@@ -1,11 +1,7 @@
-
 SELECT
-  DATE("created") AS date,
-  COUNT(*) AS billed_interactions,
-  SUM("count_testrequest") AS billed_ps_status,
-  SUM("count_deflection_edit") AS deflection_edit,
-  SUM("count_deflection_archive_unarchive") AS deflection_archive
+  "custom_escalated_reason" AS reason,
+  ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 1) AS percent
 FROM public."Mckesson_cmm_va"
-WHERE "created" BETWEEN DATE '2025-03-01' AND DATE '2025-05-06'
-GROUP BY date
-ORDER BY date;
+WHERE "custom_escalationType" = 'Eligibility'
+GROUP BY reason
+ORDER BY percent DESC;
