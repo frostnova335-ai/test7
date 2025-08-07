@@ -1,14 +1,15 @@
 SELECT
-  DATE("Created") AS "date",
   ROUND(
-    100.0 * SUM(
-      CASE
-        WHEN "Amelia Handled" = TRUE AND "Escalated" = FALSE THEN 1
-        ELSE 0
+    SUM(
+      CASE 
+        WHEN "Amelia Handled" = TRUE 
+             AND "Agent Handled" = FALSE 
+             AND "Escalated" = FALSE 
+        THEN 1 
+        ELSE 0 
       END
-    ) / COUNT(*),
+    ) * 100.0 / NULLIF(COUNT(*), 0), 
     2
-  ) AS "containment_rate"
+  ) AS "Containment Rate (%)"
 FROM public."Republic_dashboard"
-GROUP BY DATE("Created")
-ORDER BY DATE("Created");
+WHERE "Amelia Handled" IS NOT NULL;
