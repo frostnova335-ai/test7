@@ -1,10 +1,10 @@
 SELECT
-  DATE("Date") AS conversation_date,
+  'Abandonment' AS metric_label,
   ROUND(
-    100.0 * SUM(CASE WHEN "Authentication by VA success flag" = 1 THEN 1 ELSE 0 END)
+    100.0 * COUNT(CASE 
+                   WHEN "Abandonment by customer - flag" = 1 THEN 1 
+                 END)
     / NULLIF(COUNT(*), 0),
     2
-  ) AS auth_success_rate
+  ) AS abandonment_rate
 FROM public."your_table_name"
-GROUP BY 1
-ORDER BY 1
