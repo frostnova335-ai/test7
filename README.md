@@ -1,14 +1,7 @@
-SELECT 
-  DATE("created") AS date,
-  'Abandonment Rate' AS abandonment_category,
-  ROUND(
-    SUM(
-      CASE 
-        WHEN abandonment_by_customer_flag = 1 OR amelia_abandonment_flag = 1 THEN 1 
-        ELSE 0 
-      END
-    ) * 100.0 / COUNT(*),
-  2) AS abandonment_rate_percent
-FROM public."your_table"
-GROUP BY DATE("created")
-ORDER BY DATE("created");
+SELECT
+  DATE("date") AS date,
+  'World AHT' AS "World AHT",
+  ROUND(AVG("AHT"), 2) AS avg_handle_time
+FROM public."Republic_dashboard"
+GROUP BY DATE("date")
+ORDER BY DATE("date")
