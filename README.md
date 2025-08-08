@@ -1,7 +1,6 @@
 SELECT
-  DATE("date") AS date,
-  'World AHT' AS "World AHT",
-  ROUND(AVG("AHT"), 2) AS avg_handle_time
-FROM public."Republic_dashboard"
-GROUP BY DATE("date")
-ORDER BY DATE("date")
+  DATE("created") AS date,
+  SUM("successful_prompts") * 100.0 / NULLIF(SUM("total_prompts"), 0) AS success_rate
+FROM "Republic_dashboard"
+GROUP BY DATE("created")
+ORDER BY DATE("created")
