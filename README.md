@@ -1,15 +1,10 @@
 SELECT
+  DATE("Date") AS conversation_date,
   ROUND(
-    SUM(
-      CASE 
-        WHEN "Amelia Handled" = TRUE 
-             AND "Agent Handled" = FALSE 
-             AND "Escalated" = FALSE 
-        THEN 1 
-        ELSE 0 
-      END
-    ) * 100.0 / NULLIF(COUNT(*), 0), 
+    100.0 * COUNT(CASE WHEN "Amelia Handled" = TRUE AND "Escalated" = FALSE THEN 1 END) 
+    / NULLIF(COUNT(*), 0),
     2
-  ) AS "Containment Rate (%)"
-FROM public."Republic_dashboard"
-WHERE "Amelia Handled" IS NOT NULL;
+  ) AS containment_rate
+FROM public."your_table_name"
+GROUP BY 1
+ORDER BY 1
