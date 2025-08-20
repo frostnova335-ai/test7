@@ -1,15 +1,15 @@
 WITH total AS (
-    SELECT COUNT(*)::float AS total_count FROM your_table
+    SELECT COUNT(*)::float AS total_count FROM "New_Republic_Dataset"
 ),
 escalation_summary AS (
     SELECT
         CASE
-            WHEN Escalated = 'In Scope Live Agent Handoff' THEN 'In Scope Escalated'
-            WHEN Escalated = 'Out of Scope Live Agent Handoff' THEN 'Out of Scope Escalated'
+            WHEN "Escalated" = 'In Scope Live Agent Handoff' THEN 'In Scope Escalated'
+            WHEN "Escalated" = 'Out of Scope Live Agent Handoff' THEN 'Out of Scope Escalated'
             ELSE 'Not Escalated'
         END AS category,
         COUNT(*)::float AS cnt
-    FROM your_table
+    FROM "New_Republic_Dataset"
     GROUP BY 1
 ),
 inner_ring AS (
@@ -23,14 +23,13 @@ inner_ring AS (
     GROUP BY 1
 ),
 outer_ring AS (
-    -- keep "Not Escalated" only once, along with the two breakdowns
     SELECT category, cnt
     FROM escalation_summary
+    WHERE category IN ('In Scope Escalated', 'Out of Scope Escalated', 'Not Escalated')
 )
--- Final union for both rings
+-- Final output for chart
 SELECT category, cnt * 100.0 / t.total_count AS value, 'inner' AS ring
 FROM inner_ring, total t
 UNION ALL
 SELECT category, cnt * 100.0 / t.total_count AS value, 'outer' AS ring
-FROM outer_ring, total t
-WHERE category IN ('In Scope Escalated', 'Out of Scope Escalated', 'Not Escalated');
+FROM outer_ring, total t;
