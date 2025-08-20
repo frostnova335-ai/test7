@@ -1,29 +1,61 @@
 SELECT
-    CASE 
-        WHEN "Escalated_2" = 'During Authentication' 
-            THEN 'During Authentication'
-        WHEN "Escalated_2" = 'After Authentication (MPU Only)' 
-            THEN 'After Authentication'
-        WHEN "Escalated_2" = 'After Authentication (MPU + Others)' 
-            THEN 'After Authentication'
-        WHEN "Escalated_2" = 'After Authentication (Others)' 
-            THEN 'After Authentication'
-    END AS "auth_stage"  -- Inner circle
+  escalation_status AS escalation_status,
+  category AS category,
+  SUM("percentage") * 0.01 AS "SUM(""percentage"")*0.01"
+FROM (
+  WITH base AS (
+    SELECT
+      "Date" AS "Date",
+      CASE
+        WHEN "Escalated" = 'In Scope Live Agent Handoff'
+        THEN 'In Scope Escalated'
+        WHEN "Escalated" = 'Out of Scope Live Agent Handoff'
+        THEN 'Out of Scope Escalated'
+        ELSE 'Not Escalated'
+      END AS category
+    FROM "New_Republic_Dataset"
+  ), tagged AS (
+    SELECT
+      "Date",
+      CASE
+        WHEN category = 'In Scope Escalated' OR category = 'Out of Scope Escalated'
+        THEN 'Escalated'
+        ELSE 'Not Escalated'
+      END AS escalation_status,
+      category
+    FROM base
+  ), aggregated AS (
+    SELECT
+      "Date",
+      escalation_status,
+      category,
+      COUNT(*) AS count
+    FROM tagged
+    GROUP BY
+      "Date",
+      escalation_status,
+      category
+  ), total AS (
+    SELECT
+      SUM(count) AS total_count
+    FROM aggregated
+  )
+  SELECT
+    a."Date",
+    a.escalation_status,
+    a.category,
+    a.count,
+    ROUND(100.0 * a.count / t.total_count, 2) AS percentage
+  FROM aggregated AS a, total AS t
+  ORDER BY
+    a."Date",
+    a.count DESC
+) AS virtual_table
+GROUP BY
 
-   ,CASE
-        WHEN "Escalated_2" = 'During Authentication' 
-            THEN 'During Authentication'
-        WHEN "Escalated_2" = 'After Authentication (MPU Only)' 
-            THEN 'MPU Only'
-        WHEN "Escalated_2" = 'After Authentication (MPU + Others)' 
-            THEN 'MPU + Others'
-        WHEN "Escalated_2" = 'After Authentication (Others)' 
-            THEN 'Others'
-    END AS "auth_detail"  -- Outer circle
 
-   ,COUNT(*) AS "total_calls"
 
-FROM "New_Republic_Dataset"
-WHERE "Escalated" <> 'FALSE' 
-  AND "Escalated_2" <> 'FALSE'
-GROUP BY "auth_stage", "auth_detail";
+
+  escalation_status,
+  category
+LIMIT 1000
