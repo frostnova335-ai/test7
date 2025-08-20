@@ -29,3 +29,4 @@ UNION ALL
 SELECT 
     Escalated AS category, count AS value, 'outer' AS ring
 FROM escalation_breakdown;
+
