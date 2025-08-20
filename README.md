@@ -6,24 +6,12 @@ WITH base AS (
             ELSE 'Not Escalated'
         END AS category
     FROM "New_Republic_Dataset"
-),
-outer_ring AS (
-    SELECT 'outer' AS ring, category, COUNT(*) AS value
-    FROM base
-    WHERE category IN ('Not Escalated', 'In Scope Escalated', 'Out of Scope Escalated')
-    GROUP BY category
-),
-inner_ring AS (
-    SELECT 'inner' AS ring, 'Escalated' AS category, COUNT(*) AS value
-    FROM base
-    WHERE category IN ('In Scope Escalated', 'Out of Scope Escalated')
-    UNION ALL
-    SELECT 'inner' AS ring, 'Not Escalated' AS category, COUNT(*) AS value
-    FROM base
-    WHERE category = 'Not Escalated'
+), 
+total AS (
+    SELECT COUNT(*)::float AS total_count FROM base
 )
-SELECT ring, category, value
-FROM outer_ring
-UNION ALL
-SELECT ring, category, value
-FROM inner_ring;
+SELECT
+    category,
+    COUNT(*) * 100.0 / (SELECT total_count FROM total) AS percentage
+FROM base
+GROUP BY category;
