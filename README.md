@@ -23,8 +23,10 @@ inner_ring AS (
     GROUP BY 1
 ),
 outer_ring AS (
+    -- only keep the 3 subcategories
     SELECT category, cnt
     FROM escalation_summary
+    WHERE category IN ('In Scope Escalated','Out of Scope Escalated','Not Escalated')
 )
 -- Final union for both rings
 SELECT category, cnt * 100.0 / t.total_count AS value, 'inner' AS ring
