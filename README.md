@@ -10,6 +10,7 @@ WITH base AS (
 total AS (
     SELECT COUNT(*)::numeric AS total_count FROM base
 ),
+-- Inner ring = Escalated vs Not Escalated
 inner_ring AS (
     SELECT
         CASE 
@@ -20,12 +21,14 @@ inner_ring AS (
     FROM base
     GROUP BY 1
 ),
+-- Outer ring = only the 3 categories (no "Escalated")
 outer_ring AS (
     SELECT category, COUNT(*)::numeric AS cnt
     FROM base
     GROUP BY 1
+    HAVING category IN ('Not Escalated', 'In Scope Escalated', 'Out of Scope Escalated')
 )
--- Final output for sunburst
+-- Final output
 SELECT 
     category, 
     ROUND((cnt * 100.0 / t.total_count)::numeric, 2) AS percentage, 
