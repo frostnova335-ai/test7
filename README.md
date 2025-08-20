@@ -1,57 +1,34 @@
-WITH "total_calls" AS (
-    SELECT COUNT(*) AS "total"
-    FROM "New_Republic_Dataset"
+WITH total AS (
+    SELECT COUNT(*)::float AS total_count FROM "New_Republic_Dataset"
 ),
-"escalated_calls" AS (
-    SELECT COUNT(*) AS "escalated"
-    FROM "New_Republic_Dataset"
-    WHERE "Escalated" != 'FALSE'
-),
-"non_escalated_calls" AS (
-    SELECT COUNT(*) AS "not_escalated"
-    FROM "New_Republic_Dataset"
-    WHERE "Escalated" = 'FALSE'
-),
--- Breakdown of escalations (only those that are escalated)
-"escalation_breakdown" AS (
-    SELECT 
-        CASE 
+escalation_summary AS (
+    SELECT
+        CASE
             WHEN "Escalated" = 'In Scope Live Agent Handoff' THEN 'In Scope Escalated'
             WHEN "Escalated" = 'Out of Scope Live Agent Handoff' THEN 'Out of Scope Escalated'
-        END AS "Escalation_Type",
-        COUNT(*) AS "count"
+            ELSE 'Not Escalated'
+        END AS category,
+        COUNT(*)::float AS cnt
     FROM "New_Republic_Dataset"
-    WHERE "Escalated" != 'FALSE'
     GROUP BY 1
+),
+inner_ring AS (
+    SELECT 
+        CASE 
+            WHEN category = 'Not Escalated' THEN 'Not Escalated'
+            ELSE 'Escalated'
+        END AS category,
+        SUM(cnt) AS cnt
+    FROM escalation_summary
+    GROUP BY 1
+),
+outer_ring AS (
+    SELECT category, cnt
+    FROM escalation_summary
 )
--- Final Output with percentages
-SELECT 
-    'Escalated' AS "category",
-    ROUND(100.0 * e."escalated" / t."total", 2) AS "value",
-    'inner' AS "ring"
-FROM "escalated_calls" e, "total_calls" t
-
+-- Final union for both rings
+SELECT category, cnt * 100.0 / t.total_count AS value, 'inner' AS ring
+FROM inner_ring, total t
 UNION ALL
-
-SELECT 
-    'Not Escalated' AS "category",
-    ROUND(100.0 * n."not_escalated" / t."total", 2) AS "value",
-    'inner' AS "ring"
-FROM "non_escalated_calls" n, "total_calls" t
-
-UNION ALL
-
-SELECT 
-    "Escalation_Type" AS "category",
-    ROUND(100.0 * b."count" / t."total", 2) AS "value",
-    'outer' AS "ring"
-FROM "escalation_breakdown" b, "total_calls" t
-
-UNION ALL
-
--- Not Escalated also needs to appear in the outer ring
-SELECT 
-    'Not Escalated' AS "category",
-    ROUND(100.0 * n."not_escalated" / t."total", 2) AS "value",
-    'outer' AS "ring"
-FROM "non_escalated_calls" n, "total_calls" t;
+SELECT category, cnt * 100.0 / t.total_count AS value, 'outer' AS ring
+FROM outer_ring, total t;
