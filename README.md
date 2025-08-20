@@ -26,8 +26,14 @@ outer_ring AS (
     GROUP BY 1
 )
 -- Final output for sunburst
-SELECT category, ROUND(cnt * 100.0 / t.total_count, 2) AS percentage, 'inner' AS ring
+SELECT 
+    category, 
+    ROUND((cnt * 100.0 / t.total_count)::numeric, 2) AS percentage, 
+    'inner' AS ring
 FROM inner_ring, total t
 UNION ALL
-SELECT category, ROUND(cnt * 100.0 / t.total_count, 2) AS percentage, 'outer' AS ring
+SELECT 
+    category, 
+    ROUND((cnt * 100.0 / t.total_count)::numeric, 2) AS percentage, 
+    'outer' AS ring
 FROM outer_ring, total t;
