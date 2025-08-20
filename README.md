@@ -8,7 +8,7 @@ WITH base AS (
     FROM "New_Republic_Dataset"
 ),
 total AS (
-    SELECT COUNT(*)::float AS total_count FROM base
+    SELECT COUNT(*)::numeric AS total_count FROM base
 ),
 inner_ring AS (
     SELECT
@@ -16,12 +16,12 @@ inner_ring AS (
             WHEN category = 'Not Escalated' THEN 'Not Escalated'
             ELSE 'Escalated'
         END AS category,
-        COUNT(*)::float AS cnt
+        COUNT(*)::numeric AS cnt
     FROM base
     GROUP BY 1
 ),
 outer_ring AS (
-    SELECT category, COUNT(*)::float AS cnt
+    SELECT category, COUNT(*)::numeric AS cnt
     FROM base
     GROUP BY 1
 )
