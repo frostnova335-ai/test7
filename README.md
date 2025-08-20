@@ -14,13 +14,11 @@ outer_ring AS (
     GROUP BY category
 ),
 inner_ring AS (
-    SELECT 'inner' AS ring, 'Escalated' AS category,
-        COUNT(*) AS value
+    SELECT 'inner' AS ring, 'Escalated' AS category, COUNT(*) AS value
     FROM base
     WHERE category IN ('In Scope Escalated', 'Out of Scope Escalated')
     UNION ALL
-    SELECT 'inner' AS ring, 'Not Escalated' AS category,
-        COUNT(*) AS value
+    SELECT 'inner' AS ring, 'Not Escalated' AS category, COUNT(*) AS value
     FROM base
     WHERE category = 'Not Escalated'
 )
