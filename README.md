@@ -7,25 +7,20 @@ WITH base AS (
         END AS category
     FROM "New_Republic_Dataset"
 ),
-total AS (
-    SELECT CAST(COUNT(*) AS DOUBLE PRECISION) AS total_count FROM base
-),
--- Outer ring: Only three categories
 outer_ring AS (
-    SELECT 'outer' AS ring, category, COUNT(*) * 100.0 / (SELECT total_count FROM total) AS value
+    SELECT 'outer' AS ring, category, COUNT(*) AS value
     FROM base
     WHERE category IN ('Not Escalated', 'In Scope Escalated', 'Out of Scope Escalated')
     GROUP BY category
 ),
--- Inner ring: Escalated (sum both types), Not Escalated
 inner_ring AS (
     SELECT 'inner' AS ring, 'Escalated' AS category,
-        COUNT(*) * 100.0 / (SELECT total_count FROM total) AS value
+        COUNT(*) AS value
     FROM base
     WHERE category IN ('In Scope Escalated', 'Out of Scope Escalated')
     UNION ALL
     SELECT 'inner' AS ring, 'Not Escalated' AS category,
-        COUNT(*) * 100.0 / (SELECT total_count FROM total) AS value
+        COUNT(*) AS value
     FROM base
     WHERE category = 'Not Escalated'
 )
