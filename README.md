@@ -10,14 +10,7 @@ WITH base AS (
 total AS (
     SELECT COUNT(*)::float AS total_count FROM base
 ),
-outer_ring AS (
-    -- Only 3 categories
-    SELECT category, COUNT(*)::float AS cnt
-    FROM base
-    GROUP BY 1
-),
 inner_ring AS (
-    -- Escalated vs Not Escalated
     SELECT
         CASE 
             WHEN category = 'Not Escalated' THEN 'Not Escalated'
@@ -26,8 +19,13 @@ inner_ring AS (
         COUNT(*)::float AS cnt
     FROM base
     GROUP BY 1
+),
+outer_ring AS (
+    SELECT category, COUNT(*)::float AS cnt
+    FROM base
+    GROUP BY 1
 )
--- Final output for sunburst chart
+-- Final output
 SELECT category, cnt * 100.0 / t.total_count AS value, 'inner' AS ring
 FROM inner_ring, total t
 UNION ALL
