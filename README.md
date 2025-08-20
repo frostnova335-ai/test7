@@ -13,22 +13,20 @@ total AS (
 outer_ring AS (
     SELECT category, COUNT(*)::float AS cnt
     FROM base
+    WHERE category IN ('Not Escalated', 'In Scope Escalated', 'Out of Scope Escalated')
     GROUP BY category
 ),
 inner_ring AS (
-    SELECT 
-        CASE 
-            WHEN category = 'Not Escalated' THEN 'Not Escalated'
-            ELSE 'Escalated'
-        END AS category,
-        COUNT(*)::float AS cnt
+    SELECT 'Escalated' AS category, COUNT(*)::float AS cnt
     FROM base
-    GROUP BY 1
+    WHERE category IN ('In Scope Escalated', 'Out of Scope Escalated')
+    UNION ALL
+    SELECT 'Not Escalated' AS category, COUNT(*)::float AS cnt
+    FROM base
+    WHERE category = 'Not Escalated'
 )
 SELECT 'outer' AS ring, category, cnt * 100.0 / t.total_count AS value
 FROM outer_ring, total t
-WHERE category IN ('Not Escalated', 'In Scope Escalated', 'Out of Scope Escalated')
 UNION ALL
 SELECT 'inner' AS ring, category, cnt * 100.0 / t.total_count AS value
-FROM inner_ring, total t
-WHERE category IN ('Not Escalated', 'Escalated');
+FROM inner_ring, total t;
