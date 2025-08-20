@@ -1,27 +1,31 @@
-Escalated	Escalated_2
-Out of Scope Live Agent Handoff	During Authentication
-Out of Scope Live Agent Handoff	During Authentication
-Out of Scope Live Agent Handoff	After Authentication (MPU Only)
-Out of Scope Live Agent Handoff	After Authentication (MPU Only)
-FALSE	FALSE
-Out of Scope Live Agent Handoff	After Authentication (Others)
-FALSE	FALSE
-FALSE	FALSE
-Out of Scope Live Agent Handoff	After Authentication (MPU + Others)
-FALSE	FALSE
-In Scope Live Agent Handoff	In Scope Live Agent Handoff
-In Scope Live Agent Handoff	In Scope Live Agent Handoff
-FALSE	FALSE
-In Scope Live Agent Handoff	In Scope Live Agent Handoff
-FALSE	FALSE
-In Scope Live Agent Handoff	In Scope Live Agent Handoff
-FALSE	FALSE
-In Scope Live Agent Handoff	In Scope Live Agent Handoff
-FALSE	FALSE
-FALSE	FALSE
-FALSE	FALSE
-FALSE	FALSE
-<img width="627" height="668" alt="image" src="https://github.com/user-attachments/assets/b43c35e0-11cd-4f72-881f-61cfe2ba3c65" />
-
-
-
+WITH total_calls AS (
+    SELECT COUNT(*) AS total FROM your_table
+),
+escalated_calls AS (
+    SELECT COUNT(*) AS escalated
+    FROM your_table
+    WHERE Escalated != 'FALSE'
+),
+non_escalated_calls AS (
+    SELECT COUNT(*) AS not_escalated
+    FROM your_table
+    WHERE Escalated = 'FALSE'
+),
+escalation_breakdown AS (
+    SELECT Escalated, COUNT(*) AS count
+    FROM your_table
+    WHERE Escalated != 'FALSE'
+    GROUP BY Escalated
+)
+-- Final output for both rings
+SELECT 
+    'Escalated' AS category, e.escalated AS value, 'inner' AS ring
+FROM escalated_calls e
+UNION ALL
+SELECT 
+    'Not Escalated' AS category, n.not_escalated AS value, 'inner' AS ring
+FROM non_escalated_calls n
+UNION ALL
+SELECT 
+    Escalated AS category, count AS value, 'outer' AS ring
+FROM escalation_breakdown;
