@@ -1,33 +1,33 @@
-WITH total AS (
-    SELECT COUNT(*)::float AS total_count FROM "New_Republic_Dataset"
-),
-escalation_summary AS (
+WITH base AS (
     SELECT
         CASE
             WHEN "Escalated" = 'In Scope Live Agent Handoff' THEN 'In Scope Escalated'
             WHEN "Escalated" = 'Out of Scope Live Agent Handoff' THEN 'Out of Scope Escalated'
             ELSE 'Not Escalated'
-        END AS category,
-        COUNT(*)::float AS cnt
+        END AS category
     FROM "New_Republic_Dataset"
+),
+total AS (
+    SELECT COUNT(*)::float AS total_count FROM base
+),
+outer_ring AS (
+    -- Only 3 categories
+    SELECT category, COUNT(*)::float AS cnt
+    FROM base
     GROUP BY 1
 ),
 inner_ring AS (
-    SELECT 
+    -- Escalated vs Not Escalated
+    SELECT
         CASE 
             WHEN category = 'Not Escalated' THEN 'Not Escalated'
             ELSE 'Escalated'
         END AS category,
-        SUM(cnt) AS cnt
-    FROM escalation_summary
+        COUNT(*)::float AS cnt
+    FROM base
     GROUP BY 1
-),
-outer_ring AS (
-    SELECT category, cnt
-    FROM escalation_summary
-    WHERE category IN ('In Scope Escalated', 'Out of Scope Escalated', 'Not Escalated')
 )
--- Final output for chart
+-- Final output for sunburst chart
 SELECT category, cnt * 100.0 / t.total_count AS value, 'inner' AS ring
 FROM inner_ring, total t
 UNION ALL
