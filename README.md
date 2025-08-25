@@ -1,2 +1,33 @@
-Conversation Id	Created	Date	Ended	Status	Channel	Escalated	Escalated_2	Escalation Queue	Escalation Reason	Abandoned	Amelia Handled	Amelia Abandoned	Agent Handled	Agent Abandoned	Escalate Abandoned	Total Handle Time	AHT	MPU_AHT	Verification_AHT	Executed BPNs	Resolution Codes	Intent	Authentication by VA success flag	Authentication by VA failure reason	Out of scope intent	Intent recognition success by VA flag	Number of Prompts from AI	Number of Successful Prompts from AI	Handled by Agentic AI flag	Esclation after AI attempt flag	Retry of authentication flag	Retry of MPU flag	Abandonment by customer - flag	Half_hourly_interval	Missed_Utterance	Missed_Utterance_Auth	Missed_Utterance_IntentIdentification	Missed_Utterance_MPU	AI_Prompts_Auth	AI_Prompts_IntentIdentification	AI_Prompts_MPU
-![Uploading image.png…]()
+WITH misclassification AS (
+    SELECT
+        'AI Misclassification Rate' AS "kpi_name",
+        COUNT(CASE 
+                WHEN "Intent" = 'MPU' 
+                     AND "Resolution Codes" <> 'MPU'
+                THEN "Conversation Id" END) * 1.0
+        / NULLIF(COUNT(CASE WHEN "Intent" = 'MPU' THEN "Conversation Id" END), 0) 
+        AS "kpi_value"
+    FROM public."New_Republic_Dataset"
+),
+
+missed_utterance AS (
+    SELECT
+        'Missed Utterance Rate' AS "kpi_name",
+        SUM("Missed_Utterance") * 1.0
+        / NULLIF(SUM("Number of Prompts from AI"), 0) AS "kpi_value"
+    FROM public."New_Republic_Dataset"
+),
+
+prompt_success AS (
+    SELECT
+        'Prompt Success Rate' AS "kpi_name",
+        SUM("Number of Successful Prompts from AI") * 1.0
+        / NULLIF(SUM("Number of Prompts from AI"), 0) AS "kpi_value"
+    FROM public."New_Republic_Dataset"
+)
+
+SELECT * FROM misclassification
+UNION ALL
+SELECT * FROM missed_utterance
+UNION ALL
+SELECT * FROM prompt_success;
