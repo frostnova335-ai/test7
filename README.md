@@ -1,13 +1,2 @@
-SELECT
-  'MPU AHT' AS "kpi_name",
-  AVG("MPU_AHT") AS "kpi_value"
-FROM public."New_Republic_Dataset"
-WHERE "Amelia Handled" = 1
-
-UNION ALL
-
-SELECT
-  'Verification AHT' AS "kpi_name",
-  AVG("Verification_AHT") AS "kpi_value"
-FROM public."New_Republic_Dataset"
-WHERE "Amelia Handled" = 1;
+7	AI Misclassification Rate 	The percentage of residential MPU calls where the virtual assistant incorrectly identifies the caller’s intent (MPU)	Count of residential authenticated calls, not for MPU, for which at least one of the intent is identified as MPU / Total residential authenticated calls where at least one of the intents identified was MPU		% is being calculated out of total calls where at least one of the intents identified was MPU		High	Overall, Date	Line Chart
+![Uploading image.png…]()
