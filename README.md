@@ -1,5 +1,26 @@
-Missed_Utterance_Auth	Missed_Utterance_IntentIdentification	Missed_Utterance_MPU	AI_Prompts_Auth	AI_Prompts_IntentIdentification	AI_Prompts_MPU
-2	2	6	13	3	6
-0	1	7	9	3	6
-3	2	7	16	3	6
-![Uploading image.png…]()
+WITH auth AS (
+  SELECT
+    'Auth Missed Utterance Rate' AS "kpi_name",
+    SUM("Missed_Utterance_Auth")::float
+    / NULLIF(SUM("AI_Prompts_Auth"), 0) AS "kpi_value"
+  FROM public."New_Republic_Dataset"
+),
+intent_id AS (
+  SELECT
+    'Intent Identification Missed Utterance Rate' AS "kpi_name",
+    SUM("Missed_Utterance_IntentIdentification")::float
+    / NULLIF(SUM("AI_Prompts_IntentIdentification"), 0) AS "kpi_value"
+  FROM public."New_Republic_Dataset"
+),
+mpu AS (
+  SELECT
+    'MPU Missed Utterance Rate' AS "kpi_name",
+    SUM("Missed_Utterance_MPU")::float
+    / NULLIF(SUM("AI_Prompts_MPU"), 0) AS "kpi_value"
+  FROM public."New_Republic_Dataset"
+)
+SELECT * FROM auth
+UNION ALL
+SELECT * FROM intent_id
+UNION ALL
+SELECT * FROM mpu;
