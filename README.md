@@ -1,37 +1,5 @@
-WITH misclassification AS (
-  SELECT
-    'AI Misclassification Rate' AS "kpi_name",
-    (
-      COUNT(
-        CASE 
-          WHEN "Intent" = 'MPU' 
-               AND COALESCE("Resolution Codes"::text, '') <> 'MPU'
-          THEN 1 
-        END
-      )
-    )::float
-    / NULLIF(
-        COUNT(CASE WHEN "Intent" = 'MPU' THEN 1 END),
-        0
-      ) AS "kpi_value"
-  FROM public."New_Republic_Dataset"
-),
-missed_utterance AS (
-  SELECT
-    'Missed Utterance Rate' AS "kpi_name",
-    SUM("Missed_Utterance")::float
-    / NULLIF(SUM("Number of Prompts from AI"), 0) AS "kpi_value"
-  FROM public."New_Republic_Dataset"
-),
-prompt_success AS (
-  SELECT
-    'Prompt Success Rate' AS "kpi_name",
-    SUM("Number of Successful Prompts from AI")::float
-    / NULLIF(SUM("Number of Prompts from AI"), 0) AS "kpi_value"
-  FROM public."New_Republic_Dataset"
-)
-SELECT * FROM misclassification
-UNION ALL
-SELECT * FROM missed_utterance
-UNION ALL
-SELECT * FROM prompt_success;
+5	Avg. Handling Time (AHT)  	The average call duration of residential calls handled by the virtual assistant (VA)	Total VA call duration of residential calls / Total residential VA calls	We will want to ability to show this in our total average AHT, but also to segregate it out	"1. Please mention the current calcluation of AHT as per Republic. 
+2. By seggregating AHT, do we mean MPU AHT + Verification AHT?
+3. AHT only includes the call duration of VA and doesn't account for the human agent handling time in case of escalated calls"	"2. yes
+3. yes"	High	Overall, Module, Handoff, Abandoned	Column Chart
+![Uploading image.png…]()
