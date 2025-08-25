@@ -1,33 +1,16 @@
-WITH auth AS (
+WITH base AS (
   SELECT
     "Date",
-    'Auth Missed Utterance Rate' AS "kpi_name",
-    SUM("Missed_Utterance_Auth")::float
-    / NULLIF(SUM("AI_Prompts_Auth"), 0) AS "kpi_value"
-  FROM public."New_Republic_Dataset"
-  GROUP BY "Date"
-),
-intent_id AS (
-  SELECT
-    "Date",
-    'Intent Identification Missed Utterance Rate' AS "kpi_name",
-    SUM("Missed_Utterance_IntentIdentification")::float
-    / NULLIF(SUM("AI_Prompts_IntentIdentification"), 0) AS "kpi_value"
-  FROM public."New_Republic_Dataset"
-  GROUP BY "Date"
-),
-mpu AS (
-  SELECT
-    "Date",
-    'MPU Missed Utterance Rate' AS "kpi_name",
-    SUM("Missed_Utterance_MPU")::float
-    / NULLIF(SUM("AI_Prompts_MPU"), 0) AS "kpi_value"
+    SUM("Missed_Utterance")::float AS missed,
+    SUM("Number of Prompts from AI")::float AS total_prompts
   FROM public."New_Republic_Dataset"
   GROUP BY "Date"
 )
-SELECT * FROM auth
+SELECT "Date", 'Missed Utterance' AS "category",
+       (missed / NULLIF(total_prompts,0)) * 100 AS "value"
+FROM base
 UNION ALL
-SELECT * FROM intent_id
-UNION ALL
-SELECT * FROM mpu
-ORDER BY "Date", "kpi_name";
+SELECT "Date", 'Successful Utterance' AS "category",
+       ((total_prompts - missed) / NULLIF(total_prompts,0)) * 100 AS "value"
+FROM base
+ORDER BY "Date", "category";
