@@ -1,16 +1,1 @@
-WITH base AS (
-  SELECT
-    "Date",
-    SUM("Missed_Utterance")::float AS missed,
-    SUM("Number of Prompts from AI")::float AS total_prompts
-  FROM public."New_Republic_Dataset"
-  GROUP BY "Date"
-)
-SELECT "Date", 'Missed Utterance' AS "category",
-       (missed / NULLIF(total_prompts,0)) * 100 AS "value"
-FROM base
-UNION ALL
-SELECT "Date", 'Successful Utterance' AS "category",
-       ((total_prompts - missed) / NULLIF(total_prompts,0)) * 100 AS "value"
-FROM base
-ORDER BY "Date", "category";
+https://login.microsoftonline.com/organizations/oauth2/v2.0/authorize?client_id=9199bf20-a13f-4107-85dc-02114787ef48&scope=https%3A%2F%2Foutlook.office.com%2F.default%20openid%20profile%20offline_access&redirect_uri=https%3A%2F%2Foutlook.office365.com%2Fmail%2F&client-request-id=3765d307-e58e-507b-aa5e-1c766de7832b&response_mode=fragment&client_info=1&login_hint=Shivam.Agrawal%40McKesson.com&X-AnchorMailbox=UPN%3AShivam.Agrawal%40McKesson.com&nonce=019937ec-038d-72cc-ae84-6695d2b03816&state=eyJpZCI6IjAxOTkzN2VjLTAzOGMtN2UxMS1hOGY4LTMzYjVkNmU4ZTBjZCIsIm1ldGEiOnsiaW50ZXJhY3Rpb25UeXBlIjoicmVkaXJlY3QifX0%3D&claims=%7B%22access_token%22%3A%7B%22xms_cc%22%3A%7B%22values%22%3A%5B%22CP1%22%5D%7D%7D%7D&x-client-SKU=msal.js.browser&x-client-VER=4.14.0&response_type=code&code_challenge=NRO-CPfnmEbaMbbWxTNAbfpZlqAnV4YCQRXtCSEegp0&code_challenge_method=S256
