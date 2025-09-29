@@ -1,278 +1,17 @@
 SELECT
-  AVG(containment_rate) AS "%"
-FROM (
-  SELECT
-    "Date",
-    COUNT(
-      CASE
-        WHEN "MPU_Case_Closure" = 1
-        AND "MPU_Intent_Identified_Flag" = 1
-        AND "MPU_Eligible_flag" = 'Eligible'
-        THEN 1
-      END
-    ) * 1.0 / NULLIF(
-      COUNT(
-        CASE
-          WHEN "MPU_Intent_Identified_Flag" = 1 AND "MPU_Eligible_flag" = 'Eligible'
-          THEN 1
-        END
-      ),
-      0
-    ) AS containment_rate
-  FROM "New_Republic_Dataset"
-  GROUP BY
-    "Date"
-  ORDER BY
-    "Date"
-) AS virtual_table
-LIMIT 50000
-
-
-
-
-
-
-
-
-SELECT
-  SUM("auth_success_count") / SUM("residential_calls_count") AS "Auth Rate"
-FROM (
-  SELECT
-    DATE("Date") AS "Date",
-    SUM(
-      CASE
-        WHEN "Caller_Type" = 'Residential' AND "Authentication by VA success flag" = 1
-        THEN 1
-        ELSE 0
-      END
-    ) AS auth_success_count,
-    SUM(CASE WHEN "Caller_Type" = 'Residential' THEN 1 ELSE 0 END) AS residential_calls_count,
-    ROUND(
-      100.0 * SUM(
-        CASE
-          WHEN "Caller_Type" = 'Residential' AND "Authentication by VA success flag" = 1
-          THEN 1
-          ELSE 0
-        END
-      ) / NULLIF(SUM(CASE WHEN "Caller_Type" = 'Residential' THEN 1 ELSE 0 END), 0),
-      2
-    ) AS auth_success_rate
-  FROM public."New_Republic_Dataset"
-  GROUP BY
-    DATE("Date")
-  ORDER BY
-    DATE("Date")
-) AS virtual_table
-WHERE
-  "Date" >= TO_DATE('2025-08-29', 'YYYY-MM-DD')
-  AND "Date" < TO_DATE('2025-09-29', 'YYYY-MM-DD')
-LIMIT 50000
-
-
-
-
-
-
-SELECT
-  AVG("escalation_rate_percentage") * 0.01 AS "AVG(""escalation_rate_percentage"")*0.01"
-FROM (
-  SELECT
-    "Date",
-    ROUND(
-      100.0 * SUM(
-        CASE
-          WHEN "Caller_Type" = 'Residential'
-          AND "Escalated" IN ('Out of Scope Live Agent Handoff', 'In Scope Live Agent Handoff')
-          THEN 1
-          ELSE 0
-        END
-      ) / NULLIF(SUM(CASE WHEN "Caller_Type" = 'Residential' THEN 1 ELSE 0 END), 0),
-      2
-    ) AS escalation_rate_percentage
-  FROM public."New_Republic_Dataset"
-  GROUP BY
-    "Date"
-  ORDER BY
-    "Date"
-) AS virtual_table
-WHERE
-  "Date" >= '2025-08-29 00:00:00.000000' AND "Date" < '2025-09-29 00:00:00.000000'
-LIMIT 50000
-
-
-
-
-
-SELECT
-  AVG("abandonment_rate") * 0.01 AS "AVG(""abandonment_rate"")*0.01"
-FROM (
-  SELECT
-    'Abandonment' AS label,
-    ROUND(
-      100.0 * SUM(
-        CASE
-          WHEN "Abandonment by customer - flag" = 1
-          AND "Abandoned_during_VA" = 1
-          AND "MPU_Case_Closure" IS DISTINCT FROM '1'
-          THEN 1
-          ELSE 0
-        END
-      ) / NULLIF(SUM(CASE WHEN "Caller_Type" = 'Residential' THEN 1 ELSE 0 END), 0),
-      2
-    ) AS abandonment_rate
-  FROM public."New_Republic_Dataset"
-) AS virtual_table
-LIMIT 50000
-
-
-
-
-
-
-SELECT
-  AVG("missed_utterance_rate") * 0.01 AS "%"
-FROM (
-  SELECT
-    "Date",
-    (
-      CAST(SUM("Missed_Utterance") AS DOUBLE PRECISION) / NULLIF(SUM("Number of Prompts from AI"), 0)
-    ) * 100 AS missed_utterance_rate
-  FROM public."New_Republic_Dataset"
-  GROUP BY
-    "Date"
-  ORDER BY
-    "Date"
-) AS virtual_table
-LIMIT 50000
-
-
-
-
-
-
-
-
-
-SELECT
-  ROUND(SUM("handle_time") / SUM("count_conv")) AS "AHT"
-FROM (
-  SELECT
-    DATE("Date") AS "Date",
-    'AHT' AS "Metric",
-    SUM("AHT") AS handle_time,
-    COUNT("Conversation Id") AS Count_conv
-  FROM public."New_Republic_Dataset"
-  WHERE
-    "Caller_Type" = 'Residential' AND NOT "AHT" IS NULL
-  GROUP BY
-    DATE("Date")
-  ORDER BY
-    DATE("Date")
-) AS virtual_table
-WHERE
-  "Date" >= TO_DATE('2025-08-29', 'YYYY-MM-DD')
-  AND "Date" < TO_DATE('2025-09-29', 'YYYY-MM-DD')
-LIMIT 50000
-
-
-
-
-
-
-
-
-
-SELECT
-  "Date" AS "Date",
-  SUM(containment_rate) AS "%"
-FROM (
-  SELECT
-    "Date",
-    COUNT(
-      CASE
-        WHEN "MPU_Case_Closure" = 1
-        AND "MPU_Intent_Identified_Flag" = 1
-        AND "MPU_Eligible_flag" = 'Eligible'
-        THEN 1
-      END
-    ) * 1.0 / NULLIF(
-      COUNT(
-        CASE
-          WHEN "MPU_Intent_Identified_Flag" = 1 AND "MPU_Eligible_flag" = 'Eligible'
-          THEN 1
-        END
-      ),
-      0
-    ) AS containment_rate
-  FROM "New_Republic_Dataset"
-  GROUP BY
-    "Date"
-  ORDER BY
-    "Date"
-) AS virtual_table
-GROUP BY
-  "Date"
-ORDER BY
-  "%" DESC
-LIMIT 10000
-
-
-
-
-
-
-
-
-
-SELECT
-  DATE_TRUNC('DAY', "Date") AS "Date",
-  SUM("auth_success_rate") * 0.01 AS "SUM(""auth_success_rate"")*0.01"
-FROM (
-  SELECT
-    "Date",
-    ROUND(
-      100.0 * SUM(
-        CASE
-          WHEN "Caller_Type" = 'Residential' AND "Authentication by VA success flag" = 1
-          THEN 1
-          ELSE 0
-        END
-      ) / NULLIF(SUM(CASE WHEN "Caller_Type" = 'Residential' THEN 1 ELSE 0 END), 0),
-      2
-    ) AS auth_success_rate
-  FROM public."New_Republic_Dataset"
-  GROUP BY
-    "Date"
-) AS virtual_table
-WHERE
-  "Date" >= '2025-08-29 00:00:00.000000' AND "Date" < '2025-09-29 00:00:00.000000'
-GROUP BY
-  DATE_TRUNC('DAY', "Date")
-ORDER BY
-  "SUM(""auth_success_rate"")*0.01" DESC
-LIMIT 1000
-
-
-
-
-
-
-
-
-SELECT
-  "MPU_Retry_Prompt" AS "MPU_Retry_Prompt",
+  "Auth_Retry_Prompt" AS "Auth_Retry_Prompt",
   SUM(retry_count) AS "Volume"
 FROM (
   SELECT
     DATE("Date") AS "Date",
-    "MPU_Retry_Prompt",
+    "Auth_Retry_Prompt",
     COUNT(*) AS retry_count
   FROM public."New_Republic_Dataset"
   WHERE
-    "Retry of MPU flag" = 1 AND "Caller_Type" = 'Residential'
+    "Retry of authentication flag" = 1 AND "Caller_Type" = 'Residential'
   GROUP BY
     DATE("Date"),
-    "MPU_Retry_Prompt"
+    "Auth_Retry_Prompt"
   ORDER BY
     retry_count DESC
 ) AS virtual_table
@@ -280,53 +19,151 @@ WHERE
   "Date" >= TO_DATE('2025-08-29', 'YYYY-MM-DD')
   AND "Date" < TO_DATE('2025-09-29', 'YYYY-MM-DD')
 GROUP BY
-  "MPU_Retry_Prompt"
+  "Auth_Retry_Prompt"
 ORDER BY
   "Volume" DESC
 LIMIT 1000
 
+
+
 SELECT
-  DATE_TRUNC('DAY', "Date") AS "Date",
-  AVG("escalation_rate") AS "Rate"
+  "Escalation_Type" AS "Escalation_Type",
+  SUM("Count") AS "Percentage"
 FROM (
+  WITH residential_calls AS (
+    SELECT
+      "Date",
+      CASE
+        WHEN "Escalated" = 'In Scope Live Agent Handoff'
+        THEN 'In Scope'
+        WHEN "Escalated" = 'Out of Scope Live Agent Handoff'
+        THEN 'Out of Scope'
+        ELSE 'Other'
+      END AS "Escalation_Type"
+    FROM public."New_Republic_Dataset"
+    WHERE
+      "Caller_Type" = 'Residential'
+  )
   SELECT
-    DATE("Date") AS "Date",
-    CAST(SUM(
-      CASE
-        WHEN "Caller_Type" = 'Residential'
-        AND "Escalated" IN ('Out of Scope Live Agent Handoff', 'In Scope Live Agent Handoff')
-        THEN 1
-        ELSE 0
-      END
-    ) /* Rate as a decimal (0.05 = 5%) */ AS DECIMAL) / NULLIF(SUM(CASE WHEN "Caller_Type" = 'Residential' THEN 1 ELSE 0 END), 0) AS escalation_rate,
-    SUM(
-      CASE
-        WHEN "Caller_Type" = 'Residential'
-        AND "Escalated" IN ('Out of Scope Live Agent Handoff', 'In Scope Live Agent Handoff')
-        THEN 1
-        ELSE 0
-      END
-    ) AS escalation_volume /* Absolute volume */
-  FROM public."New_Republic_Dataset"
+    "Date",
+    "Escalation_Type",
+    COUNT(*) AS "Count",
+    ROUND(COUNT(*) * 100.0 / NULLIF(SUM(COUNT(*)) OVER (PARTITION BY "Date"), 0), 2) AS "Percentage"
+  FROM residential_calls
   GROUP BY
-    DATE("Date")
+    "Date",
+    "Escalation_Type"
   ORDER BY
-    DATE("Date")
+    "Date",
+    "Escalation_Type"
+) AS virtual_table
+WHERE
+  (
+    NOT "Escalation_Type" IN ('Other')
+  )
+GROUP BY
+  "Escalation_Type"
+ORDER BY
+  "Percentage" DESC
+LIMIT 100
+
+
+SELECT
+  "Escalated_2" AS "Escalated_2",
+  SUM("Count") AS "Percentage"
+FROM (
+  WITH out_of_scope_totals AS (
+    SELECT
+      "Date",
+      COUNT(*) AS total_out_of_scope
+    FROM public."New_Republic_Dataset"
+    WHERE
+      "Escalated" = 'Out of Scope Live Agent Handoff' AND "Caller_Type" = 'Residential'
+    GROUP BY
+      "Date"
+  )
+  SELECT
+    d."Date",
+    d."Escalated_2",
+    COUNT(*) AS "Count",
+    ROUND(COUNT(*) * 100.0 / t.total_out_of_scope, 2) AS "Percentage"
+  FROM public."New_Republic_Dataset" AS d
+  JOIN out_of_scope_totals AS t
+    ON d."Date" = t."Date"
+  WHERE
+    d."Escalated" = 'Out of Scope Live Agent Handoff'
+    AND d."Caller_Type" = 'Residential'
+  GROUP BY
+    d."Date",
+    d."Escalated_2",
+    t.total_out_of_scope
+  ORDER BY
+    d."Date",
+    d."Escalated_2"
 ) AS virtual_table
 GROUP BY
-  DATE_TRUNC('DAY', "Date")
+  "Escalated_2"
+ORDER BY
+  "Percentage" DESC
+LIMIT 100
+
+
+SELECT
+  journey_step AS journey_step,
+  AVG("abandonment_rate_pct") * 0.01 AS "Rate"
+FROM (
+  WITH total_calls AS (
+    SELECT
+      COUNT(*) AS total_call_count
+    FROM public."New_Republic_Dataset"
+    WHERE
+      "Caller_Type" = 'Residential'
+  ), abandonment_by_stage AS (
+    SELECT
+      TRIM("Abandonment_Last_Completed_Stage") AS journey_step,
+      COUNT(*) AS abandoned_count
+    FROM public."New_Republic_Dataset"
+    WHERE
+      "Abandonment by customer - flag" = 1
+      AND "Abandoned_during_VA" = 1
+      AND (
+        "MPU_Case_Closure" IS DISTINCT FROM '1'
+      ) /* <-- exclude only '1' */
+      AND "Caller_Type" = 'Residential'
+      AND NOT "Abandonment_Last_Completed_Stage" IS NULL
+      AND TRIM("Abandonment_Last_Completed_Stage") <> ''
+    GROUP BY
+      TRIM("Abandonment_Last_Completed_Stage")
+  )
+  SELECT
+    abs.journey_step,
+    abs.abandoned_count,
+    ROUND(100.0 * abs.abandoned_count / tc.total_call_count, 2) AS abandonment_rate_pct
+  FROM abandonment_by_stage AS abs
+  CROSS JOIN total_calls AS tc
+  ORDER BY
+    abandonment_rate_pct DESC
+) AS virtual_table
+GROUP BY
+  journey_step
 ORDER BY
   "Rate" DESC
 LIMIT 1000
 
 
-
 SELECT
-  label AS label,
-  AVG("abandonment_rate") * 0.01 AS "Rate"
+  conversation_length AS conversation_length,
+  AVG("abandonment_rate_pct") * 0.01 AS "Rate"
 FROM (
+  WITH total_calls AS (
+    SELECT
+      COUNT(*) AS total_calls
+    FROM public."New_Republic_Dataset"
+    WHERE
+      "Caller_Type" = 'Residential'
+  )
   SELECT
-    'Abandonment' AS label,
+    "AHT_Bucket" AS conversation_length,
     ROUND(
       100.0 * SUM(
         CASE
@@ -336,13 +173,20 @@ FROM (
           THEN 1
           ELSE 0
         END
-      ) / NULLIF(SUM(CASE WHEN "Caller_Type" = 'Residential' THEN 1 ELSE 0 END), 0),
+      ) / total_calls.total_calls,
       2
-    ) AS abandonment_rate
-  FROM public."New_Republic_Dataset"
+    ) AS abandonment_rate_pct
+  FROM public."New_Republic_Dataset", total_calls
+  WHERE
+    NOT "AHT_Bucket" IS NULL AND "Caller_Type" = 'Residential'
+  GROUP BY
+    "AHT_Bucket",
+    total_calls.total_calls
+  ORDER BY
+    abandonment_rate_pct DESC
 ) AS virtual_table
 GROUP BY
-  label
+  conversation_length
 ORDER BY
   "Rate" DESC
 LIMIT 1000
@@ -350,282 +194,158 @@ LIMIT 1000
 
 
 SELECT
-  DATE_TRUNC('DAY', "Date") AS "Date",
-  SUM(out_of_scope_rate) AS "%"
+  kpi_name AS kpi_name,
+  AVG(kpi_value) AS "Rate"
 FROM (
-  SELECT
-    "Date",
-    COUNT(
-      CASE
-        WHEN "Caller_Type" = 'Residential'
-        AND "Authentication by VA success flag" = 1
-        AND "MPU_Intent_Identified_Flag" = 0
-        THEN 1
-      END
-    ) * 1.0 / NULLIF(
-      COUNT(
-        CASE
-          WHEN "Caller_Type" = 'Residential' AND "Authentication by VA success flag" = 1
-          THEN 1
-        END
-      ),
-      0
-    ) AS out_of_scope_rate
-  FROM "New_Republic_Dataset"
-  GROUP BY
-    "Date"
-  ORDER BY
-    "Date"
-) AS virtual_table
-WHERE
-  "Date" >= '2025-08-29 00:00:00.000000' AND "Date" < '2025-09-29 00:00:00.000000'
-GROUP BY
-  DATE_TRUNC('DAY', "Date")
-ORDER BY
-  "%" DESC
-LIMIT 1000
-
-
-SELECT
-  DATE_TRUNC('DAY', "Date") AS "Date",
-  SUM(out_of_scope_rate_2) AS "%"
-FROM (
-  SELECT
-    "Date",
-    COUNT(
-      CASE
-        WHEN "Caller_Type" = 'Residential'
-        AND "Authentication by VA success flag" = 1
-        AND "MPU_Intent_Identified_Flag" = 1
-        AND "Here_for_MPU_Flag" = 0
-        THEN 1
-      END
-    ) * 1.0 / NULLIF(
-      COUNT(
-        CASE
-          WHEN "Caller_Type" = 'Residential'
-          AND "Authentication by VA success flag" = 1
-          AND "MPU_Intent_Identified_Flag" = 1
-          THEN 1
-        END
-      ),
-      0
-    ) AS out_of_scope_rate_2
-  FROM "New_Republic_Dataset"
-  GROUP BY
-    "Date"
-  ORDER BY
-    "Date"
-) AS virtual_table
-GROUP BY
-  DATE_TRUNC('DAY', "Date")
-ORDER BY
-  "%" DESC
-LIMIT 1000
-
-
-
-SELECT
-  "Date" AS "Date",
-  SUM(intent_success_rate) AS "%"
-FROM (
-  SELECT
-    "Date",
-    COUNT(
-      CASE
-        WHEN "MPU_Intent_Identified_1stattempt_Flag" = 1
-        AND "Here_for_MPU_Flag" = 1
-        AND "Caller_Type" = 'Residential'
-        AND "Authentication by VA success flag" = 1
-        AND "MPU_Intent_Identified_Flag" = 1
-        THEN 1
-      END
-    ) * 1.0 / NULLIF(
-      COUNT(
-        CASE
-          WHEN "Caller_Type" = 'Residential'
-          AND "Authentication by VA success flag" = 1
-          AND "MPU_Intent_Identified_Flag" = 1
-          THEN 1
-        END
-      ),
-      0
-    ) AS intent_success_rate
-  FROM "New_Republic_Dataset"
-  GROUP BY
-    "Date"
-  ORDER BY
-    "Date"
-) AS virtual_table
-GROUP BY
-  "Date"
-ORDER BY
-  "%" DESC
-LIMIT 1000
-
-
-
-SELECT
-  "Date" AS "Date",
-  SUM("success_rate") * 0.01 AS "SUM(""success_rate"")*0.01"
-FROM (
-  SELECT
-    "Date",
-    SUM("Number of Successful Prompts from AI") * 100.0 / NULLIF(SUM("Number of Prompts from AI"), 0) AS success_rate
-  FROM "New_Republic_Dataset"
-  GROUP BY
-    "Date"
-) AS virtual_table
-WHERE
-  "Date" >= TO_TIMESTAMP('2025-08-29 00:00:00.000000', 'YYYY-MM-DD HH24:MI:SS.US')
-  AND "Date" < TO_TIMESTAMP('2025-09-29 00:00:00.000000', 'YYYY-MM-DD HH24:MI:SS.US')
-GROUP BY
-  "Date"
-ORDER BY
-  "SUM(""success_rate"")*0.01" DESC
-LIMIT 1000
-
-
-SELECT
-  category AS category,
-  AVG(value) AS "Rate"
-FROM (
-  WITH base AS (
+  WITH auth AS (
     SELECT
       "Date",
-      CAST(SUM("Missed_Utterance") AS DOUBLE PRECISION) AS missed,
-      CAST(SUM("Number of Prompts from AI") AS DOUBLE PRECISION) AS total_prompts
+      'Authentication' AS "kpi_name",
+      CAST(SUM("Missed_Utterance_Auth") AS DOUBLE PRECISION) / NULLIF(SUM("AI_Prompts_Auth"), 0) AS "kpi_value"
+    FROM public."New_Republic_Dataset"
+    GROUP BY
+      "Date"
+  ), intent_id AS (
+    SELECT
+      "Date",
+      'Intent Identification' AS "kpi_name",
+      CAST(SUM("Missed_Utterance_IntentIdentification") AS DOUBLE PRECISION) / NULLIF(SUM("AI_Prompts_IntentIdentification"), 0) AS "kpi_value"
+    FROM public."New_Republic_Dataset"
+    GROUP BY
+      "Date"
+  ), mpu AS (
+    SELECT
+      "Date",
+      'MPU' AS "kpi_name",
+      CAST(SUM("Missed_Utterance_MPU") AS DOUBLE PRECISION) / NULLIF(SUM("AI_Prompts_MPU"), 0) AS "kpi_value"
     FROM public."New_Republic_Dataset"
     GROUP BY
       "Date"
   )
   SELECT
-    "Date",
-    'Missed Utterance' AS "category",
-    (
-      missed / NULLIF(total_prompts, 0)
-    ) * 100 AS "value"
-  FROM base
+    *
+  FROM auth
   UNION ALL
   SELECT
-    "Date",
-    'Rest' AS "category", /* Changed here */
-    (
-      (
-        total_prompts - missed
-      ) / NULLIF(total_prompts, 0)
-    ) * 100 AS "value"
-  FROM base
+    *
+  FROM intent_id
+  UNION ALL
+  SELECT
+    *
+  FROM mpu
   ORDER BY
     "Date",
-    "category"
+    "kpi_name"
 ) AS virtual_table
 GROUP BY
-  category
+  kpi_name
 ORDER BY
   "Rate" DESC
-LIMIT 100
-
-
-
-SELECT
-  "Date" AS "Date",
-  AVG("angelic_handled") * 0.01 AS "AVG(""angelic_handled"")*0.01"
-FROM (
-  SELECT
-    "Date",
-    'AI Traffic Share' AS "AI Traffic Share",
-    ROUND(
-      100.0 * SUM(CASE WHEN "Handled by Agentic AI flag" = 1 THEN 1 ELSE 0 END) / COUNT(CASE WHEN "Caller_Type" = 'Residential' THEN 1 END),
-      2
-    ) AS Angelic_handled
-  FROM public."New_Republic_Dataset"
-  WHERE
-    "Caller_Type" = 'Residential'
-  GROUP BY
-    "Date"
-) AS virtual_table
-GROUP BY
-  "Date"
-ORDER BY
-  "AVG(""angelic_handled"")*0.01" DESC
 LIMIT 1000
 
 
+
 SELECT
-  "Half_hourly_interval" AS "Half_hourly_interval",
-  AVG(avg_contacts_per_active_day) AS "Total Volume ",
-  AVG(avg_escalated_per_active_day) AS "Live Agent Handoff Volume"
+  kpi_name AS kpi_name,
+  ROUND(SUM("total_aht") / SUM("conversation_count")) AS "AHT"
 FROM (
-  WITH daily_counts AS (
-    SELECT
-      "Date",
-      "Half_hourly_interval",
-      COUNT(*) AS total_contacts,
-      COUNT(
-        CASE
-          WHEN "Escalated" IN ('Out of Scope Live Agent Handoff', 'In Scope Live Agent Handoff')
-          THEN 1
-        END
-      ) AS escalated_contacts
-    FROM public."New_Republic_Dataset"
-    GROUP BY
-      "Date",
-      "Half_hourly_interval"
-  ), interval_totals AS (
-    SELECT
-      "Date",
-      "Half_hourly_interval",
-      SUM(total_contacts) AS sum_contacts,
-      SUM(escalated_contacts) AS sum_escalated,
-      COUNT(*) AS active_days
-    FROM daily_counts
-    WHERE
-      total_contacts > 0
-    GROUP BY
-      "Date",
-      "Half_hourly_interval"
-  )
   SELECT
     "Date",
-    it."Half_hourly_interval",
-    CAST(it.sum_contacts AS DOUBLE PRECISION) / NULLIF(it.active_days, 0) AS avg_contacts_per_active_day,
-    CAST(it.sum_escalated AS DOUBLE PRECISION) / NULLIF(it.active_days, 0) AS avg_escalated_per_active_day
-  FROM interval_totals AS it
+    kpi_name,
+    SUM(aht_sum) AS total_aht,
+    SUM(conv_count) AS conversation_count,
+    ROUND(SUM(aht_sum) / NULLIF(SUM(conv_count), 0), 2) AS kpi_value
+  FROM (
+    SELECT
+      DATE("Date") AS "Date",
+      'MPU AHT' AS kpi_name,
+      SUM("MPU_AHT") AS aht_sum,
+      COUNT("Conversation Id") AS conv_count
+    FROM public."New_Republic_Dataset"
+    WHERE
+      "Caller_Type" = 'Residential' AND NOT "MPU_AHT" IS NULL
+    GROUP BY
+      DATE("Date")
+    UNION ALL
+    SELECT
+      DATE("Date") AS "Date",
+      'Authentication AHT' AS kpi_name,
+      SUM("Verification_AHT") AS aht_sum,
+      COUNT("Conversation Id") AS conv_count
+    FROM public."New_Republic_Dataset"
+    WHERE
+      "Caller_Type" = 'Residential' AND NOT "Verification_AHT" IS NULL
+    GROUP BY
+      DATE("Date")
+  ) AS sub
+  GROUP BY
+    "Date",
+    kpi_name
   ORDER BY
     "Date",
-    it."Half_hourly_interval"
+    kpi_name
 ) AS virtual_table
 WHERE
-  "Date" >= TO_TIMESTAMP('2025-08-29 00:00:00.000000', 'YYYY-MM-DD HH24:MI:SS.US')
-  AND "Date" < TO_TIMESTAMP('2025-09-29 00:00:00.000000', 'YYYY-MM-DD HH24:MI:SS.US')
+  "Date" >= TO_DATE('2025-08-29', 'YYYY-MM-DD')
+  AND "Date" < TO_DATE('2025-09-29', 'YYYY-MM-DD')
 GROUP BY
-  "Half_hourly_interval"
+  kpi_name
 ORDER BY
-  "Total Volume " DESC
+  "AHT" DESC
 LIMIT 1000
 
 
-
 SELECT
-  "Metric" AS "Metric",
-  ROUND(SUM("handle_time") / SUM("count_conv")) AS "AHT"
+  abandonment_type AS abandonment_type,
+  ROUND(SUM("total_aht") / SUM("conversation_count")) AS "AHT"
 FROM (
   SELECT
-    DATE("Date") AS "Date",
-    'AHT' AS "Metric",
-    SUM("AHT") AS handle_time,
-    COUNT("Conversation Id") AS Count_conv
-  FROM public."New_Republic_Dataset"
-  WHERE
-    "Caller_Type" = 'Residential' AND NOT "AHT" IS NULL
+    "Date",
+    abandonment_type,
+    SUM(aht_sum) AS total_aht,
+    SUM(conv_count) AS conversation_count,
+    ROUND(CAST((
+      SUM(aht_sum) / NULLIF(SUM(conv_count), 0)
+    ) AS DECIMAL), 2) AS avg_aht
+  FROM (
+    SELECT
+      DATE("Date") AS "Date",
+      'AHT - Abandonment' AS abandonment_type,
+      SUM("AHT") AS aht_sum,
+      COUNT("Conversation Id") AS conv_count
+    FROM public."New_Republic_Dataset"
+    WHERE
+      "Abandonment by customer - flag" = 1
+      AND "Caller_Type" = 'Residential'
+      AND NOT "AHT" IS NULL
+    GROUP BY
+      DATE("Date")
+    UNION ALL
+    SELECT
+      DATE("Date") AS "Date",
+      'AHT - Other Calls' AS abandonment_type,
+      SUM("AHT") AS aht_sum,
+      COUNT("Conversation Id") AS conv_count
+    FROM public."New_Republic_Dataset"
+    WHERE
+      "Abandonment by customer - flag" = 0
+      AND "Caller_Type" = 'Residential'
+      AND NOT "AHT" IS NULL
+    GROUP BY
+      DATE("Date")
+  ) AS sub
   GROUP BY
-    DATE("Date")
+    "Date",
+    abandonment_type
   ORDER BY
-    DATE("Date")
+    "Date",
+    abandonment_type
 ) AS virtual_table
+WHERE
+  "Date" >= TO_DATE('2025-08-29', 'YYYY-MM-DD')
+  AND "Date" < TO_DATE('2025-09-29', 'YYYY-MM-DD')
 GROUP BY
-  "Metric"
+  abandonment_type
 ORDER BY
   "AHT" DESC
 LIMIT 1000
