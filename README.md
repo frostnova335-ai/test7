@@ -14,23 +14,17 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-#
-# This file is included in the final Docker image and SHOULD be overridden when
-# deploying the image to prod. Settings configured here are intended for use in local
-# development environments. Also note that superset_config_docker.py is imported
-# as a final step as a means to override "defaults" configured here
-#
+
 import logging
 import os
 import sys
-
 from celery.schedules import crontab
 from flask_caching.backends.filesystemcache import FileSystemCache
 
 logger = logging.getLogger()
 
 # -----------------------------
-# Database settings (unchanged)
+# Database settings
 # -----------------------------
 DATABASE_DIALECT = os.getenv("DATABASE_DIALECT")
 DATABASE_USER = os.getenv("DATABASE_USER")
@@ -61,7 +55,7 @@ SQLALCHEMY_EXAMPLES_URI = os.getenv(
 )
 
 # -----------------------------
-# Caching / results (unchanged)
+# Cache Config
 # -----------------------------
 REDIS_HOST = os.getenv("REDIS_HOST", "redis")
 REDIS_PORT = os.getenv("REDIS_PORT", "6379")
@@ -82,7 +76,7 @@ DATA_CACHE_CONFIG = CACHE_CONFIG
 THUMBNAIL_CACHE_CONFIG = CACHE_CONFIG
 
 # -----------------------------
-# Celery (unchanged)
+# Celery Config
 # -----------------------------
 class CeleryConfig:
     broker_url = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_CELERY_DB}"
@@ -106,15 +100,13 @@ class CeleryConfig:
         },
     }
 
-
 CELERY_CONFIG = CeleryConfig
 
 # -----------------------------
-# Feature flags (additions)
+# Feature Flags
 # -----------------------------
 FEATURE_FLAGS = {
     "ALERT_REPORTS": True,
-    # Helpful for your dashboard migrations:
     "VERSIONED_EXPORT": True,
     "VERSIONED_IMPORT_EXPORT": True,
 }
@@ -122,19 +114,19 @@ FEATURE_FLAGS = {
 ALERT_REPORTS_NOTIFICATION_DRY_RUN = True
 
 # -----------------------------
-# HTTPS / reverse-proxy awareness
+# HTTPS / Proxy Awareness
 # -----------------------------
-# When running behind nginx on 443, trust X-Forwarded-* and emit HTTPS URLs.
 ENABLE_PROXY_FIX = True
 PROXY_FIX_CONFIG = {"x_for": 1, "x_proto": 1, "x_host": 1, "x_port": 1, "x_prefix": 1}
 PREFERRED_URL_SCHEME = "https"
-SESSION_COOKIE_SECURE = True          # secure cookies over HTTPS
-SESSION_COOKIE_SAMESITE = "Lax"       # reasonable default
+
+SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_HTTPONLY = False
+SESSION_COOKIE_DOMAIN = ".exlservice.com"  # ensures cookies work across subdomains
 
 WEBSERVER_BASEURL = "https://insightshub-inspira-uat.exlservice.com"
-# Public URL used by alerts/reports & absolute links.
-# Set SUPERSET_DNS_NAME in the container env (e.g., analytics.example.com).
-DNS_NAME = os.getenv("SUPERSET_DNS_NAME")  # e.g. "analytics.example.com"
+DNS_NAME = os.getenv("SUPERSET_DNS_NAME")
 APP_ROOT = os.environ.get("SUPERSET_APP_ROOT", "/")
 if not APP_ROOT.startswith("/"):
     APP_ROOT = f"/{APP_ROOT}"
@@ -144,35 +136,48 @@ if not APP_ROOT.endswith("/"):
 if DNS_NAME:
     PUBLIC_BASEURL = f"https://{DNS_NAME}{APP_ROOT}"
 else:
-    # Fallback to internal container hostname (still works via SSH tunnel)
-    PUBLIC_BASEURL = f"http://superset_app{APP_ROOT}"
+    PUBLIC_BASEURL = f"https://insightshub-inspira-uat.exlservice.com{APP_ROOT}"
 
 WEBDRIVER_BASEURL = PUBLIC_BASEURL
 WEBDRIVER_BASEURL_USER_FRIENDLY = PUBLIC_BASEURL
 
-# Allow CTAS/CSV etc. (unchanged)
+# -----------------------------
+# CORS / CSRF / Security Fixes
+# -----------------------------
+ENABLE_CORS = True
+CORS_OPTIONS = {
+    "supports_credentials": True,
+    "allow_headers": ["*"],
+    "resources": ["/*"],
+    "origins": [
+        "https://insightshub-inspira-uat.exlservice.com",
+        "https://localhost:8088",
+        "http://localhost:8088",
+    ],
+}
+
+# CSRF setup for API endpoints
+WTF_CSRF_ENABLED = True
+WTF_CSRF_EXEMPT_LIST = [
+    "/api/v1/chart/data",
+    "/api/v1/explore",
+    "/api/v1/dashboard",
+    "/api/v1/dataset",
+    "/api/v1/me",
+]
+WTF_CSRF_TIME_LIMIT = None
+
+# Allow CTAS/CSV etc.
 SQLLAB_CTAS_NO_LIMIT = True
 
 # -----------------------------
-# Logging (unchanged)
+# Logging
 # -----------------------------
 log_level_text = os.getenv("SUPERSET_LOG_LEVEL", "INFO")
 LOG_LEVEL = getattr(logging, log_level_text.upper(), logging.INFO)
 
 # -----------------------------
-# Cypress test override (unchanged)
-# -----------------------------
-if os.getenv("CYPRESS_CONFIG") == "true":
-    base_dir = os.path.dirname(__file__)
-    module_folder = os.path.abspath(
-        os.path.join(base_dir, "../../tests/integration_tests/")
-    )
-    sys.path.insert(0, module_folder)
-    from superset_test_config import *  # noqa
-    sys.path.pop(0)
-
-# -----------------------------
-# Optional local overrides
+# Local Overrides
 # -----------------------------
 try:
     import superset_config_docker
