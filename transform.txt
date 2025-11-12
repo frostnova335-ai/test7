@@ -1,0 +1,23 @@
+-    axisLabel: {
+-      hideOverlap: true,
+-      formatter: xAxisFormatter,
+-      rotate: xAxisLabelRotation,
+-      interval: xAxisLabelInterval,
+-    },
++    // Force edge labels to render and avoid trimming the last tick
++    axisLabel: {
++      formatter: xAxisFormatter,
++      rotate: xAxisLabelRotation,
++      interval: xAxisLabelInterval, // set to 0 in form_data if you want every tick
++      hideOverlap: false,
++      showMinLabel: true,
++      showMaxLabel: true,
++      margin: 10,
++    },
++    axisTick: { alignWithLabel: true },
++    // Make the axis end exactly at the data range,
++    // so there is room to draw the last label
++    boundaryGap: false,
++    min: 'dataMin',
++    max: 'dataMax',
+     minorTick: { show: minorTicks },
