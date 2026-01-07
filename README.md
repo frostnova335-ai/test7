@@ -1,1 +1,30 @@
-tell me to acheive these points what code cred and anything i need first How to Integrate Insightshub Dashboards in Application Option 1: Superset Standalone Mode (Cleaner iframe) When to Use Want minimal UI Still using iframe Internal users How It Works Superset supports standalone=1 to hide navigation. Steps <iframe src="https://superset.company.com/superset/dashboard/12/?standalone=1" width="100%" height="100%" frameBorder="0" /> Pros Cleaner look Very simple No SDK required Option 2: Use Superset Embedded Dashboards with Guest Tokens Why: No Superset login screen Dashboards are read-only Access is controlled by our platform More secure than open iframes 2. What Is Needed Before Embedding From Superset Superset URL (example: https://superset.company.com) Dashboard IDs for the 3 dashboards Guest role configured in Superset Embedded dashboards feature enabled From Platform Backend service (Node / Java / Python, etc.) Frontend React application Ability to call Superset APIs from backend 3. Superset Configuration (One-Time Setup) On the Superset server, the following must be enabled: 3.1 Enable Embedded Dashboards In superset_config.py: FEATURE_FLAGS = { "EMBEDDED_SUPERSET": True } Restart Superset after this change. 3.2 Enable CORS (If Platform Is on Different Domain) ENABLE_CORS = True CORS_OPTIONS = { "supports_credentials": True, "origins": ["https://platform.company.com"] } Shape 4. How Guest Token Embedding Works (Flow) React App | | 1. Request embed token | Platform Backend | | 2. Call Superset API | Superset | | 3. Return Guest Token (JWT) | Backend → Frontend | | 4. Load dashboard using token Shape 5. Backend: Generate Guest Token The token must be generated on the backend, not in React. 5.1 Login to Superset (Backend) Backend logs in using a service account. API: POST /api/v1/security/login Shape 5.2 Create Guest Token API: POST /api/v1/security/guest_token/ Payload example: { "resources": [ { "type": "dashboard", "id": "12" } ], "rls": [], "user": { "username": "embedded_user" } } Response: { "token": "<JWT_TOKEN>" } This token is then sent to the React frontend. 6. Frontend (React): Embedding the Dashboard 6.1 Install Superset Embed SDK npm install @superset-ui/embedded-sdk 6.2 Embed Dashboard in React Component Example React component: import { embedDashboard } from "@superset-ui/embedded-sdk"; import { useEffect, useRef } from "react"; function SupersetDashboard({ dashboardId, fetchToken }) { const ref = useRef(null); useEffect(() => { embedDashboard({ id: dashboardId, supersetDomain: "https://superset.company.com", mountPoint: ref.current, fetchGuestToken: fetchToken, dashboardUiConfig: { hideTitle: true, hideChartControls: true, hideTab: true, }, }); }, [dashboardId]); return <div ref={ref} style={{ height: "100vh" }} />; } export default SupersetDashboard; 6.3 Fetch Token from Backend const fetchToken = async () => { const response = await fetch("/api/get-superset-token"); const data = await response.json(); return data.token; }; 7. Embedding Multiple Dashboards For 3 dashboards: Call the same component with different dashboardId Each dashboard gets its own guest token Example: <SupersetDashboard dashboardId="12" fetchToken={fetchToken} /> <SupersetDashboard dashboardId="15" fetchToken={fetchToken} /> <SupersetDashboard dashboardId="18" fetchToken={fetchToken} /> 8. UI Controls & Restrictions You can hide Superset UI elements: Filters Tabs Chart controls Titles Using: dashboardUiConfig This ensures read-only, clean view. Summary Use Superset Guest Token embedding Generate token in backend Embed dashboards using Superset SDK in React Keep dashboards read-only and secure
+1) Key Discussion Points & Clarifications
+
+1.1 Data dictionary & column semantics
+A formal data dictionary is needed to define columns (e.g., authentication success, retry flags, abandoned by customer, stage completed before abandonment, failure reason codes).
+Retry flags:
+Retry of Authentication is binary (1 = some retry occurred within authentication; 0 = none).
+Auth Retry Prompt shows where the retry happened (e.g., “Phone verification”; ideally lists both if retries occurred at phone and address; current behavior may show only one — to be verified).
+MPU eligible flag: can be blank if customer is eligible for multiple service requests and does not pick one in the flow.
+1.2 How to analyze exports (bottom‑of‑funnel approach)
+Start with outcomes: Authenticated, Escalated, Abandoned.
+Use Stage Completed Before Abandonment to locate friction points (e.g., phone verification, address verification, MPU).
+Then narrow by reason codes (R1/R2/R3) and triage calls for deeper review.
+1.3 Failure reason codes (R1/R2/R3)
+There is a conflicting understanding of R‑codes:
+One view: R1 = Account inactive, R2 = Service interrupt, R3 = Container inactive.
+Another view (from the sheet): R3 = Phone verification failure.
+Action: reconcile R‑code mapping in the data dictionary and reflect the same mapping in exports + dashboard.
+1.4 Practical walk‑through (Dec 19 test, 51 residential calls)
+Filter unauthenticated calls; examine R3 (phone number not verified) subset.
+Use abandonment columns (not just Stage Completed) to confirm whether calls abandoned vs moved ahead.
+Realization: Phone number failure should not always block address verification; opportunity to increase progression to address verification when phone match fails.
+1.5 Looping & bulk intent
+Example highlighted where bulk intent flowed into MPU, resulting in looping; escalation occurred.
+Data view didn’t clearly expose repeated bulk intent utterances; opportunity to improve loop/ambiguity flags or prompt reasons to make such issues visible without call listening.
+1.6 Dashboard adjustments
+Containment rate (VA) shown as 100% prompted concern; proposal to rename/clarify the operational definition.
+Re‑order top‑line metrics sequentially (e.g., Calls → Authentication success → MPU progression/case creation → Escalation/Abandonment).
+1.7 Operational notes
+VDI vs public ID for meetings/screenshare caused copy/paste issues; team agreed to join from public ID going forward to avoid interruptions.
+Google call drops may skew abandonment; continue working with provider; annotate this in analysis as a known technical factor.
