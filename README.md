@@ -1,9 +1,102 @@
-	conversation_id	genesys_id	conversation_name	start_timestamp_va	authentication_by_va_failure_reason	end_timestamp_va	authentication_by_va_success_flag	Last_Stage_Completed_Before_Abandonment	intent_identified	abandonment_by_customer_flag	mpu_intent_identified_flag	mpu_intent_identified_1st_attempt_flag	other_intent_identified_flag	mpu_eligible_flag	mpu_case_closure	aht	here_for_mpu_flag	aht_bucket	mpu_aht	retry_of_authentication_flag	retry_of_mpu_flag	auth_aht	mpu_retry_prompt	auth_retry_prompt	handled_by_agentic_ai_flag	escalated	Stage_Last_Completed_Esacalation	escalated_2	escalated_1	number_of_ai_prompts_exception_handling	number_of_question_prompts_from_ai	number_of_successful_prompts_from_ai	prompts_exception_handling_intent_identification	ai_prompts_intent_identification	prompts_exception_handling_mpu	ai_prompts_mpu	missed_utterance_auth	ai_prompts_auth	half_hourly_interval	type
-131	065BfdAzXZrSraqlk2LXoTkSA	a3ef5ea6-827f-4ef5-ace3-1362b0afd091	projects/ccai-uat/locations/global/agents/b4f53505-6a93-4ca9-b2b1-f33caa819519/environments/-/sessions/065BfdAzXZrSraqlk2LXoTkSA	2026-01-05 12:08:39	R0	2026-01-05 12:14:36	1		[mpu]	0	1	1	0	Eligible	1	356	1	>=30 sec	266	1	0	90		PhoneVerification	1	FALSE	MPU	FALSE	FALSE	1	15	14	0	1	0	9	12	7	24	multi_service
-790	0816D1ECUZkQ_CY2o56SKkllQ	dd1fffe1-79e4-43f4-8199-75a8c62e2c0e	projects/ccai-uat/locations/global/agents/b4f53505-6a93-4ca9-b2b1-f33caa819519/environments/-/sessions/0816D1ECUZkQ_CY2o56SKkllQ	2026-01-05 12:13:12	R0	2026-01-05 12:15:18	1		[mpu]	0	1	1	0	Ineligible	0	125	1	>=30 sec	36	0	0	89			0	TRUE	MPU	In Scope Live Agent Handoff	In Scope Live Agent Handoff	1	8	7	0	1	0	2	0	7	24	single_service
-2120	1194FsbeOEjRUaMTsLILYsfHw	d6209824-b174-4fa7-a9ef-b91e897bbb25	projects/ccai-uat/locations/global/agents/b4f53505-6a93-4ca9-b2b1-f33caa819519/environments/-/sessions/1194FsbeOEjRUaMTsLILYsfHw	2026-01-05 12:36:54	R3	2026-01-05 12:38:31	0			0					0	97	0	>=30 sec		0	0				1	TRUE	AddressVerification	TRUE	TRUE	0	7	7	0		0	0	0	7	25	single_service
-1607	103KqvOlyjjSyy18zkF-2S9Yg	44bd5590-8cab-4940-9eef-0225c09ecdd1	projects/ccai-uat/locations/global/agents/b4f53505-6a93-4ca9-b2b1-f33caa819519/environments/-/sessions/103KqvOlyjjSyy18zkF-2S9Yg	2026-01-05 12:36:55	R0	2026-01-05 12:39:01	1		[mpu]	0	1	1	0	Ineligible	0	126	1	>=30 sec	28	0	0	98			0	TRUE	MPU	In Scope Live Agent Handoff	In Scope Live Agent Handoff	1	8	7	0	1	0	2	0	7	25	single_service
-1655	103O8CKmar0Rb-JSHM7HbtuIg	893f456c-a8eb-4030-ba17-44a8a5202381	projects/ccai-uat/locations/global/agents/b4f53505-6a93-4ca9-b2b1-f33caa819519/environments/-/sessions/103O8CKmar0Rb-JSHM7HbtuIg	2026-01-05 12:39:53	R3	2026-01-05 12:41:34	0	AddressVerification		1					0	100	0	>=30 sec		0	0				0	TRUE	AddressVerification	TRUE	TRUE	1	8	7	0		0	0	0	8	25	single_service
-2619	119ni4DvIcSQROh8s5Z0RD1Aw	eb74d557-7a3d-46d8-9859-70119d7e5898	projects/ccai-uat/locations/global/agents/b4f53505-6a93-4ca9-b2b1-f33caa819519/environments/-/sessions/119ni4DvIcSQROh8s5Z0RD1Aw	2026-01-05 12:42:41	R3	2026-01-05 12:43:38	0	PhoneVerification		1					0	56	0	>=30 sec		0	0				0	FALSE	PhoneVerification	FALSE	FALSE	1	5	4	0		0	0	0	5	25	single_service
-301	065QA0TMbzhS4KzTuaef8rsaA	868ebd51-f58a-4558-b5ec-257f2bd57059	projects/ccai-uat/locations/global/agents/b4f53505-6a93-4ca9-b2b1-f33caa819519/environments/-/sessions/065QA0TMbzhS4KzTuaef8rsaA	2026-01-05 12:44:54	R0	2026-01-05 12:49:57	1		[mpu]	0	1	1	0	Eligible	0	303	1	>=30 sec	230	0	0	72			1	FALSE	MPU	FALSE	FALSE	0	14	14	0	1	0	9	0	6	25	multi_service
-![Uploading image.png…]()
+WITH hourly_data AS (         
+    SELECT             
+        start_timestamp_va AS ts,
+        DATE(
+            (
+                (start_timestamp_va AT TIME ZONE 'UTC')
+                AT TIME ZONE 'America/New_York'
+            )
+        ) AS ny_date,
+        half_hourly_interval,
+        COUNT(*) AS total_rows,
+        COUNT(CASE WHEN escalated = 'true' THEN 1 END) AS escalated_rows
+    FROM public.rs_cs_view
+    WHERE 1 = 1
+    {% if from_dttm is not none %}
+        AND start_timestamp_va >= '{{ from_dttm }}'
+    {% endif %}
+    {% if to_dttm is not none %}
+        AND start_timestamp_va < '{{ to_dttm }}'
+    {% endif %}
+    GROUP BY             
+        start_timestamp_va,
+        DATE(
+            (
+                (start_timestamp_va AT TIME ZONE 'UTC')
+                AT TIME ZONE 'America/New_York'
+            )
+        ),
+        half_hourly_interval
+),
+hourly_summary AS (
+    SELECT             
+        ny_date,
+        half_hourly_interval,
+        COUNT(DISTINCT ny_date) AS distinct_date_count,
+        SUM(total_rows) AS total_rows_for_interval,
+        SUM(escalated_rows) AS total_escalated_for_interval,
+        MIN(ts) AS timestamp_est
+    FROM hourly_data
+    GROUP BY             
+        ny_date,
+        half_hourly_interval
+)     
+SELECT         
+    timestamp_est,
+    half_hourly_interval,
+    CASE half_hourly_interval             
+        WHEN 0  THEN '00:00'
+        WHEN 1  THEN '00:30'
+        WHEN 2  THEN '01:00'
+        WHEN 3  THEN '01:30'
+        WHEN 4  THEN '02:00'
+        WHEN 5  THEN '02:30'
+        WHEN 6  THEN '03:00'
+        WHEN 7  THEN '03:30'
+        WHEN 8  THEN '04:00'
+        WHEN 9  THEN '04:30'
+        WHEN 10 THEN '05:00'
+        WHEN 11 THEN '05:30'
+        WHEN 12 THEN '06:00'
+        WHEN 13 THEN '06:30'
+        WHEN 14 THEN '07:00'
+        WHEN 15 THEN '07:30'
+        WHEN 16 THEN '08:00'
+        WHEN 17 THEN '08:30'
+        WHEN 18 THEN '09:00'
+        WHEN 19 THEN '09:30'
+        WHEN 20 THEN '10:00'
+        WHEN 21 THEN '10:30'
+        WHEN 22 THEN '11:00'
+        WHEN 23 THEN '11:30'
+        WHEN 24 THEN '12:00'
+        WHEN 25 THEN '12:30'
+        WHEN 26 THEN '13:00'
+        WHEN 27 THEN '13:30'
+        WHEN 28 THEN '14:00'
+        WHEN 29 THEN '14:30'
+        WHEN 30 THEN '15:00'
+        WHEN 31 THEN '15:30'
+        WHEN 32 THEN '16:00'
+        WHEN 33 THEN '16:30'
+        WHEN 34 THEN '17:00'
+        WHEN 35 THEN '17:30'
+        WHEN 36 THEN '18:00'
+        WHEN 37 THEN '18:30'
+        WHEN 38 THEN '19:00'
+        WHEN 39 THEN '19:30'
+        WHEN 40 THEN '20:00'
+        WHEN 41 THEN '20:30'
+        WHEN 42 THEN '21:00'
+        WHEN 43 THEN '21:30'
+        WHEN 44 THEN '22:00'
+        WHEN 45 THEN '22:30'
+        WHEN 46 THEN '23:00'
+        WHEN 47 THEN '23:30'         
+    END AS half_hourly_time,
+    CAST(half_hourly_interval AS varchar) AS string_time,
+    distinct_date_count,
+    total_rows_for_interval,
+    total_escalated_for_interval     
+FROM hourly_summary
+ORDER BY timestamp_est, half_hourly_interval
