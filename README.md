@@ -11,13 +11,6 @@ WITH hourly_data AS (
         COUNT(*) AS total_rows,
         COUNT(CASE WHEN escalated = 'true' THEN 1 END) AS escalated_rows
     FROM public.rs_cs_view
-    WHERE 1 = 1
-    {% if from_dttm is not none %}
-        AND start_timestamp_va >= '{{ from_dttm }}'
-    {% endif %}
-    {% if to_dttm is not none %}
-        AND start_timestamp_va < '{{ to_dttm }}'
-    {% endif %}
     GROUP BY             
         start_timestamp_va,
         DATE(
@@ -45,54 +38,18 @@ SELECT
     timestamp_est,
     half_hourly_interval,
     CASE half_hourly_interval             
-        WHEN 0  THEN '00:00'
-        WHEN 1  THEN '00:30'
-        WHEN 2  THEN '01:00'
-        WHEN 3  THEN '01:30'
-        WHEN 4  THEN '02:00'
-        WHEN 5  THEN '02:30'
-        WHEN 6  THEN '03:00'
-        WHEN 7  THEN '03:30'
-        WHEN 8  THEN '04:00'
-        WHEN 9  THEN '04:30'
-        WHEN 10 THEN '05:00'
-        WHEN 11 THEN '05:30'
-        WHEN 12 THEN '06:00'
-        WHEN 13 THEN '06:30'
-        WHEN 14 THEN '07:00'
-        WHEN 15 THEN '07:30'
-        WHEN 16 THEN '08:00'
-        WHEN 17 THEN '08:30'
-        WHEN 18 THEN '09:00'
-        WHEN 19 THEN '09:30'
-        WHEN 20 THEN '10:00'
-        WHEN 21 THEN '10:30'
-        WHEN 22 THEN '11:00'
-        WHEN 23 THEN '11:30'
-        WHEN 24 THEN '12:00'
-        WHEN 25 THEN '12:30'
-        WHEN 26 THEN '13:00'
-        WHEN 27 THEN '13:30'
-        WHEN 28 THEN '14:00'
-        WHEN 29 THEN '14:30'
-        WHEN 30 THEN '15:00'
-        WHEN 31 THEN '15:30'
-        WHEN 32 THEN '16:00'
-        WHEN 33 THEN '16:30'
-        WHEN 34 THEN '17:00'
-        WHEN 35 THEN '17:30'
-        WHEN 36 THEN '18:00'
-        WHEN 37 THEN '18:30'
-        WHEN 38 THEN '19:00'
-        WHEN 39 THEN '19:30'
-        WHEN 40 THEN '20:00'
-        WHEN 41 THEN '20:30'
-        WHEN 42 THEN '21:00'
-        WHEN 43 THEN '21:30'
-        WHEN 44 THEN '22:00'
-        WHEN 45 THEN '22:30'
-        WHEN 46 THEN '23:00'
-        WHEN 47 THEN '23:30'         
+        WHEN 0  THEN '00:00' WHEN 1  THEN '00:30' WHEN 2  THEN '01:00' WHEN 3  THEN '01:30'
+        WHEN 4  THEN '02:00' WHEN 5  THEN '02:30' WHEN 6  THEN '03:00' WHEN 7  THEN '03:30'
+        WHEN 8  THEN '04:00' WHEN 9  THEN '04:30' WHEN 10 THEN '05:00' WHEN 11 THEN '05:30'
+        WHEN 12 THEN '06:00' WHEN 13 THEN '06:30' WHEN 14 THEN '07:00' WHEN 15 THEN '07:30'
+        WHEN 16 THEN '08:00' WHEN 17 THEN '08:30' WHEN 18 THEN '09:00' WHEN 19 THEN '09:30'
+        WHEN 20 THEN '10:00' WHEN 21 THEN '10:30' WHEN 22 THEN '11:00' WHEN 23 THEN '11:30'
+        WHEN 24 THEN '12:00' WHEN 25 THEN '12:30' WHEN 26 THEN '13:00' WHEN 27 THEN '13:30'
+        WHEN 28 THEN '14:00' WHEN 29 THEN '14:30' WHEN 30 THEN '15:00' WHEN 31 THEN '15:30'
+        WHEN 32 THEN '16:00' WHEN 33 THEN '16:30' WHEN 34 THEN '17:00' WHEN 35 THEN '17:30'
+        WHEN 36 THEN '18:00' WHEN 37 THEN '18:30' WHEN 38 THEN '19:00' WHEN 39 THEN '19:30'
+        WHEN 40 THEN '20:00' WHEN 41 THEN '20:30' WHEN 42 THEN '21:00' WHEN 43 THEN '21:30'
+        WHEN 44 THEN '22:00' WHEN 45 THEN '22:45' WHEN 46 THEN '23:00' WHEN 47 THEN '23:30'         
     END AS half_hourly_time,
     CAST(half_hourly_interval AS varchar) AS string_time,
     distinct_date_count,
