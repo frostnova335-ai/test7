@@ -1,0 +1,2276 @@
+transcriptId,summary,Filename,id,Emotion,Emotion_Reasoning,NPS,NPS_Reasoning,Intent,Cluster L1,Aht(min),Transcripts,Churn_Propensity,Churn_Signals,Churn_Reasoning,NPS_Bucket,NPS_Percent_Category,NPS_BKT,BU,Agent_Name,Agent_ID,Script_Adherence,Escalation_Rate,Agent_Behavior_Score,Agent_Behavior_Score_Bkt,O1,O2,O3,O4,O5,Ownership,AL1,AL2,Active_Listening,E1,E2,E3,Empathy,RP1,RP2,RP3,Right_Probing,CR1,CR2,CR3,SE1,SE2,SE3,SE4,SE5,ESS1,ESS2,ESS3,ESS4,RL1,ACUS1,ACUS2,ACUS3,ACUS4,CI1,CI2
+100001,"Customer reported a beeping alarm due to a low battery and tamper alert in the hallway sensor. Agent remotely diagnosed the issue, instructed the customer to reseat the sensor, and scheduled a battery replacement. The alarm's intrusion detection remained active during the hush period.",adt_01,adt_01,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on resolving the issue and understanding the system's behavior. They ask questions and clarify information, but do not express strong emotions like frustration, anger, or disappointment.",8.5,"The agent provided clear explanations and effective troubleshooting steps, resolving the issue and addressing customer concerns in a timely manner.",alarmIssue,Alarm Query,4,"[00:00] Customer: Hello, our home alarm has been beeping every few minutes since last night. It’s getting disruptive.
+[00:06] Agent: I’m sorry about the disturbance. I’ll help troubleshoot. Is the beep from the main control panel or a specific sensor zone?
+[00:14] Customer: I see a red light blinking near the hallway sensor.
+[00:19] Agent: Understood. I’ll run remote diagnostics on the hallway PIR sensor. Please hold for 30 seconds.
+[00:32] Agent: Diagnostics show a low battery warning and a tamper alert for the hallway sensor. Did anyone clean or move the sensor recently?
+[00:41] Customer: Yes, our housekeeper dusted it yesterday.
+[00:45] Agent: That can loosen the cover slightly and trigger tamper. Let’s reseat it: press the top clip and snap it until you hear a click.
+[00:56] Customer: Done. The red blink slowed down.
+[01:01] Agent: Good sign. I’ll hush the low-battery chirp for 12 hours. We’ll replace the battery tomorrow between 2–4 PM.
+[01:09] Customer: Will the alarm still detect intrusions while the alert is hushed?
+[01:14] Agent: Yes—hush only silences the warning tone. Intrusion detection stays fully active.
+[01:20] Customer: Perfect. Please send me a confirmation.
+[01:24] Agent: Certainly. I’ve created ticket **ALM-4821**. You’ll receive SMS and email with the visit window.
+[01:30] Customer: Is the system firmware up to date?
+[01:34] Agent: The control panel is on **v2.4.3**, which is our latest stable release.
+[01:39] Customer: Great. Thanks for explaining everything.
+[01:43] Agent: I’ve noted these actions on your account and enabled 24-hour proactive monitoring. Anything else today?
+[01:49] Customer: That’s all. Thank you.",none,,"The customer is experiencing an issue with their home alarm, but the agent is able to troubleshoot and resolve the issue efficiently. The customer is satisfied with the resolution and there is no indication of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.7,0.35,0.6305555555555555,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,1,0,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0
+100002,"The customer was unable to log in due to an invalid password. The agent unlocked the customer's profile, sent a password reset link, and provided assistance with the login process. The agent also extended the password reset validity and added a note to prevent quick lockouts.",adt_02,adt_02,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on resolving the issue and seeking assistance. They express frustration and disappointment with the initial login issue, but their language remains objective and solution-focused.",8.5,"The agent efficiently resolved the issue by unlocking the profile, sending a fresh password reset link, and providing additional security measures to prevent future lockouts.",accountIssue,Account Services,6,"[00:00] Customer: Hi, I’m unable to log in. The portal says my credentials are invalid.
+[00:06] Agent: I’m sorry for the inconvenience. Let me check your account. Could you confirm your registered mobile ending in *47?
+[00:12] Customer: Yes, 98xxxxxx47.
+[00:16] Agent: Thank you. I see your profile is locked after multiple failed attempts. Did you try a password reset?
+[00:23] Customer: I did, but the link expired before I used it.
+[00:28] Agent: I’ll unlock your profile and send a fresh reset link valid for 24 hours.
+[00:33] Customer: Please send it.
+[00:36] Agent: Done—email sent with subject “Password Reset – Case **ACC-1023**”.
+[00:42] Customer: Got it. I’m clicking the link now.
+[00:46] Agent: You’ll be prompted for an OTP via SMS. Enter the 6-digit code.
+[00:51] Customer: Entered. I’m logged in successfully.
+[00:55] Agent: Great. I’ve extended the default reset validity and added a note to prevent quick lockouts.
+[01:00] Customer: Will that help if I mistype again?
+[01:03] Agent: Yes, it reduces the chance of an automatic lock. We can also enable an authenticator app for stronger 2FA if you’d like.
+[01:10] Customer: Not today. Thanks for fixing it.
+[01:13] Agent: Happy to help. Anything else?
+[01:16] Customer: No, that’s all.",none,,"The customer had a minor issue with logging in, but the agent resolved it efficiently, and the customer showed appreciation for the help.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.89,0.24,0.5694444444444444,Medium Scoring,1,1,0,1,0,0.6,1,0,0.5,0,0,0,0,1,0,1,0.6666666666666666,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0
+100003,"Customer had issues accessing their account due to an expired password reset link. Agent resolved the issue by unlocking the profile, sending a new reset link, and enabling 2-factor authentication via an authenticator app.'",adt_03,adt_03,Joy,"The customer\\'s tone is positive throughout the conversation, especially after resolving the issue (""I’m in!"", ""Thanks for your swift help""",9.5,"The agent efficiently resolved the issue by unlocking the profile, sending a new reset link, and enabling 2FA, demonstrating a high level of technical expertise and customer satisfaction.'",accountIssue,Account Services,2,"[00:00] Customer: Hello, I can’t access my account—keeps saying invalid credentials.
+[00:05] Agent: Sorry about that. I’ll review your profile. Did you recently change your password?
+[00:12] Customer: Yes, yesterday. But the email link didn’t work today.
+[00:16] Agent: It expired after 30 minutes. I’ve unlocked your profile and sent a new reset link valid for 24 hours.
+[00:22] Customer: Please confirm the email subject so I can locate it.
+[00:25] Agent: “Password Reset – Case **ACC-2047**.” It should be in your inbox now.
+[00:30] Customer: Found it. I’ll try now.
+[00:33] Agent: When prompted, enter the OTP sent to your registered mobile.
+[00:37] Customer: I entered the OTP. I’m in!
+[00:40] Agent: Excellent. I’ve added a note for longer reset validity, and we can enable 2FA via an authenticator app if you’d like.
+[00:46] Customer: Yes, please enable 2FA app-based.
+[00:49] Agent: Enabled. You’ll receive a confirmation email within a minute.
+[00:53] Customer: Thanks for your swift help.
+[00:56] Agent: You’re welcome. I’ve closed the case with resolution notes.",none,,"The customer had an issue with accessing their account, but the agent was able to resolve the issue quickly and efficiently, and the customer expressed gratitude for the help.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.57,0.46,0.5349999999999999,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100004,"The customer inquired about their current plan, renewal date, and monthly data limit. They were informed that their plan is Pro Fiber 500, with a renewal date of 01 Feb 2026 and a monthly data limit of 500 GB with rollover (max 1 TB). The customer also inquired about add-ons and upgrading to Fiber 1G, which requires an ONT check and potential swap. An assessment was scheduled for 03 Jan 2026, 11–1 PM.",adt_04,adt_04,Neutral,"The customer's language is calm and factual, inquiring about their current plan, renewal date, and monthly data limit. They also ask about add-ons and prerequisites for upgrading to Fiber 1G. The customer's tone is polite and informative, without expressing any strong emotions.",8,"The agent provided clear and concise information about the current plan, renewal date, and monthly data limit, and also helped with the upgrade process by scheduling an assessment and sending a confirmation email.",accountInquiry,Account Services,6,"[00:00] Customer (Email): Hi, could you confirm my current plan, renewal date, and monthly data limit?
+[00:07] Agent (Email): You’re on Pro Fiber 500. Renewal: **01 Feb 2026**. Data: **500 GB/month** with rollover (max 1 TB).
+[00:15] Customer: Is there a fair usage policy after 500 GB?
+[00:19] Agent: Yes, speed reduces to 20 Mbps beyond 500 GB, but rollover applies from unused data.
+[00:26] Customer: What add-ons are available?
+[00:29] Agent: Static IP (₹199/month), parental controls, streaming bundle. You can add any via the app or reply to this email.
+[00:36] Customer: Thanks. I may upgrade to Fiber 1G. Any prerequisites?
+[00:40] Agent: We’ll schedule an ONT check and, if needed, swap. Upgrades can be prorated mid-cycle. Confirm preferred date/time.
+[00:47] Customer: Schedule an assessment for 03 Jan 2026, 11–1 PM.
+[00:51] Agent: Booked. Confirmation email sent with reference **INQ-7712**.
+[00:00] Customer (Email): Hi, could you confirm my current plan, renewal date, and monthly data limit?
+[00:07] Agent (Email): You’re on Pro Fiber 500. Renewal: **01 Feb 2026**. Data: **500 GB/month** with rollover (max 1 TB).
+[00:15] Customer: Is there a fair usage policy after 500 GB?
+[00:19] Agent: Yes, speed reduces to 20 Mbps beyond 500 GB, but rollover applies from unused data.
+[00:26] Customer: What add-ons are available?
+[00:29] Agent: Static IP (₹199/month), parental controls, streaming bundle. You can add any via the app or reply to this email.
+[00:36] Customer: Thanks. I may upgrade to Fiber 1G. Any prerequisites?
+[00:40] Agent: We’ll schedule an ONT check and, if needed, swap. Upgrades can be prorated mid-cycle. Confirm preferred date/time.
+[00:47] Customer: Schedule an assessment for 03 Jan 2026, 11–1 PM.
+[00:51] Agent: Booked. Confirmation email sent with reference **INQ-7712**.
+[00:00] Customer (Email): Hi, could you confirm my current plan, renewal date, and monthly data limit?
+[00:07] Agent (Email): You’re on Pro Fiber 500. Renewal: **01 Feb 2026**. Data: **500 GB/month** with rollover (max 1 TB).
+[00:15] Customer: Is there a fair usage policy after 500 GB?
+[00:19] Agent: Yes, speed reduces to 20 Mbps beyond 500 GB, but rollover applies from unused data.
+[00:26] Customer: What add-ons are available?
+[00:29] Agent: Static IP (₹199/month), parental controls, streaming bundle. You can add any via the app or reply to this email.
+[00:36] Customer: Thanks. I may upgrade to Fiber 1G. Any prerequisites?
+[00:40] Agent: We’ll schedule an ONT check and, if needed, swap. Upgrades can be prorated mid-cycle. Confirm preferred date/time.
+[00:47] Customer: Schedule an assessment for 03 Jan 2026, 11–1 PM.
+[00:51] Agent: Booked. Confirmation email sent with reference **INQ-7712**.",none,,"The customer is inquiring about their current plan and exploring upgrade options, but there is no indication of dissatisfaction or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.79,0.37,0.5533333333333333,Medium Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100005,"Customer inquired about current plan and renewal date, and requested to enable static IP on their Home Secure + Fiber Pro plan.",adt_05,adt_05,Neutral,"The customer's language is calm and factual throughout the conversation, inquiring about their current plan and renewal date, and requesting to enable an add-on. They also confirm the agent's actions without expressing any strong emotions.",8.5,"The agent provided clear and concise information about my current plan and renewal date, and efficiently resolved my request to enable static IP.",accountInquiry,Account Services,9,"[00:00] Customer: Hi, what’s my current plan and renewal date?
+[00:04] Agent: You’re on Home Secure + Fiber Pro; renewal on **01 Feb 2026**.
+[00:09] Customer: Do I have any add-ons like static IP or parental controls?
+[00:13] Agent: Static IP is not active; parental controls are enabled. Streaming bundle is optional.
+[00:20] Customer: Can I enable static IP starting tomorrow?
+[00:23] Agent: Yes. It will activate within 24 hours. You’ll receive a confirmation email.
+[00:28] Customer: Perfect. Please proceed.
+[00:31] Agent: Activated. Case **INQ-8859** created. Email confirmation sent.",none,,"The customer is inquiring about their current plan and making changes to their add-ons, showing no signs of dissatisfaction or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.58,0.13,0.6472222222222223,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100006,"Customer updated email and phone number, disabled marketing emails, and enabled transactional emails only.",adt_06,adt_06,Neutral,"The customer's language is calm and factual throughout the conversation, with a focus on providing information and requesting updates. They do not express any strong emotions, such as happiness, frustration, or concern.",8,The agent efficiently resolved the customer’s request and provided clear confirmation of the changes made.,accountNoted,Account Services,4,"[00:00] Customer: I need to update my email to verma.new@domain.com and phone to 98xxxxxx47.
+[00:05] Agent: Certainly. I’ll send an OTP to your current phone ending *13 for verification.
+[00:11] Customer: I received it. The OTP is 624381.
+[00:15] Agent: Verified. I’ve updated your email and phone number in the profile.
+[00:20] Customer: Please set preferences to transactional emails only.
+[00:24] Agent: Done. Marketing emails disabled; transactional will continue.
+[00:29] Customer: Will I get a confirmation?
+[00:32] Agent: Yes, a profile change receipt has been emailed with reference **NOTE-3394**.
+[00:38] Customer: Thank you. That’s all.
+[00:41] Agent: You’re welcome. Changes noted on your account.",none,,The customer is simply making updates to their account and is not showing any signs of frustration or intent to switch companies.,10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.86,0.38,0.5966666666666666,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100007,"A customer was charged twice due to gateway retries. The agent initiated refunds, sent a confirmation email, and corrected the invoice. A duplicate-charge guard was enabled to prevent future errors.",adt_07,adt_07,Anger,"The customer expresses frustration and annoyance through their language, specifically in the initial message where they demand a refund due to being charged twice. They also use imperative tone like 'Please reverse them ASAP' and 'Will my invoice be corrected?' which indicates a sense of urgency and irritation.",8,"The agent efficiently resolved the issue by initiating refunds and providing a corrected invoice, demonstrating a commitment to customer satisfaction.",billingIssue,Billing,7,"[00:00] Customer: I was charged twice this month. I need a refund.
+[00:05] Agent: I’m sorry for the inconvenience. Let me review your ledger.
+[00:11] Agent: I see duplicate transactions on **28 Dec 2025** due to gateway retries.
+[00:16] Customer: Please reverse them ASAP.
+[00:19] Agent: I’ve initiated refunds. SLA is **3–5 business days** to reflect.
+[00:24] Customer: Send me confirmation.
+[00:27] Agent: Email sent with case **BILL-8821** and refund reference IDs.
+[00:32] Customer: Will my invoice be corrected?
+[00:35] Agent: Yes, a corrected invoice is attached. I’ve enabled a duplicate-charge guard.
+[00:40] Customer: Okay, thanks for resolving.
+[00:43] Agent: You’re welcome. Notes added to your account.",3. Low,I was charged twice this month. I need a refund.,"The customer is showing slight dissatisfaction with the service due to a billing error, but the issue is resolved promptly by the agent.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.83,0.24,0.615,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100008,A customer disputed a late fee on their invoice due to a payment timestamp error. The issue was resolved by waiving the fee and adjusting the customer's grace window to prevent future errors.,adt_08,adt_08,Neutral,"The customer's tone is calm and factual, with a focus on resolving the issue and receiving a revised invoice. Although they initially express a concern about the late fee, their language remains objective and polite throughout the conversation.",9,"The agent efficiently resolved the issue by waiving the late fee, generating a revised invoice, and adjusting the grace window, demonstrating a high level of customer satisfaction.",billingIssue,Billing,9,"[00:00] Customer: My invoice shows a late fee, but I paid on time.
+[00:04] Agent: Let me check the payment timestamp.
+[00:09] Agent: Your payment posted at 11:59 PM on the due date. The system marked it late by mistake.
+[00:15] Customer: Please remove the fee.
+[00:18] Agent: I’ve waived the late fee and generated a revised invoice.
+[00:23] Customer: Send me the revision.
+[00:26] Agent: Emailed with reference **BILL-9134**.
+[00:30] Customer: Thanks. Anything else I should know?
+[00:33] Agent: I’ve adjusted your grace window by 24 hours to prevent false late fees.
+[00:38] Customer: Appreciate that.",none,,"The customer had an issue with a late fee, but the agent resolved it promptly and even made an adjustment to prevent future issues. The customer showed appreciation and there was no indication of frustration or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.57,0.5,0.4949999999999999,Low Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100009,"The customer reported a discrepancy in their billed amount and the agent investigated, finding a misapplied add-on. The agent corrected the issue, reissued the invoice, and initiated a refund, which will be processed within 3-5 business days.",adt_09,adt_09,Joy,"The customer expresses satisfaction and gratitude with the resolution of the issue, as evident from the message 'Thanks for the fix'.",8,"The agent efficiently resolved the issue by reissuing the invoice and initiating a refund, demonstrating a commitment to customer satisfaction.",billingIssue,Billing,3,"[00:00] Customer (Email): Hello, the billed amount is higher than my plan total. Please review.
+[00:06] Agent (Email): We found a misapplied add-on for one cycle. I’ve removed it and reissued your invoice.
+[00:13] Customer: What’s the corrected amount?
+[00:16] Agent: ₹1,299 for Pro Fiber 500. Revised invoice attached; reference **BILL-9902**.
+[00:22] Customer: When will the extra amount be refunded?
+[00:25] Agent: Refund initiated; **3–5 business days** SLA. Confirmation sent to your email.
+[00:31] Customer: Thanks for the fix.
+[00:34] Agent: We’ve added a safeguard to prevent misapplied add-ons.",none,,"The customer had an issue with their bill, but it was resolved promptly and efficiently by the agent. The customer even thanked the agent, indicating a positive interaction.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.86,0.2,0.6266666666666666,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100010,"The customer was informed that a refund would be processed within 3-5 days but had not received it yet. The agent checked the status and found that the refund was processed the previous day, and it may take 24-48 hours to appear in the customer's account. A confirmation email with the settlement reference was sent, and a follow-up reminder was added in case the refund was not reflected by the third business day.",adt_10,adt_10,Neutral,"The customer's tone is calm and factual, with a focus on resolving the issue. They express a clear expectation for a refund and politely ask for confirmation, without showing strong emotions like frustration or disappointment.",8,"The agent provided a clear explanation of the refund processing timeline and offered a follow-up reminder, which helped to alleviate concerns and demonstrate a commitment to resolving the issue.",billingIssue,Billing,6,"[00:00] Customer: I was told a refund would arrive in 3–5 days, but I haven’t received it yet.
+[00:05] Agent: I’m sorry for the delay. Let me check your refund status.
+[00:11] Agent: The gateway shows it processed yesterday. It may take 24–48 hours to appear depending on the bank.
+[00:18] Customer: Can you send confirmation?
+[00:20] Agent: Yes, email sent with the settlement reference. Case **BILL-9988** updated.
+[00:26] Customer: Okay, I’ll wait a couple of days.
+[00:29] Agent: I’ve added a follow-up reminder. If not reflected by the third business day, we’ll escalate.
+[00:35] Customer: Thanks.",3. Low,"I was told a refund would arrive in 3–5 days, but I haven’t received it yet.","The customer is showing slight dissatisfaction with the delay in refund, but the agent is actively resolving the issue and the customer is willing to wait.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.69,0.29,0.7222222222222222,High Scoring,1,1,0,1,0,0.6,1,1,1,0,1,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0
+100011,"Customer reported auto-pay double charging. Agent disabled auto-pay, enabled manual payments, and issued a refund. Refund expected in 3-5 business days. Duplicate-charge guard was also enabled to prevent future issues.",adt_11,adt_11,Anger,"The customer initially expresses frustration with the auto-pay double charge, which indicates an angry tone. Although the customer's tone becomes more neutral and appreciative towards the end of the conversation, the initial concern and request for a change in payment method suggest a primary emotion of anger.",8,"The agent efficiently resolved the issue, disabled auto-pay, and issued a refund, demonstrating a high level of problem-solving and customer satisfaction.",billingIssue,Billing,9,"[00:00] Customer: I think the auto-pay double charged me. Can we change my payment method?
+[00:05] Agent: I’ll check. I see a duplicate retry last cycle.
+[00:10] Customer: Please disable auto-pay and switch to manual payments.
+[00:13] Agent: Auto-pay disabled; manual set as default. I’ve issued a refund for the duplicate.
+[00:18] Customer: How long for the refund?
+[00:20] Agent: **3–5 business days**. Email confirmation sent with **BILL-9533**.
+[00:25] Customer: Thanks. This should prevent repeats.
+[00:28] Agent: I’ve enabled duplicate-charge guard and updated account notes.",3. Low,Please disable auto-pay and switch to manual payments.,"The customer is showing slight dissatisfaction with the auto-pay feature and wants to switch to manual payments, but there is no explicit intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.58,0.37,0.4961111111111111,Low Scoring,1,1,0,1,0,0.6,1,0,0.5,0,0,0,0,1,0,1,0.6666666666666666,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0
+100012,International roaming activated from 05–15 Jan 2026. Spend alert at ₹2000 and hard cap at ₹4000 configured. Confirmation SMS and email sent with reference SRV-6012 and destination rates.,adt_12,adt_12,Neutral,"The customer's language is calm and factual, with a focus on requesting specific services and features. They provide clear instructions and ask questions in a straightforward manner, indicating a neutral emotional tone.",8.5,"The agent provided clear and concise information about the international roaming activation, spend alerts, and hard cap, as well as addressed my query about pausing roaming mid-way.",accountService,Account Services,2,"[00:00] Customer: I need international roaming for 10 days starting 05 Jan 2026.
+[00:05] Agent: Activating roaming from **05–15 Jan 2026**. Standard tariffs apply.
+[00:11] Customer: Please add a spend alert at ₹2000 and a hard cap at ₹4000.
+[00:15] Agent: Configured alerts and cap. Confirmation SMS will arrive shortly.
+[00:20] Customer: Can I pause roaming mid-way?
+[00:23] Agent: Yes, from the app toggle. Charges are prorated daily.
+[00:28] Customer: Great. Please send a summary.
+[00:31] Agent: Email sent with reference **SRV-6012** and destination rates.",none,,"The customer is making inquiries and requests about international roaming and spend alerts, but there is no indication of dissatisfaction or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.83,0.5,0.5383333333333333,Medium Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100013,"Customer added 'Entertainment+ Bundle' to their plan, priced at ₹249/month.",adt_13,adt_13,Joy,"The customer's tone is positive and appreciative throughout the conversation, using phrases like 'Proceed' and 'Thanks', indicating satisfaction with the support agent's assistance.",8,The agent efficiently processed the request and provided clear information about the add-on activation and pricing.,accountService,Account Services,9,"[00:00] Customer: I want the streaming bundle added to my plan.
+[00:04] Agent: Certainly. It activates within **24 hours**. Charges will reflect from the next cycle.
+[00:10] Customer: Please confirm the add-on name and price.
+[00:13] Agent: “Entertainment+ Bundle” at ₹249/month.
+[00:17] Customer: Proceed. Also, send me an email confirmation.
+[00:21] Agent: Activated. Email sent with case **SRV-7184**. App will show the add-on within 24 hours.
+[00:28] Customer: Perfect. Thanks.
+[00:31] Agent: Happy to help. Notes added to your account.",none,,"The customer is making a request to add a streaming bundle to their plan and the conversation is smooth and polite, with no signs of frustration or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.57,0.34,0.6938888888888889,Medium Scoring,1,1,0,1,0,0.6,1,1,1,0,1,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0
+100014,"""The customer reported an issue with the app crashing when opening Settings. The agent helped resolve the issue by updating the app to the latest version (v3.2.1), which fixed the crash. Additional troubleshooting steps were provided to improve performance, and the customer\\'s preferences were synced.",adt_14,adt_14,Neutral,"The customer's language is calm and factual, with a focus on requesting specific services and features. They provide clear instructions and ask questions in a straightforward manner, indicating a neutral emotional tone.",8,"The agent provided a clear and effective solution to the issue, including updating the app and providing additional troubleshooting steps.'",appSupport,App Services,9,"[00:00] Customer: The app crashes whenever I open Settings.
+[00:04] Agent: Which version are you on?
+[00:07] Customer: v3.1.0.
+[00:10] Agent: Please update to **v3.2.1**; it fixes the Settings crash.
+[00:15] Customer: Updating now… Done. Testing Settings.
+[00:19] Agent: If it’s slow, clear cache and enable background activity in OS settings.
+[00:24] Customer: Cleared and enabled. Settings opens quickly now.
+[00:28] Agent: Great. I’ve enabled auto-updates and synced your preferences.
+[00:33] Customer: Thanks!
+[00:36] Agent: Resolution noted. Anything else?
+[00:39] Customer: No, all set.",none,,"The customer had an issue with the app crashing, but the agent was able to resolve it quickly and efficiently, resulting in a positive outcome with no signs of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.83,0.16,0.7394444444444446,High Scoring,0,1,1,1,0,0.6,1,0,0.5,1,0,1,0.6666666666666666,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+100015,"The customer was experiencing issues with receiving push notifications from the app. The agent guided the customer to check and enable OS notification permissions and exclude the app from battery optimization settings. After the customer made the necessary changes, they successfully received a test alert, and the agent noted preventive steps and enabled auto-updates.",adt_15,adt_15,Joy,"The customer expresses happiness and satisfaction with the resolution of the issue, as evident from the phrase 'Thanks for the prompt fix'.",9.5,"The agent provided clear and actionable steps to resolve the issue, ensuring timely resolution and future prevention.",appSupport,App Services,2,"[00:00] Customer: I don’t receive push notifications from your app.
+[00:04] Agent: Let’s check OS notification permissions and battery optimization settings.
+[00:10] Customer: Notifications were off; battery saver was on.
+[00:13] Agent: Enable notifications and exclude the app from battery optimization. Also, ensure app version is **v3.2.1**.
+[00:20] Customer: Done. I just received a test alert.
+[00:23] Agent: Excellent. I’ve noted preventive steps and turned on auto-updates.
+[00:28] Customer: Thanks for the prompt fix.",none,,"The customer had an issue with push notifications, but the agent was able to resolve it promptly and efficiently, resulting in a positive outcome with no signs of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.58,0.49,0.5872222222222222,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100016,"""Customer reported app resetting to light mode after switching to dark mode. Agent resolved issue by updating app and clearing cache",adt_16,adt_16,Neutral,"The customer's language is calm and factual, with a focus on requesting specific services and features. They provide clear instructions and ask questions in a straightforward manner, indicating a neutral emotional tone.",9,"""The agent provided a clear and effective solution to the issue, ensuring that the customer's preferred dark mode setting persisted across sessions.""",appSupport,App Services,6,"[00:00] Customer (Email): The app resets to light mode after I switch to dark mode.
+[00:06] Agent (Email): Please confirm version **v3.2.1** and ensure “Sync Preferences” is enabled in Settings.
+[00:12] Customer: I’m on v3.2.0. I’ll update.
+[00:15] Agent: After updating, clear cache and re-login to sync. This persists dark mode across sessions.
+[00:21] Customer: Updated and re-logged in. Dark mode sticks now.
+[00:25] Agent: Great. We’ve noted resolution and enabled auto-updates remotely.",none,,"The customer is experiencing a minor issue with the app, but it is resolved quickly and efficiently by the agent. There is no indication of frustration or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.61,0.28,0.6272222222222222,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0
+100017,"The customer expressed frustration with frequent outages and considered cancelling their subscription. The agent offered a solution, including escalating the area node, providing a 20% discount, and enabling 14-day stability monitoring. The customer agreed to give the service another month, contingent on improved reliability.",adt_17,adt_17,Anger,"The customer expresses frustration and annoyance due to the frequent outages, which is a clear sign of anger. Although the customer is open to a possible resolution and is willing to give the service another chance, the initial tone is negative and critical.",7,"The agent's proactive offer of a 20% discount and 14-day stability monitoring, along with the escalation of the area node and priority routing, demonstrated a genuine effort to address the customer's concerns and improve the service.",serviceCancellation,Account Services,3,"[00:00] Customer: I want to cancel my subscription. Outages have been frequent.
+[00:05] Agent: I’m sorry you’ve experienced outages. May I investigate and propose an improvement plan?
+[00:12] Customer: Sure, but I’m frustrated.
+[00:15] Agent: I’ll escalate your area node and enable priority routing. Also, I can offer a **20% discount** next cycle and **14-day stability monitoring**.
+[00:24] Customer: If reliability improves, I’ll reconsider cancelling.
+[00:28] Agent: Fair. I’ll share weekly health reports. Confirmation email and SMS sent—case **RET-2037**.
+[00:36] Customer: Okay, I’ll give it one more month.
+[00:39] Agent: Thanks. I’ve recorded your work-from-home flag for priority handling.",1. High,I want to cancel my subscription.,"The customer explicitly states their intention to cancel their subscription, indicating a high likelihood of churn.",7-Apr,7-Jun,Medium NPS,Accounts_and_Billing,Alice Walker,1001,0.82,0.37,0.5583333333333332,Medium Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100018,"Customer concerned about increasing prices. Agent offers Value plan or 15% loyalty discount. Customer chooses discount on current plan, with email confirmation sent. Customer decides to stay and assess for two months.",adt_18,adt_18,Neutral,"The customer's tone is calm and factual, discussing their concerns and preferences without expressing strong emotions. They are making informed decisions and negotiating the best option for themselves.",8,"The agent provided a suitable alternative plan and applied a loyalty discount, addressing the customer's concerns and leading to a positive outcome.",serviceCancellation,Account Services,8,"[00:00] Customer: Prices keep increasing. I’m considering cancelling.
+[00:04] Agent: I understand cost concerns. We can switch you to the Value plan or apply **15% loyalty discount** for two cycles.
+[00:12] Customer: What’s the difference in speed and data?
+[00:15] Agent: Value plan: 200 Mbps, 300 GB/month with rollover. Your current: 500 Mbps, 500 GB.
+[00:22] Customer: Apply the discount on my current plan for now.
+[00:25] Agent: Done. Email confirmation sent with reference **RET-2610**.
+[00:30] Customer: I’ll stay and assess for the next two months.",1. High,I’m considering cancelling.,"The customer explicitly states their intention to cancel their service, indicating a high likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,James William,1002,0.82,0.15,0.6838888888888889,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100019,"Customer reported dish alignment issues, agent scheduled revisit for proper alignment and signal improvement.",adt_19,adt_19,Neutral,"The customer's language is calm and factual, with a focus on requesting specific services and features. They provide clear instructions and ask questions in a straightforward manner, indicating a neutral emotional tone.",8,"""The agent provided a clear plan for revisiting the installation, addressing the customer's concerns, and ensuring proper alignment and weatherproofing.""",installationIssue,Installation,7,"[00:00] Customer: The dish alignment seems off—the signal fluctuates a lot.
+[00:04] Agent: I’ll schedule a revisit. Senior installer available **tomorrow 2–4 PM**.
+[00:10] Customer: Please ensure proper alignment and weatherproofing.
+[00:13] Agent: Noted. We’ll bring alignment tools, apply sealant, and reroute the cable to reduce bends.
+[00:20] Customer: Send confirmation by SMS and email.
+[00:23] Agent: Confirmation sent. Visit ID **INS-4412**.
+[00:27] Customer: Thank you.
+[00:30] Agent: You’re welcome. Notes added; target signal >80%.",none,,"The customer is expressing some dissatisfaction with the dish alignment, but the tone is not aggressive and the agent is responsive to the customer's concerns, resolving the issue promptly.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,James William,1002,0.87,0.38,0.5983333333333333,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100020,"A technician will visit on 03 Jan 2026, 11–1 PM to complete the job, including proper cable sleeves and ONT wall mount. A summary email with case INS-5097 and checklist details has been sent.",adt_20,adt_20,Neutral,"The customer's tone is calm and factual, with a focus on resolving the issue and ensuring proper completion of the job. They express gratitude for the agent's quick action, indicating a neutral emotional state.",8,"The agent arranged a completion visit and noted the customer's requests for proper cable management and ONT wall mount, which addressed the customer's concerns.",installationIssue,Installation,3,"[00:00] Customer: The technician left without mounting the ONT, and the wire management is messy.
+[00:05] Agent: Sorry for the inconvenience. I’ll arrange a completion visit for **03 Jan 2026, 11–1 PM**.
+[00:12] Customer: Please include proper cable sleeves and ONT wall mount.
+[00:15] Agent: Noted. We’ll bring sleeves, anchors, and a wall mount kit. The job will take 45–60 minutes.
+[00:22] Customer: Will I get a summary?
+[00:25] Agent: Yes, email with case **INS-5097** and checklist details has been sent.
+[00:30] Customer: Good. Thanks for acting quickly.",3. Low,"The technician left without mounting the ONT, and the wire management is messy.","The customer is showing slight dissatisfaction with the service, but the agent is actively resolving the issue, which reduces the likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,James William,1002,0.83,0.39,0.6788888888888889,Medium Scoring,1,1,1,1,0,0.8,0,1,0.5,0,1,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
+100021,"A customer contacted ADT Inc. to report issues with their alarm system, which was not arming properly. The customer provided their account number and described the error message 'System Not Ready' on the keypad. The agent remotely resolved the issue by sending a signal to the system, and the customer confirmed that the problem was fixed.",adt_21,adt_21,Neutral,"The customer's tone is calm and factual throughout the conversation, with a neutral language and no apparent emotional distress or frustration. The customer reports an issue and receives a resolution, but there's no strong emotional expression of joy, sadness, anger, fear, disgust, or surprise.",8.5,"The issue was resolved promptly and efficiently by the agent, who also provided clear instructions and checked on the status of the system to ensure the problem was fixed.",accountService,Account Services,7,"00:00:00\\n
+     AGENT:\\n
+     Hello good afternoon.\\n
+     00:00:07\\n
+     CUSTOMER:\\n
+     good afternoon\\n
+     00:00:10\\n
+     AGENT:\\n
+     Thank you for reaching out to ADT Inc. My name is John, and I'll be happy to assist you with your account service inquiry. How can I help you today?\\n
+     00:00:20\\n
+     CUSTOMER:\\n
+     Hi John, I'm having some issues with my alarm system. It's not armoring properly.\\n
+     00:00:30\\n
+     AGENT:\\n
+     Sorry to hear that. Can you please provide me with your account number so I can look into this further for you?\\n
+     00:00:40\\n
+     CUSTOMER:\\n
+     It's 123456.\\n
+     00:00:50\\n
+     AGENT:\\n
+     Thank you. I've located your account. Can you tell me more about the issue you're experiencing with your alarm system? Is it giving you any error messages?\\n
+     00:01:00\\n
+     CUSTOMER:\\n
+     Yeah, it says 'System Not Ready' on the keypad.\\n
+     00:01:10\\n
+     AGENT:\\n
+     Okay, that usually indicates a communication issue. I'm going to go ahead and send a signal to your system to see if we can resolve the issue remotely. Can you please confirm if your system is online?\\n
+     00:01:20\\n
+     CUSTOMER:\\n
+     Yeah, it's online.\\n
+     00:01:30\\n
+     AGENT:\\n
+     Alright, I've sent the signal. Can you please check your keypad and see if the issue has been resolved?\\n
+     00:01:40\\n
+     CUSTOMER:\\n
+     Yeah, it's working now. Thanks, John!\\n
+     00:01:50\\n
+     AGENT:\\n
+     You're welcome! I'm glad we could resolve the issue for you. Is there anything else I can assist you with today?\\n
+     00:02:00\\n
+     CUSTOMER:\\n
+     No, that's all. Thanks again.\\n
+     00:02:05\\n
+     AGENT:\\n
+     You're welcome! It was my pleasure to assist you. Have a great day, and thank you for choosing ADT Inc. for your security needs.\\n""",none,,"The customer had an issue with their alarm system, but it was resolved by the agent. The customer showed no signs of frustration or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.7,0.35,0.6305555555555555,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,1,0,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0
+100022,"The customer called to inquire about their account and received a notice that their payment was due soon. The agent assisted the customer in making a payment over the phone, processing a payment of $120 using their credit card.",adt_22,adt_22,Neutral,"The customer's tone is calm and factual throughout the conversation, inquiring about their account and making a payment without expressing any strong emotions. They provide necessary information and confirm the payment, indicating a neutral emotional state.",8.5,"The agent was helpful and efficient in resolving my issue, and provided clear instructions throughout the process.",accountNoted,Account Services,9,"00:00:00
+AGENT:
+Hello good afternoon.
+00:00:07
+CUSTOMER:
+good afternoon. I'm calling to inquire about my account. I received a notice that my payment is due soon.
+00:00:15
+AGENT:
+I'd be happy to assist you with that. Can you please provide me with your account number so I can look into it further?
+00:00:22
+CUSTOMER:
+It's 123456789.
+00:00:28
+AGENT:
+Thank you. I've located your account. It appears that your payment is due on the 15th of this month. Would you like to make a payment over the phone today?
+00:00:37
+CUSTOMER:
+Yes, that would be great. How much do I owe?
+00:00:42
+AGENT:
+According to our records, your balance is $120. Would you like to pay the full amount or set up a payment plan?
+00:00:50
+CUSTOMER:
+I'll just pay the full amount. Can I use my credit card?
+00:00:55
+AGENT:
+Yes, we accept all major credit cards. I'll just need to verify some information to process the payment. Can you please confirm your credit card number and expiration date?
+00:01:03
+CUSTOMER:
+It's 4111-1111-1111-1111, and the expiration date is 02/2025.
+00:01:11
+AGENT:
+Thank you. I've processed the payment successfully. Your account is now up to date. Is there anything else I can assist you with today?
+00:01:18
+CUSTOMER:
+No, that's all. Thank you for your help.
+00:01:22
+AGENT:
+You're welcome. It was my pleasure to assist you. If you have any other questions or concerns in the future, don't hesitate to reach out to us. Have a great day!
+00:01:28
+CUSTOMER:
+Thank you. You too.
+""",none,,"The customer is simply inquiring about their account and making a payment, with no signs of frustration or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.89,0.24,0.5694444444444444,Medium Scoring,1,1,0,1,0,0.6,1,0,0.5,0,0,0,0,1,0,1,0.6666666666666666,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0
+100023,"The customer is experiencing issues with their ADT Pulse alarm system, which is going off randomly at night. The agent has taken a service request and is working to get a technician to the customer's location as soon as possible. The agent has also escalated the issue to advanced technical support and recommended that the customer silence the alarm and call the monitoring center to report a false alarm.",adt_23,adt_23,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on describing the issue and seeking resolution. They express gratitude at the end, but overall, their language is neutral and matter-of-fact.",8,"The agent was proactive in escalating the issue to the advanced technical support team and provided clear instructions on how to silence the alarm and contact the monitoring center, which helped to alleviate the customer's concerns.",alarmIssue,Alarm Query,6,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm having some issues with my alarm system.
+     00:00:12
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? Is the alarm going off randomly or is there an error message on the keypad?
+     00:00:25
+     CUSTOMER:
+     Yeah, it's been going off randomly. I've tried to silence it, but it just keeps going off.
+     00:00:35
+     AGENT:
+     Okay, I'm going to go ahead and put in a service request for one of our technicians to come out and take a look at your system. Can you please confirm your address and the type of system you have?
+     00:00:50
+     CUSTOMER:
+     Yeah, it's 123 Main St, and I have the ADT Pulse system.
+     00:01:00
+     AGENT:
+     Alright, I've got that updated. I'm also going to go ahead and put in a request for a priority service, so we can get someone out to you as soon as possible. Can you please tell me a little bit more about what's been happening when the alarm goes off? Is it during the day, at night, or is it random?
+     00:01:20
+     CUSTOMER:
+     It's been happening mostly at night, around 2 or 3 am.
+     00:01:30
+     AGENT:
+     Okay, that's helpful to know. I'm going to go ahead and escalate this issue to our advanced technical support team, and they'll work with our dispatch team to get someone out to you as soon as possible. In the meantime, I recommend that you try to silence the alarm and then immediately call our monitoring center to let them know that it's a false alarm.
+     00:01:50
+     CUSTOMER:
+     Okay, that sounds good. How long do you think it'll take for someone to come out?
+     00:02:00
+     AGENT:
+     We'll do our best to get someone out to you within the next 24 to 48 hours. I'll also make sure to follow up with you tomorrow to ensure that everything is taken care of.
+     00:02:15
+     CUSTOMER:
+     Alright, thank you for your help.
+     00:02:20
+     AGENT:
+     You're welcome. I apologize again for the inconvenience, and I'll make sure to get this issue resolved for you as quickly as possible. Is there anything else I can assist you with today?
+     00:02:30
+     CUSTOMER:
+     No, that's all. Thank you.
+     00:02:35
+     AGENT:
+     You're welcome. Have a great day.
+     """,3. Low,I'm having some issues with my alarm system.,"The customer is experiencing some issues with their alarm system, but the agent is helpful and apologetic, and the customer seems satisfied with the solution provided.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.57,0.46,0.5349999999999999,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100024,"Customer reported issues with their alarm system, which was going off randomly. Technician scheduled to visit within 24-48 hours to investigate and resolve the issue. Customer advised to avoid triggering the alarm and to contact the 24/7 monitoring center if it goes off again before the technician arrives.",adt_24,adt_24,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on describing the issue and seeking a resolution. They do not express strong emotions such as happiness, frustration, or anxiety, and their language is straightforward and informative.",8,"The agent was helpful and provided a clear plan for resolving the issue, including scheduling a technician to visit the customer's location and offering assistance in case the alarm went off again before the technician arrived.",alarmIssue,Alarm Query,8,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm having some issues with my alarm system.
+     00:00:12
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing?
+     00:00:18
+     CUSTOMER:
+     Yeah, the alarm keeps going off randomly. I've tried to reset it, but it just won't stop.
+     00:00:25
+     AGENT:
+     I see. Have you noticed any patterns or triggers that might be causing the alarm to go off?
+     00:00:32
+     CUSTOMER:
+     Not really. It just seems to happen at random times. Sometimes it's during the day, sometimes at night.
+     00:00:39
+     AGENT:
+     Okay. I'm going to go ahead and put in a service request for one of our technicians to come out and take a look at your system. Can you please confirm your address and contact information?
+     00:00:47
+     CUSTOMER:
+     Yeah, it's 123 Main St, Anytown, USA. And my phone number is 555-555-5555.
+     00:00:55
+     AGENT:
+     Got it. I've scheduled a technician to come out to your location within the next 24-48 hours. In the meantime, I recommend that you try to avoid triggering the alarm again, as it may cause further issues.
+     00:01:03
+     CUSTOMER:
+     Okay, that sounds good. But what if it goes off again before the technician arrives?
+     00:01:09
+     AGENT:
+     If the alarm goes off again, please don't hesitate to reach out to us. We have a 24/7 monitoring center that can assist you in getting the alarm shut off remotely.
+     00:01:17
+     CUSTOMER:
+     Alright, thank you for your help.
+     00:01:21
+     AGENT:
+     You're welcome. We'll get your alarm system up and running smoothly again. Is there anything else I can assist you with today?
+     00:01:28
+     CUSTOMER:
+     No, that's all. Thanks again.
+     00:01:32
+     AGENT:
+     You're welcome. Have a great day.
+     """,3. Low,the alarm keeps going off randomly,"The customer is experiencing some frustration with their alarm system, but the agent is helpful and resolves the issue, which reduces the likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.79,0.37,0.5533333333333333,Medium Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100025,"The customer inquired about their account, and the agent assisted by verifying their account information, providing details about their services, and sending a copy of their contract via email.",adt_25,adt_25,Neutral,"The customer's language is calm and factual throughout the conversation, inquiring about their account and services without expressing any strong emotions. They ask questions and provide necessary information, but do not show any signs of excitement, frustration, or other emotions.",8,The agent provided clear and accurate information about my account services and was helpful in sending me a copy of my contract.,accountInquiry,Account Services,5,"00:00:00
+AGENT:
+Hello good afternoon.
+
+00:00:07
+CUSTOMER:
+good afternoon. I'm calling to inquire about my account.
+
+00:00:12
+AGENT:
+Okay, sir/ma'am. Can you please provide me with your account number or the phone number associated with your account?
+
+00:00:20
+CUSTOMER:
+It's 555-1234.
+
+00:00:25
+AGENT:
+Thank you. I've located your account. What would you like to know about your account?
+
+00:00:32
+CUSTOMER:
+I'm not sure. Can you just tell me what services I have?
+
+00:00:38
+AGENT:
+You have our premium security package, which includes 24/7 alarm monitoring, fire protection, and smart home automation.
+
+00:00:45
+CUSTOMER:
+That sounds right. How much am I paying per month?
+
+00:00:50
+AGENT:
+According to our records, your monthly payment is $49.99.
+
+00:00:56
+CUSTOMER:
+Okay, that's what I thought. Can I also get a copy of my contract?
+
+00:01:02
+AGENT:
+I can assist you with that. I'll email you a copy of your contract. Would you like me to send it to the email address we have on file?
+
+00:01:10
+CUSTOMER:
+Yes, that's fine.
+
+00:01:13
+AGENT:
+You should receive the email within the next 10 minutes. Is there anything else I can assist you with today?
+
+00:01:20
+CUSTOMER:
+No, that's all. Thank you.
+
+00:01:23
+AGENT:
+You're welcome, sir/ma'am. Have a great day!
+
+00:01:26
+CUSTOMER:
+You too. Bye.
+
+00:01:28
+AGENT:
+Bye.",none,,"The customer is inquiring about their account and requesting a copy of their contract, but there is no indication of dissatisfaction or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.58,0.13,0.6472222222222223,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100026,"Customer reported not receiving notifications from their doorbell camera. Agent reset notification settings and customer tested the camera, which started working again. Issue resolved.",adt_26,adt_26,Neutral,"The customer's tone is calm and factual throughout the conversation. They report an issue, provide necessary information, and express gratitude for the agent's help. The customer's language does not indicate any strong emotions such as happiness, frustration, or disappointment.",8.5,"The agent was able to resolve the issue promptly and efficiently, which led to a high level of satisfaction.",accountIssue,Account Services,8,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my account. I'm not receiving any notifications when someone rings my doorbell.
+     00:00:14
+     AGENT:
+     Sorry to hear that. Can you please provide me with your account number so I can look into this further for you?
+     00:00:21
+     CUSTOMER:
+     It's 123456.
+     00:00:25
+     AGENT:
+     Thank you. I've located your account. Can you tell me more about the issue you're experiencing? When did you first notice that you weren't receiving notifications?
+     00:00:35
+     CUSTOMER:
+     It started yesterday. I was at work and my wife told me that someone came to the door, but I didn't receive any notification on my phone.
+     00:00:43
+     AGENT:
+     I apologize for the inconvenience. I'm going to go ahead and reset your notification settings. This should resolve the issue. Can you please try testing your doorbell camera to see if you receive a notification?
+     00:00:53
+     CUSTOMER:
+     Okay, let me try that. (pause) Yeah, I just received a notification. It looks like it's working now.
+     00:01:01
+     AGENT:
+     Great! I'm glad to hear that. If you experience any further issues, please don't hesitate to reach out to us. Is there anything else I can assist you with today?
+     00:01:08
+     CUSTOMER:
+     No, that's all. Thank you for your help.
+     00:01:12
+     AGENT:
+     You're welcome. Have a great day!
+     00:01:15
+     CUSTOMER:
+     You too.
+     """,none,,"The customer had an issue with their account, but it was resolved by the agent. The customer showed no signs of frustration or intention to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.86,0.38,0.5966666666666666,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100027,"Customer's alarm system has been going off randomly, possibly due to an issue with the system itself. Technician scheduled to visit customer's location to resolve the issue.",adt_27,adt_27,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on describing the issue and seeking resolution. They express frustration with the alarm system, but it's not a dominant emotion. The customer's language is objective and matter-of-fact, indicating a neutral emotional state.",8,"The agent was helpful and proactive in resolving the issue with the alarm system, and provided a clear plan for sending a technician to investigate the problem.",alarmIssue,Alarm Query,8,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm having some issues with my alarm system. It's been going off randomly throughout the day.
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me a little bit more about what's been happening? How many times has it gone off today?
+     00:00:23
+     CUSTOMER:
+     It's gone off about five times so far. And it's not just a quick beep, it's a full-on siren.
+     00:00:31
+     AGENT:
+     I apologize for the inconvenience. Have you noticed anything unusual around your home that might be triggering the alarm?
+     00:00:39
+     CUSTOMER:
+     No, nothing out of the ordinary. I've checked all the doors and windows, and they're all secure.
+     00:00:46
+     AGENT:
+     Okay. In that case, it's possible that there might be an issue with the system itself. Can you please tell me the type of alarm system you have and when it was last serviced?
+     00:00:54
+     CUSTOMER:
+     I have the ADT Pulse system, and I think it was last serviced about six months ago.
+     00:01:01
+     AGENT:
+     Alright. I'm going to go ahead and send a technician to your location to take a look at the system. Would you be available for them to come out today or tomorrow?
+     00:01:09
+     CUSTOMER:
+     Yeah, today would be great if possible.
+     00:01:13
+     AGENT:
+     Okay, I've scheduled a technician to come out to your location today. They should be there within the next few hours. In the meantime, is there anything else I can assist you with?
+     00:01:21
+     CUSTOMER:
+     No, that's all. Thank you for your help.
+     00:01:25
+     AGENT:
+     You're welcome. We apologize again for the issue with your alarm system, and we'll get it resolved as quickly as possible. Is there anything else you'd like to add or any other concerns you have?
+     00:01:33
+     CUSTOMER:
+     No, that's all. Thanks again.
+     00:01:36
+     AGENT:
+     You're welcome. Have a great day.
+     00:01:39
+     CUSTOMER:
+     You too.
+     """,3. Low,"It's gone off about five times so far. And it's not just a quick beep, it's a full-on siren.","The customer is showing minor frustration with the alarm system, but the agent is helpful and resolves the issue promptly, reducing the likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.83,0.24,0.615,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100028,"The customer inquired about their account services with ADT, specifically asking about alarm monitoring services, fire protection services, pricing plans, and customer support. The agent provided information on these topics, including the features and pricing of the Premium Plan, and offered assistance with account management and customer support.",adt_28,adt_28,Neutral,"The customer's tone is calm and factual throughout the conversation, inquiring about various services and asking questions without expressing any strong emotions. They seem to be seeking information and clarifying details, which suggests a neutral emotional state.",8.5,"The agent provided clear and concise information about the services offered, and was able to address all of my questions and concerns in a timely manner.",accountService,Account Services,5,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm calling to inquire about my account services with ADT.
+     00:00:14
+     AGENT:
+     Absolutely! I'd be happy to assist you with that. Can you please provide me with your account number or the phone number associated with your account?
+     00:00:23
+     CUSTOMER:
+     My account number is 123456.
+     00:00:29
+     AGENT:
+     Thank you for providing that information. I've accessed your account. What specific services would you like to inquire about or modify?
+     00:00:39
+     CUSTOMER:
+     I'd like to know more about the alarm monitoring services you offer.
+     00:00:46
+     AGENT:
+     We offer 24/7 alarm monitoring services, which include burglary, fire, and carbon monoxide monitoring. Our monitoring centers are UL-certified and staffed by trained professionals who respond quickly to any alarm signals.
+     00:01:02
+     CUSTOMER:
+     That sounds great. Can I also get information about your fire protection services?
+     00:01:09
+     AGENT:
+     Yes, of course! Our fire protection services include smoke detector monitoring, heat detector monitoring, and sprinkler system monitoring. We also offer fire extinguisher inspections and maintenance.
+     00:01:23
+     CUSTOMER:
+     Okay, that's good to know. I'd also like to inquire about your pricing plans.
+     00:01:30
+     AGENT:
+     We offer various pricing plans to fit your needs and budget. Our most popular plan is the Premium Plan, which includes 24/7 monitoring, fire protection, and smart home automation integration. It starts at $49.99 per month.
+     00:01:45
+     CUSTOMER:
+     That sounds reasonable. Can I also get information about your customer support?
+     00:01:52
+     AGENT:
+     Absolutely! Our customer support is available 24/7, and you can reach us through phone, email, or online chat. We also have a comprehensive FAQ section on our website and a mobile app for easy account management.
+     00:02:04
+     CUSTOMER:
+     Okay, that's great. Thank you for providing all this information.
+     00:02:09
+     AGENT:
+     You're welcome! Is there anything else I can assist you with today?
+     00:02:14
+     CUSTOMER:
+     No, that's all. Thank you again.
+     00:02:18
+     AGENT:
+     You're welcome! Have a great day, and thank you for choosing ADT.
+     """,none,,"The customer is inquiring about services and pricing plans, and the conversation is polite and informative, with no signs of frustration or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.57,0.5,0.4949999999999999,Low Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100029,"The customer is experiencing issues with their ADT Pulse alarm system, including false alarms and the system not turning off. The customer has tried restarting the system and checking the battery levels, but the issue persists. A technician is dispatched to the customer's location to investigate and resolve the issue.",adt_29,adt_29,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on resolving the issue with their alarm system. They express frustration and disappointment with the system's malfunction, but their language remains objective and matter-of-fact.",8,"The agent was helpful and efficient in resolving the issue, providing a clear solution and scheduling a technician to visit within a reasonable timeframe.",alarmIssue,Alarm Query,4,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my alarm system. It's not turning off and I'm getting a lot of false alarms.
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me a little bit more about what's happening? What kind of alarm system do you have?
+     00:00:25
+     CUSTOMER:
+     I have the ADT Pulse system. I've had it for about a year now.
+     00:00:32
+     AGENT:
+     Okay. Have you noticed any patterns or triggers that might be causing the false alarms?
+     00:00:40
+     CUSTOMER:
+     Not really. It just seems to be going off randomly. And when I try to turn it off, it won't shut down.
+     00:00:48
+     AGENT:
+     I see. Have you tried restarting the system or checking the battery levels of your sensors?
+     00:00:56
+     CUSTOMER:
+     Yeah, I've tried restarting it, but that didn't work. And I'm not sure how to check the battery levels.
+     00:01:03
+     AGENT:
+     Okay. I can walk you through that. But first, can you please confirm your account information so I can look into this further for you?
+     00:01:12
+     CUSTOMER:
+     Yeah. My account number is 123456.
+     00:01:18
+     AGENT:
+     Thank you. I've located your account. I'm going to go ahead and dispatch a technician to your location to take a look at your system.
+     00:01:26
+     CUSTOMER:
+     Okay, that sounds great. How long will it take for them to arrive?
+     00:01:32
+     AGENT:
+     We aim to have a technician at your location within 2-4 hours. Would you like me to schedule a specific time window for you?
+     00:01:40
+     CUSTOMER:
+     Yeah, that would be great. Can I schedule it for between 3-5 pm today?
+     00:01:47
+     AGENT:
+     Absolutely. I've scheduled the appointment for you. You should receive a confirmation email with the details shortly.
+     00:01:54
+     CUSTOMER:
+     Great, thank you so much for your help.
+     00:01:58
+     AGENT:
+     You're welcome. We apologize again for the inconvenience and appreciate your patience. Is there anything else I can assist you with today?
+     00:02:04
+     CUSTOMER:
+     No, that's all. Thank you again.
+     00:02:07
+     AGENT:
+     You're welcome. Have a great day.
+     """,3. Low,"It just seems to be going off randomly. And when I try to turn it off, it won't shut down.","The customer is experiencing some issues with their alarm system, but the agent is helpful and resolves the issue promptly, which reduces the likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.86,0.2,0.6266666666666666,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100030,"Customer had issues with alarm system not arming properly. Agent John assisted customer, troubleshooting the issue and resetting the system. The issue was resolved, and the customer's alarm system is now working properly.",adt_30,adt_30,Neutral,"The customer's tone is calm and factual throughout the conversation, without expressing any strong emotions such as happiness, frustration, or disappointment. They report the issue with their alarm system and follow the agent's instructions, indicating a neutral emotional state.",9.5,"The agent, John, was able to troubleshoot and resolve the issue with the alarm system in a timely and professional manner.",accountService,Account Services,8,"00:00:00\\n
+     AGENT:\\n
+     Hello good afternoon.\\n
+     00:00:07\\n
+     CUSTOMER:\\n
+     good afternoon\\n
+     00:00:12\\n
+     AGENT:\\n
+     Thank you for reaching out to ADT Inc. My name is John, and I'll be happy to assist you with your account service needs. How can I help you today?\\n
+     00:00:25\\n
+     CUSTOMER:\\n
+     Hi John, I'm having some issues with my alarm system. It's not armoring properly.\\n
+     00:00:35\\n
+     AGENT:\\n
+     Sorry to hear that. Can you please provide me with your account number so I can look into this further for you?\\n
+     00:00:45\\n
+     CUSTOMER:\\n
+     It's 123456.\\n
+     00:00:52\\n
+     AGENT:\\n
+     Thank you. I've located your account. Can you tell me more about the issue you're experiencing with your alarm system? Is it giving you an error message?\\n
+     00:01:05\\n
+     CUSTOMER:\\n
+     Yes, it says 'System Error'.\\n
+     00:01:12\\n
+     AGENT:\\n
+     Okay. I'm going to go ahead and troubleshoot this issue for you. Can you please try to arm your system again while I'm on the line with you?\\n
+     00:01:25\\n
+     CUSTOMER:\\n
+     Okay... done.\\n
+     00:01:32\\n
+     AGENT:\\n
+     Alright. I've checked on our end, and it looks like there was a temporary communication issue with our monitoring center. I've reset the system, and it should be working properly now. Can you try to arm it again to confirm?\\n
+     00:01:50\\n
+     CUSTOMER:\\n
+     Yeah, it's working now. Thanks, John.\\n
+     00:01:58\\n
+     AGENT:\\n
+     You're welcome. I'm glad I could assist you in getting your alarm system up and running again. If you have any other issues or concerns, please don't hesitate to reach out to us. Is there anything else I can help you with today?\\n
+     00:02:10\\n
+     CUSTOMER:\\n
+     No, that's all. Thanks again.\\n
+     00:02:15\\n
+     AGENT:\\n
+     You're welcome. Have a great day, and thank you for choosing ADT Inc. for your security needs.""",none,,"The customer had an issue with their alarm system, but the agent was able to resolve it quickly and efficiently. The customer was satisfied with the resolution and did not express any frustration or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.69,0.29,0.7222222222222222,High Scoring,1,1,0,1,0,0.6,1,1,1,0,1,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0
+100031,"The customer, John Smith, is experiencing issues with his ADT security system, where the alarm is going off randomly. The agent assists John in troubleshooting the issue, checks on his account, and schedules a service appointment for Wednesday to send a technician to fix the problem.",adt_31,adt_31,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on describing the issue and providing necessary information. They do not express strong emotions such as happiness, frustration, or concern, and their language is straightforward and to the point.",8,"The agent was helpful and efficient in resolving the issue, and provided a clear explanation of the next steps.",appSupport,App Services,5,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my ADT security system. The alarm keeps going off randomly and I'm not sure why.
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me a little bit more about the issue you're experiencing? How often has the alarm been going off?
+     00:00:25
+     CUSTOMER:
+     It's been happening every few days. Sometimes it's during the day, sometimes at night. I've tried to troubleshoot it myself, but I can't seem to find the problem.
+     00:00:35
+     AGENT:
+     Okay, I'm going to go ahead and check on your account. Can you please confirm your account information, including your name and address?
+     00:00:45
+     CUSTOMER:
+     Yeah, my name is John Smith and my address is 123 Main St.
+     00:00:55
+     AGENT:
+     Okay, thank you John. I've checked on your account and it looks like we may need to send a technician out to take a look at your system. Would you be available for a service appointment this week?
+     00:01:05
+     CUSTOMER:
+     Yeah, that sounds good. What days and times are available?
+     00:01:15
+     AGENT:
+     Let me check on that for you. (pause) Okay, it looks like we have a technician available to come out on Wednesday or Friday of this week. Would either of those days work for you?
+     00:01:25
+     CUSTOMER:
+     Yeah, Wednesday works for me.
+     00:01:35
+     AGENT:
+     Great, I've scheduled the appointment for Wednesday. You should receive a confirmation email with the details shortly. Is there anything else I can assist you with today?
+     00:01:45
+     CUSTOMER:
+     No, that's all. Thank you for your help.
+     00:01:50
+     AGENT:
+     You're welcome, John. We'll get your system fixed and make sure you're secure again. Have a great day!
+     00:01:55
+     CUSTOMER:
+     You too. Bye.
+     00:02:00
+     AGENT:
+     Bye.
+     """,none,,"The customer is experiencing issues with their ADT security system, but the agent is helpful and resolves the issue by scheduling a service appointment. There is no indication of the customer intending to switch companies or showing extreme frustration.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.58,0.37,0.4961111111111111,Low Scoring,1,1,0,1,0,0.6,1,0,0.5,0,0,0,0,1,0,1,0.6666666666666666,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0
+100032,"Customer had an issue with ADT alarm system, agent dispatched technician and offered complimentary system check.",adt_32,adt_32,Neutral,"The customer's tone is calm and factual throughout the conversation, with no clear signs of strong emotions such as joy, sadness, anger, fear, disgust, or surprise. They provide necessary information and respond to the agent's questions without expressing any significant emotional tone.",8.5,"The agent was able to resolve the issue and provide a solution in a timely manner, which contributed to the high satisfaction score.",accountService,Account Services,8,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm calling to inquire about my account services with ADT.
+     00:00:14
+     AGENT:
+     Ah-ha! Thank you for reaching out to us. Can you please provide me with your account number or the phone number associated with your account so I can look into it for you?
+     00:00:25
+     CUSTOMER:
+     My account number is 123456.
+     00:00:32
+     AGENT:
+     Thank you, sir/ma'am. I've accessed your account. What seems to be the issue or concern you're experiencing with our services?
+     00:00:42
+     CUSTOMER:
+     I'm having some trouble with my alarm system. It's been going off randomly, and I'm not sure why.
+     00:00:51
+     AGENT:
+     I apologize for the inconvenience. I'm going to go ahead and dispatch a technician to your location to investigate the issue. Would you prefer a morning or afternoon appointment?
+     00:01:02
+     CUSTOMER:
+     Afternoon would be better, thank you.
+     00:01:08
+     AGENT:
+     You're welcome! I've scheduled the appointment for this afternoon. In the meantime, I'd like to offer you a complimentary system check to ensure everything is working properly. Would you like to take advantage of that offer?
+     00:01:22
+     CUSTOMER:
+     Yes, that sounds great. Thank you.
+     00:01:28
+     AGENT:
+     You're welcome! I've added the system check to your appointment. Is there anything else I can assist you with today?
+     00:01:36
+     CUSTOMER:
+     No, that's all. Thank you for your help.
+     00:01:42
+     AGENT:
+     You're welcome! It was my pleasure to assist you. If you have any further issues or concerns, please don't hesitate to reach out to us. Have a great day!
+     00:01:50
+     CUSTOMER:
+     You too. Bye.
+     00:01:53
+     AGENT:
+     Bye.
+     """,3. Low,"I'm having some trouble with my alarm system. It's been going off randomly, and I'm not sure why.","The customer is experiencing some issues with their alarm system, but the agent is helpful and resolves the issue promptly, which reduces the likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.83,0.5,0.5383333333333333,Medium Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100033,"Customer's ADT security system was not arming properly, resolved by remotely updating the system's software.",adt_33,adt_33,Joy,"The customer expresses happiness and satisfaction at the end of the conversation when the issue is resolved, thanking the agent for their help.",9.5,"The agent was able to remotely update the system, which resolved the issue and restored the customer's security system to working order.",appSupport,App Services,7,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my ADT security system. Can you help me troubleshoot?
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? Is your system not arming or disarming properly?
+     00:00:25
+     CUSTOMER:
+     Yeah, it's not arming. I've tried restarting the system, but it's still not working.
+     00:00:35
+     AGENT:
+     Okay. Have you checked the power source and made sure all the doors and windows are closed?
+     00:00:45
+     CUSTOMER:
+     Yeah, I've checked all that. I even tried replacing the batteries in the sensors, but nothing's working.
+     00:00:55
+     AGENT:
+     I see. Can you please provide me with your account information so I can look into this further?
+     00:01:05
+     CUSTOMER:
+     Okay. My account number is 123456.
+     00:01:15
+     AGENT:
+     Thank you. I've located your account. It looks like there was a recent software update that may be causing the issue. I'm going to remotely update your system. Can you please confirm if that resolves the issue?
+     00:01:30
+     CUSTOMER:
+     Yeah, that seems to have fixed it. Thank you so much!
+     00:01:40
+     AGENT:
+     You're welcome! I'm glad I could assist you. If you have any other issues or concerns, please don't hesitate to reach out to us. Have a great day!
+     00:01:50
+     CUSTOMER:
+     Thanks, you too!",none,,"The customer had an issue with their ADT security system, but the agent was able to troubleshoot and resolve the issue, resulting in a positive outcome and no indication of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.57,0.34,0.6938888888888889,Medium Scoring,1,1,0,1,0,0.6,1,1,1,0,1,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0
+100034,"The customer was experiencing issues with their ADT security system, specifically with the alarm system going off randomly. The agent helped the customer troubleshoot the issue by checking the battery levels of the wireless sensors, which were found to be low. The agent recommended replacing the battery or the sensor itself and scheduled a technician visit for the next day.",adt_34,adt_34,Neutral,"The customer's tone is calm and factual throughout the conversation, as they describe their issue with the ADT security system and follow the agent's instructions to troubleshoot the problem. The customer expresses gratitude at the end, but the overall tone remains neutral.",8,"The agent provided clear and helpful guidance on troubleshooting the issue with the ADT security system, and offered a solution to replace the low battery sensor, which was the root cause of the problem.",installationIssue,Installation,2,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my ADT security system. It's not working properly.
+     00:00:14
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? Is it related to the alarm system or the cameras?
+     00:00:21
+     CUSTOMER:
+     Yeah, it's the alarm system. It keeps going off randomly, even when no one is around.
+     00:00:28
+     AGENT:
+     I see. Have you tried resetting the system or checking the sensors to see if they're faulty?
+     00:00:35
+     CUSTOMER:
+     Yeah, I've tried resetting it, but it still doesn't work. And I'm not sure how to check the sensors.
+     00:00:42
+     AGENT:
+     Okay, no problem. I can walk you through that. Can you please tell me what type of sensors you have installed?
+     00:00:49
+     CUSTOMER:
+     Um, I think they're the wireless ones.
+     00:00:54
+     AGENT:
+     Alright. In that case, let's try checking the battery levels of the sensors. Sometimes, low battery levels can cause false alarms.
+     00:01:01
+     CUSTOMER:
+     Okay, that makes sense. But how do I check the battery levels?
+     00:01:06
+     AGENT:
+     You can check the battery levels through the ADT Pulse app on your smartphone. Have you downloaded the app?
+     00:01:13
+     CUSTOMER:
+     Yeah, I have the app.
+     00:01:16
+     AGENT:
+     Great! Open the app and go to the 'Devices' tab. From there, you should be able to see the battery levels of each sensor.
+     00:01:23
+     CUSTOMER:
+     Okay, I'm checking it now... Yeah, one of the sensors is showing low battery.
+     00:01:30
+     AGENT:
+     That's probably the cause of the issue. I recommend replacing the battery or the sensor itself if it's old. Would you like me to send a technician to assist you with the replacement?
+     00:01:37
+     CUSTOMER:
+     Yeah, that would be great. Thank you so much for your help!
+     00:01:42
+     AGENT:
+     You're welcome! I'll go ahead and schedule a technician visit for you. Is there a preferred date and time that works for you?
+     00:01:49
+     CUSTOMER:
+     How about tomorrow afternoon?
+     00:01:52
+     AGENT:
+     Tomorrow afternoon works for me. I'll go ahead and schedule the visit. You should receive a confirmation email with the details shortly. Is there anything else I can assist you with today?
+     00:02:00
+     CUSTOMER:
+     No, that's all. Thank you again for your help.
+     00:02:03
+     AGENT:
+     You're welcome! Have a great day, and we'll get your security system up and running smoothly again.
+     """,none,,"The customer is experiencing issues with their ADT security system, but the agent is helpful and resolves the issue. There is no indication of the customer intending to switch companies or showing extreme frustration.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.83,0.16,0.7394444444444446,High Scoring,0,1,1,1,0,0.6,1,0,0.5,1,0,1,0.6666666666666666,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+100035,"The customer was experiencing issues with their ADT security system, specifically with arming. The agent helped troubleshoot the issue, identifying a communication problem between the control panel and keypad. A technician was scheduled to replace the communication cable, and the customer received a confirmation email with the appointment details.",adt_35,adt_35,Neutral,"The customer's tone is calm and factual throughout the conversation, as they describe their issue with the ADT security system and provide information to the agent. They express frustration and disappointment when the system doesn't work, but their language remains neutral and objective.",8,"The agent was able to troubleshoot the issue and schedule a technician to replace the communication cable, which was the root cause of the problem.",installationIssue,Installation,3,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my ADT security system. It's not working properly.
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? Is it not arming or disarming properly?
+     00:00:25
+     CUSTOMER:
+     Yeah, it's not arming. I've tried to arm it multiple times, but it just won't work.
+     00:00:35
+     AGENT:
+     Okay. Have you tried restarting the system or checking the power source?
+     00:00:45
+     CUSTOMER:
+     Yeah, I've tried restarting it, but that didn't work. And the power source is fine.
+     00:00:55
+     AGENT:
+     Alright. In that case, I'm going to go ahead and troubleshoot the issue with you. Can you please check the keypad and make sure it's not displaying any error codes?
+     00:01:05
+     CUSTOMER:
+     Okay, let me check. (pause) Yeah, it's displaying an error code. It says 'System Fault'.
+     00:01:15
+     AGENT:
+     Okay, that helps. The 'System Fault' error code usually indicates a communication issue between the control panel and the keypad. I'm going to go ahead and remote into your system to take a closer look.
+     00:01:30
+     CUSTOMER:
+     Okay, sounds good.
+     00:01:40
+     AGENT:
+     Alright, I've remote into your system. It looks like there's an issue with the communication cable. I'm going to go ahead and schedule a technician to come out and replace the cable for you.
+     00:01:55
+     CUSTOMER:
+     Okay, that sounds good. How long will it take for the technician to arrive?
+     00:02:05
+     AGENT:
+     We can usually get a technician out to you within 24-48 hours. Would you like me to schedule the appointment for you?
+     00:02:15
+     CUSTOMER:
+     Yeah, that would be great. Thank you for your help.
+     00:02:25
+     AGENT:
+     You're welcome. I've scheduled the appointment for you. You should receive a confirmation email with the details shortly. Is there anything else I can assist you with today?
+     00:02:35
+     CUSTOMER:
+     No, that's all. Thank you again.
+     00:02:45
+     AGENT:
+     You're welcome. Have a great day.
+     """,none,,"The customer is experiencing an issue with their ADT security system, but the agent is helpful and resolves the issue by scheduling a technician to replace the communication cable. The customer is satisfied with the solution and there is no indication of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.58,0.49,0.5872222222222222,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100036,"A customer is experiencing issues with their alarm system, which has been going off randomly due to unknown causes. The customer has checked all doors and windows, but the issue persists. A technician is scheduled to visit the customer's location to investigate and resolve the issue.",adt_36,adt_36,Neutral,"The customer's tone is calm and factual throughout the conversation, describing the issue with their alarm system and providing information to help the agent troubleshoot the problem. They express a desire to resolve the issue, but their language remains neutral and objective.",8,The agent was able to provide a clear plan of action to resolve the issue and scheduled a technician to visit the customer's location in a timely manner.,alarmIssue,Alarm Query,4,"00:00:00\\n
+     AGENT:\\n
+     Hello good afternoon.\\n
+     00:00:07\\n
+     CUSTOMER:\\n
+     good afternoon\\n
+     00:00:12\\n
+     AGENT:\\n
+     Thank you for reaching out to ADT Inc. My name is John, and I'll be happy to assist you with any concerns you may have. How can I help you today?\\n
+     00:00:25\\n
+     CUSTOMER:\\n
+     Hi John, thanks for taking my call. I'm having some issues with my alarm system. It's been going off randomly throughout the day, and I'm not sure why.\\n
+     00:00:40\\n
+     AGENT:\\n
+     Sorry to hear that. Can you please tell me a little bit more about the issue you're experiencing? For example, how long has this been happening, and have you noticed any patterns or triggers that might be causing the alarm to go off?\\n
+     00:01:00\\n
+     CUSTOMER:\\n
+     It started yesterday morning, and it's been going off every few hours since then. I haven't noticed any patterns, but I did have some workers doing some renovations in the backyard yesterday.\\n
+     00:01:20\\n
+     AGENT:\\n
+     Okay, that's helpful to know. It's possible that the renovations might be triggering the alarm. Can you please check to make sure that all doors and windows are closed and that there are no obstructions near the sensors?\\n
+     00:01:35\\n
+     CUSTOMER:\\n
+     Yeah, I've already checked all that. I'm pretty sure it's not a false alarm.\\n
+     00:01:45\\n
+     AGENT:\\n
+     Alright. In that case, I'm going to go ahead and dispatch a technician to your location to take a look at the system and see if we can determine what's causing the issue. Would you be available for a technician to come out today or tomorrow?\\n
+     00:02:00\\n
+     CUSTOMER:\\n
+     Yeah, today would be great if possible.\\n
+     00:02:05\\n
+     AGENT:\\n
+     Okay, I've scheduled a technician to come out to your location today between 2 pm and 4 pm. If you need to reschedule, please let us know as soon as possible. Is there anything else I can assist you with today?\\n
+     00:02:20\\n
+     CUSTOMER:\\n
+     No, that's all. Thanks for your help, John.\\n
+     00:02:25\\n
+     AGENT:\\n
+     You're welcome. We'll get this issue resolved for you as soon as possible. Have a great day, and thank you for choosing ADT Inc.\\n""",3. Low,I'm having some issues with my alarm system.,"The customer is experiencing some issues with their alarm system, but the conversation is calm and the agent is helpful in resolving the issue, indicating a low churn risk.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.61,0.28,0.6272222222222222,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0
+100037,"Customer reported an error on their bill, being charged for a service they didn't sign up for (video monitoring). Agent investigated, removed the charge, and provided a confirmation number. Customer thanked the agent for their help.",adt_37,adt_37,Anger,"The customer expresses frustration and annoyance throughout the conversation, particularly when discussing the error on their bill and the service they were charged for without their consent. They also show a sense of disappointment and concern, which are all indicators of anger.",8,"The agent was able to resolve the issue promptly and provided a clear explanation for the mistake, which led to a high level of satisfaction.",billingIssue,Billing,2,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm calling about an issue with my bill. I received it yesterday and I think there's an error.
+     00:00:14
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing with your bill? What's the account number associated with the bill?
+     00:00:22
+     CUSTOMER:
+     It's 123456. And the issue is that I'm being charged for a service I don't have.
+     00:00:30
+     AGENT:
+     I apologize for the inconvenience. I'm going to look into this for you. Can you please confirm the service you're being charged for that you don't have?
+     00:00:38
+     CUSTOMER:
+     Yeah, it's the video monitoring service. I never signed up for that.
+     00:00:45
+     AGENT:
+     Okay, I've located your account. I'm going to go ahead and remove that charge from your bill. You should receive an updated bill within the next 3-5 business days.
+     00:00:53
+     CUSTOMER:
+     Okay, that sounds good. But can you also tell me why I was being charged for it in the first place?
+     00:00:59
+     AGENT:
+     I've checked on our system, and it looks like there was an error on our part when we set up your account. I apologize for the mistake.
+     01:01:06
+     CUSTOMER:
+     Okay, thank you for taking care of that. Can I also get a confirmation number for the changes you made to my account?
+     01:01:13
+     AGENT:
+     Absolutely. Your confirmation number is 789012. You should also receive an email with the updated bill and the changes we made to your account.
+     01:01:20
+     CUSTOMER:
+     Alright, thank you so much for your help.
+     01:01:25
+     AGENT:
+     You're welcome. It was my pleasure to assist you. If you have any other issues or concerns, please don't hesitate to reach out to us. Have a great day.
+     01:01:31
+     CUSTOMER:
+     You too. Bye.
+     01:01:33
+     AGENT:
+     Bye.
+     """,none,,"The customer had an issue with their bill, but the agent resolved it promptly and efficiently, and the customer expressed gratitude and satisfaction with the service.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.82,0.37,0.5583333333333332,Medium Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100038,"The customer was experiencing issues with their ADT security system, specifically with the alarm system going off randomly. The agent remotely accessed the system, identified the issue with a sensor, and reset it, resolving the problem.",adt_38,adt_38,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on describing the issue and seeking assistance. They express gratitude at the end when the issue is resolved, but overall, their language is neutral and objective.",8.5,"The agent was able to remotely access the system, identify the issue, and resolve it promptly, which was the biggest reason for my high satisfaction level.",appSupport,App Services,2,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my ADT security system. I was wondering if I could get some assistance.
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? Is it related to the alarm system or the monitoring service?
+     00:00:25
+     CUSTOMER:
+     Yeah, it's the alarm system. It's been going off randomly throughout the day. I've tried to arm and disarm it, but it just won't stop beeping.
+     00:00:35
+     AGENT:
+     Okay, I see. Have you tried checking the system for any open zones or doors that might be triggering the alarm?
+     00:00:45
+     CUSTOMER:
+     Yeah, I've checked everything, and it all seems to be closed. I'm not sure what's causing it.
+     00:00:55
+     AGENT:
+     Alright. In that case, I'd like to remotely access your system to take a closer look. Can you please provide me with your account information and the system's ID number?
+     00:01:05
+     CUSTOMER:
+     Okay, let me get that for you. (pause) Alright, my account number is 123456, and the system ID is ADT1234.
+     00:01:20
+     AGENT:
+     Thank you. I've accessed your system, and it looks like there's an issue with one of the sensors. I'm going to go ahead and reset it remotely. Can you please try arming the system again and see if that resolves the issue?
+     00:01:35
+     CUSTOMER:
+     Okay, I'll try that. (pause) Yeah, that seems to have fixed it. Thank you so much for your help!
+     00:01:45
+     AGENT:
+     You're welcome! I'm glad I could assist you in resolving the issue. If you have any other problems or concerns in the future, don't hesitate to reach out to us. Have a great day!
+     00:01:55
+     CUSTOMER:
+     Thank you. You too.",none,,"The customer had an issue with their ADT security system, but the agent was able to resolve it quickly and efficiently. The customer showed appreciation for the help and there was no indication of frustration or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,James William,1002,0.82,0.15,0.6838888888888889,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100039,Customer paid overdue account balance using credit card after agent located and verified account information.,adt_39,adt_39,Neutral,"The customer's tone is calm and factual throughout the conversation, with no clear emotional expression. They provide their account number and credit card information without any signs of frustration or anxiety.",8,"The agent, John, was able to resolve the issue of the overdue payment and process the payment over the phone in a timely manner.",accountNoted,Account Services,3,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon
+     00:00:10
+     AGENT:
+     Thank you for calling ADT Inc. My name is John, and I'll be happy to assist you with your account. Can you please tell me your account number or the phone number associated with your account?
+     00:00:20
+     CUSTOMER:
+     Yeah, my account number is 123456.
+     00:00:25
+     AGENT:
+     Thank you, sir. I've located your account. What seems to be the issue with your account today?
+     00:00:35
+     CUSTOMER:
+     I got a notice in the mail saying my payment is overdue, but I could've sworn I paid it.
+     00:00:45
+     AGENT:
+     I apologize for the inconvenience, sir. Let me check on that for you. (pause) Okay, I've checked, and it looks like we didn't receive your payment for this month. Would you like to make a payment over the phone today?
+     00:01:00
+     CUSTOMER:
+     Yeah, that's what I thought. Can I pay with my credit card?
+     00:01:05
+     AGENT:
+     Yes, sir. We accept all major credit cards. I just need to verify some information to process the payment. Can you please confirm your credit card number and expiration date?
+     00:01:20
+     CUSTOMER:
+     Yeah, it's 1234-5678-9012-3456, and the expiration date is 02/2025.
+     00:01:30
+     AGENT:
+     Thank you, sir. I've processed the payment, and your account is now up to date. You should receive a confirmation email shortly. Is there anything else I can assist you with today?
+     00:01:40
+     CUSTOMER:
+     No, that's it. Thanks for your help, John.
+     00:01:45
+     AGENT:
+     You're welcome, sir. It was my pleasure to assist you. If you have any other issues in the future, don't hesitate to reach out to us. Have a great day!
+     00:01:50
+     CUSTOMER:
+     You too.
+     """,none,,The customer is not showing any signs of frustration or intention to switch companies. The conversation is smooth and the customer's issue is resolved.,10-Aug,10-Aug,High NPS,Accounts_and_Billing,James William,1002,0.87,0.38,0.5983333333333333,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100040,"The customer's ADT alarm system has been going off randomly, triggered by opening the back door. A technician has been dispatched to investigate and remotely reset the system to prevent further false alarms.",adt_40,adt_40,Neutral,"The customer's tone is calm and factual throughout the conversation, describing the issue with their ADT alarm system and providing information about the problem. They also express gratitude and relief when the agent offers a solution, but their primary tone remains neutral.",8.5,The agent was able to provide a clear solution to the issue and schedule a service appointment in a timely manner.,alarmIssue,Alarm Query,9,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm having some issues with my ADT alarm system.
+     00:00:12
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? Is the alarm going off unexpectedly or is there an error message on the panel?
+     00:00:20
+     CUSTOMER:
+     Yeah, it's been going off randomly throughout the day. I've tried to silence it, but it just keeps going off.
+     00:00:28
+     AGENT:
+     Okay, I see. Have you noticed any patterns or triggers that might be causing the alarm to go off? For example, is it happening when you open a door or window?
+     00:00:36
+     CUSTOMER:
+     Actually, yes. It seems to happen whenever I open the back door.
+     00:00:42
+     AGENT:
+     That's a good clue. It's possible that the sensor on the back door might be malfunctioning. I'm going to go ahead and dispatch a technician to take a look at it. Would you be available for a service appointment tomorrow or Thursday?
+     00:00:52
+     CUSTOMER:
+     Yeah, tomorrow would be fine.
+     00:00:56
+     AGENT:
+     Great. I've scheduled the appointment for tomorrow. In the meantime, I'm going to go ahead and put in a request to have your system remotely reset. This should stop the false alarms from happening.
+     00:01:04
+     CUSTOMER:
+     Okay, that sounds good. Thank you.
+     00:01:07
+     AGENT:
+     You're welcome. Is there anything else I can assist you with today?
+     00:01:12
+     CUSTOMER:
+     No, that's all. Thanks again.
+     00:01:15
+     AGENT:
+     You're welcome. Have a great day and we'll see you tomorrow.
+     """,3. Low,it's been going off randomly throughout the day,"The customer is experiencing some issues with their ADT alarm system, but the agent is helpful and resolves the issue promptly, which reduces the likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,James William,1002,0.83,0.39,0.6788888888888889,Medium Scoring,1,1,1,1,0,0.8,0,1,0.5,0,1,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
+100041,"The customer inquired about their account services with ADT, specifically asking about alarm monitoring and fire protection services. The agent provided information about the services, including 24/7 protection, customizable solutions, smoke detector monitoring, and fire alarm system inspections. The customer added the fire protection services to their account and confirmed their address and phone number.",adt_41,adt_41,Neutral,"The customer's tone is calm and factual throughout the conversation, inquiring about services and requesting assistance without expressing any strong emotions. They seem satisfied with the information provided and the resolution of their issue, but their language remains neutral and polite.",8.5,"The agent provided clear and concise information about the services offered, and efficiently added the fire protection services to the customer's account.",accountService,Account Services,4,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm calling to inquire about my account services with ADT.
+     00:00:14
+     AGENT:
+     Absolutely! I'd be happy to assist you with that. Can you please provide me with your account number or the phone number associated with your account?
+     00:00:23
+     CUSTOMER:
+     My account number is 123456.
+     00:00:29
+     AGENT:
+     Thank you for providing that information. I've accessed your account. What specific services would you like to inquire about or make changes to?
+     00:00:38
+     CUSTOMER:
+     I'd like to know more about the alarm monitoring services you offer.
+     00:00:45
+     AGENT:
+     Our alarm monitoring services provide 24/7 protection for your home or business. We have a team of trained professionals who monitor your system and respond quickly in the event of an emergency. We also offer customizable solutions to fit your specific needs.
+     00:01:02
+     CUSTOMER:
+     That sounds great. Can you tell me more about the fire protection services you offer?
+     00:01:09
+     AGENT:
+     Yes, of course! Our fire protection services include smoke detector monitoring, heat detector monitoring, and carbon monoxide detector monitoring. We also offer fire alarm system inspections and testing to ensure your system is functioning properly.
+     00:01:24
+     CUSTOMER:
+     I see. I'd like to add the fire protection services to my account. Can you walk me through the process?
+     00:01:31
+     AGENT:
+     I'd be happy to help you with that. I just need to verify some information and then I can add the services to your account. Can you please confirm your address and phone number?
+     00:01:42
+     CUSTOMER:
+     Yes, my address is 123 Main St and my phone number is 555-555-5555.
+     00:01:50
+     AGENT:
+     Thank you for confirming that information. I've added the fire protection services to your account. You should receive a confirmation email with the details of your updated services.
+     00:02:00
+     CUSTOMER:
+     Great, thank you for your help.
+     00:02:04
+     AGENT:
+     You're welcome! Is there anything else I can assist you with today?
+     00:02:09
+     CUSTOMER:
+     No, that's all. Thank you again.
+     00:02:12
+     AGENT:
+     You're welcome! Have a great day!
+     """,none,,"The customer is inquiring about services and making changes to their account, showing satisfaction with the agent's assistance.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,David Freeman,1001,0.74,0.37,0.7727777777777778,High Scoring,0,1,1,1,0,0.6,1,1,1,1,0,1,0.6666666666666666,1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,1,0,1,1,1,0,0
+100047,"Customer inquired about account balance and payment due date, and was informed about a promotion for referring a friend.",adt_47,adt_47,Neutral,"The customer's language and tone throughout the conversation are calm and factual, without expressing any strong emotions such as happiness, frustration, or concern. They ask questions and seek information in a polite and respectful manner, indicating a neutral emotional state.",8,"The agent provided clear and accurate information about my account, and also offered a promotion that I was eligible for, which improved my satisfaction with the conversation.",accountInquiry,Account Services,6,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm calling to inquire about my account.
+     00:00:12
+     AGENT:
+     Okay, sir/ma'am. Can you please provide me with your account number or the phone number associated with your account?
+     00:00:20
+     CUSTOMER:
+     My account number is 123456.
+     00:00:25
+     AGENT:
+     Thank you, sir/ma'am. I've located your account. What would you like to know about your account?
+     00:00:32
+     CUSTOMER:
+     I'd like to know my current balance and when my next payment is due.
+     00:00:38
+     AGENT:
+     Okay, let me check on that for you. (pause) Okay, your current balance is $150, and your next payment is due on the 15th of this month.
+     00:00:50
+     CUSTOMER:
+     Okay, that sounds right. Can you also tell me about any promotions or discounts that I might be eligible for?
+     00:00:58
+     AGENT:
+     Yes, sir/ma'am. We currently have a promotion for existing customers who refer a friend to our services. If your friend signs up, you'll both receive a $25 credit on your next bill.
+     01:01:05
+     CUSTOMER:
+     That sounds great. How do I go about referring a friend?
+     01:01:10
+     AGENT:
+     You can refer a friend by logging into your online account and clicking on the 'Refer a Friend' tab. You can also call us back and we can assist you with the referral process.
+     01:01:20
+     CUSTOMER:
+     Okay, got it. Thank you for your help.
+     01:01:25
+     AGENT:
+     You're welcome, sir/ma'am. Is there anything else I can assist you with today?
+     01:01:30
+     CUSTOMER:
+     No, that's all. Thank you again.
+     01:01:35
+     AGENT:
+     You're welcome. Have a great day!
+     01:01:40
+     CUSTOMER:
+     You too. Bye.
+     01:01:45
+     AGENT:
+     Bye.
+     """,none,,"The customer is inquiring about their account and seeking information about promotions, but there is no indication of dissatisfaction or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,James William,1002,0.5,0.3,0.638888889,Medium Scoring,1,1,1,1,0,0.8,0,1,0.5,0,1,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0
+100042,"The customer is experiencing issues with their ADT security system, specifically that it will not arm. The customer has tried restarting the system and checking the power source, but the issue persists. The agent troubleshoots the issue and determines that there may be a problem with the communication between the control panel and the monitoring center. A technician is scheduled to visit the customer's location to diagnose and fix the issue.",adt_42,adt_42,Anger,"The customer expresses frustration and annoyance throughout the conversation, particularly when discussing the issues with their ADT security system. They mention that the system is not working properly, and despite trying to troubleshoot the issue, it still doesn't work. The customer's tone is also somewhat aggressive when asking for help, indicating a sense of anger and frustration.",7,"The agent was helpful in troubleshooting the issue and scheduling a technician to come out to resolve the problem, but the issue was not resolved during the call.",installationIssue,Installation,9,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm having some issues with my ADT security system. It was installed last week, but it's not working properly.
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? Is the system not arming or disarming properly?
+     00:00:23
+     CUSTOMER:
+     Yeah, it's not arming. I've tried to arm it multiple times, but it just won't work. I've also noticed that the sensors are not responding.
+     00:00:32
+     AGENT:
+     Okay, I see. Have you tried restarting the system or checking the power source?
+     00:00:40
+     CUSTOMER:
+     Yeah, I've tried restarting it, but that didn't work. And the power source is fine, I've checked that already.
+     00:00:48
+     AGENT:
+     Alright. In that case, I'm going to go ahead and troubleshoot the issue further. Can you please provide me with your account information so I can look into this further?
+     00:00:57
+     CUSTOMER:
+     Okay, my account number is 123456.
+     00:01:04
+     AGENT:
+     Thank you. I've located your account. It looks like there may be an issue with the communication between the control panel and the monitoring center. I'm going to go ahead and send a signal to the panel to reset it. Can you please try arming the system again?
+     00:01:17
+     CUSTOMER:
+     Okay, I'll try it now. (pause) Yeah, it's still not working.
+     00:01:25
+     AGENT:
+     Okay, no problem. In that case, I'm going to go ahead and schedule a technician to come out to your location to take a look at the system. Would you be available for a technician to come out tomorrow or Thursday?
+     00:01:36
+     CUSTOMER:
+     Yeah, tomorrow would be fine.
+     00:01:42
+     AGENT:
+     Great. I've scheduled a technician to come out to your location tomorrow. They will be able to diagnose the issue and get your system up and running properly. Is there anything else I can assist you with today?
+     00:01:51
+     CUSTOMER:
+     No, that's all. Thank you for your help.
+     00:01:55
+     AGENT:
+     You're welcome. We apologize again for the inconvenience and appreciate your patience. Have a great day.
+     """,3. Low,"it's not arming. I've tried to arm it multiple times, but it just won't work.","The customer is experiencing some issues with their ADT security system, but the agent is actively trying to troubleshoot and resolve the issue. The customer's frustration is minor and the agent's efforts to resolve the issue are likely to mitigate any churn risk.",7-Apr,7-Jun,Medium NPS,Accounts_and_Billing,David Freeman,1001,0.81,0.27,0.6566666666666666,Medium Scoring,0,0,0,1,1,0.4,1,1,1,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+100043,"The customer is experiencing issues with their alarm system, which has been going off randomly throughout the day. The customer suspects that the issue may be related to recent renovations in the house. The agent schedules a service appointment for the next day and requests a remote check of the system to identify the issue.",adt_43,adt_43,Neutral,"The customer's tone is calm and factual throughout the conversation, without expressing any strong emotions such as happiness, frustration, or concern. They provide information about the issue and respond to the agent's questions, but do not show any clear emotional tone.",8.5,"The agent was able to provide a clear plan of action to resolve the issue, including scheduling a service appointment and remotely checking the system, which helped to increase customer satisfaction.",alarmIssue,Alarm Query,4,"00:00:00\\n
+     AGENT:\\n
+     Hello good afternoon.\\n
+     00:00:07\\n
+     CUSTOMER:\\n
+     good afternoon\\n
+     00:00:10\\n
+     AGENT:\\n
+     Thank you for reaching out to ADT. My name is John, and I'll be happy to assist you with any concerns you may have. How can I help you today?\\n
+     00:00:20\\n
+     CUSTOMER:\\n
+     Hi John, thanks for taking my call. I'm having some issues with my alarm system. It's been going off randomly throughout the day.\\n
+     00:00:30\\n
+     AGENT:\\n
+     Sorry to hear that. Can you please tell me a little bit more about the issue you're experiencing? For example, how long has this been happening, and have you noticed any patterns or triggers that might be causing the alarm to go off?\\n
+     00:00:40\\n
+     CUSTOMER:\\n
+     It started yesterday, and it seems to be happening every few hours. I haven't noticed anything out of the ordinary, but I did have some workers doing some renovations in the house yesterday.\\n
+     00:00:50\\n
+     AGENT:\\n
+     Okay, that's helpful to know. It's possible that the renovations might have triggered the alarm. I'm going to go ahead and put in a service request for one of our technicians to come out and take a look at your system. Would you be available for a service appointment tomorrow or Thursday?\\n
+     00:01:00\\n
+     CUSTOMER:\\n
+     Yeah, tomorrow would be fine.\\n
+     00:01:05\\n
+     AGENT:\\n
+     Great, I've scheduled the appointment for tomorrow. In the meantime, I'm going to go ahead and put in a request to have your system remotely checked to see if we can identify the issue. You should receive a call from our technical team within the next hour to walk you through some troubleshooting steps.\\n
+     00:01:15\\n
+     CUSTOMER:\\n
+     Okay, sounds good. Thanks for your help, John.\\n
+     00:01:20\\n
+     AGENT:\\n
+     You're welcome. Is there anything else I can assist you with today?\\n
+     00:01:25\\n
+     CUSTOMER:\\n
+     No, that's all. Thanks again.\\n
+     00:01:30\\n
+     AGENT:\\n
+     You're welcome. Have a great day, and we'll get your alarm system sorted out for you.\\n""",3. Low,It's been going off randomly throughout the day.,"The customer is experiencing some issues with their alarm system, but the agent is helpful and resolves the issue promptly, which reduces the likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,David Freeman,1001,0.55,0.15,0.5777777777777778,Medium Scoring,0,1,0,1,0,0.4,1,1,1,0,0,0,0,1,0,1,0.6666666666666666,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0
+100044,"Customer inquires about overdue payment, makes payment over the phone using credit card, and receives confirmation email. Agent apologizes for oversight in reminder calls and notes account for future reminders.",adt_44,adt_44,Neutral,"The customer's tone is calm and factual throughout the conversation, inquiring about their account and expressing concern about not receiving a reminder. They also provide necessary information to resolve the issue, without showing strong emotions like frustration or anger.",8,"The agent was able to process the payment and provide a solution to the customer's issue in a timely manner, but there was a lack of communication regarding the reminder for the overdue payment.",accountNoted,Account Services,4,"00:00:00
+AGENT:
+Hello good afternoon.
+
+00:00:07
+CUSTOMER:
+good afternoon. I'm calling to inquire about my account. I received a notice that my payment is overdue.
+
+00:00:15
+AGENT:
+I apologize for the inconvenience. Can you please provide me with your account number so I can look into this further for you?
+
+00:00:23
+CUSTOMER:
+It's 1234567.
+
+00:00:29
+AGENT:
+Thank you. I've located your account. It appears that your payment was due on the 15th of this month, and we haven't received it yet. Would you like to make a payment over the phone today?
+
+00:00:41
+CUSTOMER:
+Yes, I'd like to make a payment. But can you also tell me why I didn't receive a reminder call or email?
+
+00:00:50
+AGENT:
+I apologize for the oversight. It's possible that there was an error in our system. I'm going to go ahead and note your account to ensure that you receive reminders in the future. Would you like to make a payment with a credit card or electronic check?
+
+00:01:03
+CUSTOMER:
+I'll use my credit card.
+
+00:01:07
+AGENT:
+I just need to confirm a few details. Can you please provide me with the credit card number and expiration date?
+
+00:01:17
+CUSTOMER:
+It's 1234-5678-9012-3456, and the expiration date is 02/2025.
+
+00:01:27
+AGENT:
+Thank you. I've processed the payment. You should receive a confirmation email shortly. Is there anything else I can assist you with today?
+
+00:01:35
+CUSTOMER:
+No, that's all. Thank you for your help.
+
+00:01:40
+AGENT:
+You're welcome. Have a great day!",none,,"The customer is inquiring about their account and making a payment, but there is no indication of dissatisfaction or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,David Freeman,1001,0.63,0.12,0.7961111111111111,High Scoring,0,1,1,1,0,0.6,1,1,1,1,0,1,0.6666666666666666,1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,1,0,1,1,1,0,0
+100045,The customer's alarm system is not arming properly due to a communication issue between the panel and the monitoring center. A technician has been scheduled to visit the customer's location today between 2-4 pm to investigate and resolve the issue.,adt_45,adt_45,Neutral,"The customer's language and tone throughout the conversation are calm and factual, indicating a neutral emotional state. They express frustration with the issue but remain objective and cooperative with the support agent's troubleshooting efforts.",8,"The agent was able to diagnose the issue and schedule a technician to come out to the customer's location in a timely manner, showing a high level of problem-solving skills and customer satisfaction.",alarmIssue,Alarm Query,3,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm having some issues with my alarm system. It's not working properly.
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? Is it not arming or disarming properly?
+     00:00:25
+     CUSTOMER:
+     Yeah, it's not arming properly. I've tried to arm it multiple times, but it just won't work.
+     00:00:35
+     AGENT:
+     Okay. Have you tried checking the sensors to make sure they're clean and free of any obstructions?
+     00:00:45
+     CUSTOMER:
+     Yeah, I've checked them and they seem fine. I'm not sure what's going on.
+     00:00:55
+     AGENT:
+     Alright. In that case, I'd like to send a signal to your panel to see if we can diagnose the issue remotely. Can you please confirm your account information so I can access your system?
+     00:01:05
+     CUSTOMER:
+     Okay. My account number is 123456.
+     00:01:15
+     AGENT:
+     Thank you. I've sent the signal to your panel. Can you please check the keypad and see if it's showing any error messages?
+     00:01:25
+     CUSTOMER:
+     Yeah, it's showing an error code 345.
+     00:01:35
+     AGENT:
+     Okay. That error code typically indicates a communication issue between the panel and our monitoring center. I'm going to go ahead and send a technician to your location to investigate further. Would you be available for a technician to come out today or tomorrow?
+     00:01:50
+     CUSTOMER:
+     Yeah, I'd prefer today if possible.
+     00:02:00
+     AGENT:
+     Alright. I've scheduled a technician to come out to your location today between 2-4 pm. If you have any further issues or concerns, please don't hesitate to reach out to us. Is there anything else I can assist you with today?
+     00:02:10
+     CUSTOMER:
+     No, that's all. Thank you for your help.
+     00:02:15
+     AGENT:
+     You're welcome. We'll get your alarm system up and running properly today. Have a great day!",none,,"The customer is experiencing an issue with their alarm system, but the agent is helpful and resolves the issue promptly. There is no indication of the customer being frustrated or intending to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,David Freeman,1001,0.52,0.39,0.4216666666666666,Low Scoring,0,1,0,1,0,0.4,0,0,0,0,1,1,0.6666666666666666,0,0,1,0.3333333333333333,1,1,0,1,0,1,1,1,0,0,0,0,1,0,0,0,0,0,0
+100046,"The customer had issues with their ADT Pulse security system, which was not arming properly. The agent, John, helped troubleshoot the issue, identified a malfunctioning window sensor, and scheduled a technician to replace it. The customer was satisfied with the resolution and received a confirmation email with the appointment details.",adt_46,adt_46,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on resolving the issue with their ADT security system. They express gratitude at the end, but overall, their language is neutral and objective.",8,"The agent, John, was able to troubleshoot the issue with the ADT Pulse system and schedule a technician to replace the malfunctioning window sensor, which resolved the customer's problem.",appSupport,App Services,9,"00:00:00\\n
+     AGENT:\\n
+     Hello good afternoon.\\n
+     00:00:07\\n
+     CUSTOMER:\\n
+     good afternoon\\n
+     00:00:12\\n
+     AGENT:\\n
+     Thank you for reaching out to ADT Inc. My name is John, and I'll be happy to assist you with any questions or concerns you may have about our security services. How can I help you today?\\n
+     00:00:25\\n
+     CUSTOMER:\\n
+     Hi John, thanks for taking my call. I'm having some issues with my ADT security system. It's not armoring properly.\\n
+     00:00:38\\n
+     AGENT:\\n
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? What type of system do you have, and when did you first notice the problem?\\n
+     00:00:52\\n
+     CUSTOMER:\\n
+     I have the ADT Pulse system, and I noticed it yesterday evening when I was trying to arm it remotely.\\n
+     00:01:03\\n
+     AGENT:\\n
+     Okay, I've located your account. I'm going to go ahead and troubleshoot the issue with you. Can you please try to arm the system again while I'm on the line, and let me know what error message you're getting?\\n
+     00:01:18\\n
+     CUSTOMER:\\n
+     Okay, I've tried to arm it again, and it's saying 'System Not Ready'.\\n
+     00:01:28\\n
+     AGENT:\\n
+     Alright, that error message usually indicates that there's an issue with one of the sensors. I'm going to go ahead and run a diagnostic test on your system. Can you please confirm that all doors and windows are closed?\\n
+     00:01:43\\n
+     CUSTOMER:\\n
+     Yes, everything is closed.\\n
+     00:01:50\\n
+     AGENT:\\n
+     Okay, the diagnostic test is complete. It looks like one of your window sensors is malfunctioning. I'm going to go ahead and schedule a technician to come out and replace it for you.\\n
+     00:02:05\\n
+     CUSTOMER:\\n
+     That sounds great, thank you. When can I expect the technician to arrive?\\n
+     00:02:12\\n
+     AGENT:\\n
+     We have an available appointment for tomorrow afternoon. Would that work for you?\\n
+     00:02:20\\n
+     CUSTOMER:\\n
+     Yes, that works perfect. Thank you so much for your help, John.\\n
+     00:02:28\\n
+     AGENT:\\n
+     You're welcome! I'm glad I could assist you. You should receive a confirmation email with the appointment details shortly. If you have any other questions or concerns, please don't hesitate to reach out to us. Have a great day!\\n
+     00:02:40\\n
+     CUSTOMER:\\n
+     Thank you, you too.""",none,,"The customer is experiencing an issue with their security system, but the agent is helpful and resolves the issue promptly. There is no indication of the customer being frustrated or intending to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,David Freeman,1001,0.55,0.17,0.7744444444444444,High Scoring,1,1,0,1,0,0.6,1,1,1,0,1,1,0.6666666666666666,1,1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,1,1,0
+100048,"The customer called ADT Inc. to inquire about their account, checked their balance and next payment due date, and was eligible for a 10% discount on their annual subscription fee.",adt_48,adt_48,Neutral,"The customer's language and tone throughout the conversation are calm, factual, and polite. They ask questions and provide information as needed, without expressing any strong emotions such as happiness, frustration, or disappointment.",9,"The agent, John, was very helpful and provided me with the information I needed in a timely manner, including applying a discount to my account and sending me a copy of my billing statement to my email.",accountInquiry,Account Services,4,"00:00:00\\n
+AGENT:\\n
+Hello good afternoon.\\n
+00:00:07\\n
+CUSTOMER:\\n
+good afternoon\\n
+00:00:10\\n
+AGENT:\\n
+Thank you for calling ADT Inc. My name is John, and I'll be happy to assist you with your account inquiry. Can you please provide me with your account number or the phone number associated with your account?\\n
+00:00:20\\n
+CUSTOMER:\\n
+My account number is 123456.\\n
+00:00:25\\n
+AGENT:\\n
+Thank you, sir. I've accessed your account. What would you like to know about your account? Would you like to check your billing information, alarm history, or perhaps make some changes to your account settings?\\n
+00:00:40\\n
+CUSTOMER:\\n
+I'd like to know my current balance and when my next payment is due.\\n
+00:00:45\\n
+AGENT:\\n
+According to our records, your current balance is $150, and your next payment is due on the 15th of this month.\\n
+00:00:55\\n
+CUSTOMER:\\n
+That's correct. Can you also tell me about any promotions or discounts that I might be eligible for?\\n
+00:01:00\\n
+AGENT:\\n
+We currently have a promotion for our loyal customers, which includes a 10% discount on their annual subscription fee. Since you've been with us for over a year, you're eligible for this promotion. Would you like me to apply it to your account?\\n
+00:01:15\\n
+CUSTOMER:\\n
+Yes, please do. How much will I save?\\n
+00:01:20\\n
+AGENT:\\n
+With the 10% discount, you'll save $50 on your annual subscription fee. I've applied the discount to your account, and you'll see the changes reflected on your next billing statement.\\n
+00:01:30\\n
+CUSTOMER:\\n
+That's great, thank you! Can you also send me a copy of my billing statement to my email?\\n
+00:01:35\\n
+AGENT:\\n
+I'd be happy to assist you with that. I've sent a copy of your billing statement to the email address associated with your account. If you need any further assistance, please don't hesitate to reach out to us.\\n
+00:01:45\\n
+CUSTOMER:\\n
+Thank you, John. You've been very helpful.\\n
+00:01:50\\n
+AGENT:\\n
+You're welcome, sir. It was my pleasure to assist you. If you have any other questions or concerns in the future, please don't hesitate to call us. Have a great day!\\n
+00:01:55\\n
+CUSTOMER:\\n
+You too, John. Bye.\\n
+00:02:00\\n
+AGENT:\\n
+Goodbye, sir.""
+}
+```",none,,"The customer is inquiring about their account and is satisfied with the service provided by the agent, showing no signs of frustration or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,James William,1002,0.7,0.12,0.6077777777777778,Medium Scoring,0,1,0,1,0,0.4,1,1,1,0,0,0,0,1,0,1,0.6666666666666666,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0
+100049,"Customer is experiencing issues with their ADT security system, specifically the alarm system going off randomly. Technician is scheduled to visit the customer's home tomorrow to investigate and resolve the issue.",adt_49,adt_49,Neutral,"The customer's tone is calm and factual throughout the conversation, describing the issue with their security system and providing information to the agent. They do not express any strong emotions, such as frustration or happiness, and seem to be seeking a resolution to their problem in a straightforward manner.",8,"The agent was helpful and proactive in scheduling a technician to resolve the issue, which was the biggest reason for my satisfaction.",installationIssue,Installation,7,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my ADT security system. It's not working properly.
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? Is it related to the alarm system or the cameras?
+     00:00:25
+     CUSTOMER:
+     Yeah, it's the alarm system. It keeps going off randomly, even when no one is around.
+     00:00:35
+     AGENT:
+     I see. Have you tried resetting the system or checking the sensors for any obstructions?
+     00:00:45
+     CUSTOMER:
+     Yeah, I've tried resetting it, but it still doesn't work. And I've checked the sensors, they seem fine.
+     00:00:55
+     AGENT:
+     Okay. In that case, I'd like to send a technician to take a look at the system. Would you be available for a visit tomorrow or Thursday?
+     00:01:05
+     CUSTOMER:
+     Yeah, tomorrow would be fine.
+     00:01:10
+     AGENT:
+     Great. I'll go ahead and schedule the appointment. Can you please confirm your address and contact information?
+     00:01:20
+     CUSTOMER:
+     Yeah, it's 123 Main St, and my phone number is 555-555-5555.
+     00:01:30
+     AGENT:
+     Got it. I've scheduled the appointment for tomorrow. You should receive a confirmation email shortly. Is there anything else I can assist you with today?
+     00:01:40
+     CUSTOMER:
+     No, that's all. Thanks for your help.
+     00:01:45
+     AGENT:
+     You're welcome. We'll get your system up and running smoothly again. Have a great day!
+     """,3. Low,It's not working properly.,"The customer is experiencing issues with their ADT security system, but the agent is helpful and schedules a technician visit to resolve the issue, indicating a low likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.7,0.35,0.6305555555555555,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,1,0,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0
+100050,"Customer cancels ADT security service due to relocation, agent offers relocation discount and provides instructions for returning equipment.",adt_50,adt_50,Neutral,"The customer's tone is calm and factual throughout the conversation, without expressing any strong emotions such as happiness, frustration, or disappointment. They provide necessary information and respond to the agent's questions in a neutral manner, without showing any clear emotional tone.",7,"The agent provided a relocation discount offer, which was a good attempt to retain the customer, but ultimately the customer decided to cancel the service.",serviceCancellation,Account Services,3,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm calling to cancel my ADT security service.
+     00:00:14
+     AGENT:
+     Sorry to hear that you want to cancel your service. Can you please provide me with your account information so I can assist you further?
+     00:00:23
+     CUSTOMER:
+     My account number is 123456.
+     00:00:29
+     AGENT:
+     Thank you for providing that information. I've located your account. Can you please tell me why you want to cancel your service?
+     00:00:38
+     CUSTOMER:
+     I'm moving to a new house and I don't want to continue the service.
+     00:00:44
+     AGENT:
+     I understand. We can definitely assist you with canceling your service. However, I want to let you know that you may be eligible for a relocation discount if you decide to continue your service at your new location.
+     00:00:55
+     CUSTOMER:
+     That sounds interesting. Can you tell me more about it?
+     00:01:02
+     AGENT:
+     Yes, of course. Our relocation discount can help you save up to 25% on your monthly monitoring fees. We can also provide you with a free security consultation at your new location to ensure that your new home is secure.
+     00:01:14
+     CUSTOMER:
+     That's a great offer, but I think I'll still need to cancel my service for now.
+     00:01:20
+     AGENT:
+     Okay, I understand. I'm going to go ahead and process your cancellation request. Please note that you will need to return your ADT equipment to avoid any additional fees.
+     00:01:30
+     CUSTOMER:
+     Okay, got it. How do I return the equipment?
+     00:01:36
+     AGENT:
+     We'll provide you with a prepaid return shipping label. You can schedule a pickup at your convenience or drop off the equipment at a nearby location.
+     00:01:44
+     CUSTOMER:
+     Sounds good. Thank you for your help.
+     00:01:49
+     AGENT:
+     You're welcome. Your cancellation request has been processed, and you'll receive a confirmation email shortly. If you have any other questions or need further assistance, please don't hesitate to reach out to us.
+     00:01:58
+     CUSTOMER:
+     Thank you. Goodbye.
+     00:02:01
+     AGENT:
+     Goodbye.""",1. High,I'm calling to cancel my ADT security service.,"The customer explicitly states their intention to cancel their service, indicating a high likelihood of churn.",7-Apr,7-Jun,Medium NPS,Accounts_and_Billing,Alice Walker,1001,0.89,0.24,0.5694444444444444,Medium Scoring,1,1,0,1,0,0.6,1,0,0.5,0,0,0,0,1,0,1,0.6666666666666666,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0
+100051,Customer's ADT Pulse alarm system was not arming properly. Agent assisted in troubleshooting and remotely resolved the issue.,adt_51,adt_51,Joy,"The customer expresses happiness and relief when the issue is resolved, as evident from their message 'Yeah, it looks like it's arming now. Thank you so much!'",8,"The agent was able to provide helpful troubleshooting steps and successfully resolved the issue remotely, resulting in a high level of satisfaction.",alarmIssue,Alarm Query,4,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my alarm system. It's not armoring properly.
+     00:00:14
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? What type of alarm system do you have?
+     00:00:23
+     CUSTOMER:
+     I have the ADT Pulse system. It's been working fine for months, but suddenly it's not arming when I leave the house.
+     00:00:32
+     AGENT:
+     Okay, I see. Have you tried checking the system status on your ADT Pulse app?
+     00:00:40
+     CUSTOMER:
+     Yeah, I've checked the app, and it says the system is online, but it's just not arming.
+     00:00:48
+     AGENT:
+     Okay. In that case, I'd like to try a few troubleshooting steps with you. Can you please check if all the doors and windows are closed properly?
+     00:01:00
+     CUSTOMER:
+     Yeah, I've checked, and they're all closed.
+     00:01:06
+     AGENT:
+     Alright. Next, I'd like you to try restarting the system. Sometimes, a simple reboot can resolve the issue.
+     00:01:15
+     CUSTOMER:
+     Okay, I'll try that. (pause) Okay, I've restarted it, but it's still not arming.
+     00:01:28
+     AGENT:
+     Okay, no problem. In that case, I'm going to go ahead and send a signal to your system to try and resolve the issue remotely. Can you please confirm if you see any changes on your end?
+     00:01:40
+     CUSTOMER:
+     (pause) Yeah, it looks like it's arming now. Thank you so much!
+     00:01:48
+     AGENT:
+     You're welcome! I'm glad we could resolve the issue for you. If you experience any further problems, please don't hesitate to reach out to us. Have a great day!
+     00:01:55
+     CUSTOMER:
+     Thank you, you too.
+     """,none,,"The customer had an issue with their alarm system, but the agent was able to resolve it through troubleshooting and remote assistance. The customer expressed gratitude and the conversation ended on a positive note, indicating no churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.57,0.46,0.5349999999999999,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100052,"Customer reported issue with account, agent resolved the issue by updating the account and sending a confirmation email.",adt_52,adt_52,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on resolving the issue with their account. They express concern about the overdue payment notice and ask questions about the confirmation email, but their language remains neutral and polite.",8,The agent was able to resolve the issue with the payment and provided a clear explanation for the delay and the lack of confirmation email.,accountNoted,Account Services,8,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon
+     00:00:10
+     AGENT:
+     Thank you for calling ADT Inc. My name is John, and I'll be happy to assist you with your account. Can you please tell me your account number or the phone number associated with your account?
+     00:00:20
+     CUSTOMER:
+     Yeah, my account number is 123456.
+     00:00:25
+     AGENT:
+     Thank you, sir. I've located your account. What seems to be the issue with your account today?
+     00:00:35
+     CUSTOMER:
+     I just got a notice that my payment is overdue, but I'm sure I paid it on time.
+     00:00:40
+     AGENT:
+     I apologize for the inconvenience, sir. Let me check on that for you. (pause) Okay, I've checked, and it seems that there was an issue with our system that caused the delay in processing your payment. I've gone ahead and updated your account to reflect the payment.
+     00:01:00
+     CUSTOMER:
+     Okay, that's great. But can you also tell me why I didn't get a confirmation email or anything?
+     00:01:05
+     AGENT:
+     I apologize for that oversight, sir. It seems that our system also failed to send out the confirmation email. I've made a note on your account, and you should receive a confirmation email within the next 24 hours.
+     00:01:15
+     CUSTOMER:
+     Alright, thank you for taking care of that.
+     00:01:20
+     AGENT:
+     You're welcome, sir. Is there anything else I can assist you with today?
+     00:01:25
+     CUSTOMER:
+     No, that's all. Thank you.
+     00:01:30
+     AGENT:
+     You're welcome, sir. Have a great day, and thank you for choosing ADT Inc.
+     00:01:35
+     CUSTOMER:
+     You too. Bye.
+     00:01:40
+     AGENT:
+     Bye.",none,,"The customer had an issue with their payment, but the agent resolved it promptly and efficiently. The customer did not show any signs of frustration or intention to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.79,0.37,0.5533333333333333,Medium Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100053,"The customer is experiencing issues with their alarm system, which is going off randomly. The technician suspects a malfunctioning sensor on the back door and schedules an appointment for the same day to investigate and resolve the issue.",adt_53,adt_53,Neutral,"The customer's tone is calm and factual throughout the conversation, providing information about the issue with their alarm system and responding to the agent's questions. They express a desire for the issue to be resolved, but do not display strong emotions such as frustration, anger, or disappointment.",8.5,The agent was able to provide a clear solution to the issue and scheduled a technician to visit the customer's location in a timely manner.,alarmIssue,Alarm Query,3,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm having some issues with my alarm system.
+     00:00:14
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the issue you're experiencing? Is the alarm going off randomly or is there an error message on the panel?
+     00:00:25
+     CUSTOMER:
+     Yeah, it's been going off randomly. I've tried to silence it, but it just keeps going off.
+     00:00:33
+     AGENT:
+     Okay, I see. Have you noticed any patterns or triggers that might be causing the alarm to go off? For example, is it happening at a specific time of day or when you're opening a certain door?
+     00:00:45
+     CUSTOMER:
+     Now that you mention it, it does seem to happen when I open the back door.
+     00:00:52
+     AGENT:
+     That's a good clue. It's possible that the sensor on the back door might be malfunctioning. I'm going to go ahead and dispatch a technician to take a look at it. Would you be available for them to come out today or tomorrow?
+     00:01:04
+     CUSTOMER:
+     Today would be great, if possible.
+     00:01:08
+     AGENT:
+     Okay, I've scheduled the appointment for today. You should receive a call from the technician within the next hour to confirm the appointment time. In the meantime, is there anything else I can assist you with?
+     00:01:20
+     CUSTOMER:
+     No, that's all. Thank you for your help.
+     00:01:24
+     AGENT:
+     You're welcome. We'll get that alarm system sorted out for you. Have a great day!
+     00:01:29
+     CUSTOMER:
+     You too.
+     """,none,,"The customer is experiencing an issue with their alarm system, but the agent is helpful and resolves the issue promptly. There is no indication of the customer being frustrated or intending to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.58,0.13,0.6472222222222223,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100054,"Customer had issues with their bill, specifically a $50 charge for 'additional monitoring fee' that they didn't agree to. Agent investigated and removed the charge. Customer also had a higher bill due to a rate increase, which was caused by the addition of new features to the security systems. Agent offered a one-time courtesy credit of $20 to help with the increase.",adt_54,adt_54,Anger,"The customer expresses frustration and annoyance throughout the conversation, particularly when discussing the unexpected charges and rate increase. They also show signs of disappointment and concern, which are all indicative of the anger emotion.",7,"The agent was able to resolve the issue with the additional monitoring fee and provided a clear explanation for the rate increase, but the customer was not satisfied with the offered courtesy credit and felt that the rate increase was not adequately communicated.",billingIssue,Billing,9,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm having some issues with my bill. I got a statement yesterday and I don't understand some of the charges.
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me more about the charges you're concerned about? What's your account number so I can look into it for you?
+     00:00:25
+     CUSTOMER:
+     It's 123456. And there's this one charge for $50 that says 'additional monitoring fee'. I don't remember agreeing to any additional services.
+     00:00:37
+     AGENT:
+     Okay, let me check on that for you. (pause) Okay, I see the issue. It looks like there was a miscommunication about the new service we introduced last quarter. You did opt-in for the additional monitoring, but it was supposed to be free for the first three months.
+     00:01:00
+     CUSTOMER:
+     I don't remember that at all. Can you please remove the charge?
+     00:01:05
+     AGENT:
+     Absolutely. I'm going to go ahead and remove the charge for you. You should see the updated bill reflected in your next statement.
+     00:01:12
+     CUSTOMER:
+     Okay, thank you. And can you also tell me why my bill is higher than usual this month?
+     00:01:20
+     AGENT:
+     Let me check on that for you. (pause) Okay, it looks like there was a rate increase that went into effect last month. We sent out notifications to all our customers, but it's possible you might have missed it.
+     00:01:35
+     CUSTOMER:
+     Yeah, I might have missed it. Can you tell me more about the rate increase?
+     00:01:42
+     AGENT:
+     The rate increase was due to the addition of new features to our security systems. We're now offering enhanced video monitoring and smart home integration, which required an adjustment to our pricing.
+     00:01:55
+     CUSTOMER:
+     Okay, I understand. But can I get a discount or something? This is a big increase for me.
+     00:02:02
+     AGENT:
+     Let me see what I can do for you. (pause) Okay, I can offer you a one-time courtesy credit of $20. Would you like me to apply that to your account?
+     00:02:12
+     CUSTOMER:
+     Yeah, that would be great. Thank you so much for your help.
+     00:02:18
+     AGENT:
+     You're welcome! Is there anything else I can assist you with today?
+     00:02:22
+     CUSTOMER:
+     No, that's all. Thank you again.
+     00:02:25
+     AGENT:
+     You're welcome. Have a great day!
+     """,3. Low,I don't remember agreeing to any additional services.,"The customer is showing minor frustration and dissatisfaction with the service, but the issue is resolved by the agent and the customer is satisfied with the solution.",7-Apr,7-Jun,Medium NPS,Accounts_and_Billing,Alice Walker,1001,0.86,0.38,0.5966666666666666,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100055,Customer is experiencing random alarm triggers with their ADT security system. Technician scheduled to investigate and resolve the issue.,adt_55,adt_55,Frustration,"The customer expresses frustration and concern about the issue with their ADT security system, as evident from their repeated complaints about the alarm going off randomly and their questions about the resolution of the issue.",7,"The agent provided a clear plan to troubleshoot the issue and scheduled a technician to come out to resolve the problem, which showed a good level of problem-solving and customer service skills.",installationIssue,Installation,4,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my ADT security system. The alarm keeps going off randomly and I'm not sure why.
+     00:00:14
+     AGENT:
+     Sorry to hear that. Can you please tell me a little bit more about what's been happening? How often has the alarm been going off?
+     00:00:21
+     CUSTOMER:
+     It's been happening almost every day for the past week. Sometimes it's just a few times a day, but yesterday it went off like five times.
+     00:00:30
+     AGENT:
+     Okay, I see. Have you noticed anything unusual around your home that might be triggering the alarm?
+     00:00:37
+     CUSTOMER:
+     No, nothing out of the ordinary. I've checked the doors and windows, and everything seems to be secure.
+     00:00:44
+     AGENT:
+     Alright. It's possible that there might be an issue with the system itself. Can you please tell me what type of system you have installed?
+     00:00:51
+     CUSTOMER:
+     I have the ADT Pulse system with the wireless sensors.
+     00:00:58
+     AGENT:
+     Okay. I'm going to go ahead and troubleshoot the issue with you. Can you please try restarting the system and see if that resolves the issue?
+     00:01:05
+     CUSTOMER:
+     Okay, I'll try that. But what if that doesn't work?
+     00:01:10
+     AGENT:
+     If restarting the system doesn't work, we may need to send a technician out to your location to take a closer look. But let's try the restart first and see if that resolves the issue.
+     00:01:18
+     CUSTOMER:
+     Okay, I'll try that now. (pause) Okay, I've restarted the system. But the alarm is still going off.
+     00:01:27
+     AGENT:
+     Okay. In that case, I'm going to go ahead and schedule a technician to come out to your location to take a closer look. Can you please provide me with your availability for the next few days?
+     00:01:35
+     CUSTOMER:
+     Yeah, I'm available anytime tomorrow or the next day.
+     00:01:41
+     AGENT:
+     Alright, I've scheduled a technician to come out to your location tomorrow afternoon. They'll be able to take a closer look at the system and determine what's causing the issue. Is there anything else I can assist you with today?
+     00:01:49
+     CUSTOMER:
+     No, that's all. Thank you for your help.
+     00:01:53
+     AGENT:
+     You're welcome. We'll get the issue resolved for you. Have a great day.
+     """,3. Low,I'm having some issues with my ADT security system.,"The customer is experiencing issues with their security system, but the agent is actively trying to troubleshoot and resolve the issue, and the customer is not showing extreme frustration or intent to switch companies.",7-Apr,7-Jun,Medium NPS,Accounts_and_Billing,Rose Cooper,1000,0.83,0.24,0.615,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100056,"The customer had issues with their alarm system, including it not arming properly and displaying error messages on the panel. The agent helped troubleshoot the issue, including restarting the system and checking connections, and scheduled a technician to visit the customer's location the next day.",adt_56,adt_56,Neutral,"The customer's tone is calm and factual throughout the conversation, without expressing any strong emotions such as happiness, frustration, or disappointment. They provide information about their issue and follow the agent's instructions, indicating a neutral emotional state.",8,"The agent was knowledgeable and helpful in troubleshooting the issue, and provided clear instructions for the next steps to be taken.",accountIssue,Account Services,9,"00:00:00\\n
+     AGENT:\\n
+     Hello good afternoon.\\n
+     00:00:07\\n
+     CUSTOMER:\\n
+     good afternoon\\n
+     00:00:12\\n
+     AGENT:\\n
+     Thank you for reaching out to ADT. My name is John, and I'll be happy to assist you with your account issue. Can you please tell me a little bit more about what's going on?\\n
+     00:00:25\\n
+     CUSTOMER:\\n
+     Yeah, I'm having some issues with my alarm system. It's not arming properly, and I'm getting some weird error messages on my panel.\\n
+     00:00:38\\n
+     AGENT:\\n
+     Sorry to hear that. Can you please provide me with your account information so I can look into this further for you?\\n
+     00:00:50\\n
+     CUSTOMER:\\n
+     My account number is 123456.\\n
+     00:01:00\\n
+     AGENT:\\n
+     Thank you. I've located your account. Can you please tell me more about the error messages you're seeing on your panel? Are they specific error codes or just general messages?\\n
+     00:01:15\\n
+     CUSTOMER:\\n
+     It says 'System Fault' and then some numbers and letters. I'm not really sure what it means.\\n
+     00:01:28\\n
+     AGENT:\\n
+     Okay, that's helpful. I'm going to go ahead and put in a trouble ticket for our technical team to take a look at your system. In the meantime, I'd like to try and troubleshoot the issue with you. Have you tried restarting your system or checking the connections on your panel?\\n
+     00:01:45\\n
+     CUSTOMER:\\n
+     Yeah, I've tried restarting it, but that didn't work. And I'm not really sure how to check the connections.\\n
+     00:02:00\\n
+     AGENT:\\n
+     That's okay. I can walk you through it. Can you please locate the main panel and check if all the wires are securely connected?\\n
+     00:02:15\\n
+     CUSTOMER:\\n
+     Okay, I've checked, and everything looks good.\\n
+     00:02:25\\n
+     AGENT:\\n
+     Alright. In that case, I'm going to go ahead and schedule a technician to come out and take a look at your system. We'll get it up and running properly for you. Would you prefer a morning or afternoon appointment?\\n
+     00:02:40\\n
+     CUSTOMER:\\n
+     Afternoon would be better.\\n
+     00:02:50\\n
+     AGENT:\\n
+     Great. I've scheduled an appointment for tomorrow afternoon. You'll receive a confirmation email with the details. Is there anything else I can assist you with today?\\n
+     00:03:00\\n
+     CUSTOMER:\\n
+     No, that's all. Thank you for your help.\\n
+     00:03:05\\n
+     AGENT:\\n
+     You're welcome. We'll get your system fixed, and you'll be back to normal in no time. Have a great day!""",3. Low,I'm having some issues with my alarm system.,"The customer is experiencing some issues with their alarm system, but the agent is helpful and resolves the issue, scheduling a technician to come out and fix the problem. The customer's frustration is minor and temporary, indicating a low churn risk.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.57,0.5,0.4949999999999999,Low Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100057,"The customer called to inquire about their account, as they received a notice that their payment was due soon, but they were certain they had already paid it. The agent checked the account and found that the payment was indeed received, but it was applied to the previous balance. The customer then paid their outstanding balance for the current month using their credit card.",adt_57,adt_57,Neutral,"The customer's tone is calm and factual throughout the conversation. They express concern and frustration when they believe there was an error, but once the issue is resolved, they are appreciative and polite.",8,"The agent was helpful and patient in resolving the issue, and provided a clear explanation for the outstanding balance.",accountNoted,Account Services,6,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm calling to inquire about my account. I received a notice that my payment is due soon, but I could've sworn I already paid it.
+     00:00:15
+     AGENT:
+     I apologize for the inconvenience. Can you please provide me with your account number so I can look into this further for you?
+     00:00:22
+     CUSTOMER:
+     It's 1234567.
+     00:00:28
+     AGENT:
+     Thank you. I've located your account. It appears that your payment was due on the 15th of this month, and we haven't received it yet. Would you like to make a payment over the phone today?
+     00:00:37
+     CUSTOMER:
+     I'm positive I paid it. Can you check again? Maybe there was an error on your end.
+     00:00:44
+     AGENT:
+     I understand your concern. Let me check on the status of your payment. (pause) Okay, I've checked with our billing department, and it seems that your payment was indeed received, but it was applied to your previous balance. You do have an outstanding balance for this month's service.
+     00:00:58
+     CUSTOMER:
+     Okay, that makes sense. How much do I owe for this month?
+     00:01:03
+     AGENT:
+     Your outstanding balance for this month's service is $49.95.
+     00:01:08
+     CUSTOMER:
+     Alright, I'll go ahead and pay that now. Can I pay with my credit card?
+     00:01:13
+     AGENT:
+     Yes, you can pay with your credit card. I just need to verify some information. Can you please provide me with the credit card number and expiration date?
+     00:01:22
+     CUSTOMER:
+     It's 4321 1234 5678 9012, and the expiration date is 02/2025.
+     00:01:30
+     AGENT:
+     Thank you. I've processed the payment, and your account is now up to date. You should receive a confirmation email shortly.
+     00:01:37
+     CUSTOMER:
+     Great, thank you for your help.
+     00:01:40
+     AGENT:
+     You're welcome. Is there anything else I can assist you with today?
+     00:01:43
+     CUSTOMER:
+     No, that's all. Thank you again.
+     00:01:45
+     AGENT:
+     You're welcome. Have a great day.
+     """,none,,"The customer is inquiring about their account and making a payment, but there is no indication of frustration or intent to switch companies.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.86,0.2,0.6266666666666666,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100058,"The customer was experiencing issues with their ADT account, specifically not receiving notifications when someone entered their home. The agent helped resolve the issue by resetting the system remotely. Additionally, the customer inquired about a discount on their monthly subscription, and the agent offered a 10% discount for the next 6 months.",adt_58,adt_58,Joy,"The customer expresses happiness and satisfaction throughout the conversation, especially after the issue is resolved and a discount is offered. The customer's tone is positive and appreciative, with phrases like 'Yeah, I just got a notification. Thank you!' and 'That sounds great. Thank you!'",8.5,"The agent was able to resolve the issue with the ADT account notifications and also provided a discount on the monthly subscription, showing a high level of customer satisfaction.",accountIssue,Account Services,5,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm having some issues with my ADT account. I'm not receiving any notifications when someone enters my home.
+     00:00:14
+     AGENT:
+     Sorry to hear that. Can you please provide me with your account number so I can look into this further for you?
+     00:00:21
+     CUSTOMER:
+     It's 1234567.
+     00:00:25
+     AGENT:
+     Thank you. I've located your account. Can you tell me more about the issue you're experiencing? When did you first notice that you weren't receiving notifications?
+     00:00:34
+     CUSTOMER:
+     It started about a week ago. I've tried restarting the system, but that didn't work.
+     00:00:40
+     AGENT:
+     Okay. I'm going to go ahead and reset your system remotely. This should resolve the issue. Can you please confirm if you're receiving notifications now?
+     00:00:50
+     CUSTOMER:
+     Yeah, I just got a notification. Thank you!
+     00:00:55
+     AGENT:
+     You're welcome. I'm glad we could resolve the issue. Is there anything else I can assist you with today?
+     00:01:02
+     CUSTOMER:
+     Actually, yes. I was wondering if I could get a discount on my monthly subscription. I've been a loyal customer for over 5 years.
+     00:01:10
+     AGENT:
+     I can definitely look into that for you. Let me check on some options. (pause) Okay, I can offer you a 10% discount on your monthly subscription for the next 6 months. Would you like to take advantage of that?
+     00:01:23
+     CUSTOMER:
+     That sounds great. Thank you!
+     00:01:27
+     AGENT:
+     You're welcome. I've applied the discount to your account. You should see the changes on your next billing cycle. Is there anything else I can assist you with today?
+     00:01:35
+     CUSTOMER:
+     No, that's all. Thank you for your help.
+     00:01:40
+     AGENT:
+     You're welcome. It was my pleasure to assist you. Have a great day!
+     00:01:45
+     CUSTOMER:
+     You too. Bye.
+     00:01:48
+     AGENT:
+     Bye.
+     """,none,,"The customer had some issues with their ADT account, but the agent was able to resolve the issue and even offered a discount on their monthly subscription. The customer was satisfied with the resolution and there was no indication of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.69,0.29,0.7222222222222222,High Scoring,1,1,0,1,0,0.6,1,1,1,0,1,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0
+100059,"The customer had a billing issue with ADT Inc. and contacted their representative, John. John helped the customer understand the reason for the increased bill, which was due to a recent change in their service plan. He offered a one-time courtesy credit of $25 and set up a notification system to alert the customer of any future changes to their plan. The customer was satisfied with the resolution and thanked John for his assistance.",adt_59,adt_59,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on resolving the billing issue. They express frustration and disappointment about the unexpected bill, but the tone remains neutral and polite.",8,"The agent, John, was able to provide a clear explanation of the changes to the customer's service plan and offered a one-time courtesy credit to offset the increase, demonstrating a proactive approach to resolving the issue.",billingIssue,Billing,8,"00:00:00\\n
+     AGENT:\\n
+     Hello good afternoon.\\n
+     00:00:07\\n
+     CUSTOMER:\\n
+     good afternoon\\n
+     00:00:10\\n
+     AGENT:\\n
+     Thank you for reaching out to ADT Inc. My name is John, and I'll be happy to assist you with your billing issue. Can you please tell me a little bit more about the issue you're experiencing?\\n
+     00:00:20\\n
+     CUSTOMER:\\n
+     Yeah, I got a bill for $150 and I don't think it's correct. I've been a customer for 5 years and my bill is usually around $100.\\n
+     00:00:30\\n
+     AGENT:\\n
+     I apologize for the inconvenience. Can you please provide me with your account number so I can look into this further for you?\\n
+     00:00:40\\n
+     CUSTOMER:\\n
+     It's 123456.\\n
+     00:00:50\\n
+     AGENT:\\n
+     Thank you. I've located your account. It appears that there was a recent change to your service plan that may have caused the increase in your bill. Would you like me to explain the changes and see if we can find a solution that works for you?\\n
+     00:01:00\\n
+     CUSTOMER:\\n
+     Yeah, that would be great. I had no idea they changed my plan.\\n
+     00:01:10\\n
+     AGENT:\\n
+     Okay. It looks like our system automatically upgraded your plan to include additional features. However, I can offer you a one-time courtesy credit of $25 to offset the increase. Would you like me to apply that to your account?\\n
+     00:01:20\\n
+     CUSTOMER:\\n
+     That sounds good. But can you also tell me how to prevent this from happening in the future?\\n
+     00:01:30\\n
+     AGENT:\\n
+     Absolutely. I can set up a notification for you to receive alerts whenever there's a change to your service plan. That way, you'll always be informed and can make adjustments as needed. Would you like me to set that up for you?\\n
+     00:01:40\\n
+     CUSTOMER:\\n
+     Yeah, that would be great. Thank you so much for your help, John.\\n
+     00:01:50\\n
+     AGENT:\\n
+     You're welcome. I'm glad I could assist you. Is there anything else I can help you with today?\\n
+     00:02:00\\n
+     CUSTOMER:\\n
+     No, that's all. Thank you again.\\n
+     00:02:05\\n
+     AGENT:\\n
+     You're welcome. Have a great day, and thank you for choosing ADT Inc.""",3. Low,I've been a customer for 5 years and my bill is usually around $100.,"The customer is showing minor frustration about the unexpected bill increase, but the issue is resolved with the agent's help, and the customer is appreciative of the assistance.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.58,0.37,0.4961111111111111,Low Scoring,1,1,0,1,0,0.6,1,0,0.5,0,0,0,0,1,0,1,0.6666666666666666,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0
+100060,"Customer experiencing issues with ADT security system, scheduled for technician visit",adt_60,adt_60,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on describing the issue and seeking resolution. They express gratitude at the end, but overall, their language is neutral and objective.",8,"The agent was helpful and responsive in resolving the issue, and provided a clear explanation of the next steps and a timely resolution.",appSupport,App Services,7,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     good afternoon. I'm having some issues with my ADT security system. The alarm keeps going off randomly and I'm not sure why.
+     00:00:15
+     AGENT:
+     Sorry to hear that. Can you please tell me a little bit more about the issue you're experiencing? When did you first notice the problem?
+     00:00:25
+     CUSTOMER:
+     It started about a week ago. I've tried to troubleshoot it myself, but I'm not sure what's causing it.
+     00:00:35
+     AGENT:
+     Okay. Have you noticed any patterns or triggers that might be setting off the alarm?
+     00:00:45
+     CUSTOMER:
+     Not really. It seems to happen at random times of the day. Sometimes it's when I'm home, sometimes it's when I'm away.
+     00:00:55
+     AGENT:
+     I see. Can you please confirm your account information so I can look into this further for you?
+     00:01:05
+     CUSTOMER:
+     Sure. My account number is 123456.
+     00:01:15
+     AGENT:
+     Thank you. I've located your account. I'm going to go ahead and put in a request for a technician to visit your location and take a look at your system.
+     00:01:25
+     CUSTOMER:
+     Okay, that sounds great. How long will it take for someone to come out?
+     00:01:35
+     AGENT:
+     We should be able to get someone out to you within the next 24-48 hours. Would you prefer a morning or afternoon appointment?
+     00:01:45
+     CUSTOMER:
+     Afternoon would be fine.
+     00:01:55
+     AGENT:
+     Great. I've scheduled the appointment for tomorrow afternoon. You should receive a confirmation email with the details shortly.
+     00:02:05
+     CUSTOMER:
+     Thank you so much for your help. I really appreciate it.
+     00:02:15
+     AGENT:
+     You're welcome. We apologize again for the inconvenience and appreciate your patience. If you have any other issues or concerns, please don't hesitate to reach out to us.
+     """,3. Low,I'm having some issues with my ADT security system.,"The customer is experiencing some issues with their security system, but the agent is helpful and resolves the issue promptly, which reduces the likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.83,0.5,0.5383333333333333,Medium Scoring,0,1,0,1,0,0.4,1,0,0.5,0,1,0,0.3333333333333333,1,0,1,0.6666666666666666,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0
+100061,"The customer contacted ADT Inc. to report an error on their bill, specifically a charge they didn't recognize. The agent assisted the customer by investigating the issue, locating the account, and removing the additional service that caused the discrepancy. The customer's bill was adjusted accordingly, and they were informed that an updated statement would be sent within 3-5 business days.",adt_61,adt_61,Neutral,"The customer's tone is calm and factual throughout the conversation, with a focus on resolving the issue with their bill. They express frustration and disappointment when they don't understand the charge, but their language remains neutral and objective.",8,"The agent was able to resolve the issue promptly and professionally, providing a clear explanation for the additional charge and making the necessary adjustments to the account.",billingIssue,Billing,7,"00:00:00\\n
+     AGENT:\\n
+     Hello good afternoon.\\n
+     00:00:07\\n
+     CUSTOMER:\\n
+     good afternoon\\n
+     00:00:10\\n
+     AGENT:\\n
+     Thank you for reaching out to ADT Inc. My name is John, and I'll be happy to assist you with your concern. Can you please tell me a little bit about what's going on?\\n
+     00:00:20\\n
+     CUSTOMER:\\n
+     Yeah, I'm having some issues with my bill. I got a statement yesterday, and I think there's an error on it.\\n
+     00:00:30\\n
+     AGENT:\\n
+     Sorry to hear that. Can you please provide me with your account number so I can look into this further for you?\\n
+     00:00:40\\n
+     CUSTOMER:\\n
+     It's 123456789.\\n
+     00:00:50\\n
+     AGENT:\\n
+     Thank you. I've located your account. Can you please tell me more about the error you're seeing on your statement? Is it a discrepancy in the amount due or perhaps a charge you don't recognize?\\n
+     00:01:00\\n
+     CUSTOMER:\\n
+     Yeah, it's a charge I don't recognize. It says I owe $50 more than I thought I did.\\n
+     00:01:10\\n
+     AGENT:\\n
+     I apologize for the inconvenience. Let me investigate this further. (pause) Okay, I've checked on our system, and it appears that there was an additional service added to your account last month. It's possible that you weren't aware of the extra charge.\\n
+     00:01:25\\n
+     CUSTOMER:\\n
+     I don't remember adding any services. Can you please remove the charge?\\n
+     00:01:35\\n
+     AGENT:\\n
+     I'd be happy to assist you with that. I'm going to go ahead and remove the additional service and adjust your bill accordingly. You should receive an updated statement within the next 3-5 business days.\\n
+     00:01:50\\n
+     CUSTOMER:\\n
+     Okay, that sounds good. Thank you for your help.\\n
+     00:02:00\\n
+     AGENT:\\n
+     You're welcome. Is there anything else I can assist you with today?\\n
+     00:02:05\\n
+     CUSTOMER:\\n
+     No, that's all. Thank you again.\\n
+     00:02:10\\n
+     AGENT:\\n
+     You're welcome. It was my pleasure to assist you. Have a great day, and thank you for choosing ADT Inc.""",none,,"The customer had an issue with their bill, but it was resolved by the agent, and the customer showed appreciation for the help.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Rose Cooper,1000,0.57,0.34,0.6938888888888889,Medium Scoring,1,1,0,1,0,0.6,1,1,1,0,1,1,0.6666666666666666,1,0,1,0.6666666666666666,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0
+100062,"The customer had issues with their ADT Inc. billing, specifically an unexpected invoice with a higher amount than usual. The agent, John, helped clarify the issue by checking the customer's account and explaining that a new security camera installation was the cause of the increase. The agent adjusted the invoice and provided a clear breakdown of the charges to avoid future confusion.",adt_62,adt_62,Neutral,"The customer's tone is calm and factual throughout the conversation. They express confusion and concern about their billing, but their language remains neutral and polite. They do not show strong emotions like anger, sadness, or fear, and instead, they appreciate the agent's help and thank them for their assistance.",8,"The agent, John, provided clear explanations for the billing issues and took steps to resolve the problem, demonstrating a high level of customer service.",billingIssue,Billing,8,"00:00:00\\n
+     AGENT:\\n
+     Hello good afternoon.\\n
+     00:00:07\\n
+     CUSTOMER:\\n
+     good afternoon\\n
+     00:00:12\\n
+     AGENT:\\n
+     Thank you for reaching out to ADT Inc. My name is John, and I'll be happy to assist you with any concerns you may have. How can I help you today?\\n
+     00:00:25\\n
+     CUSTOMER:\\n
+     Hi John, thanks for taking my call. I'm having some issues with my billing. I received an invoice that I don't understand, and I was hoping you could help me clarify some things.\\n
+     00:00:40\\n
+     AGENT:\\n
+     Sorry to hear that you're experiencing some billing issues. Can you please provide me with your account number or the invoice number so I can look into this further for you?\\n
+     00:00:52\\n
+     CUSTOMER:\\n
+     Yeah, my account number is 123456.\\n
+     00:01:00\\n
+     AGENT:\\n
+     Thank you for providing that information. I've accessed your account, and I see that there was a recent invoice generated. Can you please tell me more about what's confusing you about the invoice? Is it the amount, the services listed, or something else?\\n
+     00:01:15\\n
+     CUSTOMER:\\n
+     Yeah, the amount seems way higher than what I'm used to paying. I'm not sure why it's so much more this month.\\n
+     00:01:28\\n
+     AGENT:\\n
+     I understand your concern. Let me check on that for you. (pause) Okay, I see that there was an additional service added to your account last month, which would explain the increase in cost. We recently installed a new security camera at your location, and that's being reflected on this invoice.\\n
+     00:01:45\\n
+     CUSTOMER:\\n
+     Oh, I didn't realize that. Yeah, we did get that installed. But I thought it was supposed to be a one-time fee, not an ongoing charge.\\n
+     00:02:00\\n
+     AGENT:\\n
+     I apologize for the misunderstanding. You are correct that the installation fee was a one-time charge. However, the monthly monitoring fee for the camera is an ongoing charge. I can see why that would be confusing. Let me see what I can do to help you out.\\n
+     00:02:20\\n
+     CUSTOMER:\\n
+     Okay, thanks. I appreciate your help.\\n
+     00:02:25\\n
+     AGENT:\\n
+     You're welcome. I'm going to go ahead and adjust the invoice for you. I'll also make sure to provide you with a clear breakdown of the charges so you understand what you're paying for moving forward. Is there anything else I can assist you with today?\\n
+     00:02:40\\n
+     CUSTOMER:\\n
+     No, that's all. Thank you again for your help, John.\\n
+     00:02:45\\n
+     AGENT:\\n
+     You're welcome. It was my pleasure to assist you. If you have any other questions or concerns in the future, don't hesitate to reach out to us. Have a great day!\\n
+     00:02:50\\n
+     CUSTOMER:\\n
+     You too. Bye.\\n
+     00:02:52\\n
+     AGENT:\\n
+     Bye.""",3. Low,"I didn't realize that. Yeah, we did get that installed. But I thought it was supposed to be a one-time fee, not an ongoing charge.","The customer is showing minor frustration and confusion about the billing, but the agent is able to clarify and resolve the issue, resulting in a low churn risk.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.83,0.16,0.7394444444444446,High Scoring,0,1,1,1,0,0.6,1,0,0.5,1,0,1,0.6666666666666666,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0
+100063,"A customer, Sarah Johnson, reported issues with her ADT system, including a randomly triggering alarm. The agent, John, assisted her in scheduling a technician visit to investigate the issue and resolve the problem.",adt_63,adt_63,Neutral,"The customer's language and tone are calm and factual throughout the conversation. They provide necessary information and respond to the agent's questions without expressing any strong emotions, such as frustration, disappointment, or happiness.",8,"The agent, John, was able to assist the customer in scheduling a technician visit to resolve the issue, which was the primary concern.",installationIssue,Installation,2,"00:00:00\\n
+     AGENT:\\n
+     Hello good afternoon.\\n
+     00:00:07\\n
+     CUSTOMER:\\n
+     good afternoon\\n
+     00:00:12\\n
+     AGENT:\\n
+     Thank you for reaching out to ADT. My name is John, and I'll be happy to assist you with your concern. Can you please tell me a little bit about what's going on with your system?\\n
+     00:00:25\\n
+     CUSTOMER:\\n
+     Yeah, I'm having some issues with my installation. The alarm keeps going off randomly, and I'm not sure why.\\n
+     00:00:38\\n
+     AGENT:\\n
+     Sorry to hear that. Can you please confirm your account information so I can look into this further for you?\\n
+     00:00:50\\n
+     CUSTOMER:\\n
+     Yeah, my name is Sarah Johnson, and my account number is #123456.\\n
+     00:01:02\\n
+     AGENT:\\n
+     Thank you, Sarah. I've located your account. Can you please tell me more about when this issue started happening? Was it sudden or did you notice any changes before the alarm started going off?\\n
+     00:01:20\\n
+     CUSTOMER:\\n
+     It started about a week ago. I didn't notice anything unusual before that, but now it's happening almost daily.\\n
+     00:01:35\\n
+     AGENT:\\n
+     Okay, Sarah. I'm going to go ahead and dispatch a technician to your location to investigate the issue. Would you be available for a visit tomorrow or Thursday?\\n
+     00:01:50\\n
+     CUSTOMER:\\n
+     Yeah, tomorrow would be fine.\\n
+     00:02:00\\n
+     AGENT:\\n
+     Great. I've scheduled the appointment for tomorrow. You should receive a confirmation email with the details shortly. Is there anything else I can assist you with in the meantime?\\n
+     00:02:15\\n
+     CUSTOMER:\\n
+     No, that's all. Thank you for your help, John.\\n
+     00:02:20\\n
+     AGENT:\\n
+     You're welcome, Sarah. We'll get this issue resolved for you. Have a great day, and we'll see you tomorrow.\\n""",3. Low,"The alarm keeps going off randomly, and I'm not sure why.","The customer is experiencing some issues with their installation, but the agent is helpful and resolves the issue promptly, which reduces the likelihood of churn.",10-Aug,10-Aug,High NPS,Accounts_and_Billing,Alice Walker,1001,0.58,0.49,0.5872222222222222,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0
+100064,Customer cancelled ADT security service due to dissatisfaction with service and issues with alarm system and customer support.,adt_64,adt_64,Anger,"The customer expresses frustration and dissatisfaction with the service, mentioning 'issues with the alarm system' and 'customer support hasn't been helpful'. The customer also states they've 'already made up my mind' to cancel, indicating a sense of annoyance and finality.",4,"The agent failed to address the customer's concerns and issues with the service, leading to a lack of trust and satisfaction.",serviceCancellation,Account Services,6,"00:00:00
+     AGENT:
+     Hello good afternoon.
+     00:00:07
+     CUSTOMER:
+     Good afternoon. I'm calling to cancel my ADT security service.
+     00:00:14
+     AGENT:
+     Sorry to hear that you want to cancel your service. Can you please provide me with your account information so I can assist you further?
+     00:00:23
+     CUSTOMER:
+     My account number is 123456.
+     00:00:29
+     AGENT:
+     Thank you for providing that information. I've located your account. Can you please tell me the reason for cancellation? Is there anything we can do to improve our service?
+     00:00:41
+     CUSTOMER:
+     Honestly, I'm not satisfied with the service. I've had some issues with the alarm system and the customer support hasn't been helpful.
+     00:00:52
+     AGENT:
+     I apologize for the inconvenience you've experienced. I'm going to go ahead and process the cancellation for you. However, I want to let you know that we have a dedicated team that can help resolve the issues you're facing. Would you be willing to give us another chance to make it right?
+     00:01:05
+     CUSTOMER:
+     No, I've already made up my mind. I just want to cancel the service.
+     00:01:11
+     AGENT:
+     Okay, I understand. The cancellation will take effect immediately. You will receive a confirmation email with the details of the cancellation. Is there anything else I can assist you with?
+     00:01:22
+     CUSTOMER:
+     No, that's all. Thank you.
+     00:01:26
+     AGENT:
+     You're welcome. Sorry again for not meeting your expectations. If you have any other questions or concerns in the future, please don't hesitate to reach out to us.
+     00:01:34
+     CUSTOMER:
+     Okay, bye.
+     00:01:36
+     AGENT:
+     Goodbye.
+     """,1. High,I'm calling to cancel my ADT security service.,"The customer explicitly states their intention to cancel their service and switch to another company, indicating a high likelihood of churn.",7-Apr,5-Jan,Medium NPS,Accounts_and_Billing,Alice Walker,1001,0.61,0.28,0.6272222222222222,Medium Scoring,0,1,1,1,0,0.6,1,0,0.5,0,0,1,0.3333333333333333,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0
