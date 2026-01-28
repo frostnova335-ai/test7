@@ -1,0 +1,1800 @@
+Utterance,Interval,Call_ID,Sentiment_Score,Sentiment,BU,Intent_Cluster,Agent_Name
+"Hello, our home alarm has been beeping every few minutes since last night. It’s getting disruptive.
+Customer",0,100001,-0.9491132893742383,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+"I see a red light blinking near the hallway sensor.
+Customer",10,100001,-0.07339540446632431,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],20,100001,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],30,100001,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Yes, our housekeeper dusted it yesterday.
+Customer",40,100001,0.004735159994237736,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+"Done. The red blink slowed down.
+Customer",50,100001,-0.009300931480623942,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+"Will the alarm still detect intrusions while the alert is hushed?
+Customer",60,100001,-0.02326319019880513,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],70,100001,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Perfect. Please send me a confirmation.
+Customer",80,100001,0.2863795520619333,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+"Is the system firmware up to date?
+Customer
+Great. Thanks for explaining everything.
+Customer",90,100001,0.9640368300066208,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],100,100001,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],110,100001,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],120,100001,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Hi, I’m unable to log in. The portal says my credentials are invalid.
+Customer",0,100002,-0.8726283309222589,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"Yes, 98xxxxxx47.
+Customer",10,100002,0.05354984735219118,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"I did, but the link expired before I used it.
+Customer",20,100002,-0.6092176556312278,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"Please send it.
+Customer",30,100002,0.000431950595607189,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"Got it. I’m clicking the link now.
+Customer",40,100002,0.06875464642719176,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"Entered. I’m logged in successfully.
+Customer",50,100002,0.9725437409260719,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"Will that help if I mistype again?
+Customer",60,100002,-0.02913388240579806,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],70,100002,,,Accounts_and_Billing,Account Services,Alice Walker
+[],80,100002,,,Accounts_and_Billing,Account Services,Alice Walker
+[],90,100002,,,Accounts_and_Billing,Account Services,Alice Walker
+"Hello, I can’t access my account—keeps saying invalid credentials.
+Customer",0,100003,-0.9130057767009694,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"Yes, yesterday. But the email link didn’t work today.
+Customer",10,100003,-0.922943694419456,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"Please confirm the email subject so I can locate it.
+Customer",20,100003,0.0001418529826682224,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"Found it. I’ll try now.
+Customer
+I entered the OTP. I’m in!
+Customer",30,100003,0.0745999835344523,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"Yes, please enable 2FA app-based.
+Customer",40,100003,0.554854292425369,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],50,100003,,,Accounts_and_Billing,Account Services,Alice Walker
+[],60,100003,,,Accounts_and_Billing,Account Services,Alice Walker
+[],70,100003,,,Accounts_and_Billing,Account Services,Alice Walker
+[],0,100004,,,Accounts_and_Billing,Account Services,Alice Walker
+"Is there a fair usage policy after 500 GB?
+Customer",10,100004,-0.005823388094934739,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"What add-ons are available?
+Customer",20,100004,0.0003008942649658786,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"Thanks. I may upgrade to Fiber 1G. Any prerequisites?
+Customer",30,100004,0.9281669880895678,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],40,100004,,,Accounts_and_Billing,Account Services,Alice Walker
+[],50,100004,,,Accounts_and_Billing,Account Services,Alice Walker
+[],60,100004,,,Accounts_and_Billing,Account Services,Alice Walker
+"Hi, what’s my current plan and renewal date?
+Customer
+Do I have any add-ons like static IP or parental controls?
+Customer",0,100005,-0.0003237408123409335,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],10,100005,,,Accounts_and_Billing,Account Services,Alice Walker
+[],20,100005,,,Accounts_and_Billing,Account Services,Alice Walker
+[],30,100005,,,Accounts_and_Billing,Account Services,Alice Walker
+[],40,100005,,,Accounts_and_Billing,Account Services,Alice Walker
+"I need to update my email to verma.new@domain.com and phone to 98xxxxxx47.
+Customer",0,100006,0.0005394363972488492,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"I received it. The OTP is 624381.
+Customer",10,100006,0.002329475424665731,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"Please set preferences to transactional emails only.
+Customer
+Will I get a confirmation?
+Customer",20,100006,-0.000720252130139154,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],30,100006,,,Accounts_and_Billing,Account Services,Alice Walker
+[],40,100006,,,Accounts_and_Billing,Account Services,Alice Walker
+[],50,100006,,,Accounts_and_Billing,Account Services,Alice Walker
+"I was charged twice this month. I need a refund.
+Customer",0,100007,-0.9192286406509328,Negative,Accounts_and_Billing,Billing,Rose Cooper
+"Please reverse them ASAP.
+Customer",10,100007,-0.7119107457060436,Negative,Accounts_and_Billing,Billing,Rose Cooper
+"Send me confirmation.
+Customer",20,100007,4.323361126656877e-05,Positive,Accounts_and_Billing,Billing,Rose Cooper
+"Will my invoice be corrected?
+Customer",30,100007,-0.01563092951487949,Negative,Accounts_and_Billing,Billing,Rose Cooper
+[],40,100007,,,Accounts_and_Billing,Billing,Rose Cooper
+[],50,100007,,,Accounts_and_Billing,Billing,Rose Cooper
+"My invoice shows a late fee, but I paid on time.
+Customer",0,100008,0.01964475657513454,Positive,Accounts_and_Billing,Billing,Rose Cooper
+"Please remove the fee.
+Customer",10,100008,-0.7913886776777065,Negative,Accounts_and_Billing,Billing,Rose Cooper
+"Send me the revision.
+Customer",20,100008,3.3145177941174e-05,Positive,Accounts_and_Billing,Billing,Rose Cooper
+[],30,100008,,,Accounts_and_Billing,Billing,Rose Cooper
+[],40,100008,,,Accounts_and_Billing,Billing,Rose Cooper
+[],50,100008,,,Accounts_and_Billing,Billing,Rose Cooper
+[],0,100009,,,Accounts_and_Billing,Billing,Rose Cooper
+"What’s the corrected amount?
+Customer",10,100009,-0.008349345764701588,Negative,Accounts_and_Billing,Billing,Rose Cooper
+"When will the extra amount be refunded?
+Customer",20,100009,-0.02259373572757756,Negative,Accounts_and_Billing,Billing,Rose Cooper
+[],30,100009,,,Accounts_and_Billing,Billing,Rose Cooper
+[],40,100009,,,Accounts_and_Billing,Billing,Rose Cooper
+[],50,100009,,,Accounts_and_Billing,Billing,Rose Cooper
+"I was told a refund would arrive in 3–5 days, but I haven’t received it yet.
+Customer",0,100010,-0.9145505840356152,Negative,Accounts_and_Billing,Billing,Rose Cooper
+"Can you send confirmation?
+Customer",10,100010,1.553903325690609e-05,Positive,Accounts_and_Billing,Billing,Rose Cooper
+"Okay, I’ll wait a couple of days.
+Customer",20,100010,0.0001022955197249598,Positive,Accounts_and_Billing,Billing,Rose Cooper
+[],30,100010,,,Accounts_and_Billing,Billing,Rose Cooper
+[],40,100010,,,Accounts_and_Billing,Billing,Rose Cooper
+[],50,100010,,,Accounts_and_Billing,Billing,Rose Cooper
+"I think the auto-pay double charged me. Can we change my payment method?
+Customer",0,100011,-0.853523599215884,Negative,Accounts_and_Billing,Billing,Rose Cooper
+"Please disable auto-pay and switch to manual payments.
+Customer
+How long for the refund?
+Customer",10,100011,-0.3697270577644542,Negative,Accounts_and_Billing,Billing,Rose Cooper
+[],20,100011,,,Accounts_and_Billing,Billing,Rose Cooper
+[],30,100011,,,Accounts_and_Billing,Billing,Rose Cooper
+[],40,100011,,,Accounts_and_Billing,Billing,Rose Cooper
+"I need international roaming for 10 days starting 05 Jan 2026.
+Customer",0,100012,0.0002247119551027632,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+"Please add a spend alert at ₹2000 and a hard cap at ₹4000.
+Customer",10,100012,-0.0002539059517961406,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],20,100012,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],30,100012,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],40,100012,,,Accounts_and_Billing,Account Services,Rose Cooper
+"I want the streaming bundle added to my plan.
+Customer",0,100013,0.05152543589445227,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+"Please confirm the add-on name and price.
+Customer
+Proceed. Also, send me an email confirmation.
+Customer",10,100013,0.0002554913477031961,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],20,100013,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],30,100013,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],40,100013,,,Accounts_and_Billing,Account Services,Rose Cooper
+"The app crashes whenever I open Settings.
+Customer
+v3.1.0.
+Customer",0,100014,-0.9284715288910143,Negative,Accounts_and_Billing,App Services,Alice Walker
+"Updating now… Done. Testing Settings.
+Customer",10,100014,0.0002910094370898175,Positive,Accounts_and_Billing,App Services,Alice Walker
+"Cleared and enabled. Settings opens quickly now.
+Customer",20,100014,0.05978360947803363,Positive,Accounts_and_Billing,App Services,Alice Walker
+[],30,100014,,,Accounts_and_Billing,App Services,Alice Walker
+[],40,100014,,,Accounts_and_Billing,App Services,Alice Walker
+[],50,100014,,,Accounts_and_Billing,App Services,Alice Walker
+"I don’t receive push notifications from your app.
+Customer",0,100015,-0.920543100551572,Negative,Accounts_and_Billing,App Services,Alice Walker
+"Notifications were off; battery saver was on.
+Customer",10,100015,-0.0001706821135121217,Negative,Accounts_and_Billing,App Services,Alice Walker
+[],20,100015,,,Accounts_and_Billing,App Services,Alice Walker
+[],30,100015,,,Accounts_and_Billing,App Services,Alice Walker
+[],40,100015,,,Accounts_and_Billing,App Services,Alice Walker
+[],0,100016,,,Accounts_and_Billing,App Services,Alice Walker
+"I’m on v3.2.0. I’ll update.
+Customer",10,100016,0.0003205599459689401,Positive,Accounts_and_Billing,App Services,Alice Walker
+[],20,100016,,,Accounts_and_Billing,App Services,Alice Walker
+[],30,100016,,,Accounts_and_Billing,App Services,Alice Walker
+[],40,100016,,,Accounts_and_Billing,App Services,Alice Walker
+"I want to cancel my subscription. Outages have been frequent.
+Customer",0,100017,-0.9601032053186357,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"Sure, but I’m frustrated.
+Customer",10,100017,-0.9578502813407753,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"If reliability improves, I’ll reconsider cancelling.
+Customer",20,100017,-0.536325532802822,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],30,100017,,,Accounts_and_Billing,Account Services,Alice Walker
+[],40,100017,,,Accounts_and_Billing,Account Services,Alice Walker
+[],50,100017,,,Accounts_and_Billing,Account Services,Alice Walker
+"Prices keep increasing. I’m considering cancelling.
+Customer",0,100018,-0.9412561857596484,Negative,Accounts_and_Billing,Account Services,James William
+"What’s the difference in speed and data?
+Customer",10,100018,-0.005955481136925345,Negative,Accounts_and_Billing,Account Services,James William
+"Apply the discount on my current plan for now.
+Customer",20,100018,0.003054572783178999,Positive,Accounts_and_Billing,Account Services,James William
+[],30,100018,,,Accounts_and_Billing,Account Services,James William
+[],40,100018,,,Accounts_and_Billing,Account Services,James William
+"The dish alignment seems off—the signal fluctuates a lot.
+Customer",0,100019,-0.8885480411432632,Negative,Accounts_and_Billing,Installation,James William
+[],150,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Please ensure proper alignment and weatherproofing.
+Customer",10,100019,-0.001009472309938975,Negative,Accounts_and_Billing,Installation,James William
+[],20,100019,,,Accounts_and_Billing,Installation,James William
+[],30,100019,,,Accounts_and_Billing,Installation,James William
+[],40,100019,,,Accounts_and_Billing,Installation,James William
+"The technician left without mounting the ONT, and the wire management is messy.
+Customer",0,100020,-0.9553560527870575,Negative,Accounts_and_Billing,Installation,James William
+"Please include proper cable sleeves and ONT wall mount.
+Customer",10,100020,1.438270809472897e-05,Positive,Accounts_and_Billing,Installation,James William
+"Will I get a summary?
+Customer",20,100020,-0.001093810522334593,Negative,Accounts_and_Billing,Installation,James William
+[],30,100020,,,Accounts_and_Billing,Installation,James William
+[],40,100020,,,Accounts_and_Billing,Installation,James William
+"good afternoon
+Customer",0,100021,0.9365030848671186,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],10,100021,,,Accounts_and_Billing,Account Services,Alice Walker
+"Hi John, I'm having some issues with my alarm system. It's not armoring properly.
+Customer",20,100021,-0.8795101571141758,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],30,100021,,,Accounts_and_Billing,Account Services,Alice Walker
+"It's 123456.
+Customer",40,100021,0.0001929685223673316,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],50,100021,,,Accounts_and_Billing,Account Services,Alice Walker
+"Yeah, it says 'System Not Ready' on the keypad.
+Customer",60,100021,-0.675425569817794,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],70,100021,,,Accounts_and_Billing,Account Services,Alice Walker
+"Yeah, it's online.
+Customer",80,100021,0.3816820638343373,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],90,100021,,,Accounts_and_Billing,Account Services,Alice Walker
+"Yeah, it's working now. Thanks, John!
+Customer",100,100021,0.9762563820724616,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],110,100021,,,Accounts_and_Billing,Account Services,Alice Walker
+[],120,100021,,,Accounts_and_Billing,Account Services,Alice Walker
+[],130,100021,,,Accounts_and_Billing,Account Services,Alice Walker
+"good afternoon. I'm calling to inquire about my account. I received a notice that my payment is due soon.
+Customer",0,100022,0.02697737951022014,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],10,100022,,,Accounts_and_Billing,Account Services,Alice Walker
+"It's 123456789.
+Customer",20,100022,0.0002283745457107855,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"Yes, that would be great. How much do I owe?
+Customer",30,100022,0.9565504784758264,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],40,100022,,,Accounts_and_Billing,Account Services,Alice Walker
+"I'll just pay the full amount. Can I use my credit card?
+Customer",50,100022,-0.0009547238114182566,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"It's 4111-1111-1111-1111, and the expiration date is 02/2025.
+Customer",60,100022,0.000327009420002522,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"No, that's all. Thank you for your help.
+Customer",70,100022,0.8006347490734803,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],80,100022,,,Accounts_and_Billing,Account Services,Alice Walker
+[],90,100022,,,Accounts_and_Billing,Account Services,Alice Walker
+[],100,100022,,,Accounts_and_Billing,Account Services,Alice Walker
+"Good afternoon. I'm having some issues with my alarm system.
+Customer",0,100023,-0.8507820346137596,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],10,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Yeah, it's been going off randomly. I've tried to silence it, but it just keeps going off.
+Customer",20,100023,-0.8900526528240222,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],30,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],40,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Yeah, it's 123 Main St, and I have the ADT Pulse system.
+Customer",50,100023,0.4720304689148501,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],60,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],70,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"It's been happening mostly at night, around 2 or 3 am.
+Customer",80,100023,-0.0002719911190935953,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],90,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],100,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Okay, that sounds good. How long do you think it'll take for someone to come out?
+Customer",110,100023,0.7332670894609556,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],120,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Alright, thank you for your help.
+Customer",130,100023,0.9303789533153229,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],140,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],150,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],160,100023,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Good afternoon. I'm having some issues with my alarm system.
+Customer",0,100024,-0.8507820346137596,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+"Yeah, the alarm keeps going off randomly. I've tried to reset it, but it just won't stop.
+Customer",10,100024,-0.9284101203526908,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],20,100024,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Not really. It just seems to happen at random times. Sometimes it's during the day, sometimes at night.
+Customer",30,100024,-8.302631035750352e-05,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+"Yeah, it's 123 Main St, Anytown, USA. And my phone number is 555-555-5555.
+Customer",40,100024,0.01120066636020253,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],50,100024,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Okay, that sounds good. But what if it goes off again before the technician arrives?
+Customer",60,100024,-0.01310023374037073,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+"Alright, thank you for your help.
+Customer",70,100024,0.9303789533153229,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],80,100024,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],90,100024,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],100,100024,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"good afternoon. I'm calling to inquire about my account.
+Customer",0,100025,0.04784904424940035,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],10,100025,,,Accounts_and_Billing,Account Services,Alice Walker
+"It's 555-1234.
+Customer",20,100025,0.0002482796174868851,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"I'm not sure. Can you just tell me what services I have?
+Customer",30,100025,-0.03338800472369649,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"That sounds right. How much am I paying per month?
+Customer",40,100025,-0.0167261165264323,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"Okay, that's what I thought. Can I also get a copy of my contract?
+Customer",50,100025,-0.0006021866591655045,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],60,100025,,,Accounts_and_Billing,Account Services,Alice Walker
+"Yes, that's fine.
+Customer",70,100025,0.1539556801301774,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],80,100025,,,Accounts_and_Billing,Account Services,Alice Walker
+[],90,100025,,,Accounts_and_Billing,Account Services,Alice Walker
+[],100,100025,,,Accounts_and_Billing,Account Services,Alice Walker
+"good afternoon. I'm having some issues with my account. I'm not receiving any notifications when someone rings my doorbell.
+Customer",0,100026,-0.8563451401217684,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],10,100026,,,Accounts_and_Billing,Account Services,Alice Walker
+"It's 123456.
+Customer",20,100026,0.0001929685223673316,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"It started yesterday. I was at work and my wife told me that someone came to the door, but I didn't receive any notification on my phone.
+Customer",30,100026,-0.0467179368625652,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],40,100026,,,Accounts_and_Billing,Account Services,Alice Walker
+"Okay, let me try that. (pause) Yeah, I just received a notification. It looks like it's working now.
+Customer",50,100026,0.8688792796649653,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"No, that's all. Thank you for your help.
+Customer",60,100026,0.8006347490734803,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],70,100026,,,Accounts_and_Billing,Account Services,Alice Walker
+[],80,100026,,,Accounts_and_Billing,Account Services,Alice Walker
+[],90,100026,,,Accounts_and_Billing,Account Services,Alice Walker
+"Good afternoon. I'm having some issues with my alarm system. It's been going off randomly throughout the day.
+Customer",0,100027,-0.8168652713579093,Negative,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],10,100027,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+"It's gone off about five times so far. And it's not just a quick beep, it's a full-on siren.
+Customer",20,100027,-0.6527868840636883,Negative,Accounts_and_Billing,Alarm Query,Rose Cooper
+"No, nothing out of the ordinary. I've checked all the doors and windows, and they're all secure.
+Customer",30,100027,0.05293717024431843,Positive,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],40,100027,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+"I have the ADT Pulse system, and I think it was last serviced about six months ago.
+Customer",50,100027,0.005093992087640317,Positive,Accounts_and_Billing,Alarm Query,Rose Cooper
+"Yeah, today would be great if possible.
+Customer",60,100027,0.9841200464388498,Positive,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],70,100027,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+"No, that's all. Thank you for your help.
+Customer",80,100027,0.8006347490734803,Positive,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],90,100027,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],100,100027,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],110,100027,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+"good afternoon. I'm calling to inquire about my account services with ADT.
+Customer",0,100028,0.01489369304341435,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],10,100028,,,Accounts_and_Billing,Account Services,Rose Cooper
+"My account number is 123456.
+Customer",20,100028,0.0003299199362614413,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+"I'd like to know more about the alarm monitoring services you offer.
+Customer",30,100028,-0.01612267952276702,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],40,100028,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],50,100028,,,Accounts_and_Billing,Account Services,Rose Cooper
+"That sounds great. Can I also get information about your fire protection services?
+Customer",60,100028,0.9464055548307915,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],70,100028,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Okay, that's good to know. I'd also like to inquire about your pricing plans.
+Customer",80,100028,0.8019746391802054,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],90,100028,,,Accounts_and_Billing,Account Services,Rose Cooper
+"That sounds reasonable. Can I also get information about your customer support?
+Customer",100,100028,0.2239543547332298,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],110,100028,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Okay, that's great. Thank you for providing all this information.
+Customer",120,100028,0.9710788769315776,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],130,100028,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],140,100028,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],150,100028,,,Accounts_and_Billing,Account Services,Rose Cooper
+"good afternoon. I'm having some issues with my alarm system. It's not turning off and I'm getting a lot of false alarms.
+Customer",0,100029,-0.9431993844365445,Negative,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],10,100029,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+"I have the ADT Pulse system. I've had it for about a year now.
+Customer",20,100029,0.1372785744081386,Positive,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],30,100029,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+"Not really. It just seems to be going off randomly. And when I try to turn it off, it won't shut down.
+Customer",40,100029,-0.7810312442439379,Negative,Accounts_and_Billing,Alarm Query,Rose Cooper
+"Yeah, I've tried restarting it, but that didn't work. And I'm not sure how to check the battery levels.
+Customer",50,100029,-0.892534560139296,Negative,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],60,100029,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+"Yeah. My account number is 123456.
+Customer",70,100029,0.007215202331922257,Positive,Accounts_and_Billing,Alarm Query,Rose Cooper
+"Okay, that sounds great. How long will it take for them to arrive?
+Customer",80,100029,0.9407911319591697,Positive,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],90,100029,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+"Yeah, that would be great. Can I schedule it for between 3-5 pm today?
+Customer",100,100029,0.9633950208187129,Positive,Accounts_and_Billing,Alarm Query,Rose Cooper
+"Great, thank you so much for your help.
+Customer",110,100029,0.9851635466497294,Positive,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],120,100029,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],130,100029,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+[],140,100029,,,Accounts_and_Billing,Alarm Query,Rose Cooper
+"good afternoon
+Customer",0,100030,0.9365030848671186,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],10,100030,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Hi John, I'm having some issues with my alarm system. It's not armoring properly.
+Customer",20,100030,-0.8795101571141758,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],30,100030,,,Accounts_and_Billing,Account Services,Rose Cooper
+"It's 123456.
+Customer",40,100030,0.0001929685223673316,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],50,100030,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Yes, it says 'System Error'.
+Customer",60,100030,-0.6362515715561828,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],70,100030,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Okay... done.
+Customer",80,100030,0.0008231643424161383,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],90,100030,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],100,100030,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Yeah, it's working now. Thanks, John.
+Customer",110,100030,0.970195357906135,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],120,100030,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],130,100030,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],140,100030,,,Accounts_and_Billing,Account Services,Rose Cooper
+"good afternoon. I'm having some issues with my ADT security system. The alarm keeps going off randomly and I'm not sure why.
+Customer",0,100031,-0.9209155491860667,Negative,Accounts_and_Billing,App Services,Rose Cooper
+[],10,100031,,,Accounts_and_Billing,App Services,Rose Cooper
+"It's been happening every few days. Sometimes it's during the day, sometimes at night. I've tried to troubleshoot it myself, but I can't seem to find the problem.
+Customer",20,100031,-0.7128370197545577,Negative,Accounts_and_Billing,App Services,Rose Cooper
+[],30,100031,,,Accounts_and_Billing,App Services,Rose Cooper
+"Yeah, my name is John Smith and my address is 123 Main St.
+Customer",40,100031,0.004472383440238648,Positive,Accounts_and_Billing,App Services,Rose Cooper
+[],50,100031,,,Accounts_and_Billing,App Services,Rose Cooper
+"Yeah, that sounds good. What days and times are available?
+Customer",60,100031,0.9376720188962785,Positive,Accounts_and_Billing,App Services,Rose Cooper
+[],70,100031,,,Accounts_and_Billing,App Services,Rose Cooper
+"Yeah, Wednesday works for me.
+Customer",80,100031,0.8545739861902555,Positive,Accounts_and_Billing,App Services,Rose Cooper
+[],90,100031,,,Accounts_and_Billing,App Services,Rose Cooper
+"No, that's all. Thank you for your help.
+Customer",100,100031,0.8006347490734803,Positive,Accounts_and_Billing,App Services,Rose Cooper
+[],110,100031,,,Accounts_and_Billing,App Services,Rose Cooper
+[],120,100031,,,Accounts_and_Billing,App Services,Rose Cooper
+[],130,100031,,,Accounts_and_Billing,App Services,Rose Cooper
+"Good afternoon. I'm calling to inquire about my account services with ADT.
+Customer",0,100032,0.03158558799768493,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],10,100032,,,Accounts_and_Billing,Account Services,Rose Cooper
+"My account number is 123456.
+Customer",20,100032,0.0003299199362614413,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],30,100032,,,Accounts_and_Billing,Account Services,Rose Cooper
+"I'm having some trouble with my alarm system. It's been going off randomly, and I'm not sure why.
+Customer",40,100032,-0.9178971842605469,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],50,100032,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Afternoon would be better, thank you.
+Customer",60,100032,0.9560374358670388,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],70,100032,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Yes, that sounds great. Thank you.
+Customer",80,100032,0.9837117128383309,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+"No, that's all. Thank you for your help.
+Customer",90,100032,0.8006347490734803,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],100,100032,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],110,100032,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],120,100032,,,Accounts_and_Billing,Account Services,Rose Cooper
+"good afternoon. I'm having some issues with my ADT security system. Can you help me troubleshoot?
+Customer",0,100033,-0.007305009901299009,Negative,Accounts_and_Billing,App Services,Rose Cooper
+[],10,100033,,,Accounts_and_Billing,App Services,Rose Cooper
+[],770,100037,,,Accounts_and_Billing,Billing,Alice Walker
+"Yeah, it's not arming. I've tried restarting the system, but it's still not working.
+Customer",20,100033,-0.9480238449656069,Negative,Accounts_and_Billing,App Services,Rose Cooper
+[],30,100033,,,Accounts_and_Billing,App Services,Rose Cooper
+"Yeah, I've checked all that. I even tried replacing the batteries in the sensors, but nothing's working.
+Customer",40,100033,-0.8953885851049751,Negative,Accounts_and_Billing,App Services,Rose Cooper
+[],50,100033,,,Accounts_and_Billing,App Services,Rose Cooper
+"Okay. My account number is 123456.
+Customer",60,100033,0.001184338500830218,Positive,Accounts_and_Billing,App Services,Rose Cooper
+[],70,100033,,,Accounts_and_Billing,App Services,Rose Cooper
+[],80,100033,,,Accounts_and_Billing,App Services,Rose Cooper
+"Yeah, that seems to have fixed it. Thank you so much!
+Customer",90,100033,0.9782524709770819,Positive,Accounts_and_Billing,App Services,Rose Cooper
+[],100,100033,,,Accounts_and_Billing,App Services,Rose Cooper
+[],110,100033,,,Accounts_and_Billing,App Services,Rose Cooper
+[],120,100033,,,Accounts_and_Billing,App Services,Rose Cooper
+"good afternoon. I'm having some issues with my ADT security system. It's not working properly.
+Customer",0,100034,-0.9434266737733809,Negative,Accounts_and_Billing,Installation,Alice Walker
+[],10,100034,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, it's the alarm system. It keeps going off randomly, even when no one is around.
+Customer",20,100034,-0.8398773212290593,Negative,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, I've tried resetting it, but it still doesn't work. And I'm not sure how to check the sensors.
+Customer",30,100034,-0.8999244279176896,Negative,Accounts_and_Billing,Installation,Alice Walker
+"Um, I think they're the wireless ones.
+Customer",40,100034,0.002626914206083075,Positive,Accounts_and_Billing,Installation,Alice Walker
+[],50,100034,,,Accounts_and_Billing,Installation,Alice Walker
+"Okay, that makes sense. But how do I check the battery levels?
+Customer",60,100034,-0.01026663395907068,Negative,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, I have the app.
+Customer",70,100034,0.7082345156937143,Positive,Accounts_and_Billing,Installation,Alice Walker
+"Okay, I'm checking it now... Yeah, one of the sensors is showing low battery.
+Customer",80,100034,-0.00624097264024881,Negative,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, that would be great. Thank you so much for your help!
+Customer",90,100034,0.9844563531144229,Positive,Accounts_and_Billing,Installation,Alice Walker
+"How about tomorrow afternoon?
+Customer",100,100034,0.0002058004875012953,Positive,Accounts_and_Billing,Installation,Alice Walker
+[],110,100034,,,Accounts_and_Billing,Installation,Alice Walker
+[],120,100034,,,Accounts_and_Billing,Installation,Alice Walker
+[],130,100034,,,Accounts_and_Billing,Installation,Alice Walker
+"good afternoon. I'm having some issues with my ADT security system. It's not working properly.
+Customer",0,100035,-0.9434266737733809,Negative,Accounts_and_Billing,Installation,Alice Walker
+[],10,100035,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, it's not arming. I've tried to arm it multiple times, but it just won't work.
+Customer",20,100035,-0.9397761602858753,Negative,Accounts_and_Billing,Installation,Alice Walker
+[],30,100035,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, I've tried restarting it, but that didn't work. And the power source is fine.
+Customer",40,100035,-0.03180668003691656,Negative,Accounts_and_Billing,Installation,Alice Walker
+[],50,100035,,,Accounts_and_Billing,Installation,Alice Walker
+"Okay, let me check. (pause) Yeah, it's displaying an error code. It says 'System Fault'.
+Customer",60,100035,-0.04087429022859834,Negative,Accounts_and_Billing,Installation,Alice Walker
+[],70,100035,,,Accounts_and_Billing,Installation,Alice Walker
+[],80,100035,,,Accounts_and_Billing,Installation,Alice Walker
+"Okay, sounds good.
+Customer",90,100035,0.9425038384517778,Positive,Accounts_and_Billing,Installation,Alice Walker
+[],100,100035,,,Accounts_and_Billing,Installation,Alice Walker
+"Okay, that sounds good. How long will it take for the technician to arrive?
+Customer",110,100035,0.8402202182504227,Positive,Accounts_and_Billing,Installation,Alice Walker
+[],120,100035,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, that would be great. Thank you for your help.
+Customer",130,100035,0.9807956422780748,Positive,Accounts_and_Billing,Installation,Alice Walker
+[],140,100035,,,Accounts_and_Billing,Installation,Alice Walker
+[],150,100035,,,Accounts_and_Billing,Installation,Alice Walker
+[],160,100035,,,Accounts_and_Billing,Installation,Alice Walker
+[],170,100035,,,Accounts_and_Billing,Installation,Alice Walker
+"good afternoon
+Customer",0,100036,0.9365030848671186,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],10,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Hi John, thanks for taking my call. I'm having some issues with my alarm system. It's been going off randomly throughout the day, and I'm not sure why.
+Customer",20,100036,-0.2684607238203205,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],30,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],40,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],50,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"It started yesterday morning, and it's been going off every few hours since then. I haven't noticed any patterns, but I did have some workers doing some renovations in the backyard yesterday.
+Customer",60,100036,-0.01878931640755721,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],70,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],80,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Yeah, I've already checked all that. I'm pretty sure it's not a false alarm.
+Customer",90,100036,0.004024295791278387,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],100,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],110,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Yeah, today would be great if possible.
+Customer",120,100036,0.9841200464388498,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],130,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],140,100036,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"good afternoon. I'm calling about an issue with my bill. I received it yesterday and I think there's an error.
+Customer",0,100037,-0.8148656135148268,Negative,Accounts_and_Billing,Billing,Alice Walker
+[],10,100037,,,Accounts_and_Billing,Billing,Alice Walker
+"It's 123456. And the issue is that I'm being charged for a service I don't have.
+Customer",20,100037,-0.9387613020741982,Negative,Accounts_and_Billing,Billing,Alice Walker
+"Yeah, it's the video monitoring service. I never signed up for that.
+Customer",30,100037,-0.8950395410881954,Negative,Accounts_and_Billing,Billing,Alice Walker
+[],40,100037,,,Accounts_and_Billing,Billing,Alice Walker
+"Okay, that sounds good. But can you also tell me why I was being charged for it in the first place?
+Customer",50,100037,-0.1814090911089909,Negative,Accounts_and_Billing,Billing,Alice Walker
+[],60,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],70,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],80,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],90,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],100,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],110,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],120,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],130,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],140,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],150,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],160,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],170,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],180,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],190,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],200,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],210,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],220,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],230,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],240,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],250,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],260,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],270,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],280,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],290,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],300,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],310,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],320,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],330,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],340,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],350,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],360,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],370,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],380,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],390,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],400,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],410,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],420,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],430,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],440,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],450,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],460,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],470,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],480,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],490,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],500,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],510,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],520,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],530,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],540,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],550,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],560,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],570,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],580,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],590,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],600,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],610,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],620,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],630,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],640,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],650,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],660,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],670,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],680,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],690,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],700,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],710,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],720,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],730,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],740,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],750,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],760,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],780,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],790,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],800,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],810,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],820,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],830,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],840,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],850,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],860,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],870,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],880,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],890,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],900,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],910,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],920,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],930,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],940,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],950,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],960,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],970,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],980,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],990,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1000,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1010,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1020,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1030,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1040,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1050,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1060,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1070,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1080,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1090,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1100,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1110,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1120,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1130,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1140,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1150,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1160,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1170,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1180,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1190,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1200,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1210,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1220,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1230,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1240,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1250,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1260,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1270,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1280,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1290,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1300,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1310,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1320,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1330,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1340,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1350,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1360,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1370,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1380,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1390,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1400,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1410,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1420,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1430,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1440,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1450,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1460,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1470,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1480,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1490,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1500,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1510,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1520,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1530,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1540,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1550,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1560,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1570,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1580,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1590,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1600,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1610,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1620,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1630,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1640,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1650,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1660,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1670,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1680,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1690,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1700,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1710,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1720,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1730,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1740,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1750,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1760,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1770,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1780,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1790,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1800,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1810,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1820,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1830,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1840,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1850,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1860,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1870,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1880,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1890,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1900,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1910,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1920,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1930,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1940,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1950,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1960,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1970,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1980,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],1990,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2000,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2010,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2020,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2030,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2040,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2050,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2060,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2070,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2080,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2090,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2100,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2110,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2120,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2130,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2140,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2150,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2160,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2170,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2180,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2190,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2200,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2210,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2220,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2230,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2240,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2250,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2260,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2270,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2280,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2290,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2300,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2310,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2320,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2330,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2340,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2350,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2360,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2370,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2380,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2390,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2400,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2410,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2420,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2430,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2440,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2450,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2460,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2470,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2480,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2490,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2500,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2510,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2520,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2530,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2540,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2550,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2560,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2570,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2580,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2590,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2600,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2610,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2620,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2630,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2640,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2650,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2660,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2670,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2680,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2690,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2700,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2710,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2720,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2730,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2740,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2750,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2760,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2770,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2780,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2790,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2800,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2810,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2820,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2830,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2840,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2850,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2860,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2870,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2880,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2890,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2900,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2910,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2920,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2930,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2940,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2950,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2960,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2970,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2980,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],2990,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3000,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3010,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3020,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3030,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3040,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3050,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3060,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3070,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3080,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3090,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3100,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3110,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3120,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3130,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3140,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3150,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3160,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3170,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3180,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3190,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3200,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3210,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3220,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3230,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3240,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3250,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3260,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3270,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3280,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3290,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3300,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3310,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3320,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3330,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3340,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3350,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3360,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3370,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3380,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3390,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3400,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3410,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3420,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3430,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3440,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3450,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3460,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3470,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3480,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3490,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3500,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3510,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3520,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3530,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3540,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3550,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3560,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3570,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3580,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3590,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3600,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3610,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3620,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3630,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3640,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3650,100037,,,Accounts_and_Billing,Billing,Alice Walker
+"Okay, thank you for taking care of that. Can I also get a confirmation number for the changes you made to my account?
+Customer",60,100037,0.06648126066881349,Positive,Accounts_and_Billing,Billing,Alice Walker
+[],70,100037,,,Accounts_and_Billing,Billing,Alice Walker
+"Alright, thank you so much for your help.
+Customer",70,100037,0.9727355041398172,Positive,Accounts_and_Billing,Billing,Alice Walker
+[],3690,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3700,100037,,,Accounts_and_Billing,Billing,Alice Walker
+[],3710,100037,,,Accounts_and_Billing,Billing,Alice Walker
+"good afternoon. I'm having some issues with my ADT security system. I was wondering if I could get some assistance.
+Customer",0,100038,-0.06078647052934616,Negative,Accounts_and_Billing,App Services,James William
+[],10,100038,,,Accounts_and_Billing,App Services,James William
+"Yeah, it's the alarm system. It's been going off randomly throughout the day. I've tried to arm and disarm it, but it just won't stop beeping.
+Customer",20,100038,-0.9090526627970537,Negative,Accounts_and_Billing,App Services,James William
+[],30,100038,,,Accounts_and_Billing,App Services,James William
+"Yeah, I've checked everything, and it all seems to be closed. I'm not sure what's causing it.
+Customer",40,100038,-0.799694799507864,Negative,Accounts_and_Billing,App Services,James William
+[],50,100038,,,Accounts_and_Billing,App Services,James William
+"Okay, let me get that for you. (pause) Alright, my account number is 123456, and the system ID is ADT1234.
+Customer",60,100038,0.0151035742492964,Positive,Accounts_and_Billing,App Services,James William
+[],70,100038,,,Accounts_and_Billing,App Services,James William
+[],80,100038,,,Accounts_and_Billing,App Services,James William
+"Okay, I'll try that. (pause) Yeah, that seems to have fixed it. Thank you so much for your help!
+Customer",90,100038,0.9758574130364914,Positive,Accounts_and_Billing,App Services,James William
+[],100,100038,,,Accounts_and_Billing,App Services,James William
+[],110,100038,,,Accounts_and_Billing,App Services,James William
+[],120,100038,,,Accounts_and_Billing,App Services,James William
+[],130,100038,,,Accounts_and_Billing,App Services,James William
+"good afternoon
+Customer",0,100039,0.9365030848671186,Positive,Accounts_and_Billing,Account Services,James William
+[],10,100039,,,Accounts_and_Billing,Account Services,James William
+"Yeah, my account number is 123456.
+Customer",20,100039,0.006155298895824196,Positive,Accounts_and_Billing,Account Services,James William
+"I got a notice in the mail saying my payment is overdue, but I could've sworn I paid it.
+Customer",30,100039,-0.4962407182666345,Negative,Accounts_and_Billing,Account Services,James William
+[],40,100039,,,Accounts_and_Billing,Account Services,James William
+[],50,100039,,,Accounts_and_Billing,Account Services,James William
+"Yeah, that's what I thought. Can I pay with my credit card?
+Customer",60,100039,-0.004518035063441728,Negative,Accounts_and_Billing,Account Services,James William
+[],70,100039,,,Accounts_and_Billing,Account Services,James William
+"Yeah, it's 1234-5678-9012-3456, and the expiration date is 02/2025.
+Customer",80,100039,0.002801846634564592,Positive,Accounts_and_Billing,Account Services,James William
+[],90,100039,,,Accounts_and_Billing,Account Services,James William
+"No, that's it. Thanks for your help, John.
+Customer",100,100039,0.8564876340499027,Positive,Accounts_and_Billing,Account Services,James William
+[],110,100039,,,Accounts_and_Billing,Account Services,James William
+[],120,100039,,,Accounts_and_Billing,Account Services,James William
+"Good afternoon. I'm having some issues with my ADT alarm system.
+Customer",0,100040,-0.8436845961258465,Negative,Accounts_and_Billing,Alarm Query,James William
+[],10,100040,,,Accounts_and_Billing,Alarm Query,James William
+"Yeah, it's been going off randomly throughout the day. I've tried to silence it, but it just keeps going off.
+Customer",20,100040,-0.9124184967653339,Negative,Accounts_and_Billing,Alarm Query,James William
+"Actually, yes. It seems to happen whenever I open the back door.
+Customer",30,100040,0.01768588116812431,Positive,Accounts_and_Billing,Alarm Query,James William
+[],40,100040,,,Accounts_and_Billing,Alarm Query,James William
+"Yeah, tomorrow would be fine.
+Customer",50,100040,0.9059218352299283,Positive,Accounts_and_Billing,Alarm Query,James William
+"Okay, that sounds good. Thank you.
+Customer",60,100040,0.9740783999547646,Positive,Accounts_and_Billing,Alarm Query,James William
+[],70,100040,,,Accounts_and_Billing,Alarm Query,James William
+[],80,100040,,,Accounts_and_Billing,Alarm Query,James William
+[],90,100040,,,Accounts_and_Billing,Alarm Query,James William
+"Good afternoon. I'm calling to inquire about my account services with ADT.
+Customer",0,100041,0.03158558799768493,Positive,Accounts_and_Billing,Account Services,David Freeman
+[],10,100041,,,Accounts_and_Billing,Account Services,David Freeman
+"My account number is 123456.
+Customer",20,100041,0.0003299199362614413,Positive,Accounts_and_Billing,Account Services,David Freeman
+"I'd like to know more about the alarm monitoring services you offer.
+Customer",30,100041,-0.01612267952276702,Negative,Accounts_and_Billing,Account Services,David Freeman
+[],40,100041,,,Accounts_and_Billing,Account Services,David Freeman
+[],50,100041,,,Accounts_and_Billing,Account Services,David Freeman
+"That sounds great. Can you tell me more about the fire protection services you offer?
+Customer",60,100041,0.9463835690786979,Positive,Accounts_and_Billing,Account Services,David Freeman
+[],70,100041,,,Accounts_and_Billing,Account Services,David Freeman
+"I see. I'd like to add the fire protection services to my account. Can you walk me through the process?
+Customer",80,100041,3.059257674054017e-05,Positive,Accounts_and_Billing,Account Services,David Freeman
+[],90,100041,,,Accounts_and_Billing,Account Services,David Freeman
+"Yes, my address is 123 Main St and my phone number is 555-555-5555.
+Customer",100,100041,0.004582118192448414,Positive,Accounts_and_Billing,Account Services,David Freeman
+[],110,100041,,,Accounts_and_Billing,Account Services,David Freeman
+[],120,100041,,,Accounts_and_Billing,Account Services,David Freeman
+[],130,100041,,,Accounts_and_Billing,Account Services,David Freeman
+[],140,100041,,,Accounts_and_Billing,Account Services,David Freeman
+"Good afternoon. I'm having some issues with my ADT security system. It was installed last week, but it's not working properly.
+Customer",0,100042,-0.9341274331705349,Negative,Accounts_and_Billing,Installation,David Freeman
+[],10,100042,,,Accounts_and_Billing,Installation,David Freeman
+"Yeah, it's not arming. I've tried to arm it multiple times, but it just won't work. I've also noticed that the sensors are not responding.
+Customer",20,100042,-0.9278196146464708,Negative,Accounts_and_Billing,Installation,David Freeman
+[],30,100042,,,Accounts_and_Billing,Installation,David Freeman
+"Yeah, I've tried restarting it, but that didn't work. And the power source is fine, I've checked that already.
+Customer",40,100042,-0.0675181939396634,Negative,Accounts_and_Billing,Installation,David Freeman
+"Okay, my account number is 123456.
+Customer",50,100042,0.001256620039713552,Positive,Accounts_and_Billing,Installation,David Freeman
+[],60,100042,,,Accounts_and_Billing,Installation,David Freeman
+"Okay, I'll try it now. (pause) Yeah, it's still not working.
+Customer",70,100042,-0.9228699007236997,Negative,Accounts_and_Billing,Installation,David Freeman
+[],80,100042,,,Accounts_and_Billing,Installation,David Freeman
+"Yeah, tomorrow would be fine.
+Customer",90,100042,0.9059218352299283,Positive,Accounts_and_Billing,Installation,David Freeman
+[],100,100042,,,Accounts_and_Billing,Installation,David Freeman
+[],110,100042,,,Accounts_and_Billing,Installation,David Freeman
+[],120,100042,,,Accounts_and_Billing,Installation,David Freeman
+[],130,100042,,,Accounts_and_Billing,Installation,David Freeman
+"good afternoon
+Customer",0,100043,0.9365030848671186,Positive,Accounts_and_Billing,Alarm Query,David Freeman
+[],10,100043,,,Accounts_and_Billing,Alarm Query,David Freeman
+"Hi John, thanks for taking my call. I'm having some issues with my alarm system. It's been going off randomly throughout the day.
+Customer",20,100043,-0.04683242686702638,Negative,Accounts_and_Billing,Alarm Query,David Freeman
+[],30,100043,,,Accounts_and_Billing,Alarm Query,David Freeman
+"It started yesterday, and it seems to be happening every few hours. I haven't noticed anything out of the ordinary, but I did have some workers doing some renovations in the house yesterday.
+Customer",40,100043,-0.008334857464707968,Negative,Accounts_and_Billing,Alarm Query,David Freeman
+[],50,100043,,,Accounts_and_Billing,Alarm Query,David Freeman
+"Yeah, tomorrow would be fine.
+Customer",60,100043,0.9059218352299283,Positive,Accounts_and_Billing,Alarm Query,David Freeman
+"Okay, sounds good. Thanks for your help, John.
+Customer",70,100043,0.9671593866843885,Positive,Accounts_and_Billing,Alarm Query,David Freeman
+[],80,100043,,,Accounts_and_Billing,Alarm Query,David Freeman
+[],90,100043,,,Accounts_and_Billing,Alarm Query,David Freeman
+[],100,100043,,,Accounts_and_Billing,Alarm Query,David Freeman
+"good afternoon. I'm calling to inquire about my account. I received a notice that my payment is overdue.
+Customer",0,100044,-0.001480170585300256,Negative,Accounts_and_Billing,Account Services,David Freeman
+[],10,100044,,,Accounts_and_Billing,Account Services,David Freeman
+"It's 1234567.
+Customer",20,100044,0.000144995847819851,Positive,Accounts_and_Billing,Account Services,David Freeman
+[],30,100044,,,Accounts_and_Billing,Account Services,David Freeman
+"Yes, I'd like to make a payment. But can you also tell me why I didn't receive a reminder call or email?
+Customer",40,100044,-0.6407990781243502,Negative,Accounts_and_Billing,Account Services,David Freeman
+[],50,100044,,,Accounts_and_Billing,Account Services,David Freeman
+"I'll use my credit card.
+Customer",60,100044,0.001975402979613045,Positive,Accounts_and_Billing,Account Services,David Freeman
+"It's 1234-5678-9012-3456, and the expiration date is 02/2025.
+Customer",70,100044,0.0002283564633449031,Positive,Accounts_and_Billing,Account Services,David Freeman
+[],80,100044,,,Accounts_and_Billing,Account Services,David Freeman
+[],90,100044,,,Accounts_and_Billing,Account Services,David Freeman
+[],100,100044,,,Accounts_and_Billing,Account Services,David Freeman
+[],110,100044,,,Accounts_and_Billing,Account Services,David Freeman
+"Good afternoon. I'm having some issues with my alarm system. It's not working properly.
+Customer",0,100045,-0.9418284332544182,Negative,Accounts_and_Billing,Alarm Query,David Freeman
+[],10,100045,,,Accounts_and_Billing,Alarm Query,David Freeman
+"Yeah, it's not arming properly. I've tried to arm it multiple times, but it just won't work.
+Customer",20,100045,-0.9436349307095001,Negative,Accounts_and_Billing,Alarm Query,David Freeman
+[],30,100045,,,Accounts_and_Billing,Alarm Query,David Freeman
+"Yeah, I've checked them and they seem fine. I'm not sure what's going on.
+Customer",40,100045,-0.04298654599913121,Negative,Accounts_and_Billing,Alarm Query,David Freeman
+[],50,100045,,,Accounts_and_Billing,Alarm Query,David Freeman
+"Okay. My account number is 123456.
+Customer",60,100045,0.001184338500830218,Positive,Accounts_and_Billing,Alarm Query,David Freeman
+[],70,100045,,,Accounts_and_Billing,Alarm Query,David Freeman
+"Yeah, it's showing an error code 345.
+Customer",80,100045,-0.4536983718171275,Negative,Accounts_and_Billing,Alarm Query,David Freeman
+[],90,100045,,,Accounts_and_Billing,Alarm Query,David Freeman
+[],100,100045,,,Accounts_and_Billing,Alarm Query,David Freeman
+"Yeah, I'd prefer today if possible.
+Customer",110,100045,-0.2078395182486309,Negative,Accounts_and_Billing,Alarm Query,David Freeman
+[],120,100045,,,Accounts_and_Billing,Alarm Query,David Freeman
+[],130,100045,,,Accounts_and_Billing,Alarm Query,David Freeman
+[],140,100045,,,Accounts_and_Billing,Alarm Query,David Freeman
+"good afternoon
+Customer",0,100046,0.9365030848671186,Positive,Accounts_and_Billing,App Services,David Freeman
+[],10,100046,,,Accounts_and_Billing,App Services,David Freeman
+"Hi John, thanks for taking my call. I'm having some issues with my ADT security system. It's not armoring properly.
+Customer",20,100046,-0.6740590604615169,Negative,Accounts_and_Billing,App Services,David Freeman
+[],30,100046,,,Accounts_and_Billing,App Services,David Freeman
+[],40,100046,,,Accounts_and_Billing,App Services,David Freeman
+"I have the ADT Pulse system, and I noticed it yesterday evening when I was trying to arm it remotely.
+Customer",50,100046,0.01603275072387716,Positive,Accounts_and_Billing,App Services,David Freeman
+[],60,100046,,,Accounts_and_Billing,App Services,David Freeman
+"Okay, I've tried to arm it again, and it's saying 'System Not Ready'.
+Customer",70,100046,-0.7499138044951391,Negative,Accounts_and_Billing,App Services,David Freeman
+[],80,100046,,,Accounts_and_Billing,App Services,David Freeman
+[],90,100046,,,Accounts_and_Billing,App Services,David Freeman
+"Yes, everything is closed.
+Customer",100,100046,-0.9438501486355882,Negative,Accounts_and_Billing,App Services,David Freeman
+[],110,100046,,,Accounts_and_Billing,App Services,David Freeman
+"That sounds great, thank you. When can I expect the technician to arrive?
+Customer",120,100046,0.9708212967198769,Positive,Accounts_and_Billing,App Services,David Freeman
+[],130,100046,,,Accounts_and_Billing,App Services,David Freeman
+"Yes, that works perfect. Thank you so much for your help, John.
+Customer",140,100046,0.9822646130717642,Positive,Accounts_and_Billing,App Services,David Freeman
+[],150,100046,,,Accounts_and_Billing,App Services,David Freeman
+[],160,100046,,,Accounts_and_Billing,App Services,David Freeman
+[],170,100046,,,Accounts_and_Billing,App Services,David Freeman
+"Good afternoon. I'm calling to inquire about my account.
+Customer",0,100047,0.0691423461192931,Positive,Accounts_and_Billing,Account Services,James William
+[],10,100047,,,Accounts_and_Billing,Account Services,James William
+"My account number is 123456.
+Customer",20,100047,0.0003299199362614413,Positive,Accounts_and_Billing,Account Services,James William
+"I'd like to know my current balance and when my next payment is due.
+Customer",30,100047,-0.0003253908274172268,Negative,Accounts_and_Billing,Account Services,James William
+[],40,100047,,,Accounts_and_Billing,Account Services,James William
+"Okay, that sounds right. Can you also tell me about any promotions or discounts that I might be eligible for?
+Customer",50,100047,0.5355730019107622,Positive,Accounts_and_Billing,Account Services,James William
+[],60,100047,,,Accounts_and_Billing,Account Services,James William
+[],70,100047,,,Accounts_and_Billing,Account Services,James William
+[],80,100047,,,Accounts_and_Billing,Account Services,James William
+[],90,100047,,,Accounts_and_Billing,Account Services,James William
+[],100,100047,,,Accounts_and_Billing,Account Services,James William
+[],110,100047,,,Accounts_and_Billing,Account Services,James William
+[],120,100047,,,Accounts_and_Billing,Account Services,James William
+[],130,100047,,,Accounts_and_Billing,Account Services,James William
+[],140,100047,,,Accounts_and_Billing,Account Services,James William
+[],150,100047,,,Accounts_and_Billing,Account Services,James William
+[],160,100047,,,Accounts_and_Billing,Account Services,James William
+[],170,100047,,,Accounts_and_Billing,Account Services,James William
+[],180,100047,,,Accounts_and_Billing,Account Services,James William
+[],190,100047,,,Accounts_and_Billing,Account Services,James William
+[],200,100047,,,Accounts_and_Billing,Account Services,James William
+[],210,100047,,,Accounts_and_Billing,Account Services,James William
+[],220,100047,,,Accounts_and_Billing,Account Services,James William
+[],230,100047,,,Accounts_and_Billing,Account Services,James William
+[],240,100047,,,Accounts_and_Billing,Account Services,James William
+[],250,100047,,,Accounts_and_Billing,Account Services,James William
+[],260,100047,,,Accounts_and_Billing,Account Services,James William
+[],270,100047,,,Accounts_and_Billing,Account Services,James William
+[],280,100047,,,Accounts_and_Billing,Account Services,James William
+[],290,100047,,,Accounts_and_Billing,Account Services,James William
+[],300,100047,,,Accounts_and_Billing,Account Services,James William
+[],310,100047,,,Accounts_and_Billing,Account Services,James William
+[],320,100047,,,Accounts_and_Billing,Account Services,James William
+[],330,100047,,,Accounts_and_Billing,Account Services,James William
+[],340,100047,,,Accounts_and_Billing,Account Services,James William
+[],350,100047,,,Accounts_and_Billing,Account Services,James William
+[],360,100047,,,Accounts_and_Billing,Account Services,James William
+[],370,100047,,,Accounts_and_Billing,Account Services,James William
+[],380,100047,,,Accounts_and_Billing,Account Services,James William
+[],390,100047,,,Accounts_and_Billing,Account Services,James William
+[],400,100047,,,Accounts_and_Billing,Account Services,James William
+[],410,100047,,,Accounts_and_Billing,Account Services,James William
+[],420,100047,,,Accounts_and_Billing,Account Services,James William
+[],430,100047,,,Accounts_and_Billing,Account Services,James William
+[],440,100047,,,Accounts_and_Billing,Account Services,James William
+[],450,100047,,,Accounts_and_Billing,Account Services,James William
+[],460,100047,,,Accounts_and_Billing,Account Services,James William
+[],470,100047,,,Accounts_and_Billing,Account Services,James William
+[],480,100047,,,Accounts_and_Billing,Account Services,James William
+[],490,100047,,,Accounts_and_Billing,Account Services,James William
+[],500,100047,,,Accounts_and_Billing,Account Services,James William
+[],510,100047,,,Accounts_and_Billing,Account Services,James William
+[],520,100047,,,Accounts_and_Billing,Account Services,James William
+[],530,100047,,,Accounts_and_Billing,Account Services,James William
+[],540,100047,,,Accounts_and_Billing,Account Services,James William
+[],550,100047,,,Accounts_and_Billing,Account Services,James William
+[],560,100047,,,Accounts_and_Billing,Account Services,James William
+[],570,100047,,,Accounts_and_Billing,Account Services,James William
+[],580,100047,,,Accounts_and_Billing,Account Services,James William
+[],590,100047,,,Accounts_and_Billing,Account Services,James William
+[],600,100047,,,Accounts_and_Billing,Account Services,James William
+[],610,100047,,,Accounts_and_Billing,Account Services,James William
+[],620,100047,,,Accounts_and_Billing,Account Services,James William
+[],630,100047,,,Accounts_and_Billing,Account Services,James William
+[],640,100047,,,Accounts_and_Billing,Account Services,James William
+[],650,100047,,,Accounts_and_Billing,Account Services,James William
+[],660,100047,,,Accounts_and_Billing,Account Services,James William
+[],670,100047,,,Accounts_and_Billing,Account Services,James William
+[],680,100047,,,Accounts_and_Billing,Account Services,James William
+[],690,100047,,,Accounts_and_Billing,Account Services,James William
+[],700,100047,,,Accounts_and_Billing,Account Services,James William
+[],710,100047,,,Accounts_and_Billing,Account Services,James William
+[],720,100047,,,Accounts_and_Billing,Account Services,James William
+[],730,100047,,,Accounts_and_Billing,Account Services,James William
+[],740,100047,,,Accounts_and_Billing,Account Services,James William
+[],750,100047,,,Accounts_and_Billing,Account Services,James William
+[],760,100047,,,Accounts_and_Billing,Account Services,James William
+[],770,100047,,,Accounts_and_Billing,Account Services,James William
+[],780,100047,,,Accounts_and_Billing,Account Services,James William
+[],790,100047,,,Accounts_and_Billing,Account Services,James William
+[],800,100047,,,Accounts_and_Billing,Account Services,James William
+[],810,100047,,,Accounts_and_Billing,Account Services,James William
+[],820,100047,,,Accounts_and_Billing,Account Services,James William
+[],830,100047,,,Accounts_and_Billing,Account Services,James William
+[],840,100047,,,Accounts_and_Billing,Account Services,James William
+[],850,100047,,,Accounts_and_Billing,Account Services,James William
+[],860,100047,,,Accounts_and_Billing,Account Services,James William
+[],870,100047,,,Accounts_and_Billing,Account Services,James William
+[],880,100047,,,Accounts_and_Billing,Account Services,James William
+[],890,100047,,,Accounts_and_Billing,Account Services,James William
+[],900,100047,,,Accounts_and_Billing,Account Services,James William
+[],910,100047,,,Accounts_and_Billing,Account Services,James William
+[],920,100047,,,Accounts_and_Billing,Account Services,James William
+[],930,100047,,,Accounts_and_Billing,Account Services,James William
+[],940,100047,,,Accounts_and_Billing,Account Services,James William
+[],950,100047,,,Accounts_and_Billing,Account Services,James William
+[],960,100047,,,Accounts_and_Billing,Account Services,James William
+[],970,100047,,,Accounts_and_Billing,Account Services,James William
+[],980,100047,,,Accounts_and_Billing,Account Services,James William
+[],990,100047,,,Accounts_and_Billing,Account Services,James William
+[],1000,100047,,,Accounts_and_Billing,Account Services,James William
+[],1010,100047,,,Accounts_and_Billing,Account Services,James William
+[],1020,100047,,,Accounts_and_Billing,Account Services,James William
+[],1030,100047,,,Accounts_and_Billing,Account Services,James William
+[],1040,100047,,,Accounts_and_Billing,Account Services,James William
+[],1050,100047,,,Accounts_and_Billing,Account Services,James William
+[],1060,100047,,,Accounts_and_Billing,Account Services,James William
+[],1070,100047,,,Accounts_and_Billing,Account Services,James William
+[],1080,100047,,,Accounts_and_Billing,Account Services,James William
+[],1090,100047,,,Accounts_and_Billing,Account Services,James William
+[],1100,100047,,,Accounts_and_Billing,Account Services,James William
+[],1110,100047,,,Accounts_and_Billing,Account Services,James William
+[],1120,100047,,,Accounts_and_Billing,Account Services,James William
+[],1130,100047,,,Accounts_and_Billing,Account Services,James William
+[],1140,100047,,,Accounts_and_Billing,Account Services,James William
+[],1150,100047,,,Accounts_and_Billing,Account Services,James William
+[],1160,100047,,,Accounts_and_Billing,Account Services,James William
+[],1170,100047,,,Accounts_and_Billing,Account Services,James William
+[],1180,100047,,,Accounts_and_Billing,Account Services,James William
+[],1190,100047,,,Accounts_and_Billing,Account Services,James William
+[],1200,100047,,,Accounts_and_Billing,Account Services,James William
+[],1210,100047,,,Accounts_and_Billing,Account Services,James William
+[],1220,100047,,,Accounts_and_Billing,Account Services,James William
+[],1230,100047,,,Accounts_and_Billing,Account Services,James William
+[],1240,100047,,,Accounts_and_Billing,Account Services,James William
+[],1250,100047,,,Accounts_and_Billing,Account Services,James William
+[],1260,100047,,,Accounts_and_Billing,Account Services,James William
+[],1270,100047,,,Accounts_and_Billing,Account Services,James William
+[],1280,100047,,,Accounts_and_Billing,Account Services,James William
+[],1290,100047,,,Accounts_and_Billing,Account Services,James William
+[],1300,100047,,,Accounts_and_Billing,Account Services,James William
+[],1310,100047,,,Accounts_and_Billing,Account Services,James William
+[],1320,100047,,,Accounts_and_Billing,Account Services,James William
+[],1330,100047,,,Accounts_and_Billing,Account Services,James William
+[],1340,100047,,,Accounts_and_Billing,Account Services,James William
+[],1350,100047,,,Accounts_and_Billing,Account Services,James William
+[],1360,100047,,,Accounts_and_Billing,Account Services,James William
+[],1370,100047,,,Accounts_and_Billing,Account Services,James William
+[],1380,100047,,,Accounts_and_Billing,Account Services,James William
+[],1390,100047,,,Accounts_and_Billing,Account Services,James William
+[],1400,100047,,,Accounts_and_Billing,Account Services,James William
+[],1410,100047,,,Accounts_and_Billing,Account Services,James William
+[],1420,100047,,,Accounts_and_Billing,Account Services,James William
+[],1430,100047,,,Accounts_and_Billing,Account Services,James William
+[],1440,100047,,,Accounts_and_Billing,Account Services,James William
+[],1450,100047,,,Accounts_and_Billing,Account Services,James William
+[],1460,100047,,,Accounts_and_Billing,Account Services,James William
+[],1470,100047,,,Accounts_and_Billing,Account Services,James William
+[],1480,100047,,,Accounts_and_Billing,Account Services,James William
+[],1490,100047,,,Accounts_and_Billing,Account Services,James William
+[],1500,100047,,,Accounts_and_Billing,Account Services,James William
+[],1510,100047,,,Accounts_and_Billing,Account Services,James William
+[],1520,100047,,,Accounts_and_Billing,Account Services,James William
+[],1530,100047,,,Accounts_and_Billing,Account Services,James William
+[],1540,100047,,,Accounts_and_Billing,Account Services,James William
+[],1550,100047,,,Accounts_and_Billing,Account Services,James William
+[],1560,100047,,,Accounts_and_Billing,Account Services,James William
+[],1570,100047,,,Accounts_and_Billing,Account Services,James William
+[],1580,100047,,,Accounts_and_Billing,Account Services,James William
+[],1590,100047,,,Accounts_and_Billing,Account Services,James William
+[],1600,100047,,,Accounts_and_Billing,Account Services,James William
+[],1610,100047,,,Accounts_and_Billing,Account Services,James William
+[],1620,100047,,,Accounts_and_Billing,Account Services,James William
+[],1630,100047,,,Accounts_and_Billing,Account Services,James William
+[],1640,100047,,,Accounts_and_Billing,Account Services,James William
+[],1650,100047,,,Accounts_and_Billing,Account Services,James William
+[],1660,100047,,,Accounts_and_Billing,Account Services,James William
+[],1670,100047,,,Accounts_and_Billing,Account Services,James William
+[],1680,100047,,,Accounts_and_Billing,Account Services,James William
+[],1690,100047,,,Accounts_and_Billing,Account Services,James William
+[],1700,100047,,,Accounts_and_Billing,Account Services,James William
+[],1710,100047,,,Accounts_and_Billing,Account Services,James William
+[],1720,100047,,,Accounts_and_Billing,Account Services,James William
+[],1730,100047,,,Accounts_and_Billing,Account Services,James William
+[],1740,100047,,,Accounts_and_Billing,Account Services,James William
+[],1750,100047,,,Accounts_and_Billing,Account Services,James William
+[],1760,100047,,,Accounts_and_Billing,Account Services,James William
+[],1770,100047,,,Accounts_and_Billing,Account Services,James William
+[],1780,100047,,,Accounts_and_Billing,Account Services,James William
+[],1790,100047,,,Accounts_and_Billing,Account Services,James William
+[],1800,100047,,,Accounts_and_Billing,Account Services,James William
+[],1810,100047,,,Accounts_and_Billing,Account Services,James William
+[],1820,100047,,,Accounts_and_Billing,Account Services,James William
+[],1830,100047,,,Accounts_and_Billing,Account Services,James William
+[],1840,100047,,,Accounts_and_Billing,Account Services,James William
+[],1850,100047,,,Accounts_and_Billing,Account Services,James William
+[],1860,100047,,,Accounts_and_Billing,Account Services,James William
+[],1870,100047,,,Accounts_and_Billing,Account Services,James William
+[],1880,100047,,,Accounts_and_Billing,Account Services,James William
+[],1890,100047,,,Accounts_and_Billing,Account Services,James William
+[],1900,100047,,,Accounts_and_Billing,Account Services,James William
+[],1910,100047,,,Accounts_and_Billing,Account Services,James William
+[],1920,100047,,,Accounts_and_Billing,Account Services,James William
+[],1930,100047,,,Accounts_and_Billing,Account Services,James William
+[],1940,100047,,,Accounts_and_Billing,Account Services,James William
+[],1950,100047,,,Accounts_and_Billing,Account Services,James William
+[],1960,100047,,,Accounts_and_Billing,Account Services,James William
+[],1970,100047,,,Accounts_and_Billing,Account Services,James William
+[],1980,100047,,,Accounts_and_Billing,Account Services,James William
+[],1990,100047,,,Accounts_and_Billing,Account Services,James William
+[],2000,100047,,,Accounts_and_Billing,Account Services,James William
+[],2010,100047,,,Accounts_and_Billing,Account Services,James William
+[],2020,100047,,,Accounts_and_Billing,Account Services,James William
+[],2030,100047,,,Accounts_and_Billing,Account Services,James William
+[],2040,100047,,,Accounts_and_Billing,Account Services,James William
+[],2050,100047,,,Accounts_and_Billing,Account Services,James William
+[],2060,100047,,,Accounts_and_Billing,Account Services,James William
+[],2070,100047,,,Accounts_and_Billing,Account Services,James William
+[],2080,100047,,,Accounts_and_Billing,Account Services,James William
+[],2090,100047,,,Accounts_and_Billing,Account Services,James William
+[],2100,100047,,,Accounts_and_Billing,Account Services,James William
+[],2110,100047,,,Accounts_and_Billing,Account Services,James William
+[],2120,100047,,,Accounts_and_Billing,Account Services,James William
+[],2130,100047,,,Accounts_and_Billing,Account Services,James William
+[],2140,100047,,,Accounts_and_Billing,Account Services,James William
+[],2150,100047,,,Accounts_and_Billing,Account Services,James William
+[],2160,100047,,,Accounts_and_Billing,Account Services,James William
+[],2170,100047,,,Accounts_and_Billing,Account Services,James William
+[],2180,100047,,,Accounts_and_Billing,Account Services,James William
+[],2190,100047,,,Accounts_and_Billing,Account Services,James William
+[],2200,100047,,,Accounts_and_Billing,Account Services,James William
+[],2210,100047,,,Accounts_and_Billing,Account Services,James William
+[],2220,100047,,,Accounts_and_Billing,Account Services,James William
+[],2230,100047,,,Accounts_and_Billing,Account Services,James William
+[],2240,100047,,,Accounts_and_Billing,Account Services,James William
+[],2250,100047,,,Accounts_and_Billing,Account Services,James William
+[],2260,100047,,,Accounts_and_Billing,Account Services,James William
+[],2270,100047,,,Accounts_and_Billing,Account Services,James William
+[],2280,100047,,,Accounts_and_Billing,Account Services,James William
+[],2290,100047,,,Accounts_and_Billing,Account Services,James William
+[],2300,100047,,,Accounts_and_Billing,Account Services,James William
+[],2310,100047,,,Accounts_and_Billing,Account Services,James William
+[],2320,100047,,,Accounts_and_Billing,Account Services,James William
+[],2330,100047,,,Accounts_and_Billing,Account Services,James William
+[],2340,100047,,,Accounts_and_Billing,Account Services,James William
+[],2350,100047,,,Accounts_and_Billing,Account Services,James William
+[],2360,100047,,,Accounts_and_Billing,Account Services,James William
+[],2370,100047,,,Accounts_and_Billing,Account Services,James William
+[],2380,100047,,,Accounts_and_Billing,Account Services,James William
+[],2390,100047,,,Accounts_and_Billing,Account Services,James William
+[],2400,100047,,,Accounts_and_Billing,Account Services,James William
+[],2410,100047,,,Accounts_and_Billing,Account Services,James William
+[],2420,100047,,,Accounts_and_Billing,Account Services,James William
+[],2430,100047,,,Accounts_and_Billing,Account Services,James William
+[],2440,100047,,,Accounts_and_Billing,Account Services,James William
+[],2450,100047,,,Accounts_and_Billing,Account Services,James William
+[],2460,100047,,,Accounts_and_Billing,Account Services,James William
+[],2470,100047,,,Accounts_and_Billing,Account Services,James William
+[],2480,100047,,,Accounts_and_Billing,Account Services,James William
+[],2490,100047,,,Accounts_and_Billing,Account Services,James William
+[],2500,100047,,,Accounts_and_Billing,Account Services,James William
+[],2510,100047,,,Accounts_and_Billing,Account Services,James William
+[],2520,100047,,,Accounts_and_Billing,Account Services,James William
+[],2530,100047,,,Accounts_and_Billing,Account Services,James William
+[],2540,100047,,,Accounts_and_Billing,Account Services,James William
+[],2550,100047,,,Accounts_and_Billing,Account Services,James William
+[],2560,100047,,,Accounts_and_Billing,Account Services,James William
+[],2570,100047,,,Accounts_and_Billing,Account Services,James William
+[],2580,100047,,,Accounts_and_Billing,Account Services,James William
+[],2590,100047,,,Accounts_and_Billing,Account Services,James William
+[],2600,100047,,,Accounts_and_Billing,Account Services,James William
+[],2610,100047,,,Accounts_and_Billing,Account Services,James William
+[],2620,100047,,,Accounts_and_Billing,Account Services,James William
+[],2630,100047,,,Accounts_and_Billing,Account Services,James William
+[],2640,100047,,,Accounts_and_Billing,Account Services,James William
+[],2650,100047,,,Accounts_and_Billing,Account Services,James William
+[],2660,100047,,,Accounts_and_Billing,Account Services,James William
+[],2670,100047,,,Accounts_and_Billing,Account Services,James William
+[],2680,100047,,,Accounts_and_Billing,Account Services,James William
+[],2690,100047,,,Accounts_and_Billing,Account Services,James William
+[],2700,100047,,,Accounts_and_Billing,Account Services,James William
+[],2710,100047,,,Accounts_and_Billing,Account Services,James William
+[],2720,100047,,,Accounts_and_Billing,Account Services,James William
+[],2730,100047,,,Accounts_and_Billing,Account Services,James William
+[],2740,100047,,,Accounts_and_Billing,Account Services,James William
+[],2750,100047,,,Accounts_and_Billing,Account Services,James William
+[],2760,100047,,,Accounts_and_Billing,Account Services,James William
+[],2770,100047,,,Accounts_and_Billing,Account Services,James William
+[],2780,100047,,,Accounts_and_Billing,Account Services,James William
+[],2790,100047,,,Accounts_and_Billing,Account Services,James William
+[],2800,100047,,,Accounts_and_Billing,Account Services,James William
+[],2810,100047,,,Accounts_and_Billing,Account Services,James William
+[],2820,100047,,,Accounts_and_Billing,Account Services,James William
+[],2830,100047,,,Accounts_and_Billing,Account Services,James William
+[],2840,100047,,,Accounts_and_Billing,Account Services,James William
+[],2850,100047,,,Accounts_and_Billing,Account Services,James William
+[],2860,100047,,,Accounts_and_Billing,Account Services,James William
+[],2870,100047,,,Accounts_and_Billing,Account Services,James William
+[],2880,100047,,,Accounts_and_Billing,Account Services,James William
+[],2890,100047,,,Accounts_and_Billing,Account Services,James William
+[],2900,100047,,,Accounts_and_Billing,Account Services,James William
+[],2910,100047,,,Accounts_and_Billing,Account Services,James William
+[],2920,100047,,,Accounts_and_Billing,Account Services,James William
+[],2930,100047,,,Accounts_and_Billing,Account Services,James William
+[],2940,100047,,,Accounts_and_Billing,Account Services,James William
+[],2950,100047,,,Accounts_and_Billing,Account Services,James William
+[],2960,100047,,,Accounts_and_Billing,Account Services,James William
+[],2970,100047,,,Accounts_and_Billing,Account Services,James William
+[],2980,100047,,,Accounts_and_Billing,Account Services,James William
+[],2990,100047,,,Accounts_and_Billing,Account Services,James William
+[],3000,100047,,,Accounts_and_Billing,Account Services,James William
+[],3010,100047,,,Accounts_and_Billing,Account Services,James William
+[],3020,100047,,,Accounts_and_Billing,Account Services,James William
+[],3030,100047,,,Accounts_and_Billing,Account Services,James William
+[],3040,100047,,,Accounts_and_Billing,Account Services,James William
+[],3050,100047,,,Accounts_and_Billing,Account Services,James William
+[],3060,100047,,,Accounts_and_Billing,Account Services,James William
+[],3070,100047,,,Accounts_and_Billing,Account Services,James William
+[],3080,100047,,,Accounts_and_Billing,Account Services,James William
+[],3090,100047,,,Accounts_and_Billing,Account Services,James William
+[],3100,100047,,,Accounts_and_Billing,Account Services,James William
+[],3110,100047,,,Accounts_and_Billing,Account Services,James William
+[],3120,100047,,,Accounts_and_Billing,Account Services,James William
+[],3130,100047,,,Accounts_and_Billing,Account Services,James William
+[],3140,100047,,,Accounts_and_Billing,Account Services,James William
+[],3150,100047,,,Accounts_and_Billing,Account Services,James William
+[],3160,100047,,,Accounts_and_Billing,Account Services,James William
+[],3170,100047,,,Accounts_and_Billing,Account Services,James William
+[],3180,100047,,,Accounts_and_Billing,Account Services,James William
+[],3190,100047,,,Accounts_and_Billing,Account Services,James William
+[],3200,100047,,,Accounts_and_Billing,Account Services,James William
+[],3210,100047,,,Accounts_and_Billing,Account Services,James William
+[],3220,100047,,,Accounts_and_Billing,Account Services,James William
+[],3230,100047,,,Accounts_and_Billing,Account Services,James William
+[],3240,100047,,,Accounts_and_Billing,Account Services,James William
+[],3250,100047,,,Accounts_and_Billing,Account Services,James William
+[],3260,100047,,,Accounts_and_Billing,Account Services,James William
+[],3270,100047,,,Accounts_and_Billing,Account Services,James William
+[],3280,100047,,,Accounts_and_Billing,Account Services,James William
+[],3290,100047,,,Accounts_and_Billing,Account Services,James William
+[],3300,100047,,,Accounts_and_Billing,Account Services,James William
+[],3310,100047,,,Accounts_and_Billing,Account Services,James William
+[],3320,100047,,,Accounts_and_Billing,Account Services,James William
+[],3330,100047,,,Accounts_and_Billing,Account Services,James William
+[],3340,100047,,,Accounts_and_Billing,Account Services,James William
+[],3350,100047,,,Accounts_and_Billing,Account Services,James William
+[],3360,100047,,,Accounts_and_Billing,Account Services,James William
+[],3370,100047,,,Accounts_and_Billing,Account Services,James William
+[],3380,100047,,,Accounts_and_Billing,Account Services,James William
+[],3390,100047,,,Accounts_and_Billing,Account Services,James William
+[],3400,100047,,,Accounts_and_Billing,Account Services,James William
+[],3410,100047,,,Accounts_and_Billing,Account Services,James William
+[],3420,100047,,,Accounts_and_Billing,Account Services,James William
+[],3430,100047,,,Accounts_and_Billing,Account Services,James William
+[],3440,100047,,,Accounts_and_Billing,Account Services,James William
+[],3450,100047,,,Accounts_and_Billing,Account Services,James William
+[],3460,100047,,,Accounts_and_Billing,Account Services,James William
+[],3470,100047,,,Accounts_and_Billing,Account Services,James William
+[],3480,100047,,,Accounts_and_Billing,Account Services,James William
+[],3490,100047,,,Accounts_and_Billing,Account Services,James William
+[],3500,100047,,,Accounts_and_Billing,Account Services,James William
+[],3510,100047,,,Accounts_and_Billing,Account Services,James William
+[],3520,100047,,,Accounts_and_Billing,Account Services,James William
+[],3530,100047,,,Accounts_and_Billing,Account Services,James William
+[],3540,100047,,,Accounts_and_Billing,Account Services,James William
+[],3550,100047,,,Accounts_and_Billing,Account Services,James William
+[],3560,100047,,,Accounts_and_Billing,Account Services,James William
+[],3570,100047,,,Accounts_and_Billing,Account Services,James William
+[],3580,100047,,,Accounts_and_Billing,Account Services,James William
+[],3590,100047,,,Accounts_and_Billing,Account Services,James William
+[],3600,100047,,,Accounts_and_Billing,Account Services,James William
+[],3610,100047,,,Accounts_and_Billing,Account Services,James William
+[],3620,100047,,,Accounts_and_Billing,Account Services,James William
+[],3630,100047,,,Accounts_and_Billing,Account Services,James William
+[],3640,100047,,,Accounts_and_Billing,Account Services,James William
+[],3650,100047,,,Accounts_and_Billing,Account Services,James William
+"That sounds great. How do I go about referring a friend?
+Customer",60,100047,0.9623104453115164,Positive,Accounts_and_Billing,Account Services,James William
+[],3670,100047,,,Accounts_and_Billing,Account Services,James William
+"Okay, got it. Thank you for your help.
+Customer",70,100047,0.9508908081785233,Positive,Accounts_and_Billing,Account Services,James William
+"No, that's all. Thank you again.
+Customer",80,100047,0.9184451639783112,Positive,Accounts_and_Billing,Account Services,James William
+[],3700,100047,,,Accounts_and_Billing,Account Services,James William
+[],3710,100047,,,Accounts_and_Billing,Account Services,James William
+"good afternoon
+Customer",0,100048,0.9365030848671186,Positive,Accounts_and_Billing,Account Services,James William
+[],10,100048,,,Accounts_and_Billing,Account Services,James William
+"My account number is 123456.
+Customer",20,100048,0.0003299199362614413,Positive,Accounts_and_Billing,Account Services,James William
+[],30,100048,,,Accounts_and_Billing,Account Services,James William
+"I'd like to know my current balance and when my next payment is due.
+Customer",40,100048,-0.0003253908274172268,Negative,Accounts_and_Billing,Account Services,James William
+"That's correct. Can you also tell me about any promotions or discounts that I might be eligible for?
+Customer",50,100048,0.1105756261137733,Positive,Accounts_and_Billing,Account Services,James William
+[],60,100048,,,Accounts_and_Billing,Account Services,James William
+"Yes, please do. How much will I save?
+Customer",70,100048,0.7630008040708051,Positive,Accounts_and_Billing,Account Services,James William
+[],80,100048,,,Accounts_and_Billing,Account Services,James William
+"That's great, thank you! Can you also send me a copy of my billing statement to my email?
+Customer",90,100048,0.9722223368020102,Positive,Accounts_and_Billing,Account Services,James William
+"Thank you, John. You've been very helpful.
+Customer",100,100048,0.9820433212404309,Positive,Accounts_and_Billing,Account Services,James William
+[],110,100048,,,Accounts_and_Billing,Account Services,James William
+[],120,100048,,,Accounts_and_Billing,Account Services,James William
+[],130,100048,,,Accounts_and_Billing,Account Services,James William
+"good afternoon. I'm having some issues with my ADT security system. It's not working properly.
+Customer",0,100049,-0.9434266737733809,Negative,Accounts_and_Billing,Installation,Alice Walker
+[],10,100049,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, it's the alarm system. It keeps going off randomly, even when no one is around.
+Customer",20,100049,-0.8398773212290593,Negative,Accounts_and_Billing,Installation,Alice Walker
+[],30,100049,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, I've tried resetting it, but it still doesn't work. And I've checked the sensors, they seem fine.
+Customer",40,100049,-0.1271944914538193,Negative,Accounts_and_Billing,Installation,Alice Walker
+[],50,100049,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, tomorrow would be fine.
+Customer",60,100049,0.9059218352299283,Positive,Accounts_and_Billing,Installation,Alice Walker
+[],70,100049,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, it's 123 Main St, and my phone number is 555-555-5555.
+Customer",80,100049,0.01105014047087417,Positive,Accounts_and_Billing,Installation,Alice Walker
+[],90,100049,,,Accounts_and_Billing,Installation,Alice Walker
+[],100,100049,,,Accounts_and_Billing,Installation,Alice Walker
+[],110,100049,,,Accounts_and_Billing,Installation,Alice Walker
+"good afternoon. I'm calling to cancel my ADT security service.
+Customer",0,100050,-0.8007631289730692,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],10,100050,,,Accounts_and_Billing,Account Services,Alice Walker
+"My account number is 123456.
+Customer",20,100050,0.0003299199362614413,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"I'm moving to a new house and I don't want to continue the service.
+Customer",30,100050,-0.9547097164011003,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],40,100050,,,Accounts_and_Billing,Account Services,Alice Walker
+"That sounds interesting. Can you tell me more about it?
+Customer",50,100050,0.8846624202807483,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],60,100050,,,Accounts_and_Billing,Account Services,Alice Walker
+"That's a great offer, but I think I'll still need to cancel my service for now.
+Customer",70,100050,-0.7937026598269659,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],80,100050,,,Accounts_and_Billing,Account Services,Alice Walker
+"Okay, got it. How do I return the equipment?
+Customer",90,100050,-0.0002867451598294046,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"Sounds good. Thank you for your help.
+Customer",100,100050,0.978951047823616,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],110,100050,,,Accounts_and_Billing,Account Services,Alice Walker
+[],120,100050,,,Accounts_and_Billing,Account Services,Alice Walker
+[],130,100050,,,Accounts_and_Billing,Account Services,Alice Walker
+"good afternoon. I'm having some issues with my alarm system. It's not armoring properly.
+Customer",0,100051,-0.914591106703558,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],10,100051,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"I have the ADT Pulse system. It's been working fine for months, but suddenly it's not arming when I leave the house.
+Customer",20,100051,-0.6194658328812721,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],30,100051,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Yeah, I've checked the app, and it says the system is online, but it's just not arming.
+Customer",40,100051,-0.90030992235256,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],50,100051,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Yeah, I've checked, and they're all closed.
+Customer",60,100051,-0.6601459141438403,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+"Okay, I'll try that. (pause) Okay, I've restarted it, but it's still not arming.
+Customer",70,100051,-0.4753873797967083,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],80,100051,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],90,100051,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"(pause) Yeah, it looks like it's arming now. Thank you so much!
+Customer",100,100051,0.9693489961596137,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],110,100051,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],120,100051,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],130,100051,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"good afternoon
+Customer",0,100052,0.9365030848671186,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],10,100052,,,Accounts_and_Billing,Account Services,Alice Walker
+"Yeah, my account number is 123456.
+Customer",20,100052,0.006155298895824196,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"I just got a notice that my payment is overdue, but I'm sure I paid it on time.
+Customer",30,100052,-0.3708026852999647,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],40,100052,,,Accounts_and_Billing,Account Services,Alice Walker
+[],50,100052,,,Accounts_and_Billing,Account Services,Alice Walker
+"Okay, that's great. But can you also tell me why I didn't get a confirmation email or anything?
+Customer",60,100052,-0.5281197547086294,Negative,Accounts_and_Billing,Account Services,Alice Walker
+"Alright, thank you for taking care of that.
+Customer",70,100052,0.8674990725758349,Positive,Accounts_and_Billing,Account Services,Alice Walker
+"No, that's all. Thank you.
+Customer",80,100052,0.3021851616006352,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],90,100052,,,Accounts_and_Billing,Account Services,Alice Walker
+[],100,100052,,,Accounts_and_Billing,Account Services,Alice Walker
+[],110,100052,,,Accounts_and_Billing,Account Services,Alice Walker
+"Good afternoon. I'm having some issues with my alarm system.
+Customer",0,100053,-0.8507820346137596,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],10,100053,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Yeah, it's been going off randomly. I've tried to silence it, but it just keeps going off.
+Customer",20,100053,-0.8900526528240222,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],30,100053,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Now that you mention it, it does seem to happen when I open the back door.
+Customer",40,100053,-0.02667737877507514,Negative,Accounts_and_Billing,Alarm Query,Alice Walker
+[],50,100053,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Today would be great, if possible.
+Customer",60,100053,0.9805130545447721,Positive,Accounts_and_Billing,Alarm Query,Alice Walker
+[],70,100053,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],80,100053,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],90,100053,,,Accounts_and_Billing,Alarm Query,Alice Walker
+[],100,100053,,,Accounts_and_Billing,Alarm Query,Alice Walker
+"Good afternoon. I'm having some issues with my bill. I got a statement yesterday and I don't understand some of the charges.
+Customer",0,100054,-0.9386444031198852,Negative,Accounts_and_Billing,Billing,Alice Walker
+[],10,100054,,,Accounts_and_Billing,Billing,Alice Walker
+"It's 123456. And there's this one charge for $50 that says 'additional monitoring fee'. I don't remember agreeing to any additional services.
+Customer",20,100054,-0.912614209016823,Negative,Accounts_and_Billing,Billing,Alice Walker
+[],30,100054,,,Accounts_and_Billing,Billing,Alice Walker
+[],40,100054,,,Accounts_and_Billing,Billing,Alice Walker
+[],50,100054,,,Accounts_and_Billing,Billing,Alice Walker
+"I don't remember that at all. Can you please remove the charge?
+Customer",60,100054,-0.7731017207336682,Negative,Accounts_and_Billing,Billing,Alice Walker
+"Okay, thank you. And can you also tell me why my bill is higher than usual this month?
+Customer",70,100054,-0.7492360319672043,Negative,Accounts_and_Billing,Billing,Alice Walker
+[],80,100054,,,Accounts_and_Billing,Billing,Alice Walker
+"Yeah, I might have missed it. Can you tell me more about the rate increase?
+Customer",90,100054,-0.4741008065329415,Negative,Accounts_and_Billing,Billing,Alice Walker
+[],100,100054,,,Accounts_and_Billing,Billing,Alice Walker
+"Okay, I understand. But can I get a discount or something? This is a big increase for me.
+Customer",110,100054,0.9590235242183651,Positive,Accounts_and_Billing,Billing,Alice Walker
+[],120,100054,,,Accounts_and_Billing,Billing,Alice Walker
+"Yeah, that would be great. Thank you so much for your help.
+Customer",130,100054,0.9837121086222608,Positive,Accounts_and_Billing,Billing,Alice Walker
+[],140,100054,,,Accounts_and_Billing,Billing,Alice Walker
+[],150,100054,,,Accounts_and_Billing,Billing,Alice Walker
+[],160,100054,,,Accounts_and_Billing,Billing,Alice Walker
+"good afternoon. I'm having some issues with my ADT security system. The alarm keeps going off randomly and I'm not sure why.
+Customer",0,100055,-0.9209155491860667,Negative,Accounts_and_Billing,Installation,Rose Cooper
+[],10,100055,,,Accounts_and_Billing,Installation,Rose Cooper
+"It's been happening almost every day for the past week. Sometimes it's just a few times a day, but yesterday it went off like five times.
+Customer",20,100055,-0.2269639555883369,Negative,Accounts_and_Billing,Installation,Rose Cooper
+"No, nothing out of the ordinary. I've checked the doors and windows, and everything seems to be secure.
+Customer",30,100055,0.0625940848401565,Positive,Accounts_and_Billing,Installation,Rose Cooper
+[],40,100055,,,Accounts_and_Billing,Installation,Rose Cooper
+"I have the ADT Pulse system with the wireless sensors.
+Customer",50,100055,0.007007522170862091,Positive,Accounts_and_Billing,Installation,Rose Cooper
+"Okay, I'll try that. But what if that doesn't work?
+Customer",60,100055,-0.1074069612723857,Negative,Accounts_and_Billing,Installation,Rose Cooper
+"Okay, I'll try that now. (pause) Okay, I've restarted the system. But the alarm is still going off.
+Customer",70,100055,-0.02069863309162701,Negative,Accounts_and_Billing,Installation,Rose Cooper
+[],80,100055,,,Accounts_and_Billing,Installation,Rose Cooper
+"Yeah, I'm available anytime tomorrow or the next day.
+Customer",90,100055,0.5424550180616803,Positive,Accounts_and_Billing,Installation,Rose Cooper
+[],100,100055,,,Accounts_and_Billing,Installation,Rose Cooper
+[],110,100055,,,Accounts_and_Billing,Installation,Rose Cooper
+[],120,100055,,,Accounts_and_Billing,Installation,Rose Cooper
+"good afternoon
+Customer",0,100056,0.9365030848671186,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],10,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Yeah, I'm having some issues with my alarm system. It's not arming properly, and I'm getting some weird error messages on my panel.
+Customer",20,100056,-0.9398089952277986,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],30,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],40,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+"My account number is 123456.
+Customer",50,100056,0.0003299199362614413,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],60,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+"It says 'System Fault' and then some numbers and letters. I'm not really sure what it means.
+Customer",70,100056,-0.7891761806892782,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],80,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],90,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Yeah, I've tried restarting it, but that didn't work. And I'm not really sure how to check the connections.
+Customer",100,100056,-0.8537183876599683,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],110,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],120,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Okay, I've checked, and everything looks good.
+Customer",130,100056,0.9773575494344435,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],140,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],150,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Afternoon would be better.
+Customer",160,100056,0.6818863262013481,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],170,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],180,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],190,100056,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Good afternoon. I'm calling to inquire about my account. I received a notice that my payment is due soon, but I could've sworn I already paid it.
+Customer",0,100057,0.005739966963630994,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],10,100057,,,Accounts_and_Billing,Account Services,Rose Cooper
+"It's 1234567.
+Customer",20,100057,0.000144995847819851,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+"I'm positive I paid it. Can you check again? Maybe there was an error on your end.
+Customer",30,100057,-0.043838804515201,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],40,100057,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Okay, that makes sense. How much do I owe for this month?
+Customer",50,100057,-0.02506229274444793,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+"Alright, I'll go ahead and pay that now. Can I pay with my credit card?
+Customer",60,100057,0.001565161519783587,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],70,100057,,,Accounts_and_Billing,Account Services,Rose Cooper
+"It's 4321 1234 5678 9012, and the expiration date is 02/2025.
+Customer",80,100057,0.0002299174743162213,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+"Great, thank you for your help.
+Customer",90,100057,0.9843422929507352,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],100,100057,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],110,100057,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],120,100057,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Good afternoon. I'm having some issues with my ADT account. I'm not receiving any notifications when someone enters my home.
+Customer",0,100058,-0.8246442531236863,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],10,100058,,,Accounts_and_Billing,Account Services,Rose Cooper
+"It's 1234567.
+Customer",20,100058,0.000144995847819851,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+"It started about a week ago. I've tried restarting the system, but that didn't work.
+Customer",30,100058,-0.8672270318409735,Negative,Accounts_and_Billing,Account Services,Rose Cooper
+[],40,100058,,,Accounts_and_Billing,Account Services,Rose Cooper
+"Yeah, I just got a notification. Thank you!
+Customer",50,100058,0.982100757082711,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+"Actually, yes. I was wondering if I could get a discount on my monthly subscription. I've been a loyal customer for over 5 years.
+Customer",60,100058,0.9242568417427187,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],70,100058,,,Accounts_and_Billing,Account Services,Rose Cooper
+"That sounds great. Thank you!
+Customer",80,100058,0.9853068227321735,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+"No, that's all. Thank you for your help.
+Customer",90,100058,0.8006347490734803,Positive,Accounts_and_Billing,Account Services,Rose Cooper
+[],100,100058,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],110,100058,,,Accounts_and_Billing,Account Services,Rose Cooper
+[],120,100058,,,Accounts_and_Billing,Account Services,Rose Cooper
+"good afternoon
+Customer",0,100059,0.9365030848671186,Positive,Accounts_and_Billing,Billing,Rose Cooper
+[],10,100059,,,Accounts_and_Billing,Billing,Rose Cooper
+"Yeah, I got a bill for $150 and I don't think it's correct. I've been a customer for 5 years and my bill is usually around $100.
+Customer",20,100059,-0.7667303890782898,Negative,Accounts_and_Billing,Billing,Rose Cooper
+[],30,100059,,,Accounts_and_Billing,Billing,Rose Cooper
+"It's 123456.
+Customer",40,100059,0.0001929685223673316,Positive,Accounts_and_Billing,Billing,Rose Cooper
+[],50,100059,,,Accounts_and_Billing,Billing,Rose Cooper
+"Yeah, that would be great. I had no idea they changed my plan.
+Customer",60,100059,0.5427984958731541,Positive,Accounts_and_Billing,Billing,Rose Cooper
+[],70,100059,,,Accounts_and_Billing,Billing,Rose Cooper
+"That sounds good. But can you also tell me how to prevent this from happening in the future?
+Customer",80,100059,-0.001457148835493083,Negative,Accounts_and_Billing,Billing,Rose Cooper
+[],90,100059,,,Accounts_and_Billing,Billing,Rose Cooper
+"Yeah, that would be great. Thank you so much for your help, John.
+Customer",100,100059,0.9827230712025309,Positive,Accounts_and_Billing,Billing,Rose Cooper
+[],110,100059,,,Accounts_and_Billing,Billing,Rose Cooper
+[],120,100059,,,Accounts_and_Billing,Billing,Rose Cooper
+[],130,100059,,,Accounts_and_Billing,Billing,Rose Cooper
+"good afternoon. I'm having some issues with my ADT security system. The alarm keeps going off randomly and I'm not sure why.
+Customer",0,100060,-0.9209155491860667,Negative,Accounts_and_Billing,App Services,Rose Cooper
+[],10,100060,,,Accounts_and_Billing,App Services,Rose Cooper
+"It started about a week ago. I've tried to troubleshoot it myself, but I'm not sure what's causing it.
+Customer",20,100060,-0.5874432097538503,Negative,Accounts_and_Billing,App Services,Rose Cooper
+[],30,100060,,,Accounts_and_Billing,App Services,Rose Cooper
+"Not really. It seems to happen at random times of the day. Sometimes it's when I'm home, sometimes it's when I'm away.
+Customer",40,100060,-0.0001388527777632098,Negative,Accounts_and_Billing,App Services,Rose Cooper
+[],50,100060,,,Accounts_and_Billing,App Services,Rose Cooper
+"Sure. My account number is 123456.
+Customer",60,100060,0.0007801900275433149,Positive,Accounts_and_Billing,App Services,Rose Cooper
+[],70,100060,,,Accounts_and_Billing,App Services,Rose Cooper
+"Okay, that sounds great. How long will it take for someone to come out?
+Customer",80,100060,0.7831480991433922,Positive,Accounts_and_Billing,App Services,Rose Cooper
+[],90,100060,,,Accounts_and_Billing,App Services,Rose Cooper
+"Afternoon would be fine.
+Customer",100,100060,0.1735054351082545,Positive,Accounts_and_Billing,App Services,Rose Cooper
+[],110,100060,,,Accounts_and_Billing,App Services,Rose Cooper
+[],120,100060,,,Accounts_and_Billing,App Services,Rose Cooper
+[],130,100060,,,Accounts_and_Billing,App Services,Rose Cooper
+[],140,100060,,,Accounts_and_Billing,App Services,Rose Cooper
+"good afternoon
+Customer",0,100061,0.9365030848671186,Positive,Accounts_and_Billing,Billing,Rose Cooper
+[],10,100061,,,Accounts_and_Billing,Billing,Rose Cooper
+"Yeah, I'm having some issues with my bill. I got a statement yesterday, and I think there's an error on it.
+Customer",20,100061,-0.9332313259761508,Negative,Accounts_and_Billing,Billing,Rose Cooper
+[],30,100061,,,Accounts_and_Billing,Billing,Rose Cooper
+"It's 123456789.
+Customer",40,100061,0.0002283745457107855,Positive,Accounts_and_Billing,Billing,Rose Cooper
+[],50,100061,,,Accounts_and_Billing,Billing,Rose Cooper
+"Yeah, it's a charge I don't recognize. It says I owe $50 more than I thought I did.
+Customer",60,100061,-0.8746597272005276,Negative,Accounts_and_Billing,Billing,Rose Cooper
+[],70,100061,,,Accounts_and_Billing,Billing,Rose Cooper
+"I don't remember adding any services. Can you please remove the charge?
+Customer",80,100061,-0.878406084133071,Negative,Accounts_and_Billing,Billing,Rose Cooper
+[],90,100061,,,Accounts_and_Billing,Billing,Rose Cooper
+[],100,100061,,,Accounts_and_Billing,Billing,Rose Cooper
+"Okay, that sounds good. Thank you for your help.
+Customer",110,100061,0.9756501677881679,Positive,Accounts_and_Billing,Billing,Rose Cooper
+[],120,100061,,,Accounts_and_Billing,Billing,Rose Cooper
+[],130,100061,,,Accounts_and_Billing,Billing,Rose Cooper
+[],140,100061,,,Accounts_and_Billing,Billing,Rose Cooper
+"good afternoon
+Customer",0,100062,0.9365030848671186,Positive,Accounts_and_Billing,Billing,Alice Walker
+[],10,100062,,,Accounts_and_Billing,Billing,Alice Walker
+"Hi John, thanks for taking my call. I'm having some issues with my billing. I received an invoice that I don't understand, and I was hoping you could help me clarify some things.
+Customer",20,100062,-0.02992158050332705,Negative,Accounts_and_Billing,Billing,Alice Walker
+[],30,100062,,,Accounts_and_Billing,Billing,Alice Walker
+[],40,100062,,,Accounts_and_Billing,Billing,Alice Walker
+"Yeah, my account number is 123456.
+Customer",50,100062,0.006155298895824196,Positive,Accounts_and_Billing,Billing,Alice Walker
+[],60,100062,,,Accounts_and_Billing,Billing,Alice Walker
+"Yeah, the amount seems way higher than what I'm used to paying. I'm not sure why it's so much more this month.
+Customer",70,100062,-0.8879995655568022,Negative,Accounts_and_Billing,Billing,Alice Walker
+[],80,100062,,,Accounts_and_Billing,Billing,Alice Walker
+[],90,100062,,,Accounts_and_Billing,Billing,Alice Walker
+"Oh, I didn't realize that. Yeah, we did get that installed. But I thought it was supposed to be a one-time fee, not an ongoing charge.
+Customer",100,100062,-0.6284734902779664,Negative,Accounts_and_Billing,Billing,Alice Walker
+[],110,100062,,,Accounts_and_Billing,Billing,Alice Walker
+[],120,100062,,,Accounts_and_Billing,Billing,Alice Walker
+[],130,100062,,,Accounts_and_Billing,Billing,Alice Walker
+"Okay, thanks. I appreciate your help.
+Customer",140,100062,0.9751857973332017,Positive,Accounts_and_Billing,Billing,Alice Walker
+[],150,100062,,,Accounts_and_Billing,Billing,Alice Walker
+"No, that's all. Thank you again for your help, John.
+Customer",160,100062,0.8703766602800611,Positive,Accounts_and_Billing,Billing,Alice Walker
+[],170,100062,,,Accounts_and_Billing,Billing,Alice Walker
+[],180,100062,,,Accounts_and_Billing,Billing,Alice Walker
+"good afternoon
+Customer",0,100063,0.9365030848671186,Positive,Accounts_and_Billing,Installation,Alice Walker
+[],10,100063,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, I'm having some issues with my installation. The alarm keeps going off randomly, and I'm not sure why.
+Customer",20,100063,-0.941014895882948,Negative,Accounts_and_Billing,Installation,Alice Walker
+[],30,100063,,,Accounts_and_Billing,Installation,Alice Walker
+[],40,100063,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, my name is Sarah Johnson, and my account number is #123456.
+Customer",50,100063,0.002457395217320496,Positive,Accounts_and_Billing,Installation,Alice Walker
+[],60,100063,,,Accounts_and_Billing,Installation,Alice Walker
+[],70,100063,,,Accounts_and_Billing,Installation,Alice Walker
+"It started about a week ago. I didn't notice anything unusual before that, but now it's happening almost daily.
+Customer",80,100063,-0.1602362829448838,Negative,Accounts_and_Billing,Installation,Alice Walker
+[],90,100063,,,Accounts_and_Billing,Installation,Alice Walker
+[],100,100063,,,Accounts_and_Billing,Installation,Alice Walker
+"Yeah, tomorrow would be fine.
+Customer",110,100063,0.9059218352299283,Positive,Accounts_and_Billing,Installation,Alice Walker
+[],120,100063,,,Accounts_and_Billing,Installation,Alice Walker
+[],130,100063,,,Accounts_and_Billing,Installation,Alice Walker
+[],140,100063,,,Accounts_and_Billing,Installation,Alice Walker
+[],150,100063,,,Accounts_and_Billing,Installation,Alice Walker
+"Good afternoon. I'm calling to cancel my ADT security service.
+Customer",0,100064,-0.7569299855509286,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],10,100064,,,Accounts_and_Billing,Account Services,Alice Walker
+"My account number is 123456.
+Customer",20,100064,0.0003299199362614413,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],30,100064,,,Accounts_and_Billing,Account Services,Alice Walker
+"Honestly, I'm not satisfied with the service. I've had some issues with the alarm system and the customer support hasn't been helpful.
+Customer",40,100064,-0.9630959808863606,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],50,100064,,,Accounts_and_Billing,Account Services,Alice Walker
+"No, I've already made up my mind. I just want to cancel the service.
+Customer",60,100064,-0.9590114014412825,Negative,Accounts_and_Billing,Account Services,Alice Walker
+[],70,100064,,,Accounts_and_Billing,Account Services,Alice Walker
+"No, that's all. Thank you.
+Customer",80,100064,0.3021851616006352,Positive,Accounts_and_Billing,Account Services,Alice Walker
+[],90,100064,,,Accounts_and_Billing,Account Services,Alice Walker
+[],100,100064,,,Accounts_and_Billing,Account Services,Alice Walker
+[],110,100064,,,Accounts_and_Billing,Account Services,Alice Walker
