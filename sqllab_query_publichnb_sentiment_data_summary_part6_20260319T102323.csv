@@ -1,0 +1,746 @@
+﻿filename,interval,transcript,sentiment,caller,conversation_date,industry,inserted_date
+transcript_1,0,good afternoon,0.92203184314638720000,customer,2026-01-25 00:00:00,Insurance,2026-02-26
+transcript_1,10,I had an accident last week and I need to file a claim.,-0.61008157187864830000,customer,2026-01-25 00:00:10,Insurance,2026-02-26
+transcript_1,20,It's 123456.,0.00015092202873451250,customer,2026-01-25 00:00:20,Insurance,2026-02-26
+transcript_1,40,I was driving home from work and another car ran a red light and hit me.,-0.89041168494760170000,customer,2026-01-25 00:00:40,Insurance,2026-02-26
+transcript_1,50,"No, I was lucky. Just some damage to my car.",-0.90505535005380720000,customer,2026-01-25 00:00:50,Insurance,2026-02-26
+transcript_1,60,It was last Wednesday at 5 pm.,0.00015560015017612730,customer,2026-01-25 00:01:00,Insurance,2026-02-26
+transcript_1,70,"Yes, I have their insurance information and a police report.",0.00029742493803341930,customer,2026-01-25 00:01:10,Insurance,2026-02-26
+transcript_1,80,"Okay, that sounds good. Thank you for your help.",0.97442300269868580000,customer,2026-01-25 00:01:20,Insurance,2026-02-26
+transcript_2,0,"good afternoon, I'm calling to report a breakdown with my washing machine. It's not turning on at all.",-0.94870448349461120000,customer,2026-01-27 00:00:00,Insurance,2026-02-26
+transcript_2,20,"Yeah, it's model number WM1234 and serial number SN123456. And I'm really frustrated because I've had this machine for only two years and it's already broken down on me.",-0.96179168970201900000,customer,2026-01-27 00:00:20,Insurance,2026-02-26
+transcript_2,50,"No, there's no error message. It just won't turn on. I've tried unplugging it and plugging it back in, but nothing's working. And like I said, it's only two years old. I expect more from your company.",-0.94162910834771900000,customer,2026-01-27 00:00:50,Insurance,2026-02-26
+transcript_2,80,"Yeah, tomorrow's fine. But I better not have to pay for this. This is your company's fault, not mine.",-0.76521247292402310000,customer,2026-01-27 00:01:20,Insurance,2026-02-26
+transcript_2,100,"Yeah, it's 123 Main St, Anytown USA. And my phone number is 555-555-5555.",0.01966023571384028000,customer,2026-01-27 00:01:40,Insurance,2026-02-26
+transcript_2,120,"No, that's it. Just get this fixed.",-0.91494159954531000000,customer,2026-01-27 00:02:00,Insurance,2026-02-26
+transcript_3,0,good afternoon. I'm calling about a new claim I need to file. I've been trying to do it online but your website is useless. I've been trying for hours and I can't get past the first step.,-0.94905591361436050000,customer,2026-01-30 00:00:00,Insurance,2026-02-26
+transcript_3,30,"The issue is that it's not working! I've tried different browsers, different devices, and I still can't get past the first step. It's ridiculous.",-0.96266527305104850000,customer,2026-01-30 00:00:30,Insurance,2026-02-26
+transcript_3,50,It's 123456. And I want to know why your website doesn't work. This is unacceptable.,-0.96146586129129720000,customer,2026-01-30 00:00:50,Insurance,2026-02-26
+transcript_3,70,"A technical glitch? That's just great. So, you're telling me that I wasted hours of my time because of your company's incompetence?",-0.94908673857963230000,customer,2026-01-30 00:01:10,Insurance,2026-02-26
+transcript_3,90,Fine. It was a car accident. The other driver was at fault and I need to get my car repaired.,-0.87029977406738860000,customer,2026-01-30 00:01:30,Insurance,2026-02-26
+transcript_3,120,And what about the website? When is it going to be fixed?,-0.84476646512089790000,customer,2026-01-30 00:02:00,Insurance,2026-02-26
+transcript_3,130,Unbelievable. I'm going to have to call back and check on the status of my claim because I don't trust your company to get it right.,-0.96471306345807260000,customer,2026-01-30 00:02:10,Insurance,2026-02-26
+transcript_4,0,good afternoon,0.92203184314638720000,customer,2026-01-15 00:00:00,Insurance,2026-02-26
+transcript_4,10,I'm interested in getting a quote for my car insurance.,0.86435654134338670000,customer,2026-01-15 00:00:10,Insurance,2026-02-26
+transcript_4,30,It's a 2018 Honda Civic.,0.09669067108483524000,customer,2026-01-15 00:00:30,Insurance,2026-02-26
+transcript_4,40,I'm looking to switch. I'm not happy with my current provider.,-0.95656099143024340000,customer,2026-01-15 00:00:40,Insurance,2026-02-26
+transcript_4,50,That sounds reasonable. What does that premium include?,0.04538770605376463000,customer,2026-01-15 00:00:50,Insurance,2026-02-26
+transcript_4,60,That sounds good. What's the deductible for the comprehensive coverage?,0.71979941069707270000,customer,2026-01-15 00:01:00,Insurance,2026-02-26
+transcript_4,70,"Okay, that's acceptable. What's the process for switching to your insurance provider?",0.04014175429167155000,customer,2026-01-15 00:01:10,Insurance,2026-02-26
+transcript_5,0,good afternoon,0.92203184314638720000,customer,2026-02-18 00:00:00,Insurance,2026-02-26
+transcript_5,20,"Oh, hi Emily. Yeah, I did purchase that. What's this about?",0.03574437225517813000,customer,2026-02-18 00:00:20,Insurance,2026-02-26
+transcript_5,30,What kind of information are you missing?,-0.85422994375629990000,customer,2026-02-18 00:00:30,Insurance,2026-02-26
+transcript_5,50,"Okay, my company name is ABC Inc. and we're in the tech industry.",0.18705083570602400000,customer,2026-02-18 00:00:50,Insurance,2026-02-26
+transcript_5,60,"No, that's all. Thanks for reaching out, Emily.",0.74731562349724420000,customer,2026-02-18 00:01:00,Insurance,2026-02-26
+transcript_6,0,good afternoon,0.92203184314638720000,customer,2026-01-06 00:00:00,Insurance,2026-02-26
+transcript_6,20,Yeah... I don't understand why it was denied. I followed all the procedures and submitted all the necessary documents.,-0.78812498583779830000,customer,2026-01-06 00:00:20,Insurance,2026-02-26
+transcript_6,40,It's #12345.,0.00038308920128521380,customer,2026-01-06 00:00:40,Insurance,2026-02-26
+transcript_6,60,But I'm sure I submitted all the forms. I double-checked before sending them in.,-0.00324283376835404800,customer,2026-01-06 00:01:00,Insurance,2026-02-26
+transcript_6,80,Okay... I hope they can resolve this issue quickly. I really need the coverage.,-0.15505630805899790000,customer,2026-01-06 00:01:20,Insurance,2026-02-26
+transcript_6,100,"Okay, thank you. I appreciate your help.",0.97702131323953500000,customer,2026-01-06 00:01:40,Insurance,2026-02-26
+transcript_7,0,good afternoon. I'm calling about the missing information on my account. I've been trying to update it online but it's not going through.,-0.52774322526513220000,customer,2025-12-29 00:00:00,Insurance,2026-02-26
+transcript_7,20,It's 1234567890.,0.00017736960032810330,customer,2025-12-29 00:00:20,Insurance,2026-02-26
+transcript_7,30,I've already uploaded them. I've been trying to update my information for weeks now.,-0.05722548620480228000,customer,2025-12-29 00:00:30,Insurance,2026-02-26
+transcript_7,60,Okay. How long is that going to take?,-0.73683394238406640000,customer,2025-12-29 00:01:00,Insurance,2026-02-26
+transcript_7,70,Alright. Thank you for your help.,0.92510398331104230000,customer,2025-12-29 00:01:10,Insurance,2026-02-26
+transcript_22,40,"I'm on I-95, near exit 27.",0.00030164870551130370,customer,2026-01-29 00:00:40,Insurance,2026-02-26
+transcript_8,0,good afternoon. I'm calling because I want to make some changes to my policy. I'm surprised I didn't get a better deal when I signed up.,0.18478224921976990000,customer,2026-02-04 00:00:00,Insurance,2026-02-26
+transcript_8,20,"Yeah, I want to remove my old car and add my new one. I just got a new car and I don't want to pay for insurance on a car I don't own anymore.",-0.48011446006718410000,customer,2026-02-04 00:00:20,Insurance,2026-02-26
+transcript_8,30,"Yeah, the VIN number of the new car is 1HGCM82633A004321 and the license plate number of the old car is ABC1234.",0.01386473349656035000,customer,2026-02-04 00:00:30,Insurance,2026-02-26
+transcript_8,50,How much is it going to increase by? I'm not sure I want to pay more.,-0.94116423729502530000,customer,2026-02-04 00:00:50,Insurance,2026-02-26
+transcript_8,70,That's a bit more than I was hoping for. Can you see if there's any way to reduce the cost?,-0.85434843987783270000,customer,2026-02-04 00:01:10,Insurance,2026-02-26
+transcript_8,80,That sounds good. How much will that save me?,0.84129361341020180000,customer,2026-02-04 00:01:20,Insurance,2026-02-26
+transcript_8,90,"Alright, that sounds good. Go ahead and make the changes.",0.80316569753810150000,customer,2026-02-04 00:01:30,Insurance,2026-02-26
+transcript_9,0,good afternoon,0.92203184314638720000,customer,2026-02-21 00:00:00,Insurance,2026-02-26
+transcript_9,10,"Okay, hi John.",0.00936959532772208000,customer,2026-02-21 00:00:10,Insurance,2026-02-26
+transcript_9,20,"Ah, yes. I got it last week.",0.93227520297999720000,customer,2026-02-21 00:00:20,Insurance,2026-02-26
+transcript_9,40,"No, I think I understand everything. It all looks good.",0.97691393170499030000,customer,2026-02-21 00:00:40,Insurance,2026-02-26
+transcript_9,50,"Okay, will do. Thanks John.
+CUSTOMER
+No, that's all.",0.71411108382084150000,customer,2026-02-21 00:00:50,Insurance,2026-02-26
+transcript_10,0,good afternoon. I'm calling to change my coverage levels and deductibles on my policy.,-0.12484107605763480000,customer,2026-02-18 00:00:00,Insurance,2026-02-26
+transcript_10,20,"Well, I've been with your company for a while now and I feel like I'm paying too much for my coverage. I want to lower my premiums.",-0.91732997669665590000,customer,2026-02-18 00:00:20,Insurance,2026-02-26
+transcript_10,40,It's 123456.,0.00015092202873451250,customer,2026-02-18 00:00:40,Insurance,2026-02-26
+transcript_10,60,I think I'd like to increase my deductible. How much would that save me?,-0.01269968453341441000,customer,2026-02-18 00:01:00,Insurance,2026-02-26
+transcript_10,70,That sounds good. Can you make that change for me?,0.87809094644305840000,customer,2026-02-18 00:01:10,Insurance,2026-02-26
+transcript_10,90,"Yes, that's correct.",0.51485815284913890000,customer,2026-02-18 00:01:30,Insurance,2026-02-26
+transcript_11,0,good afternoon,0.92203184314638720000,customer,2026-02-14 00:00:00,Insurance,2026-02-26
+transcript_11,10,I am calling to discuss my initial claim that I submitted last week.,-0.00064462326587383380,customer,2026-02-14 00:00:10,Insurance,2026-02-26
+transcript_11,20,It's #1234.,0.00018166676077324690,customer,2026-02-14 00:00:20,Insurance,2026-02-26
+transcript_11,30,"Well, I submitted my claim last week and I haven't heard anything back yet. I was wondering if there was an issue with it.",-0.65964590902830370000,customer,2026-02-14 00:00:30,Insurance,2026-02-26
+transcript_11,50,"Okay, that's good to know. I was worried that something was wrong with it.",-0.03271050877755277000,customer,2026-02-14 00:00:50,Insurance,2026-02-26
+transcript_11,60,"No, that's all. Thank you for your help.",0.80065217974932130000,customer,2026-02-14 00:01:00,Insurance,2026-02-26
+transcript_12,0,good afternoon. I'm calling to update some information on my claim.,0.02707782895776527000,customer,2026-01-29 00:00:00,Insurance,2026-02-26
+transcript_12,20,It's #123456.,0.00027068188225010110,customer,2026-01-29 00:00:20,Insurance,2026-02-26
+transcript_12,30,I need to update my contact information. I've recently moved to a new address.,-0.00060546978928721630,customer,2026-01-29 00:00:30,Insurance,2026-02-26
+transcript_12,40,"It's 123 Main St, Anytown, USA 12345.",0.00034881470407471800,customer,2026-01-29 00:00:40,Insurance,2026-02-26
+transcript_12,60,"Yes, I also need to update the vehicle information. The vehicle make is incorrect.",0.00005930269219134310,customer,2026-01-29 00:01:00,Insurance,2026-02-26
+transcript_12,70,"It's a Toyota, not a Honda.",-0.22247616949791380000,customer,2026-01-29 00:01:10,Insurance,2026-02-26
+transcript_12,80,"Yes, I need to update the property details as well. The damage is more extensive than initially reported.",-0.82859553380863920000,customer,2026-01-29 00:01:20,Insurance,2026-02-26
+transcript_12,100,"The roof is damaged, and there's water damage in the living room.",-0.94251641864846760000,customer,2026-01-29 00:01:40,Insurance,2026-02-26
+transcript_12,120,"No, that's all. Thank you for your help.",0.80065217974932130000,customer,2026-01-29 00:02:00,Insurance,2026-02-26
+transcript_12,130,"Okay, thank you.",0.72595219490837120000,customer,2026-01-29 00:02:10,Insurance,2026-02-26
+transcript_13,0,good afternoon. I'm having some car trouble and I need roadside assistance.,-0.00224670377110292000,customer,2026-02-06 00:00:00,Insurance,2026-02-26
+transcript_13,20,"Yeah, I'm on the highway, near the 5th mile marker.",0.01265738408683426000,customer,2026-02-06 00:00:20,Insurance,2026-02-26
+transcript_13,30,It just stopped running. I was driving and then it just died on me.,-0.95148068919485600000,customer,2026-02-06 00:00:30,Insurance,2026-02-26
+transcript_13,50,It's a Toyota Camry.,0.05311650128719314000,customer,2026-02-06 00:00:50,Insurance,2026-02-26
+transcript_13,60,"Okay, thank you so much. I really appreciate it.",0.98110271587967150000,customer,2026-02-06 00:01:00,Insurance,2026-02-26
+transcript_13,70,"No, that's all. Thank you again.",0.86045794499754150000,customer,2026-02-06 00:01:10,Insurance,2026-02-26
+transcript_14,0,good afternoon. I am calling to inquire about the status of my claim. I submitted it a few weeks ago and haven't heard back yet.,-0.02981149388706317000,customer,2026-02-03 00:00:00,Insurance,2026-02-26
+transcript_14,20,It's #123456.,0.00027068188225010110,customer,2026-02-03 00:00:20,Insurance,2026-02-26
+transcript_14,30,"Okay, that's what I thought. How much longer will it take to process?",-0.62043755481338460000,customer,2026-02-03 00:00:30,Insurance,2026-02-26
+transcript_14,50,"Yes, please. I really need to get this resolved as soon as possible.",-0.48507208777877570000,customer,2026-02-03 00:00:50,Insurance,2026-02-26
+transcript_14,60,"Okay, that sounds good. What's the next step after that?",0.89908360952585090000,customer,2026-02-03 00:01:00,Insurance,2026-02-26
+transcript_14,80,"Alright, thank you for your help. I appreciate it.",0.97762180850063700000,customer,2026-02-03 00:01:20,Insurance,2026-02-26
+transcript_14,90,"No, that's all. Thank you again.",0.86045794499754150000,customer,2026-02-03 00:01:30,Insurance,2026-02-26
+transcript_22,60,It's a 2018 Honda Civic.,0.09669067108483524000,customer,2026-01-29 00:01:00,Insurance,2026-02-26
+transcript_15,0,good afternoon. I'm calling to modify my service providers. I want to change my tow and repair shop.,-0.00063897119304989760,customer,2026-01-22 00:00:00,Insurance,2026-02-26
+transcript_15,20,It's 555-1234.,0.00039182684658789490,customer,2026-01-22 00:00:20,Insurance,2026-02-26
+transcript_15,30,I'm not satisfied with the current tow service. They're always late and don't seem to care about my vehicle.,-0.96538938561071640000,customer,2026-01-22 00:00:30,Insurance,2026-02-26
+transcript_15,50,"Yes, please.",0.35746911031804040000,customer,2026-01-22 00:00:50,Insurance,2026-02-26
+transcript_15,60,"Yeah, I'll try XYZ Towing.",0.04477643029385681000,customer,2026-01-22 00:01:00,Insurance,2026-02-26
+transcript_15,70,"Great, thank you.",0.98105534673959260000,customer,2026-01-22 00:01:10,Insurance,2026-02-26
+transcript_16,0,good afternoon,0.92203184314638720000,customer,2026-02-13 00:00:00,Insurance,2026-02-26
+transcript_16,10,"Hi, I need to add some notes to my previous claim.",-0.00045012405597677500,customer,2026-02-13 00:00:10,Insurance,2026-02-26
+transcript_16,20,It's #1234.,0.00018166676077324690,customer,2026-02-13 00:00:20,Insurance,2026-02-26
+transcript_16,30,"I want to add some evidence, photos, and a repair estimate.",-0.01096625922014471000,customer,2026-02-13 00:00:30,Insurance,2026-02-26
+transcript_16,40,How do I do that?,-0.02309601749663281000,customer,2026-02-13 00:00:40,Insurance,2026-02-26
+transcript_16,50,"Okay, got it. And what about the notes?",-0.02067568510344842000,customer,2026-02-13 00:00:50,Insurance,2026-02-26
+transcript_16,60,"Alright, I think that's it. Thank you for your help.",0.93849473247903060000,customer,2026-02-13 00:01:00,Insurance,2026-02-26
+transcript_17,0,good afternoon,0.92203184314638720000,customer,2026-01-22 00:00:00,Insurance,2026-02-26
+transcript_17,20,"Oh, hi Emily. Yeah, I did apply for a loan. What's the status on that?",0.00172499847065904500,customer,2026-01-22 00:00:20,Insurance,2026-02-26
+transcript_17,30,"Okay, I apologize for the delay. What specific documents do you need?",-0.11207993862734360000,customer,2026-01-22 00:00:30,Insurance,2026-02-26
+transcript_17,50,"Alright, I can provide those. How do I get them to you?",0.01565238057529761000,customer,2026-01-22 00:00:50,Insurance,2026-02-26
+transcript_17,60,"Yeah, that would be great. Can you give me the fax number?",0.88929147417681620000,customer,2026-01-22 00:01:00,Insurance,2026-02-26
+transcript_17,70,"Okay, got it. I'll get those documents sent over today.",0.02334447450291322000,customer,2026-01-22 00:01:10,Insurance,2026-02-26
+transcript_17,80,"Sounds good. Thanks, Emily.",0.97697332968107820000,customer,2026-01-22 00:01:20,Insurance,2026-02-26
+transcript_18,0,good afternoon,0.92203184314638720000,customer,2026-01-08 00:00:00,Insurance,2026-02-26
+transcript_18,10,I need to add some notes to my claim. Can you help me with that?,0.00022989804127704350,customer,2026-01-08 00:00:10,Insurance,2026-02-26
+transcript_18,20,It's #1234.,0.00018166676077324690,customer,2026-01-08 00:00:20,Insurance,2026-02-26
+transcript_18,30,I want to add some evidence. I have some photos of the damage.,-0.74107351634168070000,customer,2026-01-08 00:00:30,Insurance,2026-02-26
+transcript_18,40,Okay. That sounds good.,0.94482225862080500000,customer,2026-01-08 00:00:40,Insurance,2026-02-26
+transcript_18,50,"Yes, I do. Can I upload that as well?",0.01343556605586463000,customer,2026-01-08 00:00:50,Insurance,2026-02-26
+transcript_18,60,Okay. I've uploaded the photos and the repair estimate.,0.01017934581148787000,customer,2026-01-08 00:01:00,Insurance,2026-02-26
+transcript_19,0,good afternoon,0.92203184314638720000,customer,2026-01-14 00:00:00,Insurance,2026-02-26
+transcript_19,10,I had an accident last week and I need to report it to my insurance company.,-0.20166254133873460000,customer,2026-01-14 00:00:10,Insurance,2026-02-26
+transcript_19,30,"Yeah, it's 1234567890.",0.00772168832019026800,customer,2026-01-14 00:00:30,Insurance,2026-02-26
+transcript_19,40,I was driving home from work and another car ran a red light and hit me.,-0.89041168494760170000,customer,2026-01-14 00:00:40,Insurance,2026-02-26
+transcript_19,60,"No, I was lucky. Just some damage to my car.",-0.90505535005380720000,customer,2026-01-14 00:01:00,Insurance,2026-02-26
+transcript_19,70,"Yeah, it's 555-1234 and [email address].",0.01480660364575548000,customer,2026-01-14 00:01:10,Insurance,2026-02-26
+transcript_19,80,"No, that's all. Thank you for your help.",0.80065217974932130000,customer,2026-01-14 00:01:20,Insurance,2026-02-26
+transcript_19,90,"Yeah, me too. Thanks again.",0.91960257730973430000,customer,2026-01-14 00:01:30,Insurance,2026-02-26
+transcript_20,0,good afternoon. I'm calling about my policy. I need to make some changes.,-0.01432532990035207000,customer,2026-01-11 00:00:00,Insurance,2026-02-26
+transcript_20,20,It's #123456.,0.00027068188225010110,customer,2026-01-11 00:00:20,Insurance,2026-02-26
+transcript_20,30,I'd like to add my new car to the policy.,0.03281648168799745000,customer,2026-01-11 00:00:30,Insurance,2026-02-26
+transcript_20,50,"It's a Toyota Camry, 2022, and the VIN is 1234567890.",0.00956237569422269100,customer,2026-01-11 00:00:50,Insurance,2026-02-26
+transcript_20,60,"Yes, please.",0.35746911031804040000,customer,2026-01-11 00:01:00,Insurance,2026-02-26
+transcript_20,80,"Yes, that's fine.",-0.01156158351344416000,customer,2026-01-11 00:01:20,Insurance,2026-02-26
+transcript_20,90,"Great, thank you for your help.",0.98450958672586240000,customer,2026-01-11 00:01:30,Insurance,2026-02-26
+transcript_21,0,good afternoon I'm calling about my claim. I'm really frustrated and disappointed with the process so far. It's been weeks and I haven't heard back from anyone.,-0.95955706017689750000,customer,2026-01-02 00:00:00,Insurance,2026-02-26
+transcript_21,30,"It's #12345. I've already provided all the necessary documents and information, but nobody seems to be working on it.",-0.89825428684575290000,customer,2026-01-02 00:00:30,Insurance,2026-02-26
+transcript_21,60,"That's what the last agent told me. I was promised a call back within 24 hours, but nobody called. I'm starting to think that nobody cares about my situation.",-0.96097214099928430000,customer,2026-01-02 00:01:00,Insurance,2026-02-26
+transcript_21,90,It's 555-1234. I hope you're not just saying that to get me off the phone.,-0.76243872912612650000,customer,2026-01-02 00:01:30,Insurance,2026-02-26
+transcript_21,110,Okay...I hope so. This experience has been really disappointing.,-0.96350167115302600000,customer,2026-01-02 00:01:50,Insurance,2026-02-26
+transcript_21,130,"No, that's all. Just get my claim resolved.",-0.02109563196781405000,customer,2026-01-02 00:02:10,Insurance,2026-02-26
+transcript_22,0,good afternoon I'm having some car trouble and I need roadside assistance.,-0.03094866396594398000,customer,2026-01-29 00:00:00,Insurance,2026-02-26
+transcript_22,20,"Yeah, I was driving on the highway and my car just stopped. I don't know what's wrong with it.",-0.93825435077149400000,customer,2026-01-29 00:00:20,Insurance,2026-02-26
+transcript_22,70,"Yeah, I'm on the side of the road, but there's not a lot of shoulder room.",-0.00709854141393861900,customer,2026-01-29 00:01:10,Insurance,2026-02-26
+transcript_22,90,"Okay, thank you. I appreciate it.",0.97678179880716830000,customer,2026-01-29 00:01:30,Insurance,2026-02-26
+transcript_22,100,"No, that's all. Thank you again.",0.86045794499754150000,customer,2026-01-29 00:01:40,Insurance,2026-02-26
+transcript_23,0,good afternoon. I'm calling to report an accident and make a claim. I was involved in a car accident yesterday and I need to get it sorted out as soon as possible.,0.00009071260788839908,customer,2026-01-05 00:00:00,Insurance,2026-02-26
+transcript_23,20,It's 123456. And can you please hurry up? I don't have all day.,-0.76282692639796860000,customer,2026-01-05 00:00:20,Insurance,2026-02-26
+transcript_23,30,I was driving home from work and some idiot ran a red light and smashed into me. The police were called and everything.,-0.94832420137568010000,customer,2026-01-05 00:00:30,Insurance,2026-02-26
+transcript_23,40,"Yeah, the police took care of all that. They gave me a report number and everything.",0.05569502183359193000,customer,2026-01-05 00:00:40,Insurance,2026-02-26
+transcript_23,50,It's 2022-001234. Now can we please get on with the claim?,-0.03983306050159591000,customer,2026-01-05 00:00:50,Insurance,2026-02-26
+transcript_23,60,"Yeah, it's all the same. Just get it done, please.",-0.88896186854791390000,customer,2026-01-05 00:01:00,Insurance,2026-02-26
+transcript_23,70,Fine. Thank you.,0.97373331499306250000,customer,2026-01-05 00:01:10,Insurance,2026-02-26
+transcript_24,0,good afternoon,0.92203184314638720000,customer,2026-01-19 00:00:00,Insurance,2026-02-26
+transcript_24,10,I need to set up a new policy. Can you help me with that?,-0.00040587429834637590,customer,2026-01-19 00:00:10,Insurance,2026-02-26
+transcript_24,30,It's a life insurance policy. I want to make sure my family is protected in case something happens to me.,0.00042182896208986520,customer,2026-01-19 00:00:30,Insurance,2026-02-26
+transcript_24,40,I have a wife and two kids. I want to make sure they're taken care of financially if I'm no longer around.,-0.01047450020765872000,customer,2026-01-19 00:00:40,Insurance,2026-02-26
+transcript_24,60,I'm not sure. What are the options?,-0.57579317705295750000,customer,2026-01-19 00:01:00,Insurance,2026-02-26
+transcript_24,70,That sounds good. What's the process to set up a new policy?,0.71382844322961160000,customer,2026-01-19 00:01:10,Insurance,2026-02-26
+transcript_24,90,Sounds good. Let's get started then.,0.94378700023745200000,customer,2026-01-19 00:01:30,Insurance,2026-02-26
+transcript_24,100,"Yes, I have all that information ready.",0.04316067951011382000,customer,2026-01-19 00:01:40,Insurance,2026-02-26
+transcript_24,120,Thank you so much for your help. I really appreciate it.,0.98397759265264140000,customer,2026-01-19 00:02:00,Insurance,2026-02-26
+transcript_25,0,good afternoon,0.92203184314638720000,customer,2026-01-22 00:00:00,Insurance,2026-02-26
+transcript_25,20,"Ah, yes. I did receive it. Thank you for following up.",0.97846462139386030000,customer,2026-01-22 00:00:20,Insurance,2026-02-26
+transcript_25,30,"Yeah, I've already signed it and it's ready to go back. I was just waiting for a pickup or something.",0.31343343011036490000,customer,2026-01-22 00:00:30,Insurance,2026-02-26
+transcript_25,40,"Yeah, that's fine. Thanks.",0.75394339198758340000,customer,2026-01-22 00:00:40,Insurance,2026-02-26
+transcript_25,50,"No, that's all. Thanks again.",-0.16346849319488710000,customer,2026-01-22 00:00:50,Insurance,2026-02-26
+transcript_26,0,good afternoon,0.92203184314638720000,customer,2026-02-24 00:00:00,Insurance,2026-02-26
+transcript_26,10,I had an accident on Friday and I need to report it.,-0.22594225063923130000,customer,2026-02-24 00:00:10,Insurance,2026-02-26
+transcript_26,20,It's 1234567890.,0.00017736960032810330,customer,2026-02-24 00:00:20,Insurance,2026-02-26
+transcript_26,40,I was driving on the highway and another car hit me from behind.,-0.85912947375905950000,customer,2026-02-24 00:00:40,Insurance,2026-02-26
+transcript_26,50,"No, I was lucky. But my car has some damage.",-0.91603890020539740000,customer,2026-02-24 00:00:50,Insurance,2026-02-26
+transcript_26,60,"Okay, that sounds good.",0.95114571500340790000,customer,2026-02-24 00:01:00,Insurance,2026-02-26
+transcript_26,70,It was on Friday at 3 pm.,0.00020934794211935340,customer,2026-02-24 00:01:10,Insurance,2026-02-26
+transcript_26,80,"Yes, I have their insurance information and contact details.",0.00354448545636626400,customer,2026-02-24 00:01:20,Insurance,2026-02-26
+transcript_26,90,"Okay, thank you.",0.72595219490837120000,customer,2026-02-24 00:01:30,Insurance,2026-02-26
+transcript_27,0,good afternoon. I'm calling to inquire about my recent bill. I was surprised to see that it's higher than usual.,0.03431295976350413000,customer,2026-01-17 00:00:00,Insurance,2026-02-26
+transcript_27,20,"Yeah, it's 1234567890.",0.00772168832019026800,customer,2026-01-17 00:00:20,Insurance,2026-02-26
+transcript_27,30,"Well, I was expecting it to be around $100, but it's showing $150. I don't understand why it's so high.",-0.76661924778684430000,customer,2026-01-17 00:00:30,Insurance,2026-02-26
+transcript_27,50,That's ridiculous. How could you guys make such a mistake?,-0.95745051956436540000,customer,2026-01-17 00:00:50,Insurance,2026-02-26
+transcript_1,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-25 00:00:00,Insurance,2026-02-26
+transcript_1,10,How can I assist you today?,0.00556031215424075700,agent,2026-01-25 00:00:10,Insurance,2026-02-26
+transcript_1,20,Sorry to hear that. Can you please provide me with your policy number so I can assist you with the claim process?,-0.02170601937557692000,agent,2026-01-25 00:00:20,Insurance,2026-02-26
+transcript_1,30,Thank you. I've located your policy. Can you please tell me more about the accident? What happened?,0.03730191103221953000,agent,2026-01-25 00:00:30,Insurance,2026-02-26
+transcript_1,40,I'm so sorry to hear that. Were you injured in the accident?,-0.82049750961377410000,agent,2026-01-25 00:00:40,Insurance,2026-02-26
+transcript_1,50,Okay. I'm going to guide you through the claim process. I'll need to ask you some more questions. Can you please provide me with the date and time of the accident?,0.00065058388532487910,agent,2026-01-25 00:00:50,Insurance,2026-02-26
+transcript_1,60,And do you have the other driver's information?,-0.00011782547638422570,agent,2026-01-25 00:01:00,Insurance,2026-02-26
+transcript_1,70,That's great. I'm going to go ahead and file the claim for you. You should receive an email with the claim number and further instructions within the next 24 hours.,0.92260833840352660000,agent,2026-01-25 00:01:10,Insurance,2026-02-26
+transcript_1,80,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2026-01-25 00:01:20,Insurance,2026-02-26
+transcript_2,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-27 00:00:00,Insurance,2026-02-26
+transcript_38,60,"Okay, sure.",-0.00386378188597458200,customer,2026-01-15 00:01:00,Insurance,2026-02-26
+transcript_2,10,Sorry to hear that. Can you please provide me with the model number and the serial number of your washing machine?,-0.17637863147189660000,agent,2026-01-27 00:00:10,Insurance,2026-02-26
+transcript_2,40,"I understand your frustration, sir. I'm going to go ahead and report this breakdown. Can you please tell me a little bit more about what's happening when you try to turn it on? Is there any error message or anything?",-0.33369113262530000000,agent,2026-01-27 00:00:40,Insurance,2026-02-26
+transcript_2,70,"I apologize for the inconvenience, sir. I'm going to go ahead and schedule a technician to come out and take a look at it. Would you be available for them to come out tomorrow or Wednesday?",-0.00574724917463420600,agent,2026-01-27 00:01:10,Insurance,2026-02-26
+transcript_2,90,"I understand, sir. We'll take care of the repair costs. I just need to confirm your address and contact information to schedule the appointment.",0.03125503561215437000,agent,2026-01-27 00:01:30,Insurance,2026-02-26
+transcript_2,110,"Alright, sir. I've scheduled the appointment for tomorrow. Someone will be out to take a look at your washing machine between 10am and 2pm. Is there anything else I can assist you with today?",0.01711493916710377000,agent,2026-01-27 00:01:50,Insurance,2026-02-26
+transcript_3,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-30 00:00:00,Insurance,2026-02-26
+transcript_3,20,I apologize for the inconvenience. Can you please tell me more about the issue you're facing on our website?,-0.16227730448435540000,agent,2026-01-30 00:00:20,Insurance,2026-02-26
+transcript_3,40,I understand your frustration. Let me see if I can assist you with filing the claim over the phone. Can you please provide me with your policy number?,-0.04205753483952357000,agent,2026-01-30 00:00:40,Insurance,2026-02-26
+transcript_3,60,"I apologize again for the issue. I've checked on our system and it seems that there was a technical glitch earlier today. Our team is working on resolving it. In the meantime, I can assist you with filing the claim.",0.00060009529828519700,agent,2026-01-30 00:01:00,Insurance,2026-02-26
+transcript_3,80,I understand why you're upset. I'm going to do my best to assist you with the claim. Can you please tell me more about the incident that led to the claim?,-0.00868658629916185800,agent,2026-01-30 00:01:20,Insurance,2026-02-26
+transcript_3,100,Okay. I've got all the necessary information. I'm going to go ahead and file the claim for you. You should receive an email with the claim number and further instructions within the next 24 hours.,0.04290428214884885000,agent,2026-01-30 00:01:40,Insurance,2026-02-26
+transcript_3,120,Our team is working on resolving the issue as soon as possible. I'll make sure to escalate the issue and get an update for you.,0.29903430113511310000,agent,2026-01-30 00:02:00,Insurance,2026-02-26
+transcript_3,140,I understand your concerns. You can always reach out to us if you have any questions or concerns about your claim. Is there anything else I can assist you with today?,0.37041468831136220000,agent,2026-01-30 00:02:20,Insurance,2026-02-26
+transcript_4,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-15 00:00:00,Insurance,2026-02-26
+transcript_4,10,How can I assist you today?,0.00556031215424075700,agent,2026-01-15 00:00:10,Insurance,2026-02-26
+transcript_4,20,"I'd be happy to help you with that. Can you please provide me with some information about your vehicle, such as the make, model, and year?",0.60804194271396740000,agent,2026-01-15 00:00:20,Insurance,2026-02-26
+transcript_4,30,"Okay, and what's your current insurance situation? Do you have an existing policy or are you looking to switch?",0.00113780672505348100,agent,2026-01-15 00:00:30,Insurance,2026-02-26
+transcript_4,40,"I understand. We can definitely provide you with a competitive quote. Based on the information you've provided, I can offer you a premium of $120 per month.",0.55643726077066310000,agent,2026-01-15 00:00:40,Insurance,2026-02-26
+transcript_4,60,"Our premium includes comprehensive coverage, collision coverage, and liability coverage. We also offer additional features such as roadside assistance and rental car coverage.",0.24195765011099600000,agent,2026-01-15 00:01:00,Insurance,2026-02-26
+transcript_4,70,The deductible for comprehensive coverage is $500.,-0.00598152605651436400,agent,2026-01-15 00:01:10,Insurance,2026-02-26
+transcript_4,80,"We can assist you with the switching process. We'll need to gather some additional information from you, and then we can finalize the policy and get you switched over.",0.03036887432359515000,agent,2026-01-15 00:01:20,Insurance,2026-02-26
+transcript_4,90,Great! I'll get the paperwork started. We'll be in touch with you shortly to finalize the details.,0.95133009413219680000,agent,2026-01-15 00:01:30,Insurance,2026-02-26
+transcript_5,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-18 00:00:00,Insurance,2026-02-26
+transcript_5,10,I'm calling from XYZ Corporation. My name is Emily and I'm reaching out to you regarding your recent purchase of our premium subscription.,0.01157235624276694000,agent,2026-02-18 00:00:10,Insurance,2026-02-26
+transcript_5,20,"We appreciate your business and we're excited to have you on board. However, I noticed that we're missing some information from your profile. Could you please help me update that?",0.98420116774751070000,agent,2026-02-18 00:00:20,Insurance,2026-02-26
+transcript_5,40,We're missing your company name and industry type. This information will help us provide you with more tailored services and support.,0.10000463270652890000,agent,2026-02-18 00:00:40,Insurance,2026-02-26
+transcript_5,50,Thank you so much for providing that information. I've updated your profile accordingly. Is there anything else you'd like to add or change?,0.83591145761675130000,agent,2026-02-18 00:00:50,Insurance,2026-02-26
+transcript_6,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-06 00:00:00,Insurance,2026-02-26
+transcript_6,10,I understand you're calling about the denial of your recent claim. Can you please tell me more about what happened?,-0.01740440280716152000,agent,2026-01-06 00:00:10,Insurance,2026-02-26
+transcript_6,30,I apologize for the inconvenience. Let me check on the status of your claim. Can you please provide me with your claim number?,-0.02270672798233242000,agent,2026-01-06 00:00:30,Insurance,2026-02-26
+transcript_6,50,Thank you. I've checked on the status and it seems that there was an issue with the documentation. One of the required forms was missing.,-0.20681798779297000000,agent,2026-01-06 00:00:50,Insurance,2026-02-26
+transcript_6,70,I understand your concern. Let me escalate this issue to our quality assurance team. They will review your claim and get back to you within 3-5 business days.,0.00124264278327529400,agent,2026-01-06 00:01:10,Insurance,2026-02-26
+transcript_6,90,I completely understand. I'm going to provide you with a reference number for your escalation. It's #REF123. You can use this to track the status of your claim.,0.00129054670909201100,agent,2026-01-06 00:01:30,Insurance,2026-02-26
+transcript_6,110,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2026-01-06 00:01:50,Insurance,2026-02-26
+transcript_27,60,"Okay, that sounds good. But can you also explain to me why I wasn't notified about this error? I had to call in to find out.",-0.30378031700303150000,customer,2026-01-17 00:01:00,Insurance,2026-02-26
+transcript_27,80,"Alright, thank you for taking care of this. I appreciate it.",0.97661866917252280000,customer,2026-01-17 00:01:20,Insurance,2026-02-26
+transcript_28,0,good afternoon. I'm calling to update my vehicle usage. I've been using my car more for commuting to work lately.,0.50710630723394700000,customer,2026-02-25 00:00:00,Insurance,2026-02-26
+transcript_28,20,It's #XXXXX.,-0.00003873219828243180,customer,2026-02-25 00:00:20,Insurance,2026-02-26
+transcript_28,40,I'd say around 200-250 miles per week.,0.00086093012156307490,customer,2026-02-25 00:00:40,Insurance,2026-02-26
+transcript_28,60,"Around 12,000-15,000 miles.",0.00017411533733202590,customer,2026-02-25 00:01:00,Insurance,2026-02-26
+transcript_28,70,"Okay, that's what I'm worried about. How much is it going to increase?",-0.84113273807053770000,customer,2026-02-25 00:01:10,Insurance,2026-02-26
+transcript_28,90,That's a bit more than I was hoping for. Is there anything we can do to reduce that?,-0.90313735394301100000,customer,2026-02-25 00:01:30,Insurance,2026-02-26
+transcript_28,110,"Yeah, that would be great. I do have another car, actually.",0.96517414782164600000,customer,2026-02-25 00:01:50,Insurance,2026-02-26
+transcript_28,120,That sounds good. Go ahead and make the changes.,0.90731557842590990000,customer,2026-02-25 00:02:00,Insurance,2026-02-26
+transcript_29,0,good afternoon. I'm calling because I'm having some issues with my policy. I'm not happy with the service and I'm thinking of switching to a different provider.,-0.92277675706349720000,customer,2026-02-25 00:00:00,Insurance,2026-02-26
+transcript_29,20,"Well, I had to add a new driver to my policy and it was a huge hassle. I had to call multiple times and wait on hold for ages. It was really frustrating.",-0.95743722340213460000,customer,2026-02-25 00:00:20,Insurance,2026-02-26
+transcript_29,30,"Yeah, sure. His name is John Doe and his license number is 123456789.",0.00113302735783654700,customer,2026-02-25 00:00:30,Insurance,2026-02-26
+transcript_29,50,"Actually, yes. I want to remove my sister, Jane Doe, from the policy. She's not driving my car anymore.",-0.93930422300878360000,customer,2026-02-25 00:00:50,Insurance,2026-02-26
+transcript_29,60,"No, that's it. But like I said, I'm still not happy with the service and I'm considering switching to a different provider.",-0.95842931899324350000,customer,2026-02-25 00:01:00,Insurance,2026-02-26
+transcript_29,80,"Hmm, I'm not sure. How much of a discount are we talking about?",-0.02987944020833289000,customer,2026-02-25 00:01:20,Insurance,2026-02-26
+transcript_29,90,"Okay, fine. Yeah, go ahead and apply the discount.",0.05840919099160846000,customer,2026-02-25 00:01:30,Insurance,2026-02-26
+transcript_29,100,"No, that's it. Thanks for your help, I guess.",0.71462166078108510000,customer,2026-02-25 00:01:40,Insurance,2026-02-26
+transcript_30,0,good afternoon. I'm calling to inquire about my current insurance policy. I'm not sure if I have the right coverage.,-0.01769508110963797000,customer,2026-02-12 00:00:00,Insurance,2026-02-26
+transcript_30,20,"Well, I've been thinking about getting a new car and I'm not sure if my current policy will cover it. Plus, I've been hearing a lot about these new advanced safety features and I'm not sure if I have them.",-0.03057552308391198000,customer,2026-02-12 00:00:20,Insurance,2026-02-26
+transcript_30,50,"That sounds good, but I'm not sure if I can afford it. I've been having some financial difficulties lately.",-0.55729912902254630000,customer,2026-02-12 00:00:50,Insurance,2026-02-26
+transcript_30,70,"Hmm, that does sound appealing. But, I'm still not sure. Can you tell me more about the promotion?",-0.81494399408273820000,customer,2026-02-12 00:01:10,Insurance,2026-02-26
+transcript_30,90,"Okay, I think I'm interested. But, can you also throw in some extra perks? I've been with my current insurance company for a while and I'm not sure if I want to switch.",0.34784607162533950000,customer,2026-02-12 00:01:30,Insurance,2026-02-26
+transcript_30,120,"Yeah, that sounds good. Okay, I think I'll take the new policy.",0.71746639715655600000,customer,2026-02-12 00:02:00,Insurance,2026-02-26
+transcript_31,0,"Hi, I'm calling about my auto insurance policy. I'm not sure if I have the right coverage.",-0.51246662844904610000,customer,2026-01-29 00:00:00,Insurance,2026-02-26
+transcript_31,20,It's #XXXXX. I'm worried that I might not have enough coverage in case of an accident.,-0.90886273072862530000,customer,2026-01-29 00:00:20,Insurance,2026-02-26
+transcript_31,40,"Yeah, that's what I thought. But I'm not sure if that's enough. I've been hearing a lot about accidents and I'm worried that I might not be protected.",-0.86374160056729810000,customer,2026-01-29 00:00:40,Insurance,2026-02-26
+transcript_31,60,That sounds good. Can you tell me more about the uninsured motorist coverage?,0.32853968451235230000,customer,2026-01-29 00:01:00,Insurance,2026-02-26
+transcript_31,80,"Okay, that makes sense. How much would it cost to add that coverage to my policy?",-0.57598854486188530000,customer,2026-01-29 00:01:20,Insurance,2026-02-26
+transcript_31,90,That's not too bad. I think I'd like to add that coverage to my policy.,0.73893634288166690000,customer,2026-01-29 00:01:30,Insurance,2026-02-26
+transcript_31,100,"Okay, sounds good. And can you also review my policy to make sure I have the right coverage for my vehicle?",0.20045169779170230000,customer,2026-01-29 00:01:40,Insurance,2026-02-26
+transcript_31,120,"Okay, good. I feel better now. Thank you for your help.",0.98204462838611380000,customer,2026-01-29 00:02:00,Insurance,2026-02-26
+transcript_32,0,good afternoon I'm calling about the additional driver breakdown support. I'm extremely unhappy with the service I received last week.,-0.96355309927353440000,customer,2026-02-03 00:00:00,Insurance,2026-02-26
+transcript_32,20,It's 123456. And I want to know why I was charged extra for the additional driver when I was told it would be free.,-0.82749573370656190000,customer,2026-02-03 00:00:20,Insurance,2026-02-26
+transcript_32,40,A misunderstanding? That's just great. I was told explicitly that it would be free. Now I'm being charged extra. This is ridiculous.,-0.95049217474004880000,customer,2026-02-03 00:00:40,Insurance,2026-02-26
+transcript_32,50,That's the least you can do. What about the breakdown support? I was stuck on the side of the road for hours waiting for someone to show up.,-0.93191695157514530000,customer,2026-02-03 00:00:50,Insurance,2026-02-26
+transcript_32,70,"It was last Thursday. I was driving on the highway and my car broke down. I called for breakdown support, and it took them over two hours to arrive.",-0.92695175831575280000,customer,2026-02-03 00:01:10,Insurance,2026-02-26
+transcript_32,90,A gesture of goodwill? That's not enough. I want to speak to your supervisor.,-0.87370950406530860000,customer,2026-02-03 00:01:30,Insurance,2026-02-26
+transcript_32,100,Fine.,-0.59856804447813050000,customer,2026-02-03 00:01:40,Insurance,2026-02-26
+transcript_7,0,Hello good afternoon.,0.80734519818684690000,agent,2025-12-29 00:00:00,Insurance,2026-02-26
+transcript_32,120,"We'll see about that. I expect a call back from you within the next 24 hours to confirm the resolution.
+SUPERVISOR",0.00380305210060683000,customer,2026-02-03 00:02:00,Insurance,2026-02-26
+transcript_32,130,"Absolutely, I'll make sure to follow up with you personally within the next 24 hours. Thank you for bringing this to our attention.
+CUSTOMER
+Yeah, yeah. Just fix it.
+SUPERVISOR",0.60708878225112880000,customer,2026-02-03 00:02:10,Insurance,2026-02-26
+transcript_32,140,"We will, and again, I apologize for the inconvenience. Is there anything else I can assist you with today?
+CUSTOMER
+No, that's it.
+SUPERVISOR
+Alright, thank you for your patience, and we'll speak soon.",0.06023781474448864000,customer,2026-02-03 00:02:20,Insurance,2026-02-26
+transcript_33,0,good afternoon. I'm Joy and I'm calling about modifying my service providers. I currently have tow and repair shop services with your company.,0.31477702572998050000,customer,2026-02-22 00:00:00,Insurance,2026-02-26
+transcript_33,20,"Yeah, I'd like to add a new tow service provider and remove the current repair shop service provider.",-0.66299059266889950000,customer,2026-02-22 00:00:20,Insurance,2026-02-26
+transcript_33,40,That's correct.,0.59181863152916760000,customer,2026-02-22 00:00:40,Insurance,2026-02-26
+transcript_33,50,My account number is 123456.,0.00035577067519540480,customer,2026-02-22 00:00:50,Insurance,2026-02-26
+transcript_33,60,"The name is Sam's Towing, the address is 123 Main St, and the phone number is 555-1234.",0.00114912722175428100,customer,2026-02-22 00:01:00,Insurance,2026-02-26
+transcript_33,80,"Great, thank you so much for your help.",0.98509317606329630000,customer,2026-02-22 00:01:20,Insurance,2026-02-26
+transcript_34,0,good afternoon. I'm calling to get a quote for my car insurance. I've been with your company for a few years now.,0.56941691836804550000,customer,2026-01-09 00:00:00,Insurance,2026-02-26
+transcript_34,20,My policy number is 123456.,0.00024669188792081350,customer,2026-01-09 00:00:20,Insurance,2026-02-26
+transcript_34,40,It's a 2018 Honda Civic.,0.09669067108483524000,customer,2026-01-09 00:00:40,Insurance,2026-02-26
+transcript_34,60,"Yeah, I'd love to hear more about it. What's the new premium?",0.94465737894125930000,customer,2026-01-09 00:01:00,Insurance,2026-02-26
+transcript_34,70,That sounds great! What's the catch? Is there any additional fees or anything like that?,0.88100451876038900000,customer,2026-01-09 00:01:10,Insurance,2026-02-26
+transcript_34,80,"Okay, that sounds doable. Can you explain to me what exactly is covered in this premium?",0.01859617841371386000,customer,2026-01-09 00:01:20,Insurance,2026-02-26
+transcript_34,100,That sounds like a great deal. I think I'll take it.,0.98156897973137390000,customer,2026-01-09 00:01:40,Insurance,2026-02-26
+transcript_35,0,good afternoon. I'm calling to change my coverage levels and deductibles. I've been thinking about it and I want to make some adjustments.,0.03305092471120713000,customer,2026-01-08 00:00:00,Insurance,2026-02-26
+transcript_35,20,"Well, I've been paying a lot for my premiums and I'm not really using my insurance that much. I think I can save some money by increasing my deductible.",-0.22711034316792670000,customer,2026-01-08 00:00:20,Insurance,2026-02-26
+transcript_35,40,"Yeah, I'm aware of that. I'm willing to take on that risk to save some money.",0.02439766890263684000,customer,2026-01-08 00:00:40,Insurance,2026-02-26
+transcript_35,60,"Hmm, that's a tough decision. I think I'll go with the $2,000 deductible. That will save me a bit more money.",0.13777566143672320000,customer,2026-01-08 00:01:00,Insurance,2026-02-26
+transcript_35,70,"Yeah, my name is John Smith and my policy number is 123456.",0.00372862213045943600,customer,2026-01-08 00:01:10,Insurance,2026-02-26
+transcript_35,90,"Great, thank you for your help.
+CUSTOMER
+No, that's all. Thanks again.",0.98101666326240460000,customer,2026-01-08 00:01:30,Insurance,2026-02-26
+transcript_36,0,"good afternoon, I'm calling to update my garage location. I'm not happy with the service I've been getting lately and I want to make sure my account is updated correctly.",-0.86110278690399110000,customer,2026-02-07 00:00:00,Insurance,2026-02-26
+transcript_36,20,It's 555-1234. And can you also tell me why I've been having so many issues with my service? I've been having to call in every week to get my issues resolved.,-0.91937843997938860000,customer,2026-02-07 00:00:20,Insurance,2026-02-26
+transcript_36,50,That's not good enough. I've been a customer for 5 years and I expect better service. I want to speak to your supervisor.,-0.95070118932426620000,customer,2026-02-07 00:00:50,Insurance,2026-02-26
+transcript_36,70,(sighs) Fine.,-0.00417109940427096100,customer,2026-02-07 00:01:10,Insurance,2026-02-26
+transcript_36,90,"Like I told the agent, I've been having to call in every week to get my issues resolved. And now I need to update my garage location. Can you please just update it for me?
+SUPERVISOR",-0.70580137672339860000,customer,2026-02-07 00:01:30,Insurance,2026-02-26
+transcript_36,100,I apologize again for the inconvenience. I've updated your garage location to the new address you provided. I've also applied a credit to your account for the issues you've been experiencing. Is there anything else I can assist you with today?,-0.01564032183927311000,customer,2026-02-07 00:01:40,Insurance,2026-02-26
+transcript_36,110,"No, that's it. Just make sure my account is updated correctly.
+SUPERVISOR
+I've double-checked to ensure that your account is updated correctly. If you have any further issues, please don't hesitate to reach out to us. We appreciate your business and value you as a customer.",0.95174369096390420000,customer,2026-02-07 00:01:50,Insurance,2026-02-26
+transcript_37,0,good afternoon,0.92203184314638720000,customer,2026-01-10 00:00:00,Insurance,2026-02-26
+transcript_37,10,"Yeah, I got a letter saying it was denied because of a pre-existing condition, but I don't think that's right.",-0.92212293377026850000,customer,2026-01-10 00:00:10,Insurance,2026-02-26
+transcript_37,30,It's #123456.,0.00027068188225010110,customer,2026-01-10 00:00:30,Insurance,2026-02-26
+transcript_37,40,"Okay, that sounds good. I just don't understand why it was denied.",-0.72150496542865450000,customer,2026-01-10 00:00:40,Insurance,2026-02-26
+transcript_37,50,But I didn't think that was relevant to my current claim.,-0.73736240447753890000,customer,2026-01-10 00:00:50,Insurance,2026-02-26
+transcript_37,60,"Okay, thank you. How long will that take?",0.03871248735773181000,customer,2026-01-10 00:01:00,Insurance,2026-02-26
+transcript_38,0,good afternoon,0.92203184314638720000,customer,2026-01-15 00:00:00,Insurance,2026-02-26
+transcript_38,10,"Honestly, it's been okay. I've had some issues with my plan and I'm not sure if I'm getting the best coverage.",-0.03431086089476842000,customer,2026-01-15 00:00:10,Insurance,2026-02-26
+transcript_38,30,"Yeah, sometimes I get really bad reception in my area and I've had to deal with some surprise bills.",-0.94857310784953460000,customer,2026-01-15 00:00:30,Insurance,2026-02-26
+transcript_38,50,I'm not sure if I want to spend more money. I'm already paying a lot.,-0.90288014513613920000,customer,2026-01-15 00:00:50,Insurance,2026-02-26
+transcript_38,80,"Hmm, that sounds like it might be worth it. But can I get a discount or something?",0.28693831540934070000,customer,2026-01-15 00:01:20,Insurance,2026-02-26
+transcript_38,100,"Yeah, that sounds good. I'll take it.",0.94580497911307600000,customer,2026-01-15 00:01:40,Insurance,2026-02-26
+transcript_38,110,"Alright, thanks.",0.79113160863111030000,customer,2026-01-15 00:01:50,Insurance,2026-02-26
+transcript_39,0,good afternoon. I need some assistance with completing some paperwork for my business.,0.00082064131618553300,customer,2025-12-30 00:00:00,Insurance,2026-02-26
+transcript_39,20,"Yeah, it's for a loan application. I'm trying to expand my business and I need some help with the financials.",0.00328150137750569900,customer,2025-12-30 00:00:20,Insurance,2026-02-26
+transcript_39,40,"Yeah, I've started but I'm having trouble with some of the sections. I'm not really sure what they're asking for.",-0.82881600586159080000,customer,2025-12-30 00:00:40,Insurance,2026-02-26
+transcript_39,60,It's the financial statements. I'm not really sure how to fill out the cash flow projections.,-0.38312270190585210000,customer,2025-12-30 00:01:00,Insurance,2026-02-26
+transcript_39,70,"Okay, let me just pull it up on my computer real quick.",-0.00308213090405185000,customer,2025-12-30 00:01:10,Insurance,2026-02-26
+transcript_39,90,"Alright, I've got it up. So, where do I start with the cash flow projections?",0.01737068582427392000,customer,2025-12-30 00:01:30,Insurance,2026-02-26
+transcript_39,100,"Okay, let me see...my average monthly income is around $10,000 and my expenses are around $8,000.",-0.00027528311414060090,customer,2025-12-30 00:01:40,Insurance,2026-02-26
+transcript_39,120,"Yeah, I'm planning to invest in some new equipment for my business. It's going to cost around $20,000.",0.03848007265341757000,customer,2025-12-30 00:02:00,Insurance,2026-02-26
+transcript_40,0,good afternoon. I'm calling about my policy. I'm not sure if I have the right coverage.,-0.10762735498966810000,customer,2026-01-05 00:00:00,Insurance,2026-02-26
+transcript_40,20,It's 123456. I'm worried that I might not have enough coverage in case something happens.,-0.90321641576943700000,customer,2026-01-05 00:00:20,Insurance,2026-02-26
+transcript_40,50,I'm not sure. What kind of endorsements are available?,-0.12677610099503600000,customer,2026-01-05 00:00:50,Insurance,2026-02-26
+transcript_40,70,That sounds good. How much would it cost to add the umbrella policy?,0.58946672935921530000,customer,2026-01-05 00:01:10,Insurance,2026-02-26
+transcript_40,80,"Okay, that's not too bad. Can I add it to my policy today?",0.48421878296357040000,customer,2026-01-05 00:01:20,Insurance,2026-02-26
+transcript_40,100,"Great, thank you. What about renewing my policy? When is it up for renewal?",0.84731971190780730000,customer,2026-01-05 00:01:40,Insurance,2026-02-26
+transcript_40,120,"Yeah, that sounds good. Can you also send me a copy of my updated policy documents?",0.72967955893157740000,customer,2026-01-05 00:02:00,Insurance,2026-02-26
+transcript_40,130,"Okay, great. Thank you for your help today.",0.98343907587892620000,customer,2026-01-05 00:02:10,Insurance,2026-02-26
+transcript_41,0,good afternoon,0.92203184314638720000,customer,2026-01-15 00:00:00,Insurance,2026-02-26
+transcript_41,20,"Hi Alex, thanks for taking my call. I'm having some issues with my family driver breakdown support. I'm not sure how it works, and I need some clarification.",-0.15136412259466400000,customer,2026-01-15 00:00:20,Insurance,2026-02-26
+transcript_41,40,"Yeah, it's the process of adding a driver. I'm not sure what information I need to provide or how to do it online.",-0.03337314743028352000,customer,2026-01-15 00:00:40,Insurance,2026-02-26
+transcript_41,60,"Okay, that sounds easy enough. What about the cost? Will it be added to my monthly premium?",0.04717152268979952000,customer,2026-01-15 00:01:00,Insurance,2026-02-26
+transcript_41,80,"Okay, the driver is 25 years old, and they've had their license for about 5 years.",-0.05933292895385733000,customer,2026-01-15 00:01:20,Insurance,2026-02-26
+transcript_41,100,"Okay, that sounds reasonable. I think I'll just add it to my monthly premium.",0.62553968509259090000,customer,2026-01-15 00:01:40,Insurance,2026-02-26
+transcript_41,120,"No, that's all. Thanks so much for your help, Alex.",0.93516536069875530000,customer,2026-01-15 00:02:00,Insurance,2026-02-26
+transcript_42,0,good afternoon. I'm calling to update my garage location. I recently moved to a new house and I want to make sure my policy is updated.,0.08330341942782038000,customer,2026-02-11 00:00:00,Insurance,2026-02-26
+transcript_42,20,"Yeah, it's 123456.",0.04070362731386246000,customer,2026-02-11 00:00:20,Insurance,2026-02-26
+transcript_42,30,"Yeah, it's 123 Main St, Anytown, USA 12345.",0.05047063960637845000,customer,2026-02-11 00:00:30,Insurance,2026-02-26
+transcript_42,50,"Yeah, that would be great. Can you walk me through what's changed?",0.13355382391854320000,customer,2026-02-11 00:00:50,Insurance,2026-02-26
+transcript_42,60,"Okay, that sounds good. But can you tell me why my premium isn't changing? I thought it would be higher since I moved to a new area.",-0.49948358924684700000,customer,2026-02-11 00:01:00,Insurance,2026-02-26
+transcript_42,80,"Okay, that makes sense. And what about my billing information? Do I need to update that as well?",-0.12462202998078810000,customer,2026-02-11 00:01:20,Insurance,2026-02-26
+transcript_42,90,"Alright, sounds good. Go ahead and finalize the changes.",0.74433523072605050000,customer,2026-02-11 00:01:30,Insurance,2026-02-26
+transcript_43,0,good afternoon. I'm calling to make some changes to my auto insurance policy.,0.00499488549855003900,customer,2026-02-13 00:00:00,Insurance,2026-02-26
+transcript_43,10,I want to remove my son from the policy. He's moved out and got his own insurance.,-0.86939796053266040000,customer,2026-02-13 00:00:10,Insurance,2026-02-26
+transcript_43,30,"Yeah, his name is John Doe and his date of birth is March 12, 1995.",0.00091847748443710240,customer,2026-02-13 00:00:30,Insurance,2026-02-26
+transcript_43,40,"Yes, he is.",0.39889125957389140000,customer,2026-02-13 00:00:40,Insurance,2026-02-26
+transcript_43,50,"No, he didn't.",-0.83518614743619910000,customer,2026-02-13 00:00:50,Insurance,2026-02-26
+transcript_43,60,"Okay, that sounds good. How much will my premium change?",0.31747239379590770000,customer,2026-02-13 00:01:00,Insurance,2026-02-26
+transcript_43,80,"That's great, thank you for your help.
+CUSTOMER
+No, that's all. Thank you again.",0.98004192590549410000,customer,2026-02-13 00:01:20,Insurance,2026-02-26
+transcript_44,0,"good afternoon, I'm calling because I'm not happy with my current coverage levels and deductibles. I've been thinking about switching to a different provider.",-0.93177003417449680000,customer,2026-01-31 00:00:00,Insurance,2026-02-26
+transcript_44,20,"Well, I feel like I'm paying too much for my premiums and not getting enough coverage in return. And the deductible is just too high.",-0.94950699444490970000,customer,2026-01-31 00:00:20,Insurance,2026-02-26
+transcript_44,50,"Yeah, my premium is $250 a month and my deductible is $1,000.",-0.06132370275354410000,customer,2026-01-31 00:00:50,Insurance,2026-02-26
+transcript_7,10,I apologize for the inconvenience. Can you please provide me with your account number so I can assist you further?,-0.01779834064446273000,agent,2025-12-29 00:00:10,Insurance,2026-02-26
+transcript_7,20,Thank you. I've located your account. It seems like we're missing some identification documents from you. Can you please upload or fax them to us?,0.03565829742921994000,agent,2025-12-29 00:00:20,Insurance,2026-02-26
+transcript_7,40,I apologize for the delay. Let me check on the status of your documents. (pause) It seems like our system is still processing your documents. I'm going to go ahead and escalate this issue to our back office team. They'll review your documents and update your account accordingly.,-0.01044157185813821000,agent,2025-12-29 00:00:40,Insurance,2026-02-26
+transcript_7,60,It should take around 3-5 business days. You'll receive an email notification once the update is complete.,0.00011073622406593260,agent,2025-12-29 00:01:00,Insurance,2026-02-26
+transcript_7,70,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2025-12-29 00:01:10,Insurance,2026-02-26
+transcript_8,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-04 00:00:00,Insurance,2026-02-26
+transcript_8,10,I apologize for any inconvenience. Can you please tell me more about the changes you'd like to make?,-0.07731120915731016000,agent,2026-02-04 00:00:10,Insurance,2026-02-26
+transcript_8,30,"Okay, I can help you with that. Can you please provide me with the VIN number of the new car and the license plate number of the old car?",0.04272526120282097000,agent,2026-02-04 00:00:30,Insurance,2026-02-26
+transcript_8,40,"Alright, I've removed the old car from your policy and added the new one. However, I do need to let you know that this change will affect your premium.",-0.00435424347070601000,agent,2026-02-04 00:00:40,Insurance,2026-02-26
+transcript_8,60,"Let me check on that for you. (pause) Okay, it looks like your premium will increase by $20 per month.",-0.02267839685135264000,agent,2026-02-04 00:01:00,Insurance,2026-02-26
+transcript_8,70,"Let me see what I can do. (pause) Okay, I can offer you a discount if you agree to go paperless and receive your bills electronically.",0.40077527555351580000,agent,2026-02-04 00:01:10,Insurance,2026-02-26
+transcript_8,90,That will save you $5 per month.,0.02995748159176664000,agent,2026-02-04 00:01:30,Insurance,2026-02-26
+transcript_8,100,"Alright, I've made the changes to your policy. You should receive an email with the updated information shortly. Is there anything else I can assist you with today?",0.01308144656100479000,agent,2026-02-04 00:01:40,Insurance,2026-02-26
+transcript_9,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-21 00:00:00,Insurance,2026-02-26
+transcript_9,10,I'm calling from XYZ Corporation. My name is John and I'll be assisting you with your account today.,0.00750892161116742400,agent,2026-02-21 00:00:10,Insurance,2026-02-26
+transcript_9,20,I just wanted to confirm that you've received the paperwork we sent over regarding your recent policy changes.,0.00044928355688866880,agent,2026-02-21 00:00:20,Insurance,2026-02-26
+transcript_9,30,Great! I just wanted to make sure you had a chance to review everything. Do you have any questions about the changes or would you like me to go over anything with you?,0.52992689006625180000,agent,2026-02-21 00:00:30,Insurance,2026-02-26
+transcript_9,40,"Alright, great! If you do happen to think of anything later, please don't hesitate to reach out to us. We're always here to help.",0.97730379865718600000,agent,2026-02-21 00:00:40,Insurance,2026-02-26
+transcript_9,50,You're welcome! Is there anything else I can assist you with today?,0.85668438185956390000,agent,2026-02-21 00:00:50,Insurance,2026-02-26
+transcript_10,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-18 00:00:00,Insurance,2026-02-26
+transcript_10,10,"Okay, I'd be happy to help you with that. Can you please tell me a little bit more about what you're looking to change and why?",0.59607326289914460000,agent,2026-02-18 00:00:10,Insurance,2026-02-26
+transcript_10,30,I understand where you're coming from. Let me see what options we have available to you. Can you please confirm your policy number for me?,0.00700123231396107500,agent,2026-02-18 00:00:30,Insurance,2026-02-26
+transcript_10,40,"Okay, thank you. I've pulled up your policy. It looks like we do have some options to lower your premiums. We could increase your deductible or we could reduce your coverage levels. Which of those options sounds more appealing to you?",0.15023770125334400000,agent,2026-02-18 00:00:40,Insurance,2026-02-26
+transcript_10,60,"If we increase your deductible to $1,000, that would save you around $20 per month on your premiums.",0.03189564547438750000,agent,2026-02-18 00:01:00,Insurance,2026-02-26
+transcript_10,80,"Yes, I can do that. I just need to confirm a few details with you. Is that correct that you want to increase your deductible to $1,000 effective immediately?",0.00798391793309510800,agent,2026-02-18 00:01:20,Insurance,2026-02-26
+transcript_10,90,"Okay, I've made the change. You should see the new premium amount on your next bill. Is there anything else I can assist you with today?",0.01080965409841650000,agent,2026-02-18 00:01:30,Insurance,2026-02-26
+transcript_11,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-14 00:00:00,Insurance,2026-02-26
+transcript_11,10,How can I assist you today?,0.00556031215424075700,agent,2026-02-14 00:00:10,Insurance,2026-02-26
+transcript_11,20,I apologize for the inconvenience. Can you please provide me with your claim number so I can look into it for you?,-0.01710236974190149000,agent,2026-02-14 00:00:20,Insurance,2026-02-26
+transcript_11,30,Thank you. I've located your claim. Can you please tell me a little bit more about what's going on and why you're calling today?,0.00441477794138001000,agent,2026-02-14 00:00:30,Insurance,2026-02-26
+transcript_11,40,"I understand your concern. Let me check on the status of your claim. (pause) Okay, I've checked and it looks like your claim is still being processed. It should be resolved within the next 3-5 business days.",0.01757520363539553000,agent,2026-02-14 00:00:40,Insurance,2026-02-26
+transcript_11,60,I completely understand. We appreciate your patience and apologize again for the delay. Is there anything else I can assist you with today?,0.70487892356960970000,agent,2026-02-14 00:01:00,Insurance,2026-02-26
+transcript_12,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-29 00:00:00,Insurance,2026-02-26
+transcript_12,10,"Okay, I'd be happy to help you with that. Can you please provide me with your claim number so I can look into it?",0.62703951399395940000,agent,2026-01-29 00:00:10,Insurance,2026-02-26
+transcript_12,20,Thank you. I've located your claim. What specific information would you like to update?,0.11821611556776580000,agent,2026-01-29 00:00:20,Insurance,2026-02-26
+transcript_12,40,"Okay, I can help you with that. What's your new address?",0.06094833600504666000,agent,2026-01-29 00:00:40,Insurance,2026-02-26
+transcript_12,50,Got it. I've updated your address. Is there anything else you'd like to update?,0.07698146363009858000,agent,2026-01-29 00:00:50,Insurance,2026-02-26
+transcript_12,60,"Okay, what's the correct make of your vehicle?",0.00015560620874222050,agent,2026-01-29 00:01:00,Insurance,2026-02-26
+transcript_12,80,I've updated the vehicle information. Anything else?,0.00554522928787978800,agent,2026-01-29 00:01:20,Insurance,2026-02-26
+transcript_12,90,"Okay, can you please provide more details about the damage?",-0.06985634685954445000,agent,2026-01-29 00:01:30,Insurance,2026-02-26
+transcript_12,110,I've noted that down. I'll make sure to update the claim accordingly. Is there anything else you'd like to update or add?,0.00168352195134352500,agent,2026-01-29 00:01:50,Insurance,2026-02-26
+transcript_12,120,"You're welcome. I've updated all the information on your claim. If you have any further questions or concerns, please don't hesitate to reach out to us.",0.84407504385049080000,agent,2026-01-29 00:02:00,Insurance,2026-02-26
+transcript_13,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-06 00:00:00,Insurance,2026-02-26
+transcript_13,10,Sorry to hear that. Can you please provide me with your location so I can assist you better?,-0.02201518085440912000,agent,2026-02-06 00:00:10,Insurance,2026-02-26
+transcript_13,30,"Okay, I've located you. What seems to be the issue with your vehicle?",-0.00248700415059960300,agent,2026-02-06 00:00:30,Insurance,2026-02-26
+transcript_13,40,"Okay, don't worry. I'm going to send someone to help you out. Can you please confirm your vehicle's make and model?",0.05964652435530413000,agent,2026-02-06 00:00:40,Insurance,2026-02-26
+transcript_13,50,"Alright, I've got that. Someone will be there within the next 30 minutes to help you get back on the road.",0.07637338107802132000,agent,2026-02-06 00:00:50,Insurance,2026-02-26
+transcript_13,70,You're welcome. Is there anything else I can assist you with while you wait?,0.45922801131972250000,agent,2026-02-06 00:01:10,Insurance,2026-02-26
+transcript_14,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-03 00:00:00,Insurance,2026-02-26
+transcript_14,10,I apologize for the delay. Can you please provide me with your claim number so I can look into it for you?,-0.01094774883607097000,agent,2026-02-03 00:00:10,Insurance,2026-02-26
+transcript_14,20,Thank you. I've located your claim. It's currently under review by our adjuster. I can see that it was submitted on the 10th of this month.,0.53604606736157330000,agent,2026-02-03 00:00:20,Insurance,2026-02-26
+transcript_14,40,"Typically, it takes around 2-3 weeks for our adjuster to review the claim. However, I can expedite the process for you. Would you like me to do that?",-0.06901132541911326000,agent,2026-02-03 00:00:40,Insurance,2026-02-26
+transcript_14,50,I've escalated your claim to our priority queue. You should hear back from us within the next 3-5 business days.,0.00281678668490054100,agent,2026-02-03 00:00:50,Insurance,2026-02-26
+transcript_14,70,"Once our adjuster has completed the review, we'll be in touch with you to discuss the outcome. If everything is in order, we'll proceed with the payment.",0.01924724701112836000,agent,2026-02-03 00:01:10,Insurance,2026-02-26
+transcript_14,80,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2026-02-03 00:01:20,Insurance,2026-02-26
+transcript_15,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-22 00:00:00,Insurance,2026-02-26
+transcript_15,10,"Okay, I'd be happy to help you with that. Can you please tell me your account number or the phone number associated with your account?",0.60618347455818170000,agent,2026-01-22 00:00:10,Insurance,2026-02-26
+transcript_15,30,Thank you. I've located your account. What's the reason for changing your service providers?,0.00985020654860280200,agent,2026-01-22 00:00:30,Insurance,2026-02-26
+transcript_15,40,I apologize for the inconvenience. I'd be happy to help you find a new provider. We have a few options in your area. Would you like me to recommend some?,0.07770084281728673000,agent,2026-01-22 00:00:40,Insurance,2026-02-26
+transcript_15,60,Okay. We have XYZ Towing and ABC Repair Shop in your area. Both have excellent reviews and ratings. Would you like to try one of them?,0.93679237617618950000,agent,2026-01-22 00:01:00,Insurance,2026-02-26
+transcript_15,70,Alright. I've updated your account with the new provider. You should receive a confirmation email shortly.,0.04552583883555289000,agent,2026-01-22 00:01:10,Insurance,2026-02-26
+transcript_16,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-13 00:00:00,Insurance,2026-02-26
+transcript_16,10,How can I assist you today?,0.00556031215424075700,agent,2026-02-13 00:00:10,Insurance,2026-02-26
+transcript_16,20,"Okay, can you please provide me with your claim number so I can assist you further?",0.00307987731188941200,agent,2026-02-13 00:00:20,Insurance,2026-02-26
+transcript_16,30,Thank you. What kind of notes would you like to add to your claim?,0.14571405528467570000,agent,2026-02-13 00:00:30,Insurance,2026-02-26
+transcript_16,40,"Okay, I can help you with that. Can you please upload the photos and repair estimate to our portal?",0.01532707883186613000,agent,2026-02-13 00:00:40,Insurance,2026-02-26
+transcript_16,50,"You can log in to your account on our website and click on the 'Upload Evidence' button. From there, you can select the files you want to upload.",0.00172351804271099500,agent,2026-02-13 00:00:50,Insurance,2026-02-26
+transcript_16,60,You can add notes in the 'Add Notes' section of the portal. Just type in what you want to say and click 'Save'.,0.00139856064536488000,agent,2026-02-13 00:01:00,Insurance,2026-02-26
+transcript_16,70,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2026-02-13 00:01:10,Insurance,2026-02-26
+transcript_17,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-22 00:00:00,Insurance,2026-02-26
+transcript_17,10,I'm calling from XYZ Corporation. My name is Emily and I'm reaching out to you regarding your recent application for a business loan.,0.00223802297763857300,agent,2026-01-22 00:00:10,Insurance,2026-02-26
+transcript_17,20,"Well, we're still processing your application, but we need some additional information to move forward. It looks like we're missing some financial documents from your end.",-0.19743089493321760000,agent,2026-01-22 00:00:20,Insurance,2026-02-26
+transcript_17,40,"We need your business's tax returns from the past two years, as well as a copy of your business license.",-0.00703130081522829200,agent,2026-01-22 00:00:40,Insurance,2026-02-26
+transcript_17,50,You can upload them to our website or fax them to us. I can provide you with the fax number if you'd like.,0.00604591337531289200,agent,2026-01-22 00:00:50,Insurance,2026-02-26
+transcript_17,60,"It's 555-1234. If you have any issues or concerns, please don't hesitate to reach out to me directly.",0.01934846413947817000,agent,2026-01-22 00:01:00,Insurance,2026-02-26
+transcript_17,70,"Great, thank you so much for your cooperation. We'll review the documents as soon as we receive them and be in touch soon.",0.98462414724671490000,agent,2026-01-22 00:01:10,Insurance,2026-02-26
+transcript_18,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-08 00:00:00,Insurance,2026-02-26
+transcript_44,80,"Hmm, I'm not sure. I don't want to increase my deductible, but I also don't want to pay more for my premium. What's the third option?",-0.83217772476569220000,customer,2026-01-31 00:01:20,Insurance,2026-02-26
+transcript_44,100,That sounds interesting. Can you tell me more about the wellness program?,0.80814941916067160000,customer,2026-01-31 00:01:40,Insurance,2026-02-26
+transcript_44,120,"Okay, I think I'd like to explore that option further. Can you walk me through the process of adding it to my plan?",0.04964358122126096000,customer,2026-01-31 00:02:00,Insurance,2026-02-26
+transcript_44,140,Sounds good. Thank you for your help.,0.97830305242271540000,customer,2026-01-31 00:02:20,Insurance,2026-02-26
+transcript_44,150,"No, that's all. Thank you again.",0.86045794499754150000,customer,2026-01-31 00:02:30,Insurance,2026-02-26
+transcript_45,0,good afternoon,0.92203184314638720000,customer,2026-01-21 00:00:00,Insurance,2026-02-26
+transcript_45,10,I had an accident and I need to report it,-0.39531688921316210000,customer,2026-01-21 00:00:10,Insurance,2026-02-26
+transcript_45,20,It's 123456,0.00007956406608605748,customer,2026-01-21 00:00:20,Insurance,2026-02-26
+transcript_45,40,I was driving on the highway and another car hit me from behind,-0.79903680909124190000,customer,2026-01-21 00:00:40,Insurance,2026-02-26
+transcript_45,50,"No, I'm okay. But my car is damaged",-0.95338969137251480000,customer,2026-01-21 00:00:50,Insurance,2026-02-26
+transcript_45,60,"Okay, that sounds good",0.93902605812229890000,customer,2026-01-21 00:01:00,Insurance,2026-02-26
+transcript_45,70,It happened yesterday at 3 pm,-0.00383714709225832500,customer,2026-01-21 00:01:10,Insurance,2026-02-26
+transcript_45,80,"Yes, I have their insurance information",0.00376348048862545900,customer,2026-01-21 00:01:20,Insurance,2026-02-26
+transcript_45,90,"Okay, thank you",0.85397147314678070000,customer,2026-01-21 00:01:30,Insurance,2026-02-26
+transcript_46,0,good afternoon. I'm calling to get a quote for my car insurance.,0.47022036465263990000,customer,2026-02-24 00:00:00,Insurance,2026-02-26
+transcript_46,20,It's a 2018 Honda Civic.,0.09669067108483524000,customer,2026-02-24 00:00:20,Insurance,2026-02-26
+transcript_46,30,"No, I don't have any accidents on my record. And I've been insured with another company for the past 5 years.",0.03046260540723633000,customer,2026-02-24 00:00:30,Insurance,2026-02-26
+transcript_46,40,That sounds a bit high. What's included in the standard policy?,-0.20990094006679360000,customer,2026-02-24 00:00:40,Insurance,2026-02-26
+transcript_46,60,"Okay, that sounds good. But can you explain to me what the premium is based on?",0.10282130478639710000,customer,2026-02-24 00:01:00,Insurance,2026-02-26
+transcript_46,70,"I see. So, is there any way to lower the premium?",-0.82255876949730140000,customer,2026-02-24 00:01:10,Insurance,2026-02-26
+transcript_46,90,"Okay, that sounds like a good option. Can you tell me more about the bundling discount?",0.88979596923649750000,customer,2026-02-24 00:01:30,Insurance,2026-02-26
+transcript_46,100,That sounds great. I think I'll go with the bundled policy. What's the next step?,0.93105805811726830000,customer,2026-02-24 00:01:40,Insurance,2026-02-26
+transcript_46,110,Sounds good. Thank you for your help!,0.97972309924454500000,customer,2026-02-24 00:01:50,Insurance,2026-02-26
+transcript_47,0,good afternoon. I'm calling about my auto insurance policy. I need to make some changes.,-0.00373395690491529200,customer,2026-01-26 00:00:00,Insurance,2026-02-26
+transcript_47,20,It's 123456.,0.00015092202873451250,customer,2026-01-26 00:00:20,Insurance,2026-02-26
+transcript_47,30,I need to add my son to the policy. He just got his license.,0.00070092697929124980,customer,2026-01-26 00:00:30,Insurance,2026-02-26
+transcript_47,40,"His name is John and he was born on July 12, 2002.",0.00276574919166217000,customer,2026-01-26 00:00:40,Insurance,2026-02-26
+transcript_47,50,"Yes, please.",0.35746911031804040000,customer,2026-01-26 00:00:50,Insurance,2026-02-26
+transcript_47,70,"That sounds great. He's a good student, so we'll definitely take advantage of that discount.",0.98578747426775700000,customer,2026-01-26 00:01:10,Insurance,2026-02-26
+transcript_47,80,"No, that's it. Thank you for your help.",0.83576222391556370000,customer,2026-01-26 00:01:20,Insurance,2026-02-26
+transcript_48,0,good afternoon. I'm calling about my recent bill. I got a statement yesterday and I'm not sure I understand some of the charges.,-0.73287585832767940000,customer,2026-01-26 00:00:00,Insurance,2026-02-26
+transcript_48,20,It's 1234567890.,0.00017736960032810330,customer,2026-01-26 00:00:20,Insurance,2026-02-26
+transcript_48,30,There's a charge for $50 that says 'miscellaneous'. I don't know what that's for.,-0.86553059393005040000,customer,2026-01-26 00:00:30,Insurance,2026-02-26
+transcript_48,50,"Oh, okay. I remember requesting that. But I thought it was supposed to be free for the first month.",-0.00768828119992126500,customer,2026-01-26 00:00:50,Insurance,2026-02-26
+transcript_48,60,Thank you so much! I really appreciate it.,0.98471204807014790000,customer,2026-01-26 00:01:00,Insurance,2026-02-26
+transcript_48,70,"No, that's all. Thank you again for your help.",0.91044289232321470000,customer,2026-01-26 00:01:10,Insurance,2026-02-26
+transcript_49,0,good afternoon. I'm calling because I'm having some issues with my internet connection. It's been down for a few hours now.,-0.72142175876319410000,customer,2026-01-20 00:00:00,Insurance,2026-02-26
+transcript_49,20,"Yeah, my account number is 123456. I've tried restarting my router but that didn't work.",-0.63640294326017730000,customer,2026-01-20 00:00:20,Insurance,2026-02-26
+transcript_49,40,2-3 hours? That's unacceptable. I need my internet for work and I'm already behind schedule because of this.,-0.95596735060427700000,customer,2026-01-20 00:00:40,Insurance,2026-02-26
+transcript_49,60,Fine.,-0.59856804447813050000,customer,2026-01-20 00:01:00,Insurance,2026-02-26
+transcript_49,70,Okay. And what about some kind of compensation for the inconvenience this has caused me?,-0.90442585324395390000,customer,2026-01-20 00:01:10,Insurance,2026-02-26
+transcript_49,80,I suppose so. But I'm still not happy about this.,-0.96150775052993100000,customer,2026-01-20 00:01:20,Insurance,2026-02-26
+transcript_50,0,good afternoon. I'm calling to modify my service providers. I want to change my tow and repair shop.,-0.00063897119304989760,customer,2026-02-07 00:00:00,Insurance,2026-02-26
+transcript_50,20,It's 555-1234.,0.00039182684658789490,customer,2026-02-07 00:00:20,Insurance,2026-02-26
+transcript_50,30,I'm not satisfied with their service. They took too long to respond last time I needed a tow.,-0.96434811946939030000,customer,2026-02-07 00:00:30,Insurance,2026-02-26
+transcript_50,50,"Yeah, I'll try XYZ Towing.",0.04477643029385681000,customer,2026-02-07 00:00:50,Insurance,2026-02-26
+transcript_50,60,"Yes, I'll try ABC Repair Shop.",0.03749211070429964000,customer,2026-02-07 00:01:00,Insurance,2026-02-26
+transcript_50,70,"No, that's it. Thank you.",0.17684227561189660000,customer,2026-02-07 00:01:10,Insurance,2026-02-26
+transcript_50,80,"No, I think that's it.",-0.24913484428311410000,customer,2026-02-07 00:01:20,Insurance,2026-02-26
+transcript_18,10,How can I assist you today?,0.00556031215424075700,agent,2026-01-08 00:00:10,Insurance,2026-02-26
+transcript_18,20,Of course. Can you please provide me with your claim number so I can assist you further?,0.00560312559594511300,agent,2026-01-08 00:00:20,Insurance,2026-02-26
+transcript_18,30,Thank you. What kind of notes would you like to add to your claim?,0.14571405528467570000,agent,2026-01-08 00:00:30,Insurance,2026-02-26
+transcript_18,40,Okay. You can upload the photos to our system. I'll guide you through the process.,0.01213430820352163000,agent,2026-01-08 00:00:40,Insurance,2026-02-26
+transcript_18,50,"Also, do you have a repair estimate for the damage?",-0.00661528111060200000,agent,2026-01-08 00:00:50,Insurance,2026-02-26
+transcript_18,60,"Yes, please do. The more information you can provide, the better we can assist you with your claim.",0.92202552122686920000,agent,2026-01-08 00:01:00,Insurance,2026-02-26
+transcript_18,70,Great. I've added the notes to your claim. Is there anything else you need assistance with?,0.54911073500596510000,agent,2026-01-08 00:01:10,Insurance,2026-02-26
+transcript_19,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-14 00:00:00,Insurance,2026-02-26
+transcript_19,10,How can I assist you today?,0.00556031215424075700,agent,2026-01-14 00:00:10,Insurance,2026-02-26
+transcript_19,20,Sorry to hear that. Can you please provide me with your policy number so I can assist you with the First Notice of Loss (FNOL) process?,-0.02248935547708264000,agent,2026-01-14 00:00:20,Insurance,2026-02-26
+transcript_19,30,Thank you for providing that. Can you please tell me more about the accident? What happened?,0.00197527811910389000,agent,2026-01-14 00:00:30,Insurance,2026-02-26
+transcript_19,50,I'm so sorry to hear that. Were you injured in the accident?,-0.82049750961377410000,agent,2026-01-14 00:00:50,Insurance,2026-02-26
+transcript_19,60,"Okay. I'm going to go ahead and file the FNOL report for you. Can you please confirm your contact information, including your phone number and email address?",0.00192012220398291000,agent,2026-01-14 00:01:00,Insurance,2026-02-26
+transcript_19,80,Got it. I've filed the report and you should receive an email with the details shortly. Is there anything else I can assist you with today?,0.05460559700403303000,agent,2026-01-14 00:01:20,Insurance,2026-02-26
+transcript_19,90,You're welcome. Sorry again for the inconvenience and I hope everything gets resolved quickly.,0.14538247930117220000,agent,2026-01-14 00:01:30,Insurance,2026-02-26
+transcript_20,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-11 00:00:00,Insurance,2026-02-26
+transcript_20,10,"Okay, I'd be happy to help you with that. Can you please provide me with your policy number so I can look into it?",0.64341637509888520000,agent,2026-01-11 00:00:10,Insurance,2026-02-26
+transcript_20,20,Thank you. I've located your policy. What changes would you like to make?,0.07255577664193433000,agent,2026-01-11 00:00:20,Insurance,2026-02-26
+transcript_20,40,"Okay, I can help you with that. Can you please provide me with the make, model, and VIN of the new car?",0.07799653101609927000,agent,2026-01-11 00:00:40,Insurance,2026-02-26
+transcript_20,60,Got it. I've added the new car to your policy. Would you like to review the changes before I finalize them?,0.01408209405794458000,agent,2026-01-11 00:01:00,Insurance,2026-02-26
+transcript_20,70,Okay. Let me just review the changes with you. (pause) Everything looks good. The premium will increase by $50 per month. Is that okay with you?,0.75931375518585520000,agent,2026-01-11 00:01:10,Insurance,2026-02-26
+transcript_20,80,Alright. I've finalized the changes. Your policy has been updated. You should receive an email with the updated policy documents within the next 24 hours.,0.06259354510382620000,agent,2026-01-11 00:01:20,Insurance,2026-02-26
+transcript_20,100,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2026-01-11 00:01:40,Insurance,2026-02-26
+transcript_21,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-02 00:00:00,Insurance,2026-02-26
+transcript_21,20,I apologize for the inconvenience. Can you please provide me with your claim number so I can look into this further?,-0.01652541344074798000,agent,2026-01-02 00:00:20,Insurance,2026-02-26
+transcript_21,40,I've located your claim. I see that it's still under review. I'm going to escalate this to our priority team to get an update on the status.,0.00033110231775923540,agent,2026-01-02 00:00:40,Insurance,2026-02-26
+transcript_21,70,I understand your frustration. I'm going to personally follow up on this and ensure that you get a call back today. Can I confirm your contact number please?,-0.07653867331725850000,agent,2026-01-02 00:01:10,Insurance,2026-02-26
+transcript_21,100,"I assure you, I'm committed to resolving this issue. You will receive a call back today. If you don't, please call me directly and I'll make sure it gets done.",0.89613054863834630000,agent,2026-01-02 00:01:40,Insurance,2026-02-26
+transcript_21,120,I understand. I'm going to make things right. You will receive a call back today and we'll get your claim moving forward. Is there anything else I can assist you with?,0.61222477391674380000,agent,2026-01-02 00:02:00,Insurance,2026-02-26
+transcript_22,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-29 00:00:00,Insurance,2026-02-26
+transcript_22,10,Sorry to hear that. Can you please tell me a little bit more about what's going on with your vehicle?,-0.34553619164281930000,agent,2026-01-29 00:00:10,Insurance,2026-02-26
+transcript_22,30,"Okay, don't worry. We'll get someone to help you out. Can you please provide me with your location?",0.08347264932432201000,agent,2026-01-29 00:00:30,Insurance,2026-02-26
+transcript_22,50,"Alright, I've located you. We'll send someone to assist you. Can you please confirm your vehicle's make and model?",0.06983147495282496000,agent,2026-01-29 00:00:50,Insurance,2026-02-26
+transcript_22,60,"Okay, got it. We'll send someone with the right equipment. In the meantime, is your vehicle in a safe location?",0.12623907055713040000,agent,2026-01-29 00:01:00,Insurance,2026-02-26
+transcript_22,80,"Okay, please be careful and stay in your vehicle. Help should arrive within the next 30-45 minutes.",0.00281735711866337700,agent,2026-01-29 00:01:20,Insurance,2026-02-26
+transcript_22,90,You're welcome. Is there anything else I can assist you with while you wait?,0.45922801131972250000,agent,2026-01-29 00:01:30,Insurance,2026-02-26
+transcript_23,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-05 00:00:00,Insurance,2026-02-26
+transcript_23,10,Sorry to hear that. Can you please provide me with your policy number so I can assist you with the claim?,-0.02292973557732036000,agent,2026-01-05 00:00:10,Insurance,2026-02-26
+transcript_23,20,"I apologize for the inconvenience, sir. I'm going to do my best to assist you as quickly as possible. Can you please tell me more about the accident? What happened?",-0.00979054471622120600,agent,2026-01-05 00:00:20,Insurance,2026-02-26
+transcript_23,40,"Okay, sir. Did you get the other driver's information?",0.00014384205048934010,agent,2026-01-05 00:00:40,Insurance,2026-02-26
+transcript_23,50,"Okay, great. Can you please provide me with the report number?",0.51432540570053190000,agent,2026-01-05 00:00:50,Insurance,2026-02-26
+transcript_23,60,"Yes, sir. I'm going to go ahead and start the claim process. Can you please confirm your contact information and the details of the accident?",0.00159707479178983200,agent,2026-01-05 00:01:00,Insurance,2026-02-26
+transcript_23,70,"Okay, sir. I've started the claim process. Someone from our claims team will be in touch with you within the next 24-48 hours to discuss the next steps.",0.03062752041723579000,agent,2026-01-05 00:01:10,Insurance,2026-02-26
+transcript_24,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-19 00:00:00,Insurance,2026-02-26
+transcript_24,10,How can I assist you today?,0.00556031215424075700,agent,2026-01-19 00:00:10,Insurance,2026-02-26
+transcript_24,20,I'd be happy to help you with that. Can you please provide me with some details? What type of policy are you looking to set up?,0.58732580463272280000,agent,2026-01-19 00:00:20,Insurance,2026-02-26
+transcript_24,30,That's a great decision. We have various life insurance policies to choose from. Can you please tell me a bit about your family and what kind of coverage you're looking for?,0.94436915686787640000,agent,2026-01-19 00:00:30,Insurance,2026-02-26
+transcript_24,50,"Okay, got it. And what's your budget for the premium?",0.01151003728196631000,agent,2026-01-19 00:00:50,Insurance,2026-02-26
+transcript_24,60,"We have policies that range from $50 to $500 per month, depending on the coverage and term. Let me see what options we have that might fit your needs.",0.06751268821328975000,agent,2026-01-19 00:01:00,Insurance,2026-02-26
+transcript_24,80,"I'll need to ask you a few more questions to determine the best policy for you. Then, I'll guide you through the application process, and once everything is approved, we'll get the policy issued.",0.01055171308275157000,agent,2026-01-19 00:01:20,Insurance,2026-02-26
+transcript_24,90,Great! I'll need your personal and beneficiary information. Can you please provide that to me?,0.53357441819239200000,agent,2026-01-19 00:01:30,Insurance,2026-02-26
+transcript_24,110,"I'll walk you through the application, and we'll get everything set up for you.",0.11762003799030490000,agent,2026-01-19 00:01:50,Insurance,2026-02-26
+transcript_24,120,"You're welcome! It was my pleasure to assist you. Your new policy will be issued shortly, and you'll receive all the details via email. Is there anything else I can help you with today?",0.96746664247678230000,agent,2026-01-19 00:02:00,Insurance,2026-02-26
+transcript_25,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-22 00:00:00,Insurance,2026-02-26
+transcript_25,10,I'm calling from XYZ Corporation. My name is John. I'm calling to confirm that you received the paperwork we sent over last week.,0.00106334839948499200,agent,2026-01-22 00:00:10,Insurance,2026-02-26
+transcript_25,20,Great! I just wanted to make sure you got it. Can you please confirm your receipt by signing and returning the enclosed acknowledgement form?,0.63232569900052300000,agent,2026-01-22 00:00:20,Insurance,2026-02-26
+transcript_25,40,"Okay, great! I'll go ahead and schedule a pickup for tomorrow. Would that work for you?",0.95538084311135220000,agent,2026-01-22 00:00:40,Insurance,2026-02-26
+transcript_26,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-24 00:00:00,Insurance,2026-02-26
+transcript_26,10,How can I assist you today?,0.00556031215424075700,agent,2026-02-24 00:00:10,Insurance,2026-02-26
+transcript_26,20,Sorry to hear that. Can you please provide me with your policy number so I can assist you with the claim?,-0.02292973557732036000,agent,2026-02-24 00:00:20,Insurance,2026-02-26
+transcript_26,30,Thank you. I've located your policy. Can you please tell me more about the accident? What happened?,0.03730191103221953000,agent,2026-02-24 00:00:30,Insurance,2026-02-26
+transcript_26,40,I'm so sorry to hear that. Were you injured in the accident?,-0.82049750961377410000,agent,2026-02-24 00:00:40,Insurance,2026-02-26
+transcript_26,50,Okay. I'm going to go ahead and file a First Notice of Loss (FNOL) for you. This will get the claim process started.,0.00429158713604185800,agent,2026-02-24 00:00:50,Insurance,2026-02-26
+transcript_26,60,I'll need to ask you a few more questions to complete the FNOL. Can you please provide me with the date and time of the accident?,-0.00044681462472440090,agent,2026-02-24 00:01:00,Insurance,2026-02-26
+transcript_26,70,And do you have the other driver's information?,-0.00011782547638422570,agent,2026-02-24 00:01:10,Insurance,2026-02-26
+transcript_26,80,Great. I'll go ahead and complete the FNOL. You will receive an email with the claim number and further instructions.,0.86329102082840690000,agent,2026-02-24 00:01:20,Insurance,2026-02-26
+transcript_26,90,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2026-02-24 00:01:30,Insurance,2026-02-26
+transcript_27,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-17 00:00:00,Insurance,2026-02-26
+transcript_27,10,Sorry to hear that. Can you please provide me with your account number so I can look into this further for you?,-0.00720404880552649700,agent,2026-01-17 00:00:10,Insurance,2026-02-26
+transcript_27,20,Thank you. I've pulled up your account. Can you tell me more about what you're seeing on your bill that's concerning you?,0.00140053272829432400,agent,2026-01-17 00:00:20,Insurance,2026-02-26
+transcript_27,40,"I see. Let me investigate this further. (pause) Okay, I see that there was an error on our part. We incorrectly charged you for an extra service.",-0.62152148161751020000,agent,2026-01-17 00:00:40,Insurance,2026-02-26
+transcript_27,50,I apologize for the inconvenience. I'm going to go ahead and correct the error. You should see the corrected bill reflected in your account within the next 24 hours.,-0.00961859614348248300,agent,2026-01-17 00:00:50,Insurance,2026-02-26
+transcript_27,70,I understand your concern. We should have notified you about the error. I'm going to make a note on your account to ensure that we're more proactive in the future.,-0.00034710715318619910,agent,2026-01-17 00:01:10,Insurance,2026-02-26
+transcript_27,80,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2026-01-17 00:01:20,Insurance,2026-02-26
+transcript_28,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-25 00:00:00,Insurance,2026-02-26
+transcript_28,10,"Okay, I'd be happy to help you with that. Can you please tell me your policy number so I can look into your account?",0.62093427188151470000,agent,2026-02-25 00:00:10,Insurance,2026-02-26
+transcript_28,30,"Thank you. I've located your account. So, you're saying you're using your vehicle more for commuting now? How many miles do you estimate you're driving per week?",0.10161884503112020000,agent,2026-02-25 00:00:30,Insurance,2026-02-26
+transcript_28,50,"Okay, got it. And how many miles do you think you'll drive in a year?",0.01032664006194040000,agent,2026-02-25 00:00:50,Insurance,2026-02-26
+transcript_37,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-10 00:00:00,Insurance,2026-02-26
+transcript_28,60,Alright. I'm going to go ahead and update your policy to reflect the change in usage. This may affect your premium.,-0.00446454501184268000,agent,2026-02-25 00:01:00,Insurance,2026-02-26
+transcript_28,80,"Let me just check on that for you. (pause) Okay, it looks like your premium will increase by about $20 per month.",-0.00400368645839588300,agent,2026-02-25 00:01:20,Insurance,2026-02-26
+transcript_28,100,"Well, we do offer some discounts for things like multi-car policies or bundling with other insurance products. Would you like me to look into those options for you?",0.33452191289718470000,agent,2026-02-25 00:01:40,Insurance,2026-02-26
+transcript_28,110,"Okay, let me see what we can do. (pause) Alright, it looks like we can offer you a discount of $10 per month if you add the other car to your policy.",0.43957908372576380000,agent,2026-02-25 00:01:50,Insurance,2026-02-26
+transcript_28,130,"Alright, I've updated your policy. You should receive an email with the new details shortly. Is there anything else I can assist you with today?",0.07224560833148796000,agent,2026-02-25 00:02:10,Insurance,2026-02-26
+transcript_29,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-25 00:00:00,Insurance,2026-02-26
+transcript_29,10,Sorry to hear that you're unhappy with our service. Can you tell me more about what's not meeting your expectations?,-0.81482999381148120000,agent,2026-02-25 00:00:10,Insurance,2026-02-26
+transcript_29,30,I apologize for the inconvenience. I'd be happy to help you with adding a new driver to your policy. Can you please provide me with the driver's details?,0.00543450364007380700,agent,2026-02-25 00:00:30,Insurance,2026-02-26
+transcript_29,40,"Okay, I've added John to your policy. Would you like to remove any existing drivers from your policy?",0.00015312835386005470,agent,2026-02-25 00:00:40,Insurance,2026-02-26
+transcript_29,50,"Okay, I've removed Jane from your policy. Is there anything else I can assist you with today?",0.00033124379015436740,agent,2026-02-25 00:00:50,Insurance,2026-02-26
+transcript_29,70,"I understand your concerns and I apologize again for the inconvenience. However, I'd like to offer you a loyalty discount for being a long-time",0.05950635406075300000,agent,2026-02-25 00:01:10,Insurance,2026-02-26
+transcript_29,80,We can offer you a 10% discount on your premium. Would you like me to apply that to your policy?,0.06425302399856239000,agent,2026-02-25 00:01:20,Insurance,2026-02-26
+transcript_29,100,"Alright, the discount has been applied. Is there anything else I can assist you with today?",0.09939150419396529000,agent,2026-02-25 00:01:40,Insurance,2026-02-26
+transcript_30,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-12 00:00:00,Insurance,2026-02-26
+transcript_30,10,"Absolutely, I'd be happy to help you review your policy. Can you please tell me a little bit more about your concerns?",0.31285963623665850000,agent,2026-02-12 00:00:10,Insurance,2026-02-26
+transcript_30,40,"Okay, let me take a look at your policy. (pause) Okay, I see that you do have a good amount of coverage, but I do think we can improve it. We have a new policy that includes advanced safety features and it would also cover your new car.",0.63081951590314720000,agent,2026-02-12 00:00:40,Insurance,2026-02-26
+transcript_30,60,"I completely understand. However, I want to let you know that this new policy would actually save you money in the long run. With the advanced safety features, you'll be eligible for a discount. And, we have a promotion going on right now that would give you an even better rate.",0.88195047231678560000,agent,2026-02-12 00:01:00,Insurance,2026-02-26
+transcript_30,80,Absolutely. The promotion is for new,0.02345599544203769000,agent,2026-02-12 00:01:20,Insurance,2026-02-26
+transcript_30,100,"I completely understand. Let me see what I can do. (pause) Okay, I can offer you a free roadside assistance package for the first year, as well as a dedicated",0.66262318190068100000,agent,2026-02-12 00:01:40,Insurance,2026-02-26
+transcript_30,120,Great! I'll go ahead and process the changes. You'll receive an email with all the details shortly. Is there anything else I can assist you with today?,0.86630476546933510000,agent,2026-02-12 00:02:00,Insurance,2026-02-26
+transcript_31,0,Hello good afternoon. How can I assist you with your policy today?,0.19010780896300620000,agent,2026-01-29 00:00:00,Insurance,2026-02-26
+transcript_31,10,I'd be happy to help you review your policy. Can you please provide me with your policy number so I can look into it for you?,0.45743989433332200000,agent,2026-01-29 00:00:10,Insurance,2026-02-26
+transcript_31,30,"Thank you for providing that. Let me just check on your policy real quick. (pause) Okay, I've got it pulled up. It looks like you have a liability coverage of $50,000. Is that correct?",0.00869576950560307900,agent,2026-01-29 00:00:30,Insurance,2026-02-26
+transcript_31,50,"I completely understand your concern. We can definitely discuss increasing your liability coverage to give you more protection. We also have some additional coverage options that might be of interest to you, such as uninsured motorist coverage.",0.33012732321488100000,agent,2026-01-29 00:00:50,Insurance,2026-02-26
+transcript_31,70,Absolutely. Uninsured motorist coverage protects you in case you're involved in an accident with someone who doesn't have insurance. It can help cover medical expenses and other related costs.,0.39046457510107930000,agent,2026-01-29 00:01:10,Insurance,2026-02-26
+transcript_31,80,"Let me just check on that for you. (pause) Okay, it looks like adding the uninsured motorist coverage would increase your premium by about $20 per month.",-0.02083308603991751000,agent,2026-01-29 00:01:20,Insurance,2026-02-26
+transcript_31,100,Great! I can assist you with that. I'll just need to update your policy and you'll be all set.,0.95147404793168420000,agent,2026-01-29 00:01:40,Insurance,2026-02-26
+transcript_31,110,"I'd be happy to review your policy with you. Let me just go through it real quick. (pause) Okay, everything looks good. You have comprehensive and collision coverage, which will help protect your vehicle in case of an accident.",0.92959341046369900000,agent,2026-01-29 00:01:50,Insurance,2026-02-26
+transcript_31,130,You're welcome! It was my pleasure to assist you. Is there anything else I can help you with today?,0.97602565596175630000,agent,2026-01-29 00:02:10,Insurance,2026-02-26
+transcript_32,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-03 00:00:00,Insurance,2026-02-26
+transcript_32,10,I apologize for the inconvenience. Can you please provide me with your policy number so I can look into this further?,-0.02219710348505810000,agent,2026-02-03 00:00:10,Insurance,2026-02-26
+transcript_32,30,"I've located your policy, and I see that there was a misunderstanding about the additional driver fee. Let me see what I can do to rectify the situation.",-0.01552772144048475000,agent,2026-02-03 00:00:30,Insurance,2026-02-26
+transcript_32,50,"I understand your frustration, and I apologize for the mistake. I'm going to go ahead and waive the additional driver fee for you.",-0.14418883120333530000,agent,2026-02-03 00:00:50,Insurance,2026-02-26
+transcript_32,60,I'm so sorry to hear that. Let me investigate what happened with the breakdown support. Can you please tell me more about the incident?,-0.48053519284521400000,agent,2026-02-03 00:01:00,Insurance,2026-02-26
+transcript_32,80,"I've located the incident report, and I see that there was an unexpected delay in our response time. I'm going to offer you a gesture of goodwill for the inconvenience.",-0.00366450653354943900,agent,2026-02-03 00:01:20,Insurance,2026-02-26
+transcript_32,90,"I understand, and I apologize again for the issues you've experienced. Let me go ahead and escalate this to my supervisor. Please hold for just a moment.",-0.00353546639472845900,agent,2026-02-03 00:01:30,Insurance,2026-02-26
+transcript_32,110,"My supervisor is on the line now. She'll be happy to assist you further.
+SUPERVISOR
+Hello, I apologize for the issues you've experienced with our additional driver breakdown support. I'm happy to offer you a more substantial gesture of goodwill and a formal apology.",0.28126417075074270000,agent,2026-02-03 00:01:50,Insurance,2026-02-26
+transcript_33,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-22 00:00:00,Insurance,2026-02-26
+transcript_33,10,"Hi Joy, thank you for reaching out to us. I'd be happy to assist you with modifying your service providers. Can you please tell me a little bit more about what changes you'd like to make?",0.77932612008666180000,agent,2026-02-22 00:00:10,Insurance,2026-02-26
+transcript_33,30,"Okay, I've located your account. To confirm, you'd like to add a new tow service provider and cancel the current repair shop service provider, correct?",0.00077009554049267680,agent,2026-02-22 00:00:30,Insurance,2026-02-26
+transcript_33,40,"Alright, I just need to verify some information. Can you please confirm your account number or the phone number associated with your account?",0.00030419762313271810,agent,2026-02-22 00:00:40,Insurance,2026-02-26
+transcript_33,50,"Thank you, Joy. I've verified your account. Now, can you please provide me with the details of the new tow service provider you'd like to add? The name, address, and phone number would be helpful.",0.46883224003222840000,agent,2026-02-22 00:00:50,Insurance,2026-02-26
+transcript_33,70,"Got it, Joy. I've added Sam's Towing to your account. And I've also cancelled the current repair shop service provider. You should receive a confirmation email shortly.",0.02596036866921736000,agent,2026-02-22 00:01:10,Insurance,2026-02-26
+transcript_33,80,"You're welcome, Joy. It was my pleasure to assist you. If you have any other questions or need further assistance, please don't hesitate to reach out to us. Have a great day!",0.98263756891737220000,agent,2026-02-22 00:01:20,Insurance,2026-02-26
+transcript_34,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-09 00:00:00,Insurance,2026-02-26
+transcript_34,10,Absolutely! I'd be happy to help you with that. Can you please provide me with your policy number or your vehicle's VIN number so I can look up your information?,0.89194247739515460000,agent,2026-01-09 00:00:10,Insurance,2026-02-26
+transcript_34,30,"Thank you! I've pulled up your information. Can you tell me a little bit about your vehicle? What's the make, model, and year?",0.24070030759036500000,agent,2026-01-09 00:00:30,Insurance,2026-02-26
+transcript_34,40,"Okay, great! Based on your information, I'm showing that your current premium is $120 per month. However, I can offer you a better rate if you're willing to switch to a 6-month payment plan. Would you be interested in hearing more about that?",0.81927122705317050000,agent,2026-01-09 00:00:40,Insurance,2026-02-26
+transcript_34,60,"If you switch to the 6-month payment plan, your new premium would be $105 per month. That's a savings of $15 per month.",0.02961646657271499000,agent,2026-01-09 00:01:00,Insurance,2026-02-26
+transcript_34,70,"No catch at all! The only thing to keep in mind is that you would need to pay the full 6 months upfront. But other than that, there are no additional fees or anything like that.",0.01135662387412029000,agent,2026-01-09 00:01:10,Insurance,2026-02-26
+transcript_34,90,"Absolutely! Your premium covers liability, collision, and comprehensive coverage. It also includes roadside assistance and rental car coverage in case your vehicle is in the shop.",0.58803272149130710000,agent,2026-01-09 00:01:30,Insurance,2026-02-26
+transcript_34,100,Wonderful! I'll go ahead and process the changes to your policy. You should receive an email with the updated information within the next 24 hours.,0.94244753452845790000,agent,2026-01-09 00:01:40,Insurance,2026-02-26
+transcript_34,110,You're welcome! It was my pleasure to assist you. Is there anything else I can help you with today?,0.97602565596175630000,agent,2026-01-09 00:01:50,Insurance,2026-02-26
+transcript_35,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-08 00:00:00,Insurance,2026-02-26
+transcript_35,10,"Okay, I'd be happy to help you with that. Can you please tell me a little bit more about what you're looking to change and why?",0.59607326289914460000,agent,2026-01-08 00:00:10,Insurance,2026-02-26
+transcript_35,30,"I understand where you're coming from. Increasing your deductible can definitely lower your premiums. But before we make any changes, I just want to make sure you're aware that you'll be responsible for paying that higher deductible amount if you need to make a claim.",-0.02462826426522557000,agent,2026-01-08 00:00:30,Insurance,2026-02-26
+transcript_35,40,"Okay. Let me just check on some options for you. (pause) Okay, I have a few options here. If we increase your deductible to $1,000, your premium would decrease by $50 per month. Or if we increase it to $2,000, your premium would decrease by $100 per month.",-0.00055615250655149940,agent,2026-01-08 00:00:40,Insurance,2026-02-26
+transcript_35,70,"Alright, I can make that change for you. I just need to confirm a few details. Can you please confirm your name and policy number?",0.00701242876847574200,agent,2026-01-08 00:01:10,Insurance,2026-02-26
+transcript_35,80,"Okay, thank you John. I've made the change to your policy. You should receive a confirmation email with the new details shortly.",0.10071048128099920000,agent,2026-01-08 00:01:20,Insurance,2026-02-26
+transcript_35,90,"You're welcome, John. Is there anything else I can assist you with today?",0.72871051575408330000,agent,2026-01-08 00:01:30,Insurance,2026-02-26
+transcript_36,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-07 00:00:00,Insurance,2026-02-26
+transcript_36,10,Sorry to hear that you're not satisfied with our service. I'd be happy to help you update your garage location. Can you please provide me with your account number or the phone number associated with your account?,-0.15774580886852170000,agent,2026-02-07 00:00:10,Insurance,2026-02-26
+transcript_36,40,I apologize for the inconvenience you've been experiencing. I've checked on your account and it seems that there was an issue with our system that caused the delay. I've escalated the issue to our technical team and they're working on resolving it as soon as possible.,-0.01584490462533550000,agent,2026-02-07 00:00:40,Insurance,2026-02-26
+transcript_36,60,"I understand your frustration, sir. I'm going to go ahead and escalate this issue to my supervisor. Please hold for just a moment.",-0.15272779555511630000,agent,2026-02-07 00:01:00,Insurance,2026-02-26
+transcript_37,10,I understand you're calling about the denial of your recent claim. Can you please tell me more about what happened?,-0.01740440280716152000,agent,2026-01-10 00:00:10,Insurance,2026-02-26
+transcript_37,20,I apologize for the inconvenience. Can you please provide me with your claim number so I can look into this further?,-0.01652541344074798000,agent,2026-01-10 00:00:20,Insurance,2026-02-26
+transcript_37,30,"Thank you. I've located your claim. I see that our adjuster did deny it due to a pre-existing condition. However, I'd like to review it again to ensure everything was handled correctly.",0.08890222097855588000,agent,2026-01-10 00:00:30,Insurance,2026-02-26
+transcript_37,40,I understand your concern. Let me go through the details with you. (pause) It appears that our adjuster did find some evidence of a pre-existing condition in your medical records.,-0.00184824822531826100,agent,2026-01-10 00:00:40,Insurance,2026-02-26
+transcript_37,50,I understand. Sometimes our adjusters may make mistakes. I'm going to go ahead and escalate this to our appeals department for a re-review.,-0.00079825763837826360,agent,2026-01-10 00:00:50,Insurance,2026-02-26
+transcript_37,60,"Typically, it takes around 7-10 business days. I'll also make sure to follow up with you personally to keep you updated on the status.",-0.00122136282743801100,agent,2026-01-10 00:01:00,Insurance,2026-02-26
+transcript_38,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-15 00:00:00,Insurance,2026-02-26
+transcript_38,10,"Joy, I see you've been with us for a while now. How's your experience been so far?",0.43484562295685000000,agent,2026-01-15 00:00:10,Insurance,2026-02-26
+transcript_38,20,"Sorry to hear that, Joy. Can you tell me more about the issues you've been facing? That way I can better understand your needs and see if there's a better plan for you.",-0.10666898299543180000,agent,2026-01-15 00:00:20,Insurance,2026-02-26
+transcript_38,40,I apologize for the inconvenience. I'd like to recommend our premium plan which offers better coverage in rural areas and includes more data. It's only $10 more per month.,0.20795418464672970000,agent,2026-01-15 00:00:40,Insurance,2026-02-26
+transcript_38,50,"I completely understand, Joy. However, our premium plan can actually save you money in the long run by avoiding surprise bills. Plus, you'll get better reception and more data. Would you like me to run some numbers and see how it can benefit you?",0.71202956249911300000,agent,2026-01-15 00:00:50,Insurance,2026-02-26
+transcript_38,70,"Alright, let me just check some things real quick. (pause) Okay, Joy, it looks like our premium plan can actually save you around $20 per month in the long run. And like I mentioned, you'll get better reception and more data.",0.86274898426796360000,agent,2026-01-15 00:01:10,Insurance,2026-02-26
+transcript_38,90,"Let me see what I can do, Joy. (pause) Okay, I can offer you a one-time discount of $5 off your first month's premium plan. Would you like to take advantage of that?",0.50756366890999080000,agent,2026-01-15 00:01:30,Insurance,2026-02-26
+transcript_38,100,"Great, Joy! I'm glad I could help. I'll go ahead and switch you over to the premium plan. You should see the changes take effect within the next 24 hours.",0.98069354524857550000,agent,2026-01-15 00:01:40,Insurance,2026-02-26
+transcript_39,0,Hello good afternoon.,0.80734519818684690000,agent,2025-12-30 00:00:00,Insurance,2026-02-26
+transcript_39,10,"Of course, Joy! I'd be happy to help you with that. Can you please tell me a bit more about the paperwork you need help with? Is it for a specific project or application?",0.91619635736686280000,agent,2025-12-30 00:00:10,Insurance,2026-02-26
+transcript_39,30,"Okay, got it! Loan applications can be a bit overwhelming. Let me see if I can guide you through it. What's the current status of your application? Have you already started filling out the forms?",0.06340986335214960000,agent,2025-12-30 00:00:30,Insurance,2026-02-26
+transcript_39,50,"Don't worry, Joy! We can work through it together. Which specific sections are you having trouble with? Is it the financial statements or the business plan?",0.54745014619289980000,agent,2025-12-30 00:00:50,Insurance,2026-02-26
+transcript_39,60,"Okay, no problem! Cash flow projections can be a bit tricky. Let me walk you through it. Can you please share with me what you have so far? Maybe we can work on it together.",0.14121172545024130000,agent,2025-12-30 00:01:00,Insurance,2026-02-26
+transcript_39,80,"Take your time, Joy. I'll wait while you get that ready.",0.04037925264415108000,agent,2025-12-30 00:01:20,Insurance,2026-02-26
+transcript_39,90,"Okay, great! Let's start with the beginning. Can you tell me a bit about your current cash flow situation? What's your average monthly income and expenses?",0.87155672289480250000,agent,2025-12-30 00:01:30,Insurance,2026-02-26
+transcript_39,110,"Alright, got it! So, we can work with that. Now, let's talk about your projected income and expenses for the next few months. Do you have any big purchases or investments planned?",0.27208355837087090000,agent,2025-12-30 00:01:50,Insurance,2026-02-26
+transcript_39,120,"Okay, that's a significant investment. Let's make sure we factor that into your cash flow projections. I'm going to guide you through it, step by step. Don't worry, we'll get it done!",0.85594169719255760000,agent,2025-12-30 00:02:00,Insurance,2026-02-26
+transcript_40,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-05 00:00:00,Insurance,2026-02-26
+transcript_40,10,"Of course, I'd be happy to help you with that. Can you please provide me with your policy number so I can look into it for you?",0.85669964402806350000,agent,2026-01-05 00:00:10,Insurance,2026-02-26
+transcript_40,30,"Okay, thank you for providing that. Let me just check on your policy real quick. (pause) Okay, I've got it pulled up. It looks like you have a standard policy with us. Would you like to consider adding any additional coverage or endorsements to your policy?",0.10875395297856950000,agent,2026-01-05 00:00:30,Insurance,2026-02-26
+transcript_40,50,"We have a few different options. We have an umbrella policy that provides additional liability coverage, a flood insurance endorsement, and a personal articles endorsement that covers high-value items like jewelry or electronics.",0.00378605934265433000,agent,2026-01-05 00:00:50,Insurance,2026-02-26
+transcript_40,70,"The cost would depend on a few factors, including your location and the amount of coverage you're looking for. But on average, it's around $200-$300 per year.",0.00029618785045759650,agent,2026-01-05 00:01:10,Insurance,2026-02-26
+transcript_40,90,"Yes, I can assist you with that. I just need to update your policy information real quick. (pause) Okay, that's all taken care of. Your policy has been updated to include the umbrella policy.",0.14752379403992470000,agent,2026-01-05 00:01:30,Insurance,2026-02-26
+transcript_40,110,Your policy is up for renewal in about 6 months. I can go ahead and set you up for automatic renewal if you'd like.,0.00268538055334867400,agent,2026-01-05 00:01:50,Insurance,2026-02-26
+transcript_40,120,Absolutely. I'll go ahead and send those to you via email. You should receive them within the next 24-48 hours.,0.07857294872093697000,agent,2026-01-05 00:02:00,Insurance,2026-02-26
+transcript_40,140,"You're welcome! It was my pleasure to assist you. If you have any other questions or concerns, don't hesitate to reach out to us. Have a great day!",0.98418976293016090000,agent,2026-01-05 00:02:20,Insurance,2026-02-26
+transcript_41,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-15 00:00:00,Insurance,2026-02-26
+transcript_41,10,"Hi Joy, thank you for reaching out to us today. My name is Alex, and I'll be happy to assist you with any questions or concerns you may have. How can I help you today?",0.95388927487257710000,agent,2026-01-15 00:00:10,Insurance,2026-02-26
+transcript_41,30,"Sorry to hear that, Joy. I'd be happy to help you with that. Can you please tell me a little bit more about what's not clear to you about the family driver breakdown support? Is it the process of adding a driver or something else?",-0.00530381633496013200,agent,2026-01-15 00:00:30,Insurance,2026-02-26
+transcript_41,50,"Okay, Joy. Adding a driver to your breakdown support is a pretty straightforward process. You can do it online through our website or through our mobile app. You'll just need to provide some basic information about the driver, such as their name, date of birth, and license details.",0.08668331748784862000,agent,2026-01-15 00:00:50,Insurance,2026-02-26
+transcript_41,70,"Great question, Joy! The cost of adding a driver to your breakdown support will depend on a few factors, such as the driver's age and license history. But don't worry, I can give you a quick quote right now. Can you please tell me the driver's age and how long they've had their license?",0.42151164627756730000,agent,2026-01-15 00:01:10,Insurance,2026-02-26
+transcript_41,90,"Alright, Joy. Based on that information, the additional cost to add this driver to your breakdown support would be £20 per year. We can either add it to your monthly premium or you can pay it upfront, whichever you prefer.",0.00249164222796693900,agent,2026-01-15 00:01:30,Insurance,2026-02-26
+transcript_41,110,"Sounds good, Joy! I've gone ahead and added the driver to your breakdown support. You should receive an email with the updated details shortly. Is there anything else I can assist you with today?",0.81166153726319230000,agent,2026-01-15 00:01:50,Insurance,2026-02-26
+transcript_41,120,"You're welcome, Joy! It was my pleasure to assist you. If you have any other questions or concerns in the future, don't hesitate to reach out to us. Have a great day!",0.98390233310447030000,agent,2026-01-15 00:02:00,Insurance,2026-02-26
+transcript_42,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-11 00:00:00,Insurance,2026-02-26
+transcript_42,10,"Okay, no problem at all. Can you please provide me with your policy number so I can look into it for you?",0.21117420044969250000,agent,2026-02-11 00:00:10,Insurance,2026-02-26
+transcript_42,20,"Alright, thank you. I've located your policy. Can you please confirm your new address for me?",0.12474564267684900000,agent,2026-02-11 00:00:20,Insurance,2026-02-26
+transcript_42,40,Got it. I've updated your policy with the new address. Would you like to review the changes before I finalize it?,0.00898613394144058600,agent,2026-02-11 00:00:40,Insurance,2026-02-26
+transcript_42,50,"Absolutely. So, I've updated your garage location to 123 Main St, Anytown, USA 12345. Everything else remains the same. Your premium will not be affected by this change.",0.02005869686918377000,agent,2026-02-11 00:00:50,Insurance,2026-02-26
+transcript_42,70,"That's a great question. Our rates are based on a variety of factors, including your driving record, vehicle, and credit score. Since none of those have changed, your premium remains the same.",0.13332482301996350000,agent,2026-02-11 00:01:10,Insurance,2026-02-26
+transcript_42,80,"No, your billing information remains the same. We'll continue to bill you at the same address and payment method.",-0.00147363229905717000,agent,2026-02-11 00:01:20,Insurance,2026-02-26
+transcript_42,100,"Alright, I've finalized the changes. Your policy is now updated with your new garage location. Is there anything else I can assist you with today?",0.25514312949809090000,agent,2026-02-11 00:01:40,Insurance,2026-02-26
+transcript_43,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-13 00:00:00,Insurance,2026-02-26
+transcript_43,10,"Okay, what changes would you like to make?",0.00157891347809704900,agent,2026-02-13 00:00:10,Insurance,2026-02-26
+transcript_43,20,"Okay, I can help you with that. Can you please confirm your son's name and date of birth?",0.00703768812000354900,agent,2026-02-13 00:00:20,Insurance,2026-02-26
+transcript_43,40,"Alright, I've located his information. I just need to confirm a few details. Is he still a licensed driver?",0.00141461528309870500,agent,2026-02-13 00:00:40,Insurance,2026-02-26
+transcript_43,50,"Okay, and did he have any accidents or claims while he was on your policy?",-0.00425352923973465500,agent,2026-02-13 00:00:50,Insurance,2026-02-26
+transcript_43,60,"Alright, I'm going to go ahead and remove him from your policy. You'll receive an updated policy document in the mail within the next 7-10 business days.",0.00321077899298138900,agent,2026-02-13 00:01:00,Insurance,2026-02-26
+transcript_43,70,"Let me just check on that for you. (pause) Okay, it looks like your premium will decrease by about $50 per month.",-0.04439823444123858000,agent,2026-02-13 00:01:10,Insurance,2026-02-26
+transcript_43,80,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2026-02-13 00:01:20,Insurance,2026-02-26
+transcript_44,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-31 00:00:00,Insurance,2026-02-26
+transcript_44,10,Sorry to hear that you're not satisfied with your current coverage. Can you tell me more about what's not meeting your expectations?,-0.88451736941742330000,agent,2026-01-31 00:00:10,Insurance,2026-02-26
+transcript_44,30,I understand your concerns. Let me see what options we have available to adjust your coverage levels and deductibles. Can you please confirm your current premium amount and deductible?,0.00100685811750794700,agent,2026-01-31 00:00:30,Insurance,2026-02-26
+transcript_44,60,"Okay, thank you for confirming that. Based on your current plan, I can offer you a few options to adjust your coverage levels and deductibles. We could lower your premium to $200 a month, but that would increase your deductible to $1,500. Or we could keep your premium the same, but lower your deductible to $800.",0.19833835505790570000,agent,2026-01-31 00:01:00,Insurance,2026-02-26
+transcript_44,90,"The third option would be to keep your premium and deductible the same, but we could add some additional features to your plan, such as a wellness program or a discount on certain services.",0.09921551928709117000,agent,2026-01-31 00:01:30,Insurance,2026-02-26
+transcript_44,110,"Yes, our wellness program offers discounts on gym memberships, healthy food delivery, and other wellness-related services. It's a great way to incentivize healthy habits and save some money in the process.",0.97981549111449700000,agent,2026-01-31 00:01:50,Insurance,2026-02-26
+transcript_44,130,Absolutely. I can assist you with that right away. I'll just need to confirm a few details and then we can get the process started.,0.52916430115648770000,agent,2026-01-31 00:02:10,Insurance,2026-02-26
+transcript_44,140,You're welcome. I'm glad I could assist you in finding a solution that works for you. Is there anything else I can help you with today?,0.96994507981484690000,agent,2026-01-31 00:02:20,Insurance,2026-02-26
+transcript_45,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-21 00:00:00,Insurance,2026-02-26
+transcript_45,10,How can I assist you today?,0.00556031215424075700,agent,2026-01-21 00:00:10,Insurance,2026-02-26
+transcript_45,20,Sorry to hear that. Can you please provide me with your policy number so I can assist you with the claim?,-0.02292973557732036000,agent,2026-01-21 00:00:20,Insurance,2026-02-26
+transcript_45,30,Thank you. I've located your policy. Can you please tell me more about the accident? What happened?,0.03730191103221953000,agent,2026-01-21 00:00:30,Insurance,2026-02-26
+transcript_45,40,Sorry to hear that. Were you injured in the accident?,-0.80154637742522970000,agent,2026-01-21 00:00:40,Insurance,2026-02-26
+transcript_45,50,Okay. I'm going to go ahead and file a First Notice of Loss (FNOL) for you. This will get the claims process started.,0.00603415581162059000,agent,2026-01-21 00:00:50,Insurance,2026-02-26
+transcript_45,60,I'll need to ask you a few more questions to complete the FNOL. Can you please provide me with the date and time of the accident?,-0.00044681462472440090,agent,2026-01-21 00:01:00,Insurance,2026-02-26
+transcript_45,70,Okay. And do you have the other driver's information?,0.00013099656920190220,agent,2026-01-21 00:01:10,Insurance,2026-02-26
+transcript_45,80,Great. I'll go ahead and complete the FNOL. You should receive an email with the claim number and next steps within the next 24 hours.,0.89687047540620680000,agent,2026-01-21 00:01:20,Insurance,2026-02-26
+transcript_45,90,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2026-01-21 00:01:30,Insurance,2026-02-26
+transcript_46,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-24 00:00:00,Insurance,2026-02-26
+transcript_46,10,"Absolutely! I'd be happy to help you with that. Can you please provide me with some information about your vehicle, such as the make, model, and year?",0.88699386863471410000,agent,2026-02-24 00:00:10,Insurance,2026-02-26
+transcript_46,20,"Okay, great! And do you have any prior insurance history or any accidents on your record?",0.57607237414209200000,agent,2026-02-24 00:00:20,Insurance,2026-02-26
+transcript_46,40,"That's great! Based on the information you provided, I can offer you a quote of $120 per month for our standard policy.",0.96214267699089320000,agent,2026-02-24 00:00:40,Insurance,2026-02-26
+transcript_46,50,"Our standard policy includes liability coverage, collision coverage, and comprehensive coverage. It also includes some additional features such as roadside assistance and rental car coverage.",0.08250140503791614000,agent,2026-02-24 00:00:50,Insurance,2026-02-26
+transcript_46,60,"The premium is based on several factors, including your driving history, the make and model of your vehicle, and your credit score. In your case, the premium is higher because you have a newer vehicle and you live in an area with higher crime rates.",-0.17368399073538440000,agent,2026-02-24 00:01:00,Insurance,2026-02-26
+transcript_46,80,"Yes, there are a few ways to lower the premium. One option is to increase your deductible, which would lower your monthly payments. Another option is to bundle your car insurance with other insurance policies, such as home or life insurance.",0.00640033318656030300,agent,2026-02-24 00:01:20,Insurance,2026-02-26
+transcript_46,100,"Yes, of course! If you bundle your car insurance with another policy, you can receive a discount of up to 15% on your premium.",0.74384470996398680000,agent,2026-02-24 00:01:40,Insurance,2026-02-26
+transcript_46,110,"I'll just need to get some more information from you to finalize the policy. Then, I'll email you the documents and you can review and sign them online.",0.00162344567111547000,agent,2026-02-24 00:01:50,Insurance,2026-02-26
+transcript_47,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-26 00:00:00,Insurance,2026-02-26
+transcript_47,10,"Okay, I'd be happy to help you with that. Can you please provide me with your policy number so I can look into it?",0.64341637509888520000,agent,2026-01-26 00:00:10,Insurance,2026-02-26
+transcript_47,20,Thank you. I've located your policy. What changes do you need to make?,0.10367176913747260000,agent,2026-01-26 00:00:20,Insurance,2026-02-26
+transcript_47,30,Congratulations to him! Adding a new driver to the policy is a pretty straightforward process. Can you please provide me with his name and date of birth?,0.96784107036198060000,agent,2026-01-26 00:00:30,Insurance,2026-02-26
+transcript_47,50,"Okay, I've added him to the policy. There will be an additional premium for the new driver. Would you like me to go over the new premium amount with you?",0.00790844961455843000,agent,2026-01-26 00:00:50,Insurance,2026-02-26
+transcript_47,60,The new premium amount will be $150 per month. We also offer a good student discount if John maintains a GPA of 3.0 or higher.,0.76063168601742810000,agent,2026-01-26 00:01:00,Insurance,2026-02-26
+transcript_47,70,I've applied the discount to your policy. Is there anything else you'd like to change or add to your policy?,0.00230842190353403000,agent,2026-01-26 00:01:10,Insurance,2026-02-26
+transcript_47,80,"You're welcome. I've sent you a confirmation email with the updated policy details. If you have any other questions or need further assistance, please don't hesitate to reach out to us.",0.78365685807048380000,agent,2026-01-26 00:01:20,Insurance,2026-02-26
+transcript_48,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-26 00:00:00,Insurance,2026-02-26
+transcript_48,10,I'd be happy to help you with that. Can you please tell me your account number so I can look into it for you?,0.69813370734794660000,agent,2026-01-26 00:00:10,Insurance,2026-02-26
+transcript_48,20,Thank you. I've pulled up your account. What specifically about the bill are you unsure about?,0.00484814370415823100,agent,2026-01-26 00:00:20,Insurance,2026-02-26
+transcript_48,40,"I see that. Let me check on that for you. (pause) Okay, it looks like that's a one-time fee for a service upgrade you requested last month.",0.00301300118228375900,agent,2026-01-26 00:00:40,Insurance,2026-02-26
+transcript_48,50,"I apologize for the confusion. You're right, it should be free for the first month. I'm going to go ahead and waive that fee for you.",0.01072533221236638000,agent,2026-01-26 00:00:50,Insurance,2026-02-26
+transcript_48,70,You're welcome. Is there anything else I can assist you with today?,0.77833108434870850000,agent,2026-01-26 00:01:10,Insurance,2026-02-26
+transcript_49,0,Hello good afternoon.,0.80734519818684690000,agent,2026-01-20 00:00:00,Insurance,2026-02-26
+transcript_49,10,Sorry to hear that. Can you please tell me your account information so I can look into this further for you?,-0.01106741944785761000,agent,2026-01-20 00:00:10,Insurance,2026-02-26
+transcript_49,30,"Okay, thank you for providing that information. I've checked on our system and it seems like there's an outage in your area. Our team is working on it and it should be resolved within the next 2-3 hours.",0.30430884881791900000,agent,2026-01-20 00:00:30,Insurance,2026-02-26
+transcript_49,50,"I understand your frustration, sir. I'm going to escalate this issue to our advanced technical support team and they'll try to resolve it as soon as possible. Can you please hold for just a minute?",-0.02228679316523763000,agent,2026-01-20 00:00:50,Insurance,2026-02-26
+transcript_49,60,"Okay, I've escalated the issue. They'll call you back within the next 30 minutes to assist you further.",0.00559338674468978800,agent,2026-01-20 00:01:00,Insurance,2026-02-26
+transcript_49,80,"I understand where you're coming from, sir. I can offer you a one-time credit of $20 on your next bill. Would that be acceptable to you?",0.05083200567146401000,agent,2026-01-20 00:01:20,Insurance,2026-02-26
+transcript_49,90,"I completely understand, sir. Again, I apologize for the inconvenience this has caused you. Is there anything else I can assist you with today?",0.00111708721902648000,agent,2026-01-20 00:01:30,Insurance,2026-02-26
+transcript_50,0,Hello good afternoon.,0.80734519818684690000,agent,2026-02-07 00:00:00,Insurance,2026-02-26
+transcript_50,10,"Okay, I'd be happy to help you with that. Can you please tell me your account number or the phone number associated with your account?",0.60618347455818170000,agent,2026-02-07 00:00:10,Insurance,2026-02-26
+transcript_50,20,Thank you. I've located your account. What's the reason for changing your tow and repair shop?,0.20032516298854160000,agent,2026-02-07 00:00:20,Insurance,2026-02-26
+transcript_50,40,"I apologize for the inconvenience. Let me see what options we have available in your area. (pause) Okay, I have a few options. We have XYZ Towing and ABC Repair Shop. Would you like to try one of those?",-0.00073224703759033890,agent,2026-02-07 00:00:40,Insurance,2026-02-26
+transcript_50,60,"Okay, I've updated your account with the new tow provider. Would you like to change your repair shop as well?",0.00493601303440255300,agent,2026-02-07 00:01:00,Insurance,2026-02-26
+transcript_50,70,"Alright, I've updated your account with the new repair shop. Is there anything else I can assist you with today?",0.05100545473303597000,agent,2026-02-07 00:01:10,Insurance,2026-02-26

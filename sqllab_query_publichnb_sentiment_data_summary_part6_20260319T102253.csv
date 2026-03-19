@@ -1,0 +1,2627 @@
+﻿filename,transcript,csat_score,csat_reasoning,inserted_date,churn_propensity,churn_signals,churn_reasoning,emotion,emotion_reasoning,o1,o2,o3,o4,o5,al1,al2,e1,e2,e3,rp1,rp2,rp3,cr1,cr2,cr3,se1,se2,se3,se4,se5,ess1,ess2,ess3,ess4,rl1,acus1,acus2,acus3,acus4,ci1,ci2,agent_behavior_score,script_adherence,escalation_rate,summary,l2_clusters,complexity_score,l3_intents,l1_cluster,proposed,resolution,resolutiondescription,aht_minutes,agent_name,skill_id,queue,conversation_date,industry,agent_id,wait_time,case_id,queue_name,channel,hold_time,queue_group,bu,is_resolved,is_escelation,nps,nps_bucket,aht_bucket,complexity_bucket,proposed_of_automation,ownership,active_listening,empathy,right_probing,agent_behavior_score_bkt,customer_relationship,set_expectation,encourage_self_service,aid_cross_up_sell,continuous_improvement,recognise_loyalty,is_sla_breach,aht_more_than_expected,is_fcr,is_adandonment,contact_id
+transcript_1,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     How can I assist you today?
+     CUSTOMER
+     00:15
+     I had an accident last week and I need to file a claim.
+     AGENT
+     00:20
+     Sorry to hear that. Can you please provide me with your policy number so I can assist you with the claim process?
+     CUSTOMER
+     00:27
+     It's 123456.
+     AGENT
+     00:30
+     Thank you. I've located your policy. Can you please tell me more about the accident? What happened?
+     CUSTOMER
+     00:40
+     I was driving home from work and another car ran a red light and hit me.
+     AGENT
+     00:47
+     I'm so sorry to hear that. Were you injured in the accident?
+     CUSTOMER
+     00:52
+     No, I was lucky. Just some damage to my car.
+     AGENT
+     00:55
+     Okay. I'm going to guide you through the claim process. I'll need to ask you some more questions. Can you please provide me with the date and time of the accident?
+     CUSTOMER
+     01:02
+     It was last Wednesday at 5 pm.
+     AGENT
+     01:05
+     And do you have the other driver's information?
+     CUSTOMER
+     01:10
+     Yes, I have their insurance information and a police report.
+     AGENT
+     01:15
+     That's great. I'm going to go ahead and file the claim for you. You should receive an email with the claim number and further instructions within the next 24 hours.
+     CUSTOMER
+     01:22
+     Okay, that sounds good. Thank you for your help.
+     AGENT
+     01:25
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:30
+     No, that's all. Thank you again.
+     AGENT
+     01:32
+     You're welcome. Have a great day.""",8.0,The agent was helpful and guided me through the claim process in a clear and efficient manner.,2026-02-26,none,,The customer is calling to file a claim and the agent is assisting them with the process. The tone is neutral and there is no indication of frustration or dissatisfaction.,joy,"The customer expresses gratitude and appreciation for the help received, indicating a positive emotional tone.",0,1,1,1,0,1,0,1,0,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0.6305555555555555,0.7,0.35,"The customer contacted the agent to file a claim for a car accident that occurred last week. The agent guided the customer through the claim process, requesting necessary information such as policy number, accident details, and other driver's information. The agent filed the claim and informed the customer that they would receive an email with further instructions within 24 hours.",FNOL & Filing,10.0,Accidentdamage,Claims & FNOL,,claimFiled,Claim filed refers to the submission of a request for coverage or compensation under an insurance policy.,9.699999809265137,Olivia Davis,1183,104,2026-02-03,Insurance,5013,0.37,CASE-20260203-0001,Policy Service,call,0.22,Policy,Retail,true,No,16.0,High NPS,medium,high,0,100.0,50.0,100.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,0,No,yes,yes,
+transcript_2,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon, I'm calling to report a breakdown with my washing machine. It's not turning on at all.
+     AGENT
+     00:15
+     Sorry to hear that. Can you please provide me with the model number and the serial number of your washing machine?
+     CUSTOMER
+     00:25
+     Yeah, it's model number WM1234 and serial number SN123456. And I'm really frustrated because I've had this machine for only two years and it's already broken down on me.
+     AGENT
+     00:40
+     I understand your frustration, sir. I'm going to go ahead and report this breakdown. Can you please tell me a little bit more about what's happening when you try to turn it on? Is there any error message or anything?
+     CUSTOMER
+     00:55
+     No, there's no error message. It just won't turn on. I've tried unplugging it and plugging it back in, but nothing's working. And like I said, it's only two years old. I expect more from your company.
+     AGENT
+     01:10
+     I apologize for the inconvenience, sir. I'm going to go ahead and schedule a technician to come out and take a look at it. Would you be available for them to come out tomorrow or Wednesday?
+     CUSTOMER
+     01:20
+     Yeah, tomorrow's fine. But I better not have to pay for this. This is your company's fault, not mine.
+     AGENT
+     01:30
+     I understand, sir. We'll take care of the repair costs. I just need to confirm your address and contact information to schedule the appointment.
+     CUSTOMER
+     01:40
+     Yeah, it's 123 Main St, Anytown USA. And my phone number is 555-555-5555.
+     AGENT
+     01:50
+     Alright, sir. I've scheduled the appointment for tomorrow. Someone will be out to take a look at your washing machine between 10am and 2pm. Is there anything else I can assist you with today?
+     CUSTOMER
+     02:00
+     No, that's it. Just get this fixed.
+     AGENT
+     02:05
+     Alright, sir. We'll get it taken care of. Thank you for calling us today.
+     CUSTOMER
+     02:10
+     Yeah, yeah. Thanks.
+     """,4.0,"The customer was frustrated with the breakdown of their two-year-old washing machine and felt that the company was at fault, which negatively impacted their satisfaction with the conversation.",2026-02-26,medium,I expect more from your company.,"The customer is frustrated with the service and has high expectations from the company, which indicates a medium level of churn.",anger,"The customer is expressing frustration and blame towards the company, indicating anger.",1,1,0,1,0,1,0,0,0,0,1,0,1,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0,0.5694444444444444,0.89,0.24,"A customer calls to report a breakdown of their 2-year-old washing machine, which won't turn on. The agent apologizes, takes down the model and serial numbers, and schedules a technician to visit the customer's home the next day to repair the machine at no cost to the customer.",Profile & Address Updates,1.2,Appliancefailure,Policy & Profile Management,,repairScheduled,Repair scheduled refers to the arrangement of a service appointment to fix a malfunctioning item.,10.399999618530273,Olivia Davis,1933,112,2025-12-19,Insurance,5013,0.44,CASE-20251219-0002,Renewals,call,0.28,Policy,Retail,true,No,8.0,High NPS,medium,low,1,100.0,50.0,0.0,100.0,low,100.0,100.0,33.33333333333333,0.0,0,100.0,1,Yes,yes,no,
+transcript_3,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling about a new claim I need to file. I've been trying to do it online but your website is useless. I've been trying for hours and I can't get past the first step.
+     AGENT
+     00:23
+     I apologize for the inconvenience. Can you please tell me more about the issue you're facing on our website?
+     CUSTOMER
+     00:30
+     The issue is that it's not working! I've tried different browsers, different devices, and I still can't get past the first step. It's ridiculous.
+     AGENT
+     00:42
+     I understand your frustration. Let me see if I can assist you with filing the claim over the phone. Can you please provide me with your policy number?
+     CUSTOMER
+     00:50
+     It's 123456. And I want to know why your website doesn't work. This is unacceptable.
+     AGENT
+     01:00
+     I apologize again for the issue. I've checked on our system and it seems that there was a technical glitch earlier today. Our team is working on resolving it. In the meantime, I can assist you with filing the claim.
+     CUSTOMER
+     01:12
+     A technical glitch? That's just great. So, you're telling me that I wasted hours of my time because of your company's incompetence?
+     AGENT
+     01:23
+     I understand why you're upset. I'm going to do my best to assist you with the claim. Can you please tell me more about the incident that led to the claim?
+     CUSTOMER
+     01:35
+     Fine. It was a car accident. The other driver was at fault and I need to get my car repaired.
+     AGENT
+     01:45
+     Okay. I've got all the necessary information. I'm going to go ahead and file the claim for you. You should receive an email with the claim number and further instructions within the next 24 hours.
+     CUSTOMER
+     02:00
+     And what about the website? When is it going to be fixed?
+     AGENT
+     02:07
+     Our team is working on resolving the issue as soon as possible. I'll make sure to escalate the issue and get an update for you.
+     CUSTOMER
+     02:15
+     Unbelievable. I'm going to have to call back and check on the status of my claim because I don't trust your company to get it right.
+     AGENT
+     02:23
+     I understand your concerns. You can always reach out to us if you have any questions or concerns about your claim. Is there anything else I can assist you with today?
+     CUSTOMER
+     02:30
+     No, that's it. Just get my claim processed correctly.
+     AGENT
+     02:35
+     I will make sure to follow up on your claim and ensure it's processed correctly. Thank you for your patience and cooperation.
+     """,2.0,"The customer's experience was marred by the company's website being down for an extended period, which led to frustration and a lack of trust in the company's ability to process the claim correctly.",2026-02-26,medium,I don't trust your company to get it right,"The customer is angry and frustrated with the service, and has called before but the issue was not resolved, making them question the company's competence.",anger,"The customer is expressing frustration and distrust towards the company, indicating anger.",0,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.5349999999999999,0.57,0.46,"A customer calls to file a new claim, but is having trouble with the company's website. The agent apologizes for the inconvenience and offers to assist with filing the claim over the phone. The customer is frustrated and expresses distrust in the company's ability to process the claim correctly. The agent assures the customer that they will follow up and ensure the claim is processed correctly.",FNOL & Filing,1.4,Technicalglitch,Claims & FNOL,,claimFiled,ClaimFiled refers to the process of submitting a request for compensation or coverage under an insurance policy.,11.600000381469727,Lucas Moore,1966,103,2025-12-18,Insurance,5010,0.56,CASE-20251218-0003,New Policy,call,0.38,Policy,Retail,true,No,4.0,Medium NPS,medium,low,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,1,Yes,yes,yes,
+transcript_4,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     How can I assist you today?
+     CUSTOMER
+     00:15
+     I'm interested in getting a quote for my car insurance.
+     AGENT
+     00:20
+     I'd be happy to help you with that. Can you please provide me with some information about your vehicle, such as the make, model, and year?
+     CUSTOMER
+     00:30
+     It's a 2018 Honda Civic.
+     AGENT
+     00:35
+     Okay, and what's your current insurance situation? Do you have an existing policy or are you looking to switch?
+     CUSTOMER
+     00:42
+     I'm looking to switch. I'm not happy with my current provider.
+     AGENT
+     00:47
+     I understand. We can definitely provide you with a competitive quote. Based on the information you've provided, I can offer you a premium of $120 per month.
+     CUSTOMER
+     00:55
+     That sounds reasonable. What does that premium include?
+     AGENT
+     01:00
+     Our premium includes comprehensive coverage, collision coverage, and liability coverage. We also offer additional features such as roadside assistance and rental car coverage.
+     CUSTOMER
+     01:08
+     That sounds good. What's the deductible for the comprehensive coverage?
+     AGENT
+     01:12
+     The deductible for comprehensive coverage is $500.
+     CUSTOMER
+     01:17
+     Okay, that's acceptable. What's the process for switching to your insurance provider?
+     AGENT
+     01:22
+     We can assist you with the switching process. We'll need to gather some additional information from you, and then we can finalize the policy and get you switched over.
+     CUSTOMER
+     01:30
+     Sounds good. I'm ready to move forward.
+     AGENT
+     01:33
+     Great! I'll get the paperwork started. We'll be in touch with you shortly to finalize the details.
+     CUSTOMER
+     01:38
+     Thank you for your help.
+     AGENT
+     01:40
+     You're welcome. It was my pleasure to assist you. We'll be in touch soon.""",8.0,"The agent provided clear and concise information about the premium and coverage, and was able to address my concerns and questions in a professional manner.",2026-02-26,low,I'm not happy with my current provider.,"The customer is looking to switch insurance providers due to dissatisfaction with their current provider, but the tone is not angry or frustrated, and the issue is being resolved.",joy,"The customer expresses genuine emotional happiness and relief caused by the outcome of the call, showing appreciation for the help received.",0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0.5533333333333333,0.79,0.37,"A customer inquires about getting a quote for their 2018 Honda Civic car insurance, and the agent provides a premium of $120 per month, explaining the coverage and features included. The customer is satisfied and decides to move forward with the switching process.",Billing Issues & Corrections,7.42,Providerdissatisfaction,Billing & Payments,,quoteProvided,Quote provided refers to the agent giving the customer a detailed insurance quote including premium and coverage details.,7.5,Noah Thomas,1462,107,2026-01-06,Insurance,5012,0.2,CASE-20260106-0004,Claims Status,call,0.1,Claims,Retail,true,No,16.0,High NPS,low,medium,1,66.66666666666666,50.0,50.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,0,No,yes,yes,
+transcript_9,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     I'm calling from XYZ Corporation. My name is John and I'll be assisting you with your account today.
+     CUSTOMER
+     00:17
+     Okay, hi John.
+     AGENT
+     00:20
+     I just wanted to confirm that you've received the paperwork we sent over regarding your recent policy changes.
+     CUSTOMER
+     00:27
+     Ah, yes. I got it last week.
+     AGENT
+     00:31
+     Great! I just wanted to make sure you had a chance to review everything. Do you have any questions about the changes or would you like me to go over anything with you?
+     CUSTOMER
+     00:40
+     No, I think I understand everything. It all looks good.
+     AGENT
+     00:44
+     Alright, great! If you do happen to think of anything later, please don't hesitate to reach out to us. We're always here to help.
+     CUSTOMER
+     00:51
+     Okay, will do. Thanks John.
+     AGENT
+     00:54
+     You're welcome! Is there anything else I can assist you with today?
+     CUSTOMER
+     00:59
+     No, that's all.
+     AGENT
+     01:02
+     Alright, well thank you for your time today. Have a great day!
+     CUSTOMER
+     01:06
+     You too, bye.
+     AGENT
+     01:09
+     Bye.
+     """,8.0,"The agent, John, was very helpful and ensured that I understood the policy changes, providing a smooth and efficient experience.",2026-02-26,none,,"The customer is calling to confirm receipt of paperwork and has no questions or concerns, indicating a routine and satisfactory interaction.",neutral,"The customer's language is showing no clear emotional charge (positive or negative), and the utterance is purely procedural or social, with routine acknowledgments and end-of-call politeness.",0,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.6266666666666666,0.86,0.2,"The agent, John, from XYZ Corporation, called the customer to confirm receipt of paperwork regarding recent policy changes. The customer confirmed receipt and understanding of the changes, and the agent offered assistance if needed in the future.",Policy Issuance/Setup,6.73,Policy Update,Policy & Profile Management,,,,13.979999542236328,John Smith,1167,104,2025-12-06,Insurance,5008,0.8,CASE-20251206-0009,Policy Service,call,0.58,Policy,Retail,false,Yes,16.0,High NPS,high,low,0,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,1,Yes,no,yes,
+transcript_5,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     I'm calling from XYZ Corporation. My name is Emily and I'm reaching out to you regarding your recent purchase of our premium subscription.
+     CUSTOMER
+     00:20
+     Oh, hi Emily. Yeah, I did purchase that. What's this about?
+     AGENT
+     00:25
+     We appreciate your business and we're excited to have you on board. However, I noticed that we're missing some information from your profile. Could you please help me update that?
+     CUSTOMER
+     00:35
+     What kind of information are you missing?
+     AGENT
+     00:40
+     We're missing your company name and industry type. This information will help us provide you with more tailored services and support.
+     CUSTOMER
+     00:50
+     Okay, my company name is ABC Inc. and we're in the tech industry.
+     AGENT
+     00:55
+     Thank you so much for providing that information. I've updated your profile accordingly. Is there anything else you'd like to add or change?
+     CUSTOMER
+     01:00
+     No, that's all. Thanks for reaching out, Emily.
+     AGENT
+     01:05
+     You're welcome! We're always here to help. If you have any questions or concerns in the future, please don't hesitate to reach out. Have a great day!
+     CUSTOMER
+     01:10
+     You too, thanks.""",8.0,"The agent, Emily, was helpful and efficient in updating my profile information, and provided clear explanations for the missing details.",2026-02-26,none,,"The customer is cooperative and polite throughout the conversation, and the agent is able to complete the task of updating the customer's profile. There is no indication of churn or dissatisfaction.",neutral,"The customer's language shows no clear emotional charge, and the utterance is a routine acknowledgment and end-of-call politeness.",0,1,1,1,0,1,0,0,0,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.6472222222222223,0.58,0.13,"Emily from XYZ Corporation called the customer to update their profile information, specifically company name and industry type, to provide more tailored services and support.",Profile & Address Updates,8.36,Missinginformation,Policy & Profile Management,,profileUpdated,Profile updated refers to the action of adding or modifying information in a customer's profile to ensure it is accurate and complete.,7.900000095367432,Liam Anderson,1299,117,2026-02-03,Insurance,5009,0.2,CASE-20260203-0005,Travel Insurance,call,0.1,Claims,Retail,true,No,16.0,High NPS,low,medium,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,0,No,yes,yes,
+transcript_6,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     I understand you're calling about the denial of your recent claim. Can you please tell me more about what happened?
+     CUSTOMER
+     00:20
+     Yeah... I don't understand why it was denied. I followed all the procedures and submitted all the necessary documents.
+     AGENT
+     00:30
+     I apologize for the inconvenience. Let me check on the status of your claim. Can you please provide me with your claim number?
+     CUSTOMER
+     00:40
+     It's #12345.
+     AGENT
+     00:50
+     Thank you. I've checked on the status and it seems that there was an issue with the documentation. One of the required forms was missing.
+     CUSTOMER
+     01:00
+     But I'm sure I submitted all the forms. I double-checked before sending them in.
+     AGENT
+     01:10
+     I understand your concern. Let me escalate this issue to our quality assurance team. They will review your claim and get back to you within 3-5 business days.
+     CUSTOMER
+     01:20
+     Okay... I hope they can resolve this issue quickly. I really need the coverage.
+     AGENT
+     01:30
+     I completely understand. I'm going to provide you with a reference number for your escalation. It's #REF123. You can use this to track the status of your claim.
+     CUSTOMER
+     01:40
+     Okay, thank you. I appreciate your help.
+     AGENT
+     01:50
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     02:00
+     No, that's all. Thank you again.
+     AGENT
+     02:10
+     You're welcome. Have a great day.""",7.0,"The agent provided a clear explanation for the claim denial and offered a solution by escalating the issue to the quality assurance team, which improved the customer's satisfaction.",2026-02-26,none,,"The customer is calling about a specific issue with their claim, and the agent is able to assist and provide a solution. The customer's tone is not angry or frustrated, and there is no mention of switching companies.",joy,"The customer expresses appreciation and gratitude towards the agent's help, indicating a positive emotional tone.",0,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.5966666666666666,0.86,0.38,"A customer called to inquire about the denial of their recent claim. The agent explained that a required form was missing, and the customer disputed this, claiming they had submitted all necessary documents. The agent escalated the issue to the quality assurance team, who will review the claim and respond within 3-5 business days. The customer was provided with a reference number to track the status of their claim.",Claim Status & Updates,8.36,Missinginformation,Claims & FNOL,,claimEscalated,Claim escalation refers to the process of forwarding a claim to a higher authority or specialized team for further review and resolution.,6.400000095367432,Lucas Moore,1032,106,2025-12-17,Insurance,5010,0.2,CASE-20251217-0006,Billing Support,call,0.1,Support,Retail,true,No,14.0,High NPS,low,medium,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,0,No,yes,no,
+transcript_7,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling about the missing information on my account. I've been trying to update it online but it's not going through.
+     AGENT
+     00:15
+     I apologize for the inconvenience. Can you please provide me with your account number so I can assist you further?
+     CUSTOMER
+     00:22
+     It's 1234567890.
+     AGENT
+     00:28
+     Thank you. I've located your account. It seems like we're missing some identification documents from you. Can you please upload or fax them to us?
+     CUSTOMER
+     00:37
+     I've already uploaded them. I've been trying to update my information for weeks now.
+     AGENT
+     00:43
+     I apologize for the delay. Let me check on the status of your documents. (pause) It seems like our system is still processing your documents. I'm going to go ahead and escalate this issue to our back office team. They'll review your documents and update your account accordingly.
+     CUSTOMER
+     01:01
+     Okay. How long is that going to take?
+     AGENT
+     01:06
+     It should take around 3-5 business days. You'll receive an email notification once the update is complete.
+     CUSTOMER
+     01:13
+     Alright. Thank you for your help.
+     AGENT
+     01:17
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:22
+     No, that's all. Thank you.
+     AGENT
+     01:25
+     You're welcome. Have a great day.
+     CUSTOMER
+     01:28
+     You too.
+     """,8.0,The agent's proactive escalation of the issue to the back office team and clear communication of the expected resolution timeline helped to alleviate the customer's frustration and improve their satisfaction.,2026-02-26,low,I've been trying to update my information for weeks now,"The customer is frustrated with the delay in updating their information, but the agent is able to resolve the issue and provide a solution, which reduces the risk of churn.",neutral,"The customer's language is showing no clear emotional charge (positive or negative), and the utterance is purely procedural or social, with routine acknowledgments and end-of-call politeness.",0,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.615,0.83,0.24,"The customer called to report missing information on their account and difficulty updating online. The agent located the account, found missing identification documents, and escalated the issue to the back office team for review. The customer was told to expect an email update in 3-5 business days.",Claim Status & Updates,8.36,Missinginformation,Claims & FNOL,,pickupEscalated,Escalation to a higher authority or team to ensure the issue is resolved promptly.,11.319999694824219,John Smith,1476,111,2026-01-13,Insurance,5008,0.53,CASE-20260113-0007,Fraud & Risk,call,0.36,Risk,Retail,false,Yes,16.0,High NPS,medium,medium,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,1,Yes,no,no,
+transcript_8,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling because I want to make some changes to my policy. I'm surprised I didn't get a better deal when I signed up.
+     AGENT
+     00:15
+     I apologize for any inconvenience. Can you please tell me more about the changes you'd like to make?
+     CUSTOMER
+     00:22
+     Yeah, I want to remove my old car and add my new one. I just got a new car and I don't want to pay for insurance on a car I don't own anymore.
+     AGENT
+     00:30
+     Okay, I can help you with that. Can you please provide me with the VIN number of the new car and the license plate number of the old car?
+     CUSTOMER
+     00:38
+     Yeah, the VIN number of the new car is 1HGCM82633A004321 and the license plate number of the old car is ABC1234.
+     AGENT
+     00:47
+     Alright, I've removed the old car from your policy and added the new one. However, I do need to let you know that this change will affect your premium.
+     CUSTOMER
+     00:55
+     How much is it going to increase by? I'm not sure I want to pay more.
+     AGENT
+     01:02
+     Let me check on that for you. (pause) Okay, it looks like your premium will increase by $20 per month.
+     CUSTOMER
+     01:10
+     That's a bit more than I was hoping for. Can you see if there's any way to reduce the cost?
+     AGENT
+     01:17
+     Let me see what I can do. (pause) Okay, I can offer you a discount if you agree to go paperless and receive your bills electronically.
+     CUSTOMER
+     01:25
+     That sounds good. How much will that save me?
+     AGENT
+     01:32
+     That will save you $5 per month.
+     CUSTOMER
+     01:39
+     Alright, that sounds good. Go ahead and make the changes.
+     AGENT
+     01:45
+     Alright, I've made the changes to your policy. You should receive an email with the updated information shortly. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:52
+     No, that's all. Thank you for your help.
+     AGENT
+     01:55
+     You're welcome. Have a great day!
+     """,7.0,"The agent was able to offer a discount for going paperless, which reduced the overall cost of the policy change.",2026-02-26,none,None,"The customer is calling to make changes to their policy, and the agent is able to assist them. The customer is not expressing any dissatisfaction or frustration with the service, and the issue is resolved successfully.",joy,"The customer expresses satisfaction and relief with the solution provided by the agent, showing genuine emotional happiness.",0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0.4949999999999999,0.57,0.5,"The customer calls to make changes to their policy, removing their old car and adding their new one. The agent assists with the changes, but informs the customer that their premium will increase by $20 per month. The customer is offered a discount of $5 per month if they agree to go paperless, which they accept. The changes are made to the policy and the customer is emailed the updated information.",Coverage & Premium Review,7.72,Vehicle Change,Policy & Profile Management,,policyUpdated,Policy updated refers to the successful modification of an insurance policy to reflect new information or changes requested by the policyholder.,11.539999961853027,Benjamin Lee,1758,120,2025-09-29,Insurance,5002,0.55,CASE-20250929-0008,Technical Support,call,0.38,Support,Retail,true,No,14.0,High NPS,medium,medium,1,66.66666666666666,50.0,50.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,1,Yes,yes,no,
+transcript_10,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to change my coverage levels and deductibles on my policy.
+     AGENT
+     00:14
+     Okay, I'd be happy to help you with that. Can you please tell me a little bit more about what you're looking to change and why?
+     CUSTOMER
+     00:23
+     Well, I've been with your company for a while now and I feel like I'm paying too much for my coverage. I want to lower my premiums.
+     AGENT
+     00:32
+     I understand where you're coming from. Let me see what options we have available to you. Can you please confirm your policy number for me?
+     CUSTOMER
+     00:41
+     It's 123456.
+     AGENT
+     00:46
+     Okay, thank you. I've pulled up your policy. It looks like we do have some options to lower your premiums. We could increase your deductible or we could reduce your coverage levels. Which of those options sounds more appealing to you?
+     CUSTOMER
+     01:01
+     I think I'd like to increase my deductible. How much would that save me?
+     AGENT
+     01:08
+     If we increase your deductible to $1,000, that would save you around $20 per month on your premiums.
+     CUSTOMER
+     01:16
+     That sounds good. Can you make that change for me?
+     AGENT
+     01:22
+     Yes, I can do that. I just need to confirm a few details with you. Is that correct that you want to increase your deductible to $1,000 effective immediately?
+     CUSTOMER
+     01:31
+     Yes, that's correct.
+     AGENT
+     01:35
+     Okay, I've made the change. You should see the new premium amount on your next bill. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:42
+     No, that's all. Thank you for your help.
+     AGENT
+     01:46
+     You're welcome. It was my pleasure to assist you. Have a great day.
+     """,8.0,"The agent provided clear explanations and options for lowering premiums, and made the requested changes to the policy in a timely manner.",2026-02-26,none,None,"The customer is calling to make changes to their policy, but there is no indication of dissatisfaction or frustration with the service. The agent is able to assist the customer and resolve the issue, and the customer is polite and courteous throughout the conversation.",neutral,"The customer's language shows no clear emotional charge, and the utterance is a routine acknowledgment and end-of-call politeness.",1,1,0,1,0,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0.7222222222222222,0.69,0.29,"The customer called to change their coverage levels and deductibles to lower their premiums. The agent helped them explore options and they decided to increase their deductible to $1,000, which would save them $20 per month on their premiums. The agent made the change and confirmed the details with the customer.",Billing Issues & Corrections,1.5,Premiumreduction,Billing & Payments,,policyUpdated,"PolicyUpdated refers to the successful modification of an insurance policy's terms, coverage levels, or deductibles.",9.5600004196167,Mason Harris,1443,109,2025-11-08,Insurance,5011,0.36,CASE-20251108-0010,Underwriting,call,0.21,Underwriting,Retail,true,No,16.0,High NPS,medium,low,1,100.0,100.0,100.0,100.0,low,100.0,100.0,0.0,0.0,0,0.0,0,Yes,yes,no,
+transcript_11,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     How can I assist you today?
+     CUSTOMER
+     00:15
+     I am calling to discuss my initial claim that I submitted last week.
+     AGENT
+     00:20
+     I apologize for the inconvenience. Can you please provide me with your claim number so I can look into it for you?
+     CUSTOMER
+     00:25
+     It's #1234.
+     AGENT
+     00:30
+     Thank you. I've located your claim. Can you please tell me a little bit more about what's going on and why you're calling today?
+     CUSTOMER
+     00:37
+     Well, I submitted my claim last week and I haven't heard anything back yet. I was wondering if there was an issue with it.
+     AGENT
+     00:43
+     I understand your concern. Let me check on the status of your claim. (pause) Okay, I've checked and it looks like your claim is still being processed. It should be resolved within the next 3-5 business days.
+     CUSTOMER
+     00:55
+     Okay, that's good to know. I was worried that something was wrong with it.
+     AGENT
+     01:00
+     I completely understand. We appreciate your patience and apologize again for the delay. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:05
+     No, that's all. Thank you for your help.
+     AGENT
+     01:10
+     You're welcome. It was my pleasure to assist you. If you have any other questions or concerns in the future, don't hesitate to reach out to us. Have a great day.
+     CUSTOMER
+     01:15
+     Thank you. You too.""",8.0,"The agent provided a clear explanation of the claim status and apologized for the delay, which helped to alleviate the customer's concerns.",2026-02-26,none,,The customer is calling to inquire about the status of their claim and the agent is able to provide a resolution. The customer's tone is neutral and there is no indication of frustration or dissatisfaction.,joy,"The customer expresses relief and happiness that everything is okay, and thanks the agent for their help.",1,1,0,1,0,1,0,0,0,0,1,0,1,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0,0.4961111111111111,0.58,0.37,The customer called to inquire about the status of their initial claim submitted last week. The agent apologized for the delay and informed the customer that the claim is still being processed and should be resolved within 3-5 business days. The customer was relieved to know that there was no issue with their claim and thanked the agent for their help.,Claim Status & Updates,7.5,Claim Status Inquiry,Claims & FNOL,,claimStatusExplained,Claim status explained refers to providing the customer with information about the current processing stage and expected resolution time of their claim.,8.5,Mason Harris,1133,103,2026-01-09,Insurance,5011,0.25,CASE-20260109-0011,New Policy,call,0.12,Policy,Retail,true,No,16.0,High NPS,medium,medium,1,100.0,50.0,0.0,100.0,low,100.0,100.0,33.33333333333333,0.0,0,100.0,0,Yes,yes,yes,
+transcript_12,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to update some information on my claim.
+     AGENT
+     00:14
+     Okay, I'd be happy to help you with that. Can you please provide me with your claim number so I can look into it?
+     CUSTOMER
+     00:22
+     It's #123456.
+     AGENT
+     00:27
+     Thank you. I've located your claim. What specific information would you like to update?
+     CUSTOMER
+     00:34
+     I need to update my contact information. I've recently moved to a new address.
+     AGENT
+     00:41
+     Okay, I can help you with that. What's your new address?
+     CUSTOMER
+     00:47
+     It's 123 Main St, Anytown, USA 12345.
+     AGENT
+     00:55
+     Got it. I've updated your address. Is there anything else you'd like to update?
+     CUSTOMER
+     01:02
+     Yes, I also need to update the vehicle information. The vehicle make is incorrect.
+     AGENT
+     01:09
+     Okay, what's the correct make of your vehicle?
+     CUSTOMER
+     01:15
+     It's a Toyota, not a Honda.
+     AGENT
+     01:21
+     I've updated the vehicle information. Anything else?
+     CUSTOMER
+     01:28
+     Yes, I need to update the property details as well. The damage is more extensive than initially reported.
+     AGENT
+     01:36
+     Okay, can you please provide more details about the damage?
+     CUSTOMER
+     01:43
+     The roof is damaged, and there's water damage in the living room.
+     AGENT
+     01:51
+     I've noted that down. I'll make sure to update the claim accordingly. Is there anything else you'd like to update or add?
+     CUSTOMER
+     02:00
+     No, that's all. Thank you for your help.
+     AGENT
+     02:06
+     You're welcome. I've updated all the information on your claim. If you have any further questions or concerns, please don't hesitate to reach out to us.
+     CUSTOMER
+     02:13
+     Okay, thank you.
+     AGENT
+     02:17
+     Have a great day.
+     CUSTOMER
+     02:20
+     You too.""",8.0,"The agent was helpful and efficient in updating the claim information, and provided clear instructions and confirmation of the updates.",2026-02-26,none,None,The customer is calling to update information on their claim and the agent is helping them with the process. The tone is neutral and there is no indication of frustration or dissatisfaction.,neutral,"The customer's language shows no clear emotional charge, and the utterances are routine acknowledgments and end-of-call politeness.",0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0.5383333333333333,0.83,0.5,"The customer called to update their claim information, including their contact address, vehicle make, and property damage details. The agent assisted with the updates and ensured the claim was updated accordingly.",Claim Status & Updates,9.18,Informationcorrection,Claims & FNOL,,claimUpdated,Claim updated refers to the successful modification or addition of information to an existing insurance claim.,7.760000228881836,John Smith,1267,104,2026-01-12,Insurance,5008,0.2,CASE-20260112-0012,Policy Service,call,0.1,Policy,Retail,true,No,16.0,High NPS,low,high,0,66.66666666666666,50.0,50.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,0,No,yes,yes,
+transcript_13,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm having some car trouble and I need roadside assistance.
+     AGENT
+     00:15
+     Sorry to hear that. Can you please provide me with your location so I can assist you better?
+     CUSTOMER
+     00:23
+     Yeah, I'm on the highway, near the 5th mile marker.
+     AGENT
+     00:30
+     Okay, I've located you. What seems to be the issue with your vehicle?
+     CUSTOMER
+     00:37
+     It just stopped running. I was driving and then it just died on me.
+     AGENT
+     00:44
+     Okay, don't worry. I'm going to send someone to help you out. Can you please confirm your vehicle's make and model?
+     CUSTOMER
+     00:52
+     It's a Toyota Camry.
+     AGENT
+     00:58
+     Alright, I've got that. Someone will be there within the next 30 minutes to help you get back on the road.
+     CUSTOMER
+     01:05
+     Okay, thank you so much. I really appreciate it.
+     AGENT
+     01:12
+     You're welcome. Is there anything else I can assist you with while you wait?
+     CUSTOMER
+     01:19
+     No, that's all. Thank you again.
+     AGENT
+     01:25
+     You're welcome. We'll get you back on the road in no time. Have a great day.
+     CUSTOMER
+     01:32
+     You too.
+     """,8.5,"The agent was helpful and efficient in resolving the issue, providing clear instructions and a sense of urgency to get the customer back on the road.",2026-02-26,none,,The customer is calling for roadside assistance and the issue is resolved promptly. The tone is polite and appreciative throughout the conversation.,joy,"The customer expresses genuine emotional happiness and relief caused by the outcome of the call, showing appreciation and gratitude.",1,1,0,1,0,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0.6938888888888889,0.57,0.34,"A customer calls for roadside assistance due to their Toyota Camry stopping on the highway. The agent locates the customer and sends help, which will arrive within 30 minutes.",Policy Changes (Vehicle/Driver/Usage),6.92,Vehiclebreakdown,Policy & Profile Management,,assistanceDispatched,Assistance dispatched refers to sending help to a customer in need of roadside assistance.,14.0,Lucas Moore,1596,115,2026-02-01,Insurance,5010,0.8,CASE-20260201-0013,Home Claims,call,0.58,Claims,Retail,false,Yes,17.0,High NPS,high,low,0,100.0,100.0,100.0,100.0,low,100.0,100.0,0.0,0.0,0,0.0,1,Yes,no,yes,
+transcript_14,"AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I am calling to inquire about the status of my claim. I submitted it a few weeks ago and haven't heard back yet.
+     AGENT
+     00:15
+     I apologize for the delay. Can you please provide me with your claim number so I can look into it for you?
+     CUSTOMER
+     00:22
+     It's #123456.
+     AGENT
+     00:28
+     Thank you. I've located your claim. It's currently under review by our adjuster. I can see that it was submitted on the 10th of this month.
+     CUSTOMER
+     00:37
+     Okay, that's what I thought. How much longer will it take to process?
+     AGENT
+     00:43
+     Typically, it takes around 2-3 weeks for our adjuster to review the claim. However, I can expedite the process for you. Would you like me to do that?
+     CUSTOMER
+     00:52
+     Yes, please. I really need to get this resolved as soon as possible.
+     AGENT
+     00:58
+     I've escalated your claim to our priority queue. You should hear back from us within the next 3-5 business days.
+     CUSTOMER
+     01:05
+     Okay, that sounds good. What's the next step after that?
+     AGENT
+     01:12
+     Once our adjuster has completed the review, we'll be in touch with you to discuss the outcome. If everything is in order, we'll proceed with the payment.
+     CUSTOMER
+     01:20
+     Alright, thank you for your help. I appreciate it.
+     AGENT
+     01:25
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:30
+     No, that's all. Thank you again.
+     AGENT
+     01:35
+     You're welcome. Have a great day.
+     CUSTOMER
+     01:40
+     You too.",8.0,"The agent was able to expedite the claim processing and provided a clear timeline for resolution, which alleviated the customer's concerns and improved their satisfaction.",2026-02-26,none,,The customer is calling to inquire about the status of their claim and the agent is able to assist them. The tone of the conversation is polite and the customer is appreciative of the agent's help. There is no indication of churn.,neutral,"The customer's language is showing no clear emotional charge (positive or negative), and the utterance is a routine acknowledgment and end-of-call politeness.",0,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0.7394444444444446,0.83,0.16,"The customer inquired about the status of their claim (#123456) and the agent provided an update, stating it was under review. The agent offered to expedite the process, which the customer accepted, and was told to expect a response within 3-5 business days. The agent explained the next steps, including a discussion of the outcome and potential payment.",Claim Status & Updates,7.5,Claim Status Update,Claims & FNOL,,claimEscalated,ClaimEscalated refers to the process of prioritizing a claim to expedite its review and resolution.,7.400000095367432,Ava Jackson,1282,106,2025-09-30,Insurance,5001,0.2,CASE-20250930-0014,Billing Support,call,0.1,Support,Retail,true,No,16.0,High NPS,low,medium,1,100.0,50.0,100.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,0.0,0,No,yes,no,
+transcript_15,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to modify my service providers. I want to change my tow and repair shop.
+     AGENT
+     00:15
+     Okay, I'd be happy to help you with that. Can you please tell me your account number or the phone number associated with your account?
+     CUSTOMER
+     00:25
+     It's 555-1234.
+     AGENT
+     00:30
+     Thank you. I've located your account. What's the reason for changing your service providers?
+     CUSTOMER
+     00:37
+     I'm not satisfied with the current tow service. They're always late and don't seem to care about my vehicle.
+     AGENT
+     00:45
+     I apologize for the inconvenience. I'd be happy to help you find a new provider. We have a few options in your area. Would you like me to recommend some?
+     CUSTOMER
+     00:53
+     Yes, please.
+     AGENT
+     01:00
+     Okay. We have XYZ Towing and ABC Repair Shop in your area. Both have excellent reviews and ratings. Would you like to try one of them?
+     CUSTOMER
+     01:08
+     Yeah, I'll try XYZ Towing.
+     AGENT
+     01:12
+     Alright. I've updated your account with the new provider. You should receive a confirmation email shortly.
+     CUSTOMER
+     01:18
+     Great, thank you.
+     AGENT
+     01:20
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:23
+     No, that's all.
+     AGENT
+     01:25
+     Alright. Thank you for calling, and have a great day.
+     CUSTOMER
+     01:27
+     You too.""",8.0,"The agent provided a satisfactory solution to the customer's issue by recommending a new provider and updating their account, which led to a positive outcome.",2026-02-26,high,I'm not satisfied with the current tow service. They're always late and don't seem to care about my vehicle.,"The customer explicitly mentions dissatisfaction with the current service provider, which implies a high risk of churn.",neutral,"The customer's language shows no clear emotional charge, and the utterance is purely procedural or social, with routine acknowledgments and end-of-call politeness.",0,1,1,1,0,1,0,0,0,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.5872222222222222,0.58,0.49,"The customer called to modify their service providers, specifically to change their tow and repair shop due to dissatisfaction with the current provider's lateness and lack of care for their vehicle. The agent assisted in finding a new provider, recommending XYZ Towing and ABC Repair Shop, and updated the customer's account with the new provider.",Policy Changes (Vehicle/Driver/Usage),7.29,Providerdissatisfaction,Policy & Profile Management,,providerUpdated,Provider updated refers to the action of changing the service provider in the customer's account to a new one.,7.300000190734863,Olivia Davis,1745,112,2025-11-29,Insurance,5013,0.2,CASE-20251129-0015,Renewals,call,0.1,Policy,Retail,true,No,16.0,High NPS,low,medium,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,0,No,yes,yes,
+transcript_16,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     How can I assist you today?
+     CUSTOMER
+     00:15
+     Hi, I need to add some notes to my previous claim.
+     AGENT
+     00:20
+     Okay, can you please provide me with your claim number so I can assist you further?
+     CUSTOMER
+     00:27
+     It's #1234.
+     AGENT
+     00:30
+     Thank you. What kind of notes would you like to add to your claim?
+     CUSTOMER
+     00:35
+     I want to add some evidence, photos, and a repair estimate.
+     AGENT
+     00:40
+     Okay, I can help you with that. Can you please upload the photos and repair estimate to our portal?
+     CUSTOMER
+     00:47
+     How do I do that?
+     AGENT
+     00:50
+     You can log in to your account on our website and click on the 'Upload Evidence' button. From there, you can select the files you want to upload.
+     CUSTOMER
+     00:57
+     Okay, got it. And what about the notes?
+     AGENT
+     01:00
+     You can add notes in the 'Add Notes' section of the portal. Just type in what you want to say and click 'Save'.
+     CUSTOMER
+     01:05
+     Alright, I think that's it. Thank you for your help.
+     AGENT
+     01:10
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:15
+     No, that's all. Thanks again.
+     AGENT
+     01:20
+     You're welcome. Have a great day.""",8.0,"The agent provided clear and concise instructions on how to upload evidence and add notes to the claim, which made the process easier for me.",2026-02-26,none,None,The customer is calling to add notes to their previous claim and the agent is assisting them with the process. The tone of the customer is neutral and there is no indication of frustration or anger.,neutral,"The customer's language shows no clear emotional charge, and the utterance is a routine acknowledgment and end-of-call politeness.",0,1,1,1,0,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0.6272222222222222,0.61,0.28,"The customer contacted the agent to add notes to their previous claim (#1234). The agent guided the customer on how to upload evidence, photos, and a repair estimate to the portal, and also explained how to add notes. The customer thanked the agent and ended the call.",Claim Status & Updates,8.36,Missinginformation,Claims & FNOL,,,Not applicable as no final resolution was provided in the conversation.,12.199999809265137,James Miller,1302,116,2025-11-06,Insurance,5007,0.62,CASE-20251106-0016,Retention,call,0.43,Policy,Retail,false,Yes,16.0,High NPS,high,medium,0,100.0,50.0,50.0,100.0,low,0.0,100.0,0.0,0.0,0,100.0,1,Yes,no,yes,
+transcript_17,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     I'm calling from XYZ Corporation. My name is Emily and I'm reaching out to you regarding your recent application for a business loan.
+     CUSTOMER
+     00:20
+     Oh, hi Emily. Yeah, I did apply for a loan. What's the status on that?
+     AGENT
+     00:25
+     Well, we're still processing your application, but we need some additional information to move forward. It looks like we're missing some financial documents from your end.
+     CUSTOMER
+     00:35
+     Okay, I apologize for the delay. What specific documents do you need?
+     AGENT
+     00:40
+     We need your business's tax returns from the past two years, as well as a copy of your business license.
+     CUSTOMER
+     00:50
+     Alright, I can provide those. How do I get them to you?
+     AGENT
+     00:55
+     You can upload them to our website or fax them to us. I can provide you with the fax number if you'd like.
+     CUSTOMER
+     01:00
+     Yeah, that would be great. Can you give me the fax number?
+     AGENT
+     01:05
+     It's 555-1234. If you have any issues or concerns, please don't hesitate to reach out to me directly.
+     CUSTOMER
+     01:10
+     Okay, got it. I'll get those documents sent over today.
+     AGENT
+     01:15
+     Great, thank you so much for your cooperation. We'll review the documents as soon as we receive them and be in touch soon.
+     CUSTOMER
+     01:20
+     Sounds good. Thanks, Emily.
+     AGENT
+     01:25
+     You're welcome. Have a great day!
+     CUSTOMER
+     01:30
+     You too.
+     """,8.0,"The agent provided clear instructions and support throughout the conversation, addressing my concerns and ensuring I understood the next steps for my loan application.",2026-02-26,none,,"The conversation is a routine call about a business loan application, and the customer is cooperative and polite throughout the call. There is no indication of churn.",neutral,"The customer's language is showing no clear emotional charge (positive or negative), it's a routine acknowledgment and end-of-call politeness.",0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0.5583333333333332,0.82,0.37,"Emily from XYZ Corporation calls a customer regarding their business loan application, requesting additional financial documents, including tax returns and a business license, to move forward with the application.",Claim Status & Updates,8.36,Missinginformation,Claims & FNOL,,documentSubmissionInstructions,Document submission instructions refer to the guidance provided to the customer on how to submit the required documents.,8.300000190734863,Isabella White,1926,116,2026-01-12,Insurance,5006,0.23,CASE-20260112-0017,Retention,call,0.11,Policy,Retail,true,No,16.0,High NPS,medium,medium,1,66.66666666666666,50.0,50.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,0,Yes,yes,yes,
+transcript_18,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     How can I assist you today?
+     CUSTOMER
+     00:15
+     I need to add some notes to my claim. Can you help me with that?
+     AGENT
+     00:20
+     Of course. Can you please provide me with your claim number so I can assist you further?
+     CUSTOMER
+     00:25
+     It's #1234.
+     AGENT
+     00:30
+     Thank you. What kind of notes would you like to add to your claim?
+     CUSTOMER
+     00:35
+     I want to add some evidence. I have some photos of the damage.
+     AGENT
+     00:40
+     Okay. You can upload the photos to our system. I'll guide you through the process.
+     CUSTOMER
+     00:45
+     Okay. That sounds good.
+     AGENT
+     00:50
+     Also, do you have a repair estimate for the damage?
+     CUSTOMER
+     00:55
+     Yes, I do. Can I upload that as well?
+     AGENT
+     01:00
+     Yes, please do. The more information you can provide, the better we can assist you with your claim.
+     CUSTOMER
+     01:05
+     Okay. I've uploaded the photos and the repair estimate.
+     AGENT
+     01:10
+     Great. I've added the notes to your claim. Is there anything else you need assistance with?
+     CUSTOMER
+     01:15
+     No, that's all. Thank you for your help.
+     AGENT
+     01:20
+     You're welcome. If you have any other questions or concerns, please don't hesitate to reach out to us.
+     """,8.5,"The agent was helpful and guided me through the process of adding notes to my claim, and provided clear instructions on how to upload the required documents.",2026-02-26,none,,The customer is calling to add notes to their claim and the agent is assisting them with the process. The tone is neutral and there is no indication of frustration or dissatisfaction.,joy,"The customer expresses gratitude and appreciation for the help received, indicating a positive emotional tone.",0,1,1,1,0,1,0,0,0,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.6838888888888889,0.82,0.15,"The customer contacted the agent to add notes to their claim (#1234), specifically to upload photos of the damage and a repair estimate. The agent guided the customer through the process and added the notes to the claim.",Claim Status & Updates,1.7,Evidencesubmission,Claims & FNOL,,claimUpdated,Claim updated refers to the process of adding or modifying information related to an existing insurance claim to ensure it is accurate and complete.,14.399999618530273,Emma Wilson,1991,116,2026-02-16,Insurance,5004,0.84,CASE-20260216-0018,Retention,call,0.62,Policy,Retail,false,Yes,17.0,High NPS,high,low,0,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,1,Yes,no,yes,
+transcript_19,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     How can I assist you today?
+     CUSTOMER
+     00:15
+     I had an accident last week and I need to report it to my insurance company.
+     AGENT
+     00:20
+     Sorry to hear that. Can you please provide me with your policy number so I can assist you with the First Notice of Loss (FNOL) process?
+     CUSTOMER
+     00:30
+     Yeah, it's 1234567890.
+     AGENT
+     00:35
+     Thank you for providing that. Can you please tell me more about the accident? What happened?
+     CUSTOMER
+     00:45
+     I was driving home from work and another car ran a red light and hit me.
+     AGENT
+     00:55
+     I'm so sorry to hear that. Were you injured in the accident?
+     CUSTOMER
+     01:00
+     No, I was lucky. Just some damage to my car.
+     AGENT
+     01:05
+     Okay. I'm going to go ahead and file the FNOL report for you. Can you please confirm your contact information, including your phone number and email address?
+     CUSTOMER
+     01:15
+     Yeah, it's 555-1234 and [email address].
+     AGENT
+     01:20
+     Got it. I've filed the report and you should receive an email with the details shortly. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:25
+     No, that's all. Thank you for your help.
+     AGENT
+     01:30
+     You're welcome. Sorry again for the inconvenience and I hope everything gets resolved quickly.
+     CUSTOMER
+     01:35
+     Yeah, me too. Thanks again.
+     AGENT
+     01:40
+     Have a great day.
+     CUSTOMER
+     01:45
+     You too.""",8.0,"The agent was empathetic and helpful throughout the conversation, efficiently guiding me through the FNOL process and providing clear explanations, which contributed to my overall satisfaction.",2026-02-26,none,,The customer is calling to report an accident and the agent is assisting with the process. The tone is neutral and there is no indication of frustration or dissatisfaction with the service.,neutral,"The customer's language shows no clear emotional charge, and the utterances are routine acknowledgments and end-of-call politeness.",0,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.5983333333333333,0.87,0.38,"The customer reported a car accident to their insurance company and provided the necessary information, including their policy number and details of the accident. The agent assisted with the First Notice of Loss (FNOL) process and filed the report, and the customer confirmed their contact information.",FNOL & Filing,10.0,Accidentdamage,Claims & FNOL,,claimFiled,Claim filed refers to the submission of a formal request to an insurance company for coverage or compensation following an incident.,13.5,Ethan Martin,1403,120,2025-10-08,Insurance,5005,0.75,CASE-20251008-0019,Technical Support,call,0.54,Support,Retail,false,Yes,16.0,High NPS,high,high,0,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,1,Yes,no,yes,
+transcript_20,"""AGENT
+        00:00
+        Hello good afternoon.
+        CUSTOMER
+        00:07
+        good afternoon. I'm calling about my policy. I need to make some changes.
+        AGENT
+        00:14
+        Okay, I'd be happy to help you with that. Can you please provide me with your policy number so I can look into it?
+        CUSTOMER
+        00:23
+        It's #123456.
+        AGENT
+        00:29
+        Thank you. I've located your policy. What changes would you like to make?
+        CUSTOMER
+        00:36
+        I'd like to add my new car to the policy.
+        AGENT
+        00:42
+        Okay, I can help you with that. Can you please provide me with the make, model, and VIN of the new car?
+        CUSTOMER
+        00:51
+        It's a Toyota Camry, 2022, and the VIN is 1234567890.
+        AGENT
+        01:00
+        Got it. I've added the new car to your policy. Would you like to review the changes before I finalize them?
+        CUSTOMER
+        01:08
+        Yes, please.
+        AGENT
+        01:14
+        Okay. Let me just review the changes with you. (pause) Everything looks good. The premium will increase by $50 per month. Is that okay with you?
+        CUSTOMER
+        01:24
+        Yes, that's fine.
+        AGENT
+        01:29
+        Alright. I've finalized the changes. Your policy has been updated. You should receive an email with the updated policy documents within the next 24 hours.
+        CUSTOMER
+        01:37
+        Great, thank you for your help.
+        AGENT
+        01:42
+        You're welcome. Is there anything else I can assist you with today?
+        CUSTOMER
+        01:47
+        No, that's all. Thank you again.
+        AGENT
+        01:52
+        You're welcome. Have a great day.""",8.5,"The agent was helpful and efficient in making the necessary changes to my policy, and provided clear explanations of the updates.",2026-02-26,none,,"The customer is calling to make changes to their policy and the agent is able to assist them successfully. The tone of the conversation is polite and friendly, with no indication of frustration or dissatisfaction.",neutral,"The customer's language is showing no clear emotional charge (positive or negative), and the utterance is a routine acknowledgment and end-of-call politeness.",1,1,1,1,0,0,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0.6788888888888889,0.83,0.39,"The customer called to make changes to their policy, specifically adding a new car, a 2022 Toyota Camry. The agent assisted with the changes, reviewed the updates with the customer, and finalized the policy with a $50 monthly premium increase.",Policy Changes (Vehicle/Driver/Usage),7.72,Vehicle Change,Policy & Profile Management,,policyUpdated,PolicyUpdated refers to the successful modification of an insurance policy as requested by the customer.,9.600000381469727,Ava Jackson,1171,111,2025-12-30,Insurance,5001,0.36,CASE-20251230-0020,Fraud & Risk,call,0.22,Risk,Retail,false,Yes,17.0,High NPS,medium,medium,1,100.0,50.0,100.0,100.0,low,100.0,33.33333333333333,0.0,0.0,0,100.0,0,Yes,no,yes,
+transcript_21,"""AGENT
+         00:00
+         Hello good afternoon.
+         CUSTOMER
+         00:07
+         good afternoon I'm calling about my claim. I'm really frustrated and disappointed with the process so far. It's been weeks and I haven't heard back from anyone.
+         AGENT
+         00:23
+         I apologize for the inconvenience. Can you please provide me with your claim number so I can look into this further?
+         CUSTOMER
+         00:35
+         It's #12345. I've already provided all the necessary documents and information, but nobody seems to be working on it.
+         AGENT
+         00:48
+         I've located your claim. I see that it's still under review. I'm going to escalate this to our priority team to get an update on the status.
+         CUSTOMER
+         01:02
+         That's what the last agent told me. I was promised a call back within 24 hours, but nobody called. I'm starting to think that nobody cares about my situation.
+         AGENT
+         01:18
+         I understand your frustration. I'm going to personally follow up on this and ensure that you get a call back today. Can I confirm your contact number please?
+         CUSTOMER
+         01:30
+         It's 555-1234. I hope you're not just saying that to get me off the phone.
+         AGENT
+         01:42
+         I assure you, I'm committed to resolving this issue. You will receive a call back today. If you don't, please call me directly and I'll make sure it gets done.
+         CUSTOMER
+         01:55
+         Okay...I hope so. This experience has been really disappointing.
+         AGENT
+         02:02
+         I understand. I'm going to make things right. You will receive a call back today and we'll get your claim moving forward. Is there anything else I can assist you with?
+         CUSTOMER
+         02:15
+         No, that's all. Just get my claim resolved.
+         AGENT
+         02:22
+         You will receive a call back today. Thank you for bringing this to my attention and I apologize again for the inconvenience.
+         CUSTOMER
+         02:30
+         Thank you.""",4.0,"The agent's failure to provide a clear resolution and follow-up on previous promises, despite their assurance to personally escalate the issue, led to a lack of trust and satisfaction.",2026-02-26,medium,I'm starting to think that nobody cares about my situation.,"The customer is angry and frustrated with the service, and has called before but the issue was not resolved, which suggests a medium churn risk.",anger,"The customer expresses frustration and disappointment with the experience, indicating anger.",0,1,1,1,0,1,0,1,0,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0.6305555555555555,0.7,0.35,"A customer calls to express frustration about the delay in their claim, which has been pending for weeks. The agent apologizes, escalates the claim to the priority team, and promises a call back within 24 hours to resolve the issue.",Claim Escalations,7.81,Servicedelay,Claims & FNOL,,claimEscalated,Claim escalation refers to prioritizing and expediting a claim to address delays or issues.,13.300000190734863,Emma Wilson,1326,119,2025-12-20,Insurance,5004,0.73,CASE-20251220-0021,Sales,call,0.52,Policy,Retail,false,Yes,8.0,High NPS,high,medium,0,100.0,50.0,100.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,1,Yes,no,no,
+transcript_26,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     How can I assist you today?
+     CUSTOMER
+     00:15
+     I had an accident on Friday and I need to report it.
+     AGENT
+     00:20
+     Sorry to hear that. Can you please provide me with your policy number so I can assist you with the claim?
+     CUSTOMER
+     00:27
+     It's 1234567890.
+     AGENT
+     00:32
+     Thank you. I've located your policy. Can you please tell me more about the accident? What happened?
+     CUSTOMER
+     00:40
+     I was driving on the highway and another car hit me from behind.
+     AGENT
+     00:47
+     I'm so sorry to hear that. Were you injured in the accident?
+     CUSTOMER
+     00:52
+     No, I was lucky. But my car has some damage.
+     AGENT
+     00:57
+     Okay. I'm going to go ahead and file a First Notice of Loss (FNOL) for you. This will get the claim process started.
+     CUSTOMER
+     01:03
+     Okay, that sounds good.
+     AGENT
+     01:06
+     I'll need to ask you a few more questions to complete the FNOL. Can you please provide me with the date and time of the accident?
+     CUSTOMER
+     01:12
+     It was on Friday at 3 pm.
+     AGENT
+     01:17
+     And do you have the other driver's information?
+     CUSTOMER
+     01:22
+     Yes, I have their insurance information and contact details.
+     AGENT
+     01:27
+     Great. I'll go ahead and complete the FNOL. You will receive an email with the claim number and further instructions.
+     CUSTOMER
+     01:33
+     Okay, thank you.
+     AGENT
+     01:36
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:40
+     No, that's all. Thank you.
+     AGENT
+     01:43
+     You're welcome. Have a great day.""",8.0,"The agent was helpful and efficient in assisting me with the claim process, providing clear instructions and answering my questions in a professional manner.",2026-02-26,none,,The customer is calling to report an accident and the agent is assisting with the claim process. The conversation is straightforward and there is no indication of churn.,neutral,"The customer's language shows no clear emotional charge, and the utterances are routine acknowledgments and end-of-call politeness.",0,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.5966666666666666,0.86,0.38,The customer reports a car accident that occurred on Friday at 3 pm and provides the policy number and details of the accident. The agent assists the customer in filing a First Notice of Loss (FNOL) and provides instructions on the next steps in the claim process.,FNOL & Filing,10.0,Accidentdamage,Claims & FNOL,,claimFiled,Claim filed refers to the formal submission of a claim to an insurance company to seek coverage or compensation.,6.760000228881836,Emma Wilson,1893,111,2025-11-04,Insurance,5004,0.2,CASE-20251104-0026,Fraud & Risk,call,0.1,Risk,Retail,false,Yes,16.0,High NPS,low,high,0,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,0,No,no,no,
+transcript_22,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon I'm having some car trouble and I need roadside assistance.
+     AGENT
+     00:15
+     Sorry to hear that. Can you please tell me a little bit more about what's going on with your vehicle?
+     CUSTOMER
+     00:25
+     Yeah, I was driving on the highway and my car just stopped. I don't know what's wrong with it.
+     AGENT
+     00:35
+     Okay, don't worry. We'll get someone to help you out. Can you please provide me with your location?
+     CUSTOMER
+     00:43
+     I'm on I-95, near exit 27.
+     AGENT
+     00:50
+     Alright, I've located you. We'll send someone to assist you. Can you please confirm your vehicle's make and model?
+     CUSTOMER
+     01:00
+     It's a 2018 Honda Civic.
+     AGENT
+     01:07
+     Okay, got it. We'll send someone with the right equipment. In the meantime, is your vehicle in a safe location?
+     CUSTOMER
+     01:15
+     Yeah, I'm on the side of the road, but there's not a lot of shoulder room.
+     AGENT
+     01:22
+     Okay, please be careful and stay in your vehicle. Help should arrive within the next 30-45 minutes.
+     CUSTOMER
+     01:30
+     Okay, thank you. I appreciate it.
+     AGENT
+     01:35
+     You're welcome. Is there anything else I can assist you with while you wait?
+     CUSTOMER
+     01:40
+     No, that's all. Thank you again.
+     AGENT
+     01:45
+     You're welcome. We'll get you back on the road soon. Have a great day.
+     CUSTOMER
+     01:50
+     You too.""",8.5,"The agent was helpful and reassuring throughout the conversation, providing clear instructions and a sense of control, which helped to alleviate the customer's stress and anxiety.",2026-02-26,none,,The customer is calling for roadside assistance and the issue is being resolved. There is no indication of churn or dissatisfaction with the service.,neutral,"The customer's language is showing no clear emotional charge (positive or negative), and the utterance is purely procedural or social, with routine acknowledgments and end-of-call politeness.",1,1,0,1,0,1,0,0,0,0,1,0,1,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0,0.5694444444444444,0.89,0.24,"A customer calls for roadside assistance after their 2018 Honda Civic breaks down on I-95 near exit 27. The agent gathers information about the vehicle and location, and assures the customer that help will arrive within 30-45 minutes.",Policy Changes (Vehicle/Driver/Usage),6.92,Vehiclebreakdown,Policy & Profile Management,,assistanceDispatched,"Assistance dispatched refers to the process of sending help or support to a customer in need, particularly in the context of vehicle breakdowns or emergencies.",13.699999809265137,Sophia Taylor,1417,107,2025-11-21,Insurance,5014,0.77,CASE-20251121-0022,Claims Status,call,0.56,Claims,Retail,false,Yes,17.0,High NPS,high,low,0,100.0,50.0,0.0,100.0,low,100.0,100.0,33.33333333333333,0.0,0,100.0,1,Yes,no,yes,
+transcript_23,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to report an accident and make a claim. I was involved in a car accident yesterday and I need to get it sorted out as soon as possible.
+     AGENT
+     00:15
+     Sorry to hear that. Can you please provide me with your policy number so I can assist you with the claim?
+     CUSTOMER
+     00:22
+     It's 123456. And can you please hurry up? I don't have all day.
+     AGENT
+     00:28
+     I apologize for the inconvenience, sir. I'm going to do my best to assist you as quickly as possible. Can you please tell me more about the accident? What happened?
+     CUSTOMER
+     00:35
+     I was driving home from work and some idiot ran a red light and smashed into me. The police were called and everything.
+     AGENT
+     00:42
+     Okay, sir. Did you get the other driver's information?
+     CUSTOMER
+     00:46
+     Yeah, the police took care of all that. They gave me a report number and everything.
+     AGENT
+     00:51
+     Okay, great. Can you please provide me with the report number?
+     CUSTOMER
+     00:55
+     It's 2022-001234. Now can we please get on with the claim?
+     AGENT
+     01:00
+     Yes, sir. I'm going to go ahead and start the claim process. Can you please confirm your contact information and the details of the accident?
+     CUSTOMER
+     01:06
+     Yeah, it's all the same. Just get it done, please.
+     AGENT
+     01:11
+     Okay, sir. I've started the claim process. Someone from our claims team will be in touch with you within the next 24-48 hours to discuss the next steps.
+     CUSTOMER
+     01:17
+     Fine. Thank you.
+     AGENT
+     01:20
+     You're welcome, sir. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:23
+     No, that's it. Thanks.
+     AGENT
+     01:25
+     You're welcome, sir. Have a good day.
+     CUSTOMER
+     01:27
+     Yeah, you too.""",7.0,"The agent was apologetic and made an effort to assist the customer as quickly as possible, but the customer's impatience and demanding tone throughout the conversation detracted from the overall experience.",2026-02-26,none,,"The customer is calling to report an accident and make a claim, and the agent is assisting with the process. The customer is slightly frustrated with the pace of the conversation, but the issue is being resolved and there is no explicit or implicit mention of churn.",anger,"The customer is showing frustration and impatience, using phrases like 'Just get it done, please' and 'Now can we please get on with the claim?', indicating anger.",0,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.5349999999999999,0.57,0.46,"A customer calls to report a car accident and make a claim. The agent assists the customer by gathering necessary information, including policy number and accident report number, and starts the claim process. The customer is told that someone from the claims team will contact them within 24-48 hours to discuss next steps.",FNOL & Filing,10.0,Accidentdamage,Claims & FNOL,,claimFiled,Claim filed refers to the initiation of the process to seek compensation or coverage for a reported incident.,11.899999618530273,Mason Harris,1083,120,2026-01-13,Insurance,5011,0.59,CASE-20260113-0023,Technical Support,call,0.41,Support,Retail,true,No,14.0,High NPS,medium,high,0,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,1,Yes,yes,no,
+transcript_24,"""AGENT
+00:00
+Hello good afternoon.
+
+CUSTOMER
+00:07
+good afternoon
+
+AGENT
+00:10
+How can I assist you today?
+
+CUSTOMER
+00:15
+I need to set up a new policy. Can you help me with that?
+
+AGENT
+00:20
+I'd be happy to help you with that. Can you please provide me with some details? What type of policy are you looking to set up?
+
+CUSTOMER
+00:30
+It's a life insurance policy. I want to make sure my family is protected in case something happens to me.
+
+AGENT
+00:37
+That's a great decision. We have various life insurance policies to choose from. Can you please tell me a bit about your family and what kind of coverage you're looking for?
+
+CUSTOMER
+00:45
+I have a wife and two kids. I want to make sure they're taken care of financially if I'm no longer around.
+
+AGENT
+00:52
+Okay, got it. And what's your budget for the premium?
+
+CUSTOMER
+01:00
+I'm not sure. What are the options?
+
+AGENT
+01:05
+We have policies that range from $50 to $500 per month, depending on the coverage and term. Let me see what options we have that might fit your needs.
+
+CUSTOMER
+01:15
+That sounds good. What's the process to set up a new policy?
+
+AGENT
+01:20
+I'll need to ask you a few more questions to determine the best policy for you. Then, I'll guide you through the application process, and once everything is approved, we'll get the policy issued.
+
+CUSTOMER
+01:30
+Sounds good. Let's get started then.
+
+AGENT
+01:35
+Great! I'll need your personal and beneficiary information. Can you please provide that to me?
+
+CUSTOMER
+01:45
+Yes, I have all that information ready.
+
+AGENT
+01:50
+I'll walk you through the application, and we'll get everything set up for you.
+
+CUSTOMER
+02:00
+Thank you so much for your help. I really appreciate it.
+
+AGENT
+02:05
+You're welcome! It was my pleasure to assist you. Your new policy will be issued shortly, and you'll receive all the details via email. Is there anything else I can help you with today?
+
+CUSTOMER
+02:10
+No, that's all. Thank you again.
+
+AGENT
+02:15
+You're welcome! Have a great day.""",8.5,"The agent provided clear and concise information about the policy options, and was able to guide me through the application process in a timely manner.",2026-02-26,none,,"The customer is calling to set up a new policy and the conversation is smooth and polite throughout. The agent is helpful and resolves the customer's query, resulting in a positive outcome.",joy,"The customer expresses genuine emotional happiness and relief caused by the outcome of the call, thanking the agent for their help and appreciating their assistance.",0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0.5533333333333333,0.79,0.37,"The customer contacted the agent to set up a new life insurance policy to ensure their family's financial protection in case of their passing. The agent guided the customer through the process, asking for details about their family and budget, and explained the available policy options and application process.",Coverage & Premium Review,2.1,Familyprotection,Policy & Profile Management,,policyIssued,Policy issued refers to the finalization and activation of a new insurance policy for the customer.,11.5600004196167,John Smith,1097,113,2025-12-21,Insurance,5008,0.56,CASE-20251221-0024,Customer Care,call,0.38,Support,Retail,true,No,17.0,High NPS,medium,low,1,66.66666666666666,50.0,50.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,1,Yes,yes,no,
+transcript_25,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     I'm calling from XYZ Corporation. My name is John. I'm calling to confirm that you received the paperwork we sent over last week.
+     CUSTOMER
+     00:20
+     Ah, yes. I did receive it. Thank you for following up.
+     AGENT
+     00:25
+     Great! I just wanted to make sure you got it. Can you please confirm your receipt by signing and returning the enclosed acknowledgement form?
+     CUSTOMER
+     00:35
+     Yeah, I've already signed it and it's ready to go back. I was just waiting for a pickup or something.
+     AGENT
+     00:42
+     Okay, great! I'll go ahead and schedule a pickup for tomorrow. Would that work for you?
+     CUSTOMER
+     00:48
+     Yeah, that's fine. Thanks.
+     AGENT
+     00:51
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     00:55
+     No, that's all. Thanks again.
+     AGENT
+     00:58
+     You're welcome. Have a great day!
+     CUSTOMER
+     01:00
+     You too.""",8.0,"The agent was proactive in following up on the paperwork and provided a convenient pickup option, which contributed to the high level of satisfaction.",2026-02-26,none,,"The conversation is a routine call to confirm receipt of paperwork and schedule a pickup. The customer is polite and cooperative throughout the call, with no signs of frustration or dissatisfaction.",neutral,"The customer's language is showing no clear emotional charge (positive or negative), and the utterance is purely procedural or social, with routine acknowledgments and end-of-call politeness.",0,1,1,1,0,1,0,0,0,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.6472222222222223,0.58,0.13,John from XYZ Corporation called to confirm receipt of paperwork sent last week and arranged for a pickup of the signed acknowledgement form the next day.,Roadside Assistance,1.8,Pickupscheduled,Service & Support,,pickupScheduled,Pickup scheduled refers to arranging a collection time for the signed documents.,7.5,Mason Harris,1969,115,2026-01-16,Insurance,5011,0.2,CASE-20260116-0025,Home Claims,call,0.1,Claims,Retail,true,No,16.0,High NPS,low,low,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,0,Yes,yes,no,
+transcript_27,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to inquire about my recent bill. I was surprised to see that it's higher than usual.
+     AGENT
+     00:15
+     Sorry to hear that. Can you please provide me with your account number so I can look into this further for you?
+     CUSTOMER
+     00:22
+     Yeah, it's 1234567890.
+     AGENT
+     00:28
+     Thank you. I've pulled up your account. Can you tell me more about what you're seeing on your bill that's concerning you?
+     CUSTOMER
+     00:35
+     Well, I was expecting it to be around $100, but it's showing $150. I don't understand why it's so high.
+     AGENT
+     00:42
+     I see. Let me investigate this further. (pause) Okay, I see that there was an error on our part. We incorrectly charged you for an extra service.
+     CUSTOMER
+     00:52
+     That's ridiculous. How could you guys make such a mistake?
+     AGENT
+     00:58
+     I apologize for the inconvenience. I'm going to go ahead and correct the error. You should see the corrected bill reflected in your account within the next 24 hours.
+     CUSTOMER
+     01:05
+     Okay, that sounds good. But can you also explain to me why I wasn't notified about this error? I had to call in to find out.
+     AGENT
+     01:12
+     I understand your concern. We should have notified you about the error. I'm going to make a note on your account to ensure that we're more proactive in the future.
+     CUSTOMER
+     01:20
+     Alright, thank you for taking care of this. I appreciate it.
+     AGENT
+     01:25
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:30
+     No, that's all. Thank you again.
+     AGENT
+     01:33
+     You're welcome. Have a great day.""",4.0,"The agent failed to proactively notify the customer about the error on their bill, which caused unnecessary inconvenience and required the customer to call in to resolve the issue.",2026-02-26,low,That's ridiculous. How could you guys make such a mistake?,"Customer tone changes to frustration and minor dissatisfaction towards the agent, but the issue is resolved at the end.",anger,"The customer is unhappy and frustrated about not being notified about an error and having to call in to find out, showing signs of anger.",0,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.615,0.83,0.24,"A customer called to inquire about a higher-than-expected bill, and the agent investigated and found an error on their part, correcting the bill and apologizing for the inconvenience, and also making a note to be more proactive in notifying customers of errors in the future.",Billing Issues & Corrections,7.12,Billing Error,Billing & Payments,,billingCorrection,Billing correction refers to the adjustment or rectification of an error on a customer's bill.,8.899999618530273,Liam Anderson,1841,108,2025-11-25,Insurance,5009,0.29,CASE-20251125-0027,,call,0.16,,Retail,true,No,8.0,High NPS,medium,medium,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,0,Yes,yes,no,
+transcript_28,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to update my vehicle usage. I've been using my car more for commuting to work lately.
+     AGENT
+     00:15
+     Okay, I'd be happy to help you with that. Can you please tell me your policy number so I can look into your account?
+     CUSTOMER
+     00:23
+     It's #XXXXX.
+     AGENT
+     00:30
+     Thank you. I've located your account. So, you're saying you're using your vehicle more for commuting now? How many miles do you estimate you're driving per week?
+     CUSTOMER
+     00:42
+     I'd say around 200-250 miles per week.
+     AGENT
+     00:50
+     Okay, got it. And how many miles do you think you'll drive in a year?
+     CUSTOMER
+     01:00
+     Around 12,000-15,000 miles.
+     AGENT
+     01:07
+     Alright. I'm going to go ahead and update your policy to reflect the change in usage. This may affect your premium.
+     CUSTOMER
+     01:15
+     Okay, that's what I'm worried about. How much is it going to increase?
+     AGENT
+     01:22
+     Let me just check on that for you. (pause) Okay, it looks like your premium will increase by about $20 per month.
+     CUSTOMER
+     01:35
+     That's a bit more than I was hoping for. Is there anything we can do to reduce that?
+     AGENT
+     01:42
+     Well, we do offer some discounts for things like multi-car policies or bundling with other insurance products. Would you like me to look into those options for you?
+     CUSTOMER
+     01:50
+     Yeah, that would be great. I do have another car, actually.
+     AGENT
+     01:57
+     Okay, let me see what we can do. (pause) Alright, it looks like we can offer you a discount of $10 per month if you add the other car to your policy.
+     CUSTOMER
+     02:05
+     That sounds good. Go ahead and make the changes.
+     AGENT
+     02:10
+     Alright, I've updated your policy. You should receive an email with the new details shortly. Is there anything else I can assist you with today?
+     CUSTOMER
+     02:17
+     No, that's all. Thank you.
+     AGENT
+     02:20
+     You're welcome. Have a great day.""",8.0,"The agent provided a clear explanation of the premium increase and offered alternative solutions to reduce the cost, such as bundling with other insurance products.",2026-02-26,none,,"The customer is calling to update their vehicle usage and is concerned about the premium increase. The agent is able to assist and offer a discount, resolving the issue. The tone of the conversation is neutral and there is no indication of churn.",joy,"The customer expresses genuine emotional happiness and relief caused by the outcome of the call, showing appreciation for the solution provided.",0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0.4949999999999999,0.57,0.5,"The customer calls to update their vehicle usage, stating they've been using their car more for commuting to work. The agent updates the policy, which results in a $20 monthly premium increase. However, the agent offers a discount of $10 per month if the customer adds their other car to the policy, which the customer accepts.",Policy Changes (Vehicle/Driver/Usage),7.7,Vehicle Usage Change,Policy & Profile Management,,policyUpdated,Policy updated refers to the modification of an insurance policy to reflect new information or circumstances.,11.100000381469727,Ava Jackson,1140,107,2025-10-15,Insurance,5001,0.51,CASE-20251015-0028,Claims Status,call,0.34,Claims,Retail,true,No,16.0,High NPS,medium,medium,1,66.66666666666666,50.0,50.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,1,Yes,yes,yes,
+transcript_29,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling because I'm having some issues with my policy. I'm not happy with the service and I'm thinking of switching to a different provider.
+     AGENT
+     00:14
+     Sorry to hear that you're unhappy with our service. Can you tell me more about what's not meeting your expectations?
+     CUSTOMER
+     00:21
+     Well, I had to add a new driver to my policy and it was a huge hassle. I had to call multiple times and wait on hold for ages. It was really frustrating.
+     AGENT
+     00:30
+     I apologize for the inconvenience. I'd be happy to help you with adding a new driver to your policy. Can you please provide me with the driver's details?
+     CUSTOMER
+     00:37
+     Yeah, sure. His name is John Doe and his license number is 123456789.
+     AGENT
+     00:44
+     Okay, I've added John to your policy. Would you like to remove any existing drivers from your policy?
+     CUSTOMER
+     00:51
+     Actually, yes. I want to remove my sister, Jane Doe, from the policy. She's not driving my car anymore.
+     AGENT
+     00:58
+     Okay, I've removed Jane from your policy. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:05
+     No, that's it. But like I said, I'm still not happy with the service and I'm considering switching to a different provider.
+     AGENT
+     01:12
+     I understand your concerns and I apologize again for the inconvenience. However, I'd like to offer you a loyalty discount for being a long-time customer. Would you like me to apply that to your policy?
+     CUSTOMER
+     01:20
+     Hmm, I'm not sure. How much of a discount are we talking about?
+     AGENT
+     01:27
+     We can offer you a 10% discount on your premium. Would you like me to apply that to your policy?
+     CUSTOMER
+     01:34
+     Okay, fine. Yeah, go ahead and apply the discount.
+     AGENT
+     01:41
+     Alright, the discount has been applied. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:48
+     No, that's it. Thanks for your help, I guess.
+     AGENT
+     01:55
+     You're welcome. We appreciate your business and hope to continue serving you in the future. Have a great day.
+     CUSTOMER
+     02:02
+     Yeah, you too.""",4.0,"The customer's concerns about the service and the hassle of adding a new driver to the policy were not fully addressed, despite the agent's efforts to offer a loyalty discount.",2026-02-26,high,I'm thinking of switching to a different provider,"The customer explicitly mentions considering switching to a different provider, indicating a high risk of churn.",sadness,"The customer is not satisfied with the discount offered and is considering switching to a different provider, showing signs of dissatisfaction and disappointment.",0,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.6266666666666666,0.86,0.2,"The customer is unhappy with their policy service and is considering switching to a different provider due to a frustrating experience adding a new driver. The agent apologizes and offers to help, making the necessary changes to the policy. The agent also offers a loyalty discount to retain the customer's business.",Policy Changes (Vehicle/Driver/Usage),7.42,Providerdissatisfaction,Policy & Profile Management,,policyUpdated,Policy updated refers to the modification of an insurance policy to reflect new details or changes requested by the customer.,11.5,Isabella White,1739,113,2026-01-26,Insurance,5006,0.55,CASE-20260126-0029,Customer Care,call,0.38,Support,Retail,true,No,8.0,High NPS,medium,medium,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,1,Yes,yes,yes,
+transcript_30,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to inquire about my current insurance policy. I'm not sure if I have the right coverage.
+     AGENT
+     00:15
+     Absolutely, I'd be happy to help you review your policy. Can you please tell me a little bit more about your concerns?
+     CUSTOMER
+     00:25
+     Well, I've been thinking about getting a new car and I'm not sure if my current policy will cover it. Plus, I've been hearing a lot about these new advanced safety features and I'm not sure if I have them.
+     AGENT
+     00:40
+     Okay, let me take a look at your policy. (pause) Okay, I see that you do have a good amount of coverage, but I do think we can improve it. We have a new policy that includes advanced safety features and it would also cover your new car.
+     CUSTOMER
+     00:55
+     That sounds good, but I'm not sure if I can afford it. I've been having some financial difficulties lately.
+     AGENT
+     01:02
+     I completely understand. However, I want to let you know that this new policy would actually save you money in the long run. With the advanced safety features, you'll be eligible for a discount. And, we have a promotion going on right now that would give you an even better rate.
+     CUSTOMER
+     01:15
+     Hmm, that does sound appealing. But, I'm still not sure. Can you tell me more about the promotion?
+     AGENT
+     01:25
+     Absolutely. The promotion is for new customers who switch to our premium policy. It's a limited time offer, but it would give you a significant discount on your first year's premium.
+     CUSTOMER
+     01:35
+     Okay, I think I'm interested. But, can you also throw in some extra perks? I've been with my current insurance company for a while and I'm not sure if I want to switch.
+     AGENT
+     01:45
+     I completely understand. Let me see what I can do. (pause) Okay, I can offer you a free roadside assistance package for the first year, as well as a dedicated customer service representative. Would that make you more comfortable with switching?
+     CUSTOMER
+     02:00
+     Yeah, that sounds good. Okay, I think I'll take the new policy.
+     AGENT
+     02:05
+     Great! I'll go ahead and process the changes. You'll receive an email with all the details shortly. Is there anything else I can assist you with today?
+     CUSTOMER
+     02:10
+     No, that's all. Thank you for your help.
+     AGENT
+     02:12
+     You're welcome! It was my pleasure to assist you. Have a great day!
+     """,8.5,"The agent provided a clear explanation of the new policy's benefits, including the advanced safety features and the promotion, which addressed my concerns and made me feel more comfortable with switching to the new policy.",2026-02-26,none,none,"The customer is inquiring about their current insurance policy and is considering switching to a new policy. The agent is helpful and provides explanations and promotions, and the customer ultimately decides to switch. There is no indication of churn or dissatisfaction with the current company.",joy,"The customer expresses genuine emotional happiness and relief caused by the outcome of the call, they are interested in the new policy and thankful for the help.",1,1,0,1,0,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0.7222222222222222,0.69,0.29,"A customer inquires about their current insurance policy, expressing concerns about coverage for a new car and advanced safety features. The agent reviews the policy, recommends an upgrade, and addresses the customer's financial concerns by offering a promotion and extra perks, ultimately leading to the customer switching to the new policy.",Billing Issues & Corrections,7.72,Vehicle Change,Billing & Payments,,policyUpdated,Policy update refers to the process of modifying or enhancing an existing insurance policy to better meet the customer's needs or preferences.,6.300000190734863,Daniel Brown,1765,114,2025-10-07,Insurance,5003,0.2,CASE-20251007-0030,Commercial Lines,call,0.1,Commercial,Commercial,true,No,17.0,High NPS,low,medium,1,100.0,100.0,100.0,100.0,low,100.0,100.0,0.0,0.0,0,0.0,0,No,yes,yes,
+transcript_31,"""
+       AGENT
+       00:00
+       Hello good afternoon. How can I assist you with your policy today?
+
+       CUSTOMER
+       00:07
+       Hi, I'm calling about my auto insurance policy. I'm not sure if I have the right coverage.
+
+       AGENT
+       00:14
+       I'd be happy to help you review your policy. Can you please provide me with your policy number so I can look into it for you?
+
+       CUSTOMER
+       00:22
+       It's #XXXXX. I'm worried that I might not have enough coverage in case of an accident.
+
+       AGENT
+       00:30
+       Thank you for providing that. Let me just check on your policy real quick. (pause) Okay, I've got it pulled up. It looks like you have a liability coverage of $50,000. Is that correct?
+
+       CUSTOMER
+       00:43
+       Yeah, that's what I thought. But I'm not sure if that's enough. I've been hearing a lot about accidents and I'm worried that I might not be protected.
+
+       AGENT
+       00:52
+       I completely understand your concern. We can definitely discuss increasing your liability coverage to give you more protection. We also have some additional coverage options that might be of interest to you, such as uninsured motorist coverage.
+
+       CUSTOMER
+       01:03
+       That sounds good. Can you tell me more about the uninsured motorist coverage?
+
+       AGENT
+       01:10
+       Absolutely. Uninsured motorist coverage protects you in case you're involved in an accident with someone who doesn't have insurance. It can help cover medical expenses and other related costs.
+
+       CUSTOMER
+       01:20
+       Okay, that makes sense. How much would it cost to add that coverage to my policy?
+
+       AGENT
+       01:27
+       Let me just check on that for you. (pause) Okay, it looks like adding the uninsured motorist coverage would increase your premium by about $20 per month.
+
+       CUSTOMER
+       01:36
+       That's not too bad. I think I'd like to add that coverage to my policy.
+
+       AGENT
+       01:42
+       Great! I can assist you with that. I'll just need to update your policy and you'll be all set.
+
+       CUSTOMER
+       01:48
+       Okay, sounds good. And can you also review my policy to make sure I have the right coverage for my vehicle?
+
+       AGENT
+       01:54
+       I'd be happy to review your policy with you. Let me just go through it real quick. (pause) Okay, everything looks good. You have comprehensive and collision coverage, which will help protect your vehicle in case of an accident.
+
+       CUSTOMER
+       02:05
+       Okay, good. I feel better now. Thank you for your help.
+
+       AGENT
+       02:10
+       You're welcome! It was my pleasure to assist you. Is there anything else I can help you with today?
+
+       CUSTOMER
+       02:15
+       No, that's all. Thank you again.
+
+       AGENT
+       02:20
+       You're welcome! Have a great day.
+       """,8.5,"The agent provided clear explanations and helpful suggestions to address my concerns about my auto insurance policy, resulting in a satisfactory outcome.",2026-02-26,none,,"The customer is calling to review their policy and is concerned about having enough coverage. The agent is helpful and provides explanations, and the customer's tone is not angry or frustrated. The conversation is focused on general explanation and query, and the agent is able to complete the task.",joy,"The customer expresses genuine emotional happiness and relief caused by the outcome of the call, specifically mentioning 'I feel better now' which indicates a positive emotional state.",1,1,0,1,0,1,0,0,0,0,1,0,1,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0,0.4961111111111111,0.58,0.37,"The customer called to review their auto insurance policy, concerned they might not have enough coverage. The agent assisted them in reviewing their policy, discussing increasing liability coverage and adding uninsured motorist coverage, which the customer decided to add to their policy. The agent also reviewed the customer's policy to ensure they had the right coverage for their vehicle.",Coverage & Premium Review,8.75,Coverage Review,Policy & Profile Management,,policyUpdated,Policy updated refers to the process of making changes or additions to an existing insurance policy to ensure it meets the customer's needs and provides adequate coverage.,11.899999618530273,John Smith,1521,103,2025-11-23,Insurance,5008,0.59,CASE-20251123-0031,New Policy,call,0.41,Policy,Retail,true,No,17.0,High NPS,medium,medium,1,100.0,50.0,0.0,100.0,low,100.0,100.0,33.33333333333333,0.0,0,100.0,1,Yes,yes,no,
+transcript_32,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon I'm calling about the additional driver breakdown support. I'm extremely unhappy with the service I received last week.
+     AGENT
+     00:15
+     I apologize for the inconvenience. Can you please provide me with your policy number so I can look into this further?
+     CUSTOMER
+     00:23
+     It's 123456. And I want to know why I was charged extra for the additional driver when I was told it would be free.
+     AGENT
+     00:32
+     I've located your policy, and I see that there was a misunderstanding about the additional driver fee. Let me see what I can do to rectify the situation.
+     CUSTOMER
+     00:41
+     A misunderstanding? That's just great. I was told explicitly that it would be free. Now I'm being charged extra. This is ridiculous.
+     AGENT
+     00:50
+     I understand your frustration, and I apologize for the mistake. I'm going to go ahead and waive the additional driver fee for you.
+     CUSTOMER
+     00:58
+     That's the least you can do. What about the breakdown support? I was stuck on the side of the road for hours waiting for someone to show up.
+     AGENT
+     01:06
+     I'm so sorry to hear that. Let me investigate what happened with the breakdown support. Can you please tell me more about the incident?
+     CUSTOMER
+     01:14
+     It was last Thursday. I was driving on the highway and my car broke down. I called for breakdown support, and it took them over two hours to arrive.
+     AGENT
+     01:23
+     I've located the incident report, and I see that there was an unexpected delay in our response time. I'm going to offer you a gesture of goodwill for the inconvenience.
+     CUSTOMER
+     01:32
+     A gesture of goodwill? That's not enough. I want to speak to your supervisor.
+     AGENT
+     01:39
+     I understand, and I apologize again for the issues you've experienced. Let me go ahead and escalate this to my supervisor. Please hold for just a moment.
+     CUSTOMER
+     01:46
+     Fine.
+     AGENT
+     01:51
+     My supervisor is on the line now. She'll be happy to assist you further.
+     SUPERVISOR
+     01:55
+     Hello, I apologize for the issues you've experienced with our additional driver breakdown support. I'm happy to offer you a more substantial gesture of goodwill and a formal apology.
+     CUSTOMER
+     02:03
+     We'll see about that. I expect a call back from you within the next 24 hours to confirm the resolution.
+     SUPERVISOR
+     02:10
+     Absolutely, I'll make sure to follow up with you personally within the next 24 hours. Thank you for bringing this to our attention.
+     CUSTOMER
+     02:17
+     Yeah, yeah. Just fix it.
+     SUPERVISOR
+     02:20
+     We will, and again, I apologize for the inconvenience. Is there anything else I can assist you with today?
+     CUSTOMER
+     02:26
+     No, that's it.
+     SUPERVISOR
+     02:29
+     Alright, thank you for your patience, and we'll speak soon.
+     CUSTOMER
+     02:32
+     Bye.
+     AGENT
+     02:34
+     Goodbye.""",2.0,"The customer's experience with the additional driver breakdown support was marred by a series of mistakes, including a misunderstanding about the fee and an unexpected delay in the response time, which led to a significant decrease in satisfaction.",2026-02-26,medium,I'm extremely unhappy with the service I received last week.,"The customer is angry and frustrated with the service, but there is no explicit or implicit mention of switching companies.",anger,"The customer is not happy and is showing frustration with the issue, using phrases like 'Just fix it' which indicates a sense of annoyance and irritation.",0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0.5383333333333333,0.83,0.5,"A customer calls to express dissatisfaction with the additional driver breakdown support, citing a misunderstanding about an extra fee and a long wait time for assistance. The agent apologizes and offers to waive the fee and provide a gesture of goodwill. The customer requests to speak to a supervisor, who offers a more substantial gesture of goodwill and a formal apology, promising to follow up within 24 hours.",Billing Issues & Corrections,7.12,Billing Error,Billing & Payments,,accountCreditIssued,Account credit issued refers to the adjustment or removal of charges from a customer's account as a resolution.,7.429999828338623,Benjamin Lee,1565,111,2025-11-02,Insurance,5002,0.2,CASE-20251102-0032,Fraud & Risk,call,0.1,Risk,Retail,false,Yes,4.0,Medium NPS,low,medium,1,66.66666666666666,50.0,50.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,0,No,no,no,
+transcript_33,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm Joy and I'm calling about modifying my service providers. I currently have tow and repair shop services with your company.
+     AGENT
+     00:15
+     Hi Joy, thank you for reaching out to us. I'd be happy to assist you with modifying your service providers. Can you please tell me a little bit more about what changes you'd like to make?
+     CUSTOMER
+     00:27
+     Yeah, I'd like to add a new tow service provider and remove the current repair shop service provider.
+     AGENT
+     00:34
+     Okay, I've located your account. To confirm, you'd like to add a new tow service provider and cancel the current repair shop service provider, correct?
+     CUSTOMER
+     00:42
+     That's correct.
+     AGENT
+     00:45
+     Alright, I just need to verify some information. Can you please confirm your account number or the phone number associated with your account?
+     CUSTOMER
+     00:53
+     My account number is 123456.
+     AGENT
+     00:57
+     Thank you, Joy. I've verified your account. Now, can you please provide me with the details of the new tow service provider you'd like to add? The name, address, and phone number would be helpful.
+     CUSTOMER
+     01:08
+     The name is Sam's Towing, the address is 123 Main St, and the phone number is 555-1234.
+     AGENT
+     01:17
+     Got it, Joy. I've added Sam's Towing to your account. And I've also cancelled the current repair shop service provider. You should receive a confirmation email shortly.
+     CUSTOMER
+     01:25
+     Great, thank you so much for your help.
+     AGENT
+     01:28
+     You're welcome, Joy. It was my pleasure to assist you. If you have any other questions or need further assistance, please don't hesitate to reach out to us. Have a great day!
+     CUSTOMER
+     01:34
+     You too, thank you.
+     AGENT
+     01:36
+     Bye, Joy.
+     CUSTOMER
+     01:38
+     Bye.""",8.0,"The agent was helpful and efficient in making the necessary changes to my account, and provided clear instructions for the next steps.",2026-02-26,none,,"The customer is calling to modify their service providers, and the agent assists them with the changes. There is no indication of churn or dissatisfaction with the company.",joy,"The customer expresses genuine emotional happiness and relief caused by the outcome of the call, thanking the agent for their help.",1,1,0,1,0,1,1,0,1,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0.6938888888888889,0.57,0.34,"Joy calls to modify her service providers, adding a new tow service provider, Sam's Towing, and removing the current repair shop service provider. The agent assists her with the changes and verifies her account information.",Policy Changes (Vehicle/Driver/Usage),1.5,Provider Update,Policy & Profile Management,,providerUpdated,Provider updated refers to the successful change or update of service providers associated with a customer's account.,6.559999942779541,Olivia Davis,1938,108,2025-09-23,Insurance,5013,0.2,CASE-20250923-0033,,call,0.1,,Retail,true,No,16.0,High NPS,low,low,1,100.0,100.0,100.0,100.0,low,100.0,100.0,0.0,0.0,0,0.0,0,Yes,yes,no,
+transcript_34,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to get a quote for my car insurance. I've been with your company for a few years now.
+     AGENT
+     00:15
+     Absolutely! I'd be happy to help you with that. Can you please provide me with your policy number or your vehicle's VIN number so I can look up your information?
+     CUSTOMER
+     00:28
+     My policy number is 123456.
+     AGENT
+     00:33
+     Thank you! I've pulled up your information. Can you tell me a little bit about your vehicle? What's the make, model, and year?
+     CUSTOMER
+     00:42
+     It's a 2018 Honda Civic.
+     AGENT
+     00:46
+     Okay, great! Based on your information, I'm showing that your current premium is $120 per month. However, I can offer you a better rate if you're willing to switch to a 6-month payment plan. Would you be interested in hearing more about that?
+     CUSTOMER
+     01:00
+     Yeah, I'd love to hear more about it. What's the new premium?
+     AGENT
+     01:05
+     If you switch to the 6-month payment plan, your new premium would be $105 per month. That's a savings of $15 per month.
+     CUSTOMER
+     01:12
+     That sounds great! What's the catch? Is there any additional fees or anything like that?
+     AGENT
+     01:18
+     No catch at all! The only thing to keep in mind is that you would need to pay the full 6 months upfront. But other than that, there are no additional fees or anything like that.
+     CUSTOMER
+     01:25
+     Okay, that sounds doable. Can you explain to me what exactly is covered in this premium?
+     AGENT
+     01:32
+     Absolutely! Your premium covers liability, collision, and comprehensive coverage. It also includes roadside assistance and rental car coverage in case your vehicle is in the shop.
+     CUSTOMER
+     01:42
+     That sounds like a great deal. I think I'll take it.
+     AGENT
+     01:45
+     Wonderful! I'll go ahead and process the changes to your policy. You should receive an email with the updated information within the next 24 hours.
+     CUSTOMER
+     01:50
+     Sounds good. Thank you so much for your help!
+     AGENT
+     01:53
+     You're welcome! It was my pleasure to assist you. Is there anything else I can help you with today?
+     CUSTOMER
+     01:57
+     No, that's all. Thank you again!
+     AGENT
+     02:00
+     You're welcome! Have a great day!
+     """,8.0,"The agent provided clear and concise information about the policy changes, including the benefits and any potential drawbacks, which helped to build trust and confidence in the customer.",2026-02-26,none,,The customer is calling to get a quote for car insurance and is satisfied with the offered rate. The conversation is polite and the customer is not showing any signs of frustration or dissatisfaction.,joy,"The customer expresses genuine emotional happiness and relief caused by the outcome of the call, specifically the premium deal offered.",0,1,1,1,0,1,0,1,0,1,1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0.7394444444444446,0.83,0.16,"The customer called to get a quote for their car insurance and provided their policy number. The agent offered a better rate if they switched to a 6-month payment plan, which would save them $15 per month. The customer agreed to the new premium and the agent explained what was covered. The agent then processed the changes to the policy and the customer thanked them for their help.",Coverage & Premium Review,7.52,Quote Provided,Policy & Profile Management,,quoteProvided,Providing a quote refers to giving the customer an estimated cost for their insurance policy.,8.5600004196167,Daniel Brown,1287,110,2025-11-06,Insurance,5003,0.26,CASE-20251106-0034,Provider Network,call,0.13,Support,Retail,true,No,16.0,High NPS,medium,medium,1,100.0,50.0,100.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,0.0,0,Yes,yes,yes,
+transcript_35,"""
+       AGENT
+       00:00
+       Hello good afternoon.
+       CUSTOMER
+       00:07
+       good afternoon. I'm calling to change my coverage levels and deductibles. I've been thinking about it and I want to make some adjustments.
+       AGENT
+       00:15
+       Okay, I'd be happy to help you with that. Can you please tell me a little bit more about what you're looking to change and why?
+       CUSTOMER
+       00:23
+       Well, I've been paying a lot for my premiums and I'm not really using my insurance that much. I think I can save some money by increasing my deductible.
+       AGENT
+       00:32
+       I understand where you're coming from. Increasing your deductible can definitely lower your premiums. But before we make any changes, I just want to make sure you're aware that you'll be responsible for paying that higher deductible amount if you need to make a claim.
+       CUSTOMER
+       00:44
+       Yeah, I'm aware of that. I'm willing to take on that risk to save some money.
+       AGENT
+       00:49
+       Okay. Let me just check on some options for you. (pause) Okay, I have a few options here. If we increase your deductible to $1,000, your premium would decrease by $50 per month. Or if we increase it to $2,000, your premium would decrease by $100 per month.
+       CUSTOMER
+       01:04
+       Hmm, that's a tough decision. I think I'll go with the $2,000 deductible. That will save me a bit more money.
+       AGENT
+       01:11
+       Alright, I can make that change for you. I just need to confirm a few details. Can you please confirm your name and policy number?
+       CUSTOMER
+       01:18
+       Yeah, my name is John Smith and my policy number is 123456.
+       AGENT
+       01:24
+       Okay, thank you John. I've made the change to your policy. You should receive a confirmation email with the new details shortly.
+       CUSTOMER
+       01:31
+       Great, thank you for your help.
+       AGENT
+       01:34
+       You're welcome, John. Is there anything else I can assist you with today?
+       CUSTOMER
+       01:38
+       No, that's all. Thanks again.
+       AGENT
+       01:41
+       You're welcome. Have a great day.
+       CUSTOMER
+       01:43
+       You too.
+       """,8.0,"The agent provided clear explanations and options for changing my coverage levels and deductibles, and was able to make the changes to my policy in a timely manner.",2026-02-26,none,,"The customer is calling to make adjustments to their coverage levels and deductibles, and the conversation is focused on finding a solution that meets their needs. The tone is polite and cooperative, with no signs of frustration or dissatisfaction.",neutral,"The customer's language shows no clear emotional charge, and the conversation is purely procedural with routine acknowledgments and end-of-call politeness.",0,1,1,1,0,1,0,0,0,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.5872222222222222,0.58,0.49,"The customer calls to change their coverage levels and deductibles to save money on premiums. The agent explains the implications of increasing the deductible and provides options. The customer chooses to increase the deductible to $2,000, which will decrease their premium by $100 per month. The agent confirms the change and the customer's details.",Billing Issues & Corrections,1.4,Premiumreduction,Billing & Payments,,policyUpdated,"PolicyUpdated refers to the successful modification of an insurance policy's terms, coverage levels, or deductibles.",7.78000020980835,Sophia Taylor,1782,101,2025-10-21,Insurance,5014,0.2,CASE-20251021-0035,Auto Claims,call,0.1,Claims,Retail,true,No,16.0,High NPS,low,low,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,0,Yes,yes,no,
+transcript_36,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon, I'm calling to update my garage location. I'm not happy with the service I've been getting lately and I want to make sure my account is updated correctly.
+     AGENT
+     00:15
+     Sorry to hear that you're not satisfied with our service. I'd be happy to help you update your garage location. Can you please provide me with your account number or the phone number associated with your account?
+     CUSTOMER
+     00:28
+     It's 555-1234. And can you also tell me why I've been having so many issues with my service? I've been having to call in every week to get my issues resolved.
+     AGENT
+     00:40
+     I apologize for the inconvenience you've been experiencing. I've checked on your account and it seems that there was an issue with our system that caused the delay. I've escalated the issue to our technical team and they're working on resolving it as soon as possible.
+     CUSTOMER
+     00:55
+     That's not good enough. I've been a customer for 5 years and I expect better service. I want to speak to your supervisor.
+     AGENT
+     01:03
+     I understand your frustration, sir. I'm going to go ahead and escalate this issue to my supervisor. Please hold for just a moment.
+     CUSTOMER
+     01:10
+     (sighs) Fine.
+     AGENT
+     01:15
+     Thank you for holding. My supervisor, Rachel, is now on the line. Rachel, this is (customer's name) and he's having some issues with his service.
+     SUPERVISOR
+     01:20
+     Hi, I apologize for the inconvenience you've been experiencing. I understand that you're not satisfied with our service and I want to assure you that we're taking steps to resolve the issue. Can you please tell me more about the issues you've been having?
+     CUSTOMER
+     01:30
+     Like I told the agent, I've been having to call in every week to get my issues resolved. And now I need to update my garage location. Can you please just update it for me?
+     SUPERVISOR
+     01:40
+     I apologize again for the inconvenience. I've updated your garage location to the new address you provided. I've also applied a credit to your account for the issues you've been experiencing. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:50
+     No, that's it. Just make sure my account is updated correctly.
+     SUPERVISOR
+     01:55
+     I've double-checked to ensure that your account is updated correctly. If you have any further issues, please don't hesitate to reach out to us. We appreciate your business and value you as a customer.
+     CUSTOMER
+     02:00
+     (sighs) Alright, thank you.
+     SUPERVISOR
+     02:05
+     You're welcome. Have a good day.
+     """,2.0,"The customer was not satisfied with the service they received, citing repeated issues with their account and a lack of resolution from the agents, leading to a negative experience.",2026-02-26,medium,I'm not happy with the service I've been getting lately,"Customer is angry and frustrated with the service, has been having to call in every week to get issues resolved, and has a tone of dissatisfaction throughout the conversation.",sadness,"The customer seems dissatisfied and unenthusiastic, with a sigh at the end of the call, indicating a sense of resignation or disappointment.",0,1,1,1,0,1,0,0,0,1,1,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0.6272222222222222,0.61,0.28,"A customer calls to update their garage location and expresses dissatisfaction with the service they've been receiving, having to call in every week to resolve issues. The agent apologizes and escalates the issue to their supervisor, who updates the garage location and applies a credit to the customer's account.",Profile & Address Updates,7.29,Providerdissatisfaction,Policy & Profile Management,,accountCreditIssued,Account credit issued refers to the application of a credit to the customer's account as compensation for issues experienced.,11.329999923706055,John Smith,1952,120,2025-10-23,Insurance,5008,0.53,CASE-20251023-0036,Technical Support,call,0.36,Support,Retail,true,No,4.0,Medium NPS,medium,medium,1,100.0,50.0,50.0,100.0,low,0.0,100.0,0.0,0.0,0,100.0,1,Yes,yes,no,
+transcript_37,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     I understand you're calling about the denial of your recent claim. Can you please tell me more about what happened?
+     CUSTOMER
+     00:17
+     Yeah, I got a letter saying it was denied because of a pre-existing condition, but I don't think that's right.
+     AGENT
+     00:24
+     I apologize for the inconvenience. Can you please provide me with your claim number so I can look into this further?
+     CUSTOMER
+     00:31
+     It's #123456.
+     AGENT
+     00:35
+     Thank you. I've located your claim. I see that our adjuster did deny it due to a pre-existing condition. However, I'd like to review it again to ensure everything was handled correctly.
+     CUSTOMER
+     00:43
+     Okay, that sounds good. I just don't understand why it was denied.
+     AGENT
+     00:47
+     I understand your concern. Let me go through the details with you. (pause) It appears that our adjuster did find some evidence of a pre-existing condition in your medical records.
+     CUSTOMER
+     00:55
+     But I didn't think that was relevant to my current claim.
+     AGENT
+     00:59
+     I understand. Sometimes our adjusters may make mistakes. I'm going to go ahead and escalate this to our appeals department for a re-review.
+     CUSTOMER
+     01:04
+     Okay, thank you. How long will that take?
+     AGENT
+     01:08
+     Typically, it takes around 7-10 business days. I'll also make sure to follow up with you personally to keep you updated on the status.
+     CUSTOMER
+     01:14
+     Alright, thank you for your help.
+     AGENT
+     01:17
+     You're welcome. I apologize again for the inconvenience, and I'll make sure to get this resolved for you as soon as possible.""",8.0,"The agent was helpful and transparent in explaining the denial of the claim and took steps to escalate it to the appeals department for a re-review, which increased my satisfaction with the conversation.",2026-02-26,none,,"The customer is calling about a specific issue with their claim, and the agent is able to resolve the issue and provide a solution. The customer's tone is not angry or frustrated, and there is no mention of switching companies.",neutral,"The customer's language shows no clear emotional charge, with routine acknowledgments and end-of-call politeness.",0,1,0,1,0,1,0,0,1,0,1,0,1,1,1,0,1,0,0,1,1,0,0,0,0,1,0,0,0,0,0,0,0.5583333333333332,0.82,0.37,"The customer called to dispute the denial of their recent claim due to a pre-existing condition. The agent apologized for the inconvenience, reviewed the claim, and found that the adjuster had denied it based on medical records. The agent offered to escalate the claim to the appeals department for re-review, which would take 7-10 business days, and promised to follow up with the customer personally.",Claim Escalations,1.6,Preexistingcondition,Claims & FNOL,,claimEscalated,Claim escalation refers to the process of forwarding a denied claim to a higher authority for further review.,13.319999694824219,Olivia Davis,1805,116,2025-11-29,Insurance,5013,0.73,CASE-20251129-0037,Retention,call,0.53,Policy,Retail,false,Yes,16.0,High NPS,high,low,0,66.66666666666666,50.0,50.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,1,Yes,no,yes,
+transcript_38,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     Joy, I see you've been with us for a while now. How's your experience been so far?
+     CUSTOMER
+     00:17
+     Honestly, it's been okay. I've had some issues with my plan and I'm not sure if I'm getting the best coverage.
+     AGENT
+     00:25
+     Sorry to hear that, Joy. Can you tell me more about the issues you've been facing? That way I can better understand your needs and see if there's a better plan for you.
+     CUSTOMER
+     00:35
+     Yeah, sometimes I get really bad reception in my area and I've had to deal with some surprise bills.
+     AGENT
+     00:43
+     I apologize for the inconvenience. I'd like to recommend our premium plan which offers better coverage in rural areas and includes more data. It's only $10 more per month.
+     CUSTOMER
+     00:52
+     I'm not sure if I want to spend more money. I'm already paying a lot.
+     AGENT
+     00:58
+     I completely understand, Joy. However, our premium plan can actually save you money in the long run by avoiding surprise bills. Plus, you'll get better reception and more data. Would you like me to run some numbers and see how it can benefit you?
+     CUSTOMER
+     01:07
+     Okay, sure.
+     AGENT
+     01:12
+     Alright, let me just check some things real quick. (pause) Okay, Joy, it looks like our premium plan can actually save you around $20 per month in the long run. And like I mentioned, you'll get better reception and more data.
+     CUSTOMER
+     01:23
+     Hmm, that sounds like it might be worth it. But can I get a discount or something?
+     AGENT
+     01:30
+     Let me see what I can do, Joy. (pause) Okay, I can offer you a one-time discount of $5 off your first month's premium plan. Would you like to take advantage of that?
+     CUSTOMER
+     01:40
+     Yeah, that sounds good. I'll take it.
+     AGENT
+     01:45
+     Great, Joy! I'm glad I could help. I'll go ahead and switch you over to the premium plan. You should see the changes take effect within the next 24 hours.
+     CUSTOMER
+     01:52
+     Alright, thanks.
+     AGENT
+     01:55
+     You're welcome, Joy. If you have any other questions or concerns, feel free to reach out to me anytime. Have a great day!
+     CUSTOMER
+     02:00
+     You too.""",8.0,"The agent provided a clear explanation of the benefits of the premium plan and offered a one-time discount, addressing the customer's concerns and ultimately leading to a satisfactory resolution.",2026-02-26,low,I'm not sure if I want to spend more money. I'm already paying a lot.,"The customer is hesitant to spend more money and is not fully satisfied with the service, but the issue is resolved by the agent, indicating a low churn risk.",joy,"The customer expresses genuine emotional happiness or relief caused by the outcome of the call, showing satisfaction with the solution offered.",0,1,1,1,0,1,0,0,0,1,1,1,1,1,1,0,1,0,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.6838888888888889,0.82,0.15,"The customer, Joy, expresses dissatisfaction with their current plan due to bad reception and surprise bills. The agent apologizes and recommends the premium plan, which offers better coverage and more data for $10 more per month. After running some numbers, the agent shows that the premium plan can save Joy $20 per month in the long run. Joy agrees to switch to the premium plan after being offered a one-time $5 discount.",Coverage & Premium Review,8.75,Coverage Review,Policy & Profile Management,,planUpgraded,Plan upgraded refers to the action of changing a customer's current plan to a higher-tier plan with better features.,6.429999828338623,Lucas Moore,1321,116,2025-12-29,Insurance,5010,0.2,CASE-20251229-0038,Retention,call,0.1,Policy,Retail,true,No,16.0,High NPS,low,medium,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,0,No,yes,yes,
+transcript_39,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I need some assistance with completing some paperwork for my business.
+     AGENT
+     00:14
+     Of course, Joy! I'd be happy to help you with that. Can you please tell me a bit more about the paperwork you need help with? Is it for a specific project or application?
+     CUSTOMER
+     00:27
+     Yeah, it's for a loan application. I'm trying to expand my business and I need some help with the financials.
+     AGENT
+     00:35
+     Okay, got it! Loan applications can be a bit overwhelming. Let me see if I can guide you through it. What's the current status of your application? Have you already started filling out the forms?
+     CUSTOMER
+     00:45
+     Yeah, I've started but I'm having trouble with some of the sections. I'm not really sure what they're asking for.
+     AGENT
+     00:52
+     Don't worry, Joy! We can work through it together. Which specific sections are you having trouble with? Is it the financial statements or the business plan?
+     CUSTOMER
+     01:00
+     It's the financial statements. I'm not really sure how to fill out the cash flow projections.
+     AGENT
+     01:07
+     Okay, no problem! Cash flow projections can be a bit tricky. Let me walk you through it. Can you please share with me what you have so far? Maybe we can work on it together.
+     CUSTOMER
+     01:15
+     Okay, let me just pull it up on my computer real quick.
+     AGENT
+     01:22
+     Take your time, Joy. I'll wait while you get that ready.
+     CUSTOMER
+     01:30
+     Alright, I've got it up. So, where do I start with the cash flow projections?
+     AGENT
+     01:37
+     Okay, great! Let's start with the beginning. Can you tell me a bit about your current cash flow situation? What's your average monthly income and expenses?
+     CUSTOMER
+     01:45
+     Okay, let me see...my average monthly income is around $10,000 and my expenses are around $8,000.
+     AGENT
+     01:52
+     Alright, got it! So, we can work with that. Now, let's talk about your projected income and expenses for the next few months. Do you have any big purchases or investments planned?
+     CUSTOMER
+     02:00
+     Yeah, I'm planning to invest in some new equipment for my business. It's going to cost around $20,000.
+     AGENT
+     02:07
+     Okay, that's a significant investment. Let's make sure we factor that into your cash flow projections. I'm going to guide you through it, step by step. Don't worry, we'll get it done!
+     CUSTOMER
+     02:14
+     Thank you so much! I really appreciate your help.
+     AGENT
+     02:18
+     You're welcome, Joy! It's my pleasure to assist you. We'll get your loan application sorted out in no time.""",8.5,"The agent provided clear guidance and support throughout the conversation, addressing my concerns and helping me understand the loan application process.",2026-02-26,none,,The customer is calling for assistance with completing paperwork for a loan application and the agent is providing helpful guidance throughout the conversation. There is no indication of churn or dissatisfaction with the company.,joy,"The customer expresses genuine emotional happiness and relief caused by the outcome of the call, showing appreciation for the help received.",0,1,1,1,0,1,0,0,0,1,1,0,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,0,0,0,0.5983333333333333,0.87,0.38,"The customer, Joy, needs assistance with completing a loan application for her business expansion. She's having trouble with the financial statements, specifically the cash flow projections. The agent guides her through the process, asking questions about her current cash flow situation and projected income and expenses, including a planned investment in new equipment.",Roadside Assistance,1.5,Financialstatementhelp,Service & Support,,loanApplicationGuidance,Loan application guidance refers to providing step-by-step assistance to customers in completing their loan application forms and financial statements.,10.5600004196167,Noah Thomas,1715,112,2025-10-06,Insurance,5012,0.46,CASE-20251006-0039,Renewals,call,0.3,Policy,Retail,true,No,17.0,High NPS,medium,low,1,100.0,50.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,1,Yes,yes,yes,
+transcript_40,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling about my policy. I'm not sure if I have the right coverage.
+     AGENT
+     00:14
+     Of course, I'd be happy to help you with that. Can you please provide me with your policy number so I can look into it for you?
+     CUSTOMER
+     00:23
+     It's 123456. I'm worried that I might not have enough coverage in case something happens.
+     AGENT
+     00:31
+     Okay, thank you for providing that. Let me just check on your policy real quick. (pause) Okay, I've got it pulled up. It looks like you have a standard policy with us. Would you like to consider adding any additional coverage or endorsements to your policy?
+     CUSTOMER
+     00:50
+     I'm not sure. What kind of endorsements are available?
+     AGENT
+     00:56
+     We have a few different options. We have an umbrella policy that provides additional liability coverage, a flood insurance endorsement, and a personal articles endorsement that covers high-value items like jewelry or electronics.
+     CUSTOMER
+     01:10
+     That sounds good. How much would it cost to add the umbrella policy?
+     AGENT
+     01:17
+     The cost would depend on a few factors, including your location and the amount of coverage you're looking for. But on average, it's around $200-$300 per year.
+     CUSTOMER
+     01:27
+     Okay, that's not too bad. Can I add it to my policy today?
+     AGENT
+     01:34
+     Yes, I can assist you with that. I just need to update your policy information real quick. (pause) Okay, that's all taken care of. Your policy has been updated to include the umbrella policy.
+     CUSTOMER
+     01:47
+     Great, thank you. What about renewing my policy? When is it up for renewal?
+     AGENT
+     01:54
+     Your policy is up for renewal in about 6 months. I can go ahead and set you up for automatic renewal if you'd like.
+     CUSTOMER
+     02:02
+     Yeah, that sounds good. Can you also send me a copy of my updated policy documents?
+     AGENT
+     02:09
+     Absolutely. I'll go ahead and send those to you via email. You should receive them within the next 24-48 hours.
+     CUSTOMER
+     02:17
+     Okay, great. Thank you for your help today.
+     AGENT
+     02:23
+     You're welcome! It was my pleasure to assist you. If you have any other questions or concerns, don't hesitate to reach out to us. Have a great day!
+     CUSTOMER
+     02:30
+     You too. Bye.
+     AGENT
+     02:33
+     Bye.
+     """,8.5,"The agent provided clear and concise explanations of the policy and endorsements, and was able to assist with updating the policy and setting up automatic renewal.",2026-02-26,none,,The customer is calling to inquire about their policy and add additional coverage. The tone is neutral and the customer is satisfied with the service provided by the agent.,neutral,"The customer's language shows no clear emotional charge, and the conversation is purely procedural with routine acknowledgments and end-of-call politeness.",1,1,1,1,0,0,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0.6788888888888889,0.83,0.39,"A customer calls to inquire about their policy coverage, and the agent assists them in adding an umbrella policy and setting up automatic renewal. The agent also offers to send updated policy documents via email.",Coverage & Premium Review,8.75,Coverage Review,Policy & Profile Management,,policyUpdated,Policy updated refers to the modification of an insurance policy to include additional coverage or endorsements.,8.550000190734863,Olivia Davis,1077,113,2025-10-07,Insurance,5013,0.26,CASE-20251007-0040,Customer Care,call,0.13,Support,Retail,true,No,17.0,High NPS,medium,medium,1,100.0,50.0,100.0,100.0,low,100.0,33.33333333333333,0.0,0.0,0,100.0,0,Yes,yes,yes,
+transcript_41,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     Hi Joy, thank you for reaching out to us today. My name is Alex, and I'll be happy to assist you with any questions or concerns you may have. How can I help you today?
+     CUSTOMER
+     00:20
+     Hi Alex, thanks for taking my call. I'm having some issues with my family driver breakdown support. I'm not sure how it works, and I need some clarification.
+     AGENT
+     00:30
+     Sorry to hear that, Joy. I'd be happy to help you with that. Can you please tell me a little bit more about what's not clear to you about the family driver breakdown support? Is it the process of adding a driver or something else?
+     CUSTOMER
+     00:40
+     Yeah, it's the process of adding a driver. I'm not sure what information I need to provide or how to do it online.
+     AGENT
+     00:50
+     Okay, Joy. Adding a driver to your breakdown support is a pretty straightforward process. You can do it online through our website or through our mobile app. You'll just need to provide some basic information about the driver, such as their name, date of birth, and license details.
+     CUSTOMER
+     01:00
+     Okay, that sounds easy enough. What about the cost? Will it be added to my monthly premium?
+     AGENT
+     01:10
+     Great question, Joy! The cost of adding a driver to your breakdown support will depend on a few factors, such as the driver's age and license history. But don't worry, I can give you a quick quote right now. Can you please tell me the driver's age and how long they've had their license?
+     CUSTOMER
+     01:20
+     Okay, the driver is 25 years old, and they've had their license for about 5 years.
+     AGENT
+     01:30
+     Alright, Joy. Based on that information, the additional cost to add this driver to your breakdown support would be £20 per year. We can either add it to your monthly premium or you can pay it upfront, whichever you prefer.
+     CUSTOMER
+     01:40
+     Okay, that sounds reasonable. I think I'll just add it to my monthly premium.
+     AGENT
+     01:50
+     Sounds good, Joy! I've gone ahead and added the driver to your breakdown support. You should receive an email with the updated details shortly. Is there anything else I can assist you with today?
+     CUSTOMER
+     02:00
+     No, that's all. Thanks so much for your help, Alex.
+     AGENT
+     02:05
+     You're welcome, Joy! It was my pleasure to assist you. If you have any other questions or concerns in the future, don't hesitate to reach out to us. Have a great day!
+     CUSTOMER
+     02:10
+     You too, Alex. Bye.
+     AGENT
+     02:12
+     Bye, Joy.
+     """,8.0,"The agent provided clear and concise explanations about the process of adding a driver to the breakdown support, and was able to answer all of my questions in a timely manner.",2026-02-26,none,,"The customer is calling for general information and query about the service, and the agent is able to assist them successfully. There is no tone of anger, frustration, or mention of switching companies.",joy,"The customer expresses gratitude and appreciation for the help received, indicating a positive emotional tone.",0,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,1,0,1,1,1,0,0,0.7727777777777778,0.74,0.37,"The customer, Joy, contacted the agent, Alex, for clarification on adding a driver to her family driver breakdown support. Alex explained the process, which can be done online or through the mobile app, and provided a quote of £20 per year based on the driver's age and license history. The customer opted to add the cost to her monthly premium, and Alex assisted with the update.",Policy Changes (Vehicle/Driver/Usage),9.18,Informationclarification,Policy & Profile Management,,driverAdded,Driver added refers to the successful inclusion of a new driver to an existing support plan.,9.229999542236328,Benjamin Lee,1251,119,2025-10-17,Insurance,5002,0.32,CASE-20251017-0041,Sales,call,0.19,Policy,Retail,true,No,16.0,High NPS,medium,high,0,100.0,100.0,100.0,100.0,low,100.0,100.0,0.0,100.0,0,100.0,0,No,yes,yes,
+transcript_42,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to update my garage location. I recently moved to a new house and I want to make sure my policy is updated.
+     AGENT
+     00:15
+     Okay, no problem at all. Can you please provide me with your policy number so I can look into it for you?
+     CUSTOMER
+     00:22
+     Yeah, it's 123456.
+     AGENT
+     00:28
+     Alright, thank you. I've located your policy. Can you please confirm your new address for me?
+     CUSTOMER
+     00:35
+     Yeah, it's 123 Main St, Anytown, USA 12345.
+     AGENT
+     00:42
+     Got it. I've updated your policy with the new address. Would you like to review the changes before I finalize it?
+     CUSTOMER
+     00:50
+     Yeah, that would be great. Can you walk me through what's changed?
+     AGENT
+     00:57
+     Absolutely. So, I've updated your garage location to 123 Main St, Anytown, USA 12345. Everything else remains the same. Your premium will not be affected by this change.
+     CUSTOMER
+     01:05
+     Okay, that sounds good. But can you tell me why my premium isn't changing? I thought it would be higher since I moved to a new area.
+     AGENT
+     01:13
+     That's a great question. Our rates are based on a variety of factors, including your driving record, vehicle, and credit score. Since none of those have changed, your premium remains the same.
+     CUSTOMER
+     01:22
+     Okay, that makes sense. And what about my billing information? Do I need to update that as well?
+     AGENT
+     01:29
+     No, your billing information remains the same. We'll continue to bill you at the same address and payment method.
+     CUSTOMER
+     01:36
+     Alright, sounds good. Go ahead and finalize the changes.
+     AGENT
+     01:43
+     Alright, I've finalized the changes. Your policy is now updated with your new garage location. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:50
+     No, that's it. Thank you for your help.
+     AGENT
+     01:55
+     You're welcome. Have a great day!
+     """,8.0,"The agent provided clear explanations for the policy changes and addressed my concerns about the premium, which helped to increase my satisfaction with the conversation.",2026-02-26,none,,The customer is calling to update their garage location and has a general inquiry about their premium. The tone is neutral and the agent is able to assist the customer without any issues.,neutral,"The customer's language shows no clear emotional charge, and the tone is polite and routine, with no expression of happiness, relief, frustration, or distress.",1,1,1,1,0,0,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0.638888889,0.5,0.3,"The customer called to update their garage location due to a recent move. The agent assisted in updating the policy with the new address, reviewed the changes with the customer, and finalized the update. The customer's premium remained the same as the move did not affect the rating factors.",Profile & Address Updates,6.78,Address Change,Policy & Profile Management,,policyUpdated,Policy updated refers to the modification or change of details in an existing insurance policy.,13.220000267028809,Sophia Taylor,1738,106,2025-12-20,Insurance,5014,0.72,CASE-20251220-0042,Billing Support,call,0.52,Support,Retail,false,Yes,16.0,High NPS,high,low,0,100.0,50.0,100.0,100.0,low,100.0,33.33333333333333,0.0,0.0,0,100.0,1,Yes,no,no,
+transcript_43,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to make some changes to my auto insurance policy.
+     AGENT
+     00:14
+     Okay, what changes would you like to make?
+     CUSTOMER
+     00:19
+     I want to remove my son from the policy. He's moved out and got his own insurance.
+     AGENT
+     00:26
+     Okay, I can help you with that. Can you please confirm your son's name and date of birth?
+     CUSTOMER
+     00:33
+     Yeah, his name is John Doe and his date of birth is March 12, 1995.
+     AGENT
+     00:40
+     Alright, I've located his information. I just need to confirm a few details. Is he still a licensed driver?
+     CUSTOMER
+     00:47
+     Yes, he is.
+     AGENT
+     00:51
+     Okay, and did he have any accidents or claims while he was on your policy?
+     CUSTOMER
+     00:57
+     No, he didn't.
+     AGENT
+     01:00
+     Alright, I'm going to go ahead and remove him from your policy. You'll receive an updated policy document in the mail within the next 7-10 business days.
+     CUSTOMER
+     01:07
+     Okay, that sounds good. How much will my premium change?
+     AGENT
+     01:12
+     Let me just check on that for you. (pause) Okay, it looks like your premium will decrease by about $50 per month.
+     CUSTOMER
+     01:20
+     That's great, thank you for your help.
+     AGENT
+     01:24
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:28
+     No, that's all. Thank you again.
+     AGENT
+     01:31
+     You're welcome. Have a great day.
+     CUSTOMER
+     01:34
+     You too.""",8.0,"The agent provided clear and concise information about the premium decrease and efficiently processed the policy change, resulting in a high level of customer satisfaction.",2026-02-26,none,None,"The customer is calling to make a change to their auto insurance policy, and the agent is able to assist them with the change. The customer is polite and appreciative throughout the conversation, and there is no indication of frustration or dissatisfaction that would suggest churn.",joy,"The customer expresses gratitude and appreciation for the help received, indicating a positive emotional tone.",0,0,0,1,1,1,1,0,0,1,1,0,1,1,1,1,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0.6566666666666666,0.81,0.27,"The customer called to remove their son, John Doe, from their auto insurance policy because he moved out and got his own insurance. The agent assisted with the change, confirmed details, and informed the customer that their premium would decrease by $50 per month.",Policy Changes (Vehicle/Driver/Usage),7.64,Driver Removal,Policy & Profile Management,,policyUpdated,PolicyUpdated refers to the successful modification or update of an existing insurance policy.,11.210000038146973,Daniel Brown,1261,105,2025-12-18,Insurance,5003,0.52,CASE-20251218-0043,Life Claims,call,0.35,Claims,Retail,true,No,16.0,High NPS,medium,medium,1,66.66666666666666,100.0,50.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,0.0,1,Yes,yes,yes,
+transcript_44,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon, I'm calling because I'm not happy with my current coverage levels and deductibles. I've been thinking about switching to a different provider.
+     AGENT
+     00:15
+     Sorry to hear that you're not satisfied with your current coverage. Can you tell me more about what's not meeting your expectations?
+     CUSTOMER
+     00:25
+     Well, I feel like I'm paying too much for my premiums and not getting enough coverage in return. And the deductible is just too high.
+     AGENT
+     00:37
+     I understand your concerns. Let me see what options we have available to adjust your coverage levels and deductibles. Can you please confirm your current premium amount and deductible?
+     CUSTOMER
+     00:50
+     Yeah, my premium is $250 a month and my deductible is $1,000.
+     AGENT
+     01:00
+     Okay, thank you for confirming that. Based on your current plan, I can offer you a few options to adjust your coverage levels and deductibles. We could lower your premium to $200 a month, but that would increase your deductible to $1,500. Or we could keep your premium the same, but lower your deductible to $800.
+     CUSTOMER
+     01:20
+     Hmm, I'm not sure. I don't want to increase my deductible, but I also don't want to pay more for my premium. What's the third option?
+     AGENT
+     01:30
+     The third option would be to keep your premium and deductible the same, but we could add some additional features to your plan, such as a wellness program or a discount on certain services.
+     CUSTOMER
+     01:40
+     That sounds interesting. Can you tell me more about the wellness program?
+     AGENT
+     01:50
+     Yes, our wellness program offers discounts on gym memberships, healthy food delivery, and other wellness-related services. It's a great way to incentivize healthy habits and save some money in the process.
+     CUSTOMER
+     02:00
+     Okay, I think I'd like to explore that option further. Can you walk me through the process of adding it to my plan?
+     AGENT
+     02:10
+     Absolutely. I can assist you with that right away. I'll just need to confirm a few details and then we can get the process started.
+     CUSTOMER
+     02:20
+     Sounds good. Thank you for your help.
+     AGENT
+     02:25
+     You're welcome. I'm glad I could assist you in finding a solution that works for you. Is there anything else I can help you with today?
+     CUSTOMER
+     02:30
+     No, that's all. Thank you again.
+     AGENT
+     02:35
+     You're welcome. Have a great day!
+     CUSTOMER
+     02:40
+     You too.
+     """,8.0,"The agent provided a clear explanation of the options available to adjust my coverage levels and deductibles, and was able to offer a solution that met my needs.",2026-02-26,high,I've been thinking about switching to a different provider.,"The customer explicitly mentions thinking about switching to a different provider, indicating a high risk of churn.",joy,"The customer expresses gratitude and appreciation for the help received, indicating a positive emotional tone.",0,1,0,1,0,1,1,0,0,0,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0.5777777777777778,0.55,0.15,"A customer is unhappy with their current insurance coverage and deductible, and is considering switching providers. An agent offers options to adjust coverage and deductible, including adding a wellness program, and the customer decides to explore this option further.",Billing Issues & Corrections,8.75,Coverage Review,Billing & Payments,,policyUpdated,Policy updated refers to the process of making changes to an existing insurance policy to better suit the policyholder's requirements.,13.34000015258789,James Miller,1612,109,2025-10-21,Insurance,5007,0.73,CASE-20251021-0044,Underwriting,call,0.53,Underwriting,Retail,false,Yes,16.0,High NPS,high,medium,0,66.66666666666666,100.0,0.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,1,Yes,no,no,
+transcript_45,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon
+     AGENT
+     00:10
+     How can I assist you today?
+     CUSTOMER
+     00:15
+     I had an accident and I need to report it
+     AGENT
+     00:20
+     Sorry to hear that. Can you please provide me with your policy number so I can assist you with the claim?
+     CUSTOMER
+     00:27
+     It's 123456
+     AGENT
+     00:30
+     Thank you. I've located your policy. Can you please tell me more about the accident? What happened?
+     CUSTOMER
+     00:40
+     I was driving on the highway and another car hit me from behind
+     AGENT
+     00:47
+     Sorry to hear that. Were you injured in the accident?
+     CUSTOMER
+     00:52
+     No, I'm okay. But my car is damaged
+     AGENT
+     00:57
+     Okay. I'm going to go ahead and file a First Notice of Loss (FNOL) for you. This will get the claims process started.
+     CUSTOMER
+     01:03
+     Okay, that sounds good
+     AGENT
+     01:06
+     I'll need to ask you a few more questions to complete the FNOL. Can you please provide me with the date and time of the accident?
+     CUSTOMER
+     01:12
+     It happened yesterday at 3 pm
+     AGENT
+     01:17
+     Okay. And do you have the other driver's information?
+     CUSTOMER
+     01:22
+     Yes, I have their insurance information
+     AGENT
+     01:27
+     Great. I'll go ahead and complete the FNOL. You should receive an email with the claim number and next steps within the next 24 hours.
+     CUSTOMER
+     01:33
+     Okay, thank you
+     AGENT
+     01:36
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:40
+     No, that's all. Thank you again
+     AGENT
+     01:43
+     You're welcome. Have a great day.""",8.0,"The agent was helpful and efficient in assisting me with the claims process, and provided clear instructions on the next steps.",2026-02-26,none,,"The customer is calling to report an accident and the agent is assisting with the claim process. The conversation is straightforward and there is no indication of frustration, anger, or dissatisfaction that would suggest churn.",neutral,"The customer's language shows no clear emotional charge, with routine acknowledgments and end-of-call politeness.",0,1,1,1,0,1,1,1,0,1,1,1,1,1,1,0,1,1,1,0,0,0,0,0,0,1,0,1,1,1,0,0,0.7961111111111111,0.63,0.12,"The customer reports a car accident and provides policy number 123456. The agent assists with filing a First Notice of Loss (FNOL) and gathers information about the accident, including the date, time, and other driver's insurance information. The customer will receive an email with the claim number and next steps within 24 hours.",FNOL & Filing,10.0,Accidentdamage,Claims & FNOL,,claimFiled,Claim filed refers to the submission of a request to an insurance company for coverage or compensation following an incident or loss.,6.559999942779541,Emma Wilson,1115,118,2026-01-02,Insurance,5004,0.2,CASE-20260102-0045,Grievances,call,0.1,Grievances,Retail,false,Yes,16.0,High NPS,low,high,0,100.0,100.0,100.0,100.0,low,100.0,100.0,0.0,100.0,0,100.0,0,No,no,yes,
+transcript_46,"""
+     AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to get a quote for my car insurance.
+     AGENT
+     00:12
+     Absolutely! I'd be happy to help you with that. Can you please provide me with some information about your vehicle, such as the make, model, and year?
+     CUSTOMER
+     00:23
+     It's a 2018 Honda Civic.
+     AGENT
+     00:27
+     Okay, great! And do you have any prior insurance history or any accidents on your record?
+     CUSTOMER
+     00:34
+     No, I don't have any accidents on my record. And I've been insured with another company for the past 5 years.
+     AGENT
+     00:41
+     That's great! Based on the information you provided, I can offer you a quote of $120 per month for our standard policy.
+     CUSTOMER
+     00:49
+     That sounds a bit high. What's included in the standard policy?
+     AGENT
+     00:54
+     Our standard policy includes liability coverage, collision coverage, and comprehensive coverage. It also includes some additional features such as roadside assistance and rental car coverage.
+     CUSTOMER
+     01:03
+     Okay, that sounds good. But can you explain to me what the premium is based on?
+     AGENT
+     01:08
+     The premium is based on several factors, including your driving history, the make and model of your vehicle, and your credit score. In your case, the premium is higher because you have a newer vehicle and you live in an area with higher crime rates.
+     CUSTOMER
+     01:18
+     I see. So, is there any way to lower the premium?
+     AGENT
+     01:23
+     Yes, there are a few ways to lower the premium. One option is to increase your deductible, which would lower your monthly payments. Another option is to bundle your car insurance with other insurance policies, such as home or life insurance.
+     CUSTOMER
+     01:34
+     Okay, that sounds like a good option. Can you tell me more about the bundling discount?
+     AGENT
+     01:40
+     Yes, of course! If you bundle your car insurance with another policy, you can receive a discount of up to 15% on your premium.
+     CUSTOMER
+     01:47
+     That sounds great. I think I'll go with the bundled policy. What's the next step?
+     AGENT
+     01:52
+     I'll just need to get some more information from you to finalize the policy. Then, I'll email you the documents and you can review and sign them online.
+     CUSTOMER
+     01:59
+     Sounds good. Thank you for your help!
+     AGENT
+     02:02
+     You're welcome! It was my pleasure to assist you. Is there anything else I can help you with today?
+     CUSTOMER
+     02:06
+     No, that's all. Thank you again!
+     AGENT
+     02:09
+     You're welcome! Have a great day!
+     """,8.0,"The agent provided clear explanations and offered a competitive bundled policy option, addressing my concerns and helping me make an informed decision.",2026-02-26,none,,"The customer is calling to get a quote for car insurance and the conversation is focused on getting information and explaining the policy details. The customer is not showing any signs of frustration or dissatisfaction, and the agent is able to provide helpful information and resolve the customer's queries.",joy,"The customer is expressing genuine emotional happiness and relief caused by the outcome of the call, specifically the bundling discount and the help provided by the agent.",0,1,0,1,0,0,0,0,1,1,0,0,1,1,1,0,1,0,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0.4216666666666666,0.52,0.39,"A customer calls to get a quote for car insurance, providing information about their 2018 Honda Civic. The agent offers a quote of $120/month, explaining the standard policy's features. The customer inquires about the premium and ways to lower it, and the agent suggests increasing the deductible or bundling with other policies. The customer chooses the bundled policy and the agent outlines the next steps to finalize the policy.",Policy Changes (Vehicle/Driver/Usage),7.52,Quote Provided,Policy & Profile Management,,quoteProvided,QuoteProvided refers to the action of giving a price estimate for an insurance policy based on the customer's details.,13.449999809265137,Liam Anderson,1898,104,2025-12-27,Insurance,5009,0.74,CASE-20251227-0046,Policy Service,call,0.54,Policy,Retail,false,Yes,16.0,High NPS,high,medium,0,66.66666666666666,0.0,100.0,50.0,low,100.0,100.0,0.0,0.0,0,100.0,1,Yes,no,yes,
+transcript_47,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling about my auto insurance policy. I need to make some changes.
+     AGENT
+     00:14
+     Okay, I'd be happy to help you with that. Can you please provide me with your policy number so I can look into it?
+     CUSTOMER
+     00:21
+     It's 123456.
+     AGENT
+     00:25
+     Thank you. I've located your policy. What changes do you need to make?
+     CUSTOMER
+     00:31
+     I need to add my son to the policy. He just got his license.
+     AGENT
+     00:37
+     Congratulations to him! Adding a new driver to the policy is a pretty straightforward process. Can you please provide me with his name and date of birth?
+     CUSTOMER
+     00:45
+     His name is John and he was born on July 12, 2002.
+     AGENT
+     00:52
+     Okay, I've added him to the policy. There will be an additional premium for the new driver. Would you like me to go over the new premium amount with you?
+     CUSTOMER
+     00:59
+     Yes, please.
+     AGENT
+     01:02
+     The new premium amount will be $150 per month. We also offer a good student discount if John maintains a GPA of 3.0 or higher.
+     CUSTOMER
+     01:10
+     That sounds great. He's a good student, so we'll definitely take advantage of that discount.
+     AGENT
+     01:15
+     I've applied the discount to your policy. Is there anything else you'd like to change or add to your policy?
+     CUSTOMER
+     01:21
+     No, that's it. Thank you for your help.
+     AGENT
+     01:24
+     You're welcome. I've sent you a confirmation email with the updated policy details. If you have any other questions or need further assistance, please don't hesitate to reach out to us.
+     CUSTOMER
+     01:30
+     Great, thank you again.
+     AGENT
+     01:32
+     You're welcome. Have a great day!
+     CUSTOMER
+     01:34
+     You too.""",8.0,"The agent was knowledgeable and helpful in making the necessary changes to my policy, and provided clear explanations of the additional premium and good student discount.",2026-02-26,none,None,"The customer is calling to make changes to their auto insurance policy and the agent is helping them with the process. The tone of the conversation is polite and friendly, with no signs of frustration or dissatisfaction.",joy,"The customer expresses gratitude and appreciation for the help received, indicating a positive emotional tone.",1,1,0,1,0,1,1,0,1,1,1,1,1,1,1,0,0,1,1,0,0,0,0,0,0,1,0,0,0,1,1,0,0.7744444444444444,0.55,0.17,"The customer called to make changes to their auto insurance policy, specifically to add their son John who just got his license. The agent assisted with the changes, provided the new premium amount, and applied a good student discount. The customer confirmed the changes and thanked the agent for their help.",Policy Changes (Vehicle/Driver/Usage),7.62,Driver Addition,Policy & Profile Management,,policyUpdated,PolicyUpdated refers to the successful modification of an existing insurance policy to reflect new changes.,10.229999542236328,Noah Thomas,1749,116,2025-10-08,Insurance,5012,0.42,CASE-20251008-0047,Retention,call,0.27,Policy,Retail,true,No,16.0,High NPS,medium,medium,1,100.0,100.0,100.0,100.0,low,100.0,66.66666666666666,0.0,33.33333333333333,50,100.0,1,Yes,yes,yes,
+transcript_48,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling about my recent bill. I got a statement yesterday and I'm not sure I understand some of the charges.
+     AGENT
+     00:15
+     I'd be happy to help you with that. Can you please tell me your account number so I can look into it for you?
+     CUSTOMER
+     00:22
+     It's 1234567890.
+     AGENT
+     00:28
+     Thank you. I've pulled up your account. What specifically about the bill are you unsure about?
+     CUSTOMER
+     00:35
+     There's a charge for $50 that says 'miscellaneous'. I don't know what that's for.
+     AGENT
+     00:42
+     I see that. Let me check on that for you. (pause) Okay, it looks like that's a one-time fee for a service upgrade you requested last month.
+     CUSTOMER
+     00:52
+     Oh, okay. I remember requesting that. But I thought it was supposed to be free for the first month.
+     AGENT
+     00:59
+     I apologize for the confusion. You're right, it should be free for the first month. I'm going to go ahead and waive that fee for you.
+     CUSTOMER
+     01:06
+     Thank you so much! I really appreciate it.
+     AGENT
+     01:11
+     You're welcome. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:16
+     No, that's all. Thank you again for your help.
+     AGENT
+     01:20
+     You're welcome. Have a great day!
+     CUSTOMER
+     01:23
+     You too. Bye.
+     AGENT
+     01:25
+     Bye.""",8.0,"The agent was able to clearly explain the cause of the miscellaneous charge and took steps to correct the issue, demonstrating a commitment to customer satisfaction.",2026-02-26,none,None,"The customer's issue was resolved, and they expressed appreciation for the agent's help. The tone of the conversation was polite and friendly, with no indication of churn.",joy,"The customer expresses genuine emotional happiness and relief caused by the outcome of the call, thanking the agent for their help and appreciation.",0,1,0,1,0,1,1,0,0,0,1,0,1,1,1,0,1,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0.6077777777777778,0.7,0.12,"A customer called to inquire about a $50 'miscellaneous' charge on their recent bill. The agent investigated and found it was a one-time fee for a service upgrade, which should have been free for the first month. The agent waived the fee, resolving the issue.",Billing Issues & Corrections,7.12,Billing Error,Billing & Payments,,accountCreditIssued,Account credit issued refers to the adjustment or removal of a charge from a customer's account.,12.229999542236328,Olivia Davis,1513,107,2026-01-06,Insurance,5013,0.62,CASE-20260106-0048,Claims Status,call,0.44,Claims,Retail,false,Yes,16.0,High NPS,high,medium,0,66.66666666666666,100.0,0.0,100.0,low,100.0,66.66666666666666,0.0,0.0,0,100.0,1,Yes,no,no,
+transcript_49,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling because I'm having some issues with my internet connection. It's been down for a few hours now.
+     AGENT
+     00:15
+     Sorry to hear that. Can you please tell me your account information so I can look into this further for you?
+     CUSTOMER
+     00:23
+     Yeah, my account number is 123456. I've tried restarting my router but that didn't work.
+     AGENT
+     00:31
+     Okay, thank you for providing that information. I've checked on our system and it seems like there's an outage in your area. Our team is working on it and it should be resolved within the next 2-3 hours.
+     CUSTOMER
+     00:43
+     2-3 hours? That's unacceptable. I need my internet for work and I'm already behind schedule because of this.
+     AGENT
+     00:51
+     I understand your frustration, sir. I'm going to escalate this issue to our advanced technical support team and they'll try to resolve it as soon as possible. Can you please hold for just a minute?
+     CUSTOMER
+     01:00
+     Fine.
+     AGENT
+     01:07
+     Okay, I've escalated the issue. They'll call you back within the next 30 minutes to assist you further.
+     CUSTOMER
+     01:14
+     Okay. And what about some kind of compensation for the inconvenience this has caused me?
+     AGENT
+     01:21
+     I understand where you're coming from, sir. I can offer you a one-time credit of $20 on your next bill. Would that be acceptable to you?
+     CUSTOMER
+     01:29
+     I suppose so. But I'm still not happy about this.
+     AGENT
+     01:36
+     I completely understand, sir. Again, I apologize for the inconvenience this has caused you. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:43
+     No, that's all. Thank you.
+     AGENT
+     01:46
+     You're welcome, sir. Have a good day.""",4.0,The agent's inability to provide a more immediate resolution to the issue and the extended wait time for the advanced technical support team to call back were major concerns.,2026-02-26,medium,That's unacceptable. I need my internet for work and I'm already behind schedule because of this.,"Customer is angry and frustrated with the service, mentioning that the outage is causing them to be behind schedule for work, which suggests a medium level of churn.",anger,"The customer is not happy and showing frustration about the inconvenience caused, which indicates anger.",0,1,1,1,0,1,0,1,0,1,1,0,1,1,1,0,1,1,1,1,1,0,0,0,0,1,0,0,0,0,0,0,0.6305555555555555,0.7,0.35,"A customer called to report an internet connection issue that had been down for a few hours. The agent apologized and explained that there was an outage in the area, but escalated the issue to advanced technical support. The customer was offered a $20 credit on their next bill as compensation for the inconvenience.",Service Outage/Restoration,1.2,Service Outage,Service & Support,,accountCreditIssued,Account credit issued refers to the application of a credit amount to the customer's account as compensation for inconvenience.,6.449999809265137,Emma Wilson,1291,112,2026-01-05,Insurance,5004,0.2,CASE-20260105-0049,Renewals,call,0.1,Policy,Retail,true,No,8.0,High NPS,low,low,1,100.0,50.0,100.0,100.0,low,100.0,100.0,0.0,0.0,0,100.0,0,Yes,yes,yes,
+transcript_50,"""AGENT
+     00:00
+     Hello good afternoon.
+     CUSTOMER
+     00:07
+     good afternoon. I'm calling to modify my service providers. I want to change my tow and repair shop.
+     AGENT
+     00:14
+     Okay, I'd be happy to help you with that. Can you please tell me your account number or the phone number associated with your account?
+     CUSTOMER
+     00:23
+     It's 555-1234.
+     AGENT
+     00:27
+     Thank you. I've located your account. What's the reason for changing your tow and repair shop?
+     CUSTOMER
+     00:34
+     I'm not satisfied with their service. They took too long to respond last time I needed a tow.
+     AGENT
+     00:41
+     I apologize for the inconvenience. Let me see what options we have available in your area. (pause) Okay, I have a few options. We have XYZ Towing and ABC Repair Shop. Would you like to try one of those?
+     CUSTOMER
+     00:56
+     Yeah, I'll try XYZ Towing.
+     AGENT
+     01:00
+     Okay, I've updated your account with the new tow provider. Would you like to change your repair shop as well?
+     CUSTOMER
+     01:06
+     Yes, I'll try ABC Repair Shop.
+     AGENT
+     01:11
+     Alright, I've updated your account with the new repair shop. Is there anything else I can assist you with today?
+     CUSTOMER
+     01:17
+     No, that's it. Thank you.
+     AGENT
+     01:20
+     You're welcome. Is there anything else you'd like to know about your new service providers?
+     CUSTOMER
+     01:25
+     No, I think that's it.
+     AGENT
+     01:28
+     Alright. Your account has been updated. If you have any issues or concerns, please don't hesitate to reach out to us. Have a great day.
+     CUSTOMER
+     01:34
+     Thank you. You too.""",8.0,The agent was able to resolve the issue efficiently and provided alternative service providers that met the customer's needs.,2026-02-26,low,I'm not satisfied with their service.,"Customer is expressing dissatisfaction with the current service provider, but is willing to try a new provider, indicating a low risk of churn.",neutral,"The customer's language shows no clear emotional charge, with routine acknowledgments and end-of-call politeness.",1,1,0,1,0,1,0,0,0,0,1,0,1,1,1,0,1,0,1,1,1,0,0,0,1,1,0,0,0,0,0,0,0.5694444444444444,0.89,0.24,"The customer called to modify their service providers, specifically changing their tow and repair shop due to dissatisfaction with the current provider's slow response time. The agent assisted in updating the account with new providers, XYZ Towing and ABC Repair Shop.",Policy Changes (Vehicle/Driver/Usage),7.29,Providerdissatisfaction,Policy & Profile Management,,providerUpdated,Provider updated refers to the successful change or update of service providers in the customer's account.,13.34000015258789,Benjamin Lee,1031,101,2026-01-27,Insurance,5002,0.73,CASE-20260127-0050,Auto Claims,call,0.53,Claims,Retail,false,Yes,16.0,High NPS,high,medium,0,100.0,50.0,0.0,100.0,low,100.0,100.0,33.33333333333333,0.0,0,100.0,1,Yes,no,yes,
