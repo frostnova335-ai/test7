@@ -17,20 +17,24 @@
  * under the License.
  */
 
-import { SupersetClient, styled, t } from '@superset-ui/core';
+import { t } from '@apache-superset/core/translation';
+import { SupersetClient } from '@superset-ui/core';
+import { styled, css } from '@apache-superset/core/theme';
 import {
   Button,
+  Card,
   Flex,
   Form,
   Input,
+  Typography,
   Icons,
 } from '@superset-ui/core/components';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { capitalize } from 'lodash/fp';
 import { addDangerToast } from 'src/components/MessageToasts/actions';
 import { useDispatch } from 'react-redux';
 import getBootstrapData from 'src/utils/getBootstrapData';
-import leftSideLogin from 'src/assets/images/login_images/left-side-login.png';
+// import leftSideLogin from 'src/assets/images/login_images/left-side-login.png';
 
 /* ── Design tokens (InsightsHub premium design) ── */
 const COLORS = {
@@ -79,12 +83,6 @@ enum AuthType {
    Styled Components — InsightsHub premium design
    ══════════════════════════════════════════════════════ */
 
-const CustomPasswordInput = styled(Input.Password)`
-  &:focus {
-    outline: none !important;
-    box-shadow: none !important;
-  }
-`;
 const PageWrapper = styled.div`
   position: relative;
   width: 100%;
@@ -133,18 +131,6 @@ const LeftPanel = styled.div`
       hsla(215, 100%, 10%, 1) 0px,
       transparent 50%
     );
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    
-    background-image: url(${leftSideLogin});
-    background-size: cover;
-    background-position: center;
-    opacity: 0.4;
-    z-index: 0;
-  }
 
   &::after {
     content: '';
@@ -446,40 +432,28 @@ const FormLabel = styled.label`
 const InputWrapper = styled.div`
   position: relative;
 
-  .ant-input-affix-wrapper,
-  .ant-input {
-    border-radius: 1.125rem !important;
-    border: 1px solid rgba(255, 255, 255, 0.4) !important;
-    background: rgba(255, 255, 255, 0.5) !important;
-    backdrop-filter: blur(4px);
-    padding: 1.05rem 1rem 1.05rem 3rem !important;
-    font-size: 1rem !important;
-    color: ${COLORS.brandBlue} !important;
+ .ant-input {
+  border-radius: 1.125rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(4px);
+  padding: 1.05rem 1rem 1.05rem 3rem !important;
+  font-size: 1rem !important;
+  color: ${COLORS.brandBlue} !important;
 
-    &:focus,
-    &.ant-input-affix-wrapper-focused {
-      border-color: ${COLORS.brandBlue} !important;
-      background: rgba(255, 255, 255, 0.8) !important;
-      box-shadow: 0 0 0 4px rgba(10, 37, 64, 0.05) !important;
-    }
-
-    &::placeholder {
-      color: ${COLORS.slate400};
-    }
+  &:focus {
+    border-color: ${COLORS.brandBlue} !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 0 0 4px rgba(10, 37, 64, 0.05) !important;
   }
 
+  &::placeholder {
+    color: ${COLORS.slate400};
+  }
+}
   .ant-input-prefix {
     margin-right: 0.5rem;
     color: ${COLORS.slate400};
-  }
-
-  .ant-input-affix-wrapper {
-    padding-right: 1rem !important;
-  }
-
-  .ant-input-affix-wrapper > input.ant-input {
-    padding: 0 !important;
-    background: transparent !important;
   }
 `;
 
@@ -678,6 +652,7 @@ const OAuthButton = styled(Button)`
 export default function Login() {
   const [form] = Form.useForm<LoginFormValues>();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const [captchaCode, setCaptchaCode] = useState<string>(generateCaptcha);
   const [userCaptchaInput, setUserCaptchaInput] = useState<string>('');
   const dispatch = useDispatch();
@@ -807,15 +782,45 @@ export default function Login() {
             <FormLabel htmlFor="password">{t('Password')}</FormLabel>
             {/* <ForgotLink href="#">{t('Forgot?')}</ForgotLink> */}
           </div>
-          <InputWrapper>
-            <InputIcon>
-              <Icons.LockOutlined iconSize="m" />
-            </InputIcon>
-            <CustomPasswordInput
-              placeholder="••••••••"
-              data-test="password-input"
-            />
-          </InputWrapper>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+            }}
+          >
+            <InputWrapper style={{ flex: 1 }}>
+              <InputIcon>
+                <Icons.LockOutlined iconSize="m" />
+              </InputIcon>
+
+              <Input
+                type={showPassword ? 'text' : 'password'}
+                placeholder="••••••••"
+                data-test="password-input"
+              />
+            </InputWrapper>
+            <span
+              onClick={() => setShowPassword(prev => !prev)}
+              style={{
+                width: '2.8rem',
+                height: '3.2rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '1rem',
+                border: '1px solid rgba(255,255,255,0.4)',
+                background: 'rgba(255,255,255,0.6)',
+                cursor: 'pointer',
+              }}
+            >
+              {showPassword ? (
+                <Icons.EyeInvisibleOutlined iconSize="m" />
+              ) : (
+                <Icons.EyeOutlined iconSize="m" />
+              )}
+            </span>
+          </div>
         </div>
       </Form.Item>
 
