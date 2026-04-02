@@ -437,7 +437,7 @@ const InputWrapper = styled.div`
   border: 1px solid rgba(255, 255, 255, 0.4) !important;
   background: rgba(255, 255, 255, 0.5) !important;
   backdrop-filter: blur(4px);
-  padding: 1.05rem 1rem 1.05rem 3rem !important;
+  padding: 1.05rem 3rem 1.05rem 3rem !important;
   font-size: 1rem !important;
   color: ${COLORS.brandBlue} !important;
 
@@ -630,7 +630,19 @@ const ForgotLink = styled.a`
     text-decoration: underline;
   }
 `;
+const EyeIcon = styled.span`
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: ${COLORS.slate400};
+  cursor: pointer;
+  z-index: 2;
 
+  &:hover {
+    color: ${COLORS.brandBlue};
+  }
+`;
 const OAuthButton = styled(Button)`
   height: 2.75rem;
   border: 1px solid rgba(255, 255, 255, 0.5);
@@ -782,14 +794,7 @@ export default function Login() {
             <FormLabel htmlFor="password">{t('Password')}</FormLabel>
             {/* <ForgotLink href="#">{t('Forgot?')}</ForgotLink> */}
           </div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.75rem',
-            }}
-          >
-            <InputWrapper style={{ flex: 1 }}>
+            <InputWrapper>
               <InputIcon>
                 <Icons.LockOutlined iconSize="m" />
               </InputIcon>
@@ -799,28 +804,15 @@ export default function Login() {
                 placeholder="••••••••"
                 data-test="password-input"
               />
+               <EyeIcon onClick={() => setShowPassword(prev => !prev)}>
+        {showPassword ? (
+          <Icons.EyeInvisibleOutlined iconSize="m" />
+        ) : (
+          <Icons.EyeOutlined iconSize="m" />
+        )}
+      </EyeIcon>
             </InputWrapper>
-            <span
-              onClick={() => setShowPassword(prev => !prev)}
-              style={{
-                width: '2.8rem',
-                height: '3.2rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                borderRadius: '1rem',
-                border: '1px solid rgba(255,255,255,0.4)',
-                background: 'rgba(255,255,255,0.6)',
-                cursor: 'pointer',
-              }}
-            >
-              {showPassword ? (
-                <Icons.EyeInvisibleOutlined iconSize="m" />
-              ) : (
-                <Icons.EyeOutlined iconSize="m" />
-              )}
-            </span>
-          </div>
+          
         </div>
       </Form.Item>
 
