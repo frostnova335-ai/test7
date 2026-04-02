@@ -16,943 +16,773 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-
+/* eslint-env browser */
+import cx from 'classnames';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { t } from '@apache-superset/core/translation';
-import { SupersetClient } from '@superset-ui/core';
-import { styled, css } from '@apache-superset/core/theme';
+import { addAlpha, JsonObject, useElementOnScreen } from '@superset-ui/core';
+import { css, styled, useTheme } from '@apache-superset/core/theme';
+import { useDispatch, useSelector } from 'react-redux';
+import { EmptyState, Loading } from '@superset-ui/core/components';
+import { ErrorBoundary, BasicErrorAlert } from 'src/components';
+import BuilderComponentPane from 'src/dashboard/components/BuilderComponentPane';
+import DashboardHeader from 'src/dashboard/components/Header';
+import { Icons } from '@superset-ui/core/components/Icons';
+import IconButton from 'src/dashboard/components/IconButton';
+import { Droppable } from 'src/dashboard/components/dnd/DragDroppable';
+import DashboardComponent from 'src/dashboard/containers/DashboardComponent';
+import WithPopoverMenu from 'src/dashboard/components/menu/WithPopoverMenu';
+import getDirectPathToTabIndex from 'src/dashboard/util/getDirectPathToTabIndex';
+import { URL_PARAMS } from 'src/constants';
+import { getUrlParam } from 'src/utils/urlUtils';
 import {
-  Button,
-  Card,
-  Flex,
-  Form,
-  Input,
-  Typography,
-  Icons,
-} from '@superset-ui/core/components';
-import { useState, useEffect, useMemo } from 'react';
-import { capitalize } from 'lodash/fp';
-import { addDangerToast } from 'src/components/MessageToasts/actions';
-import { useDispatch } from 'react-redux';
-import getBootstrapData from 'src/utils/getBootstrapData';
-// import leftSideLogin from 'src/assets/images/login_images/left-side-login.png';
+  DashboardLayout,
+  FilterBarOrientation,
+  RootState,
+} from 'src/dashboard/types';
+import {
+  setDirectPathToChild,
+  setEditMode,
+} from 'src/dashboard/actions/dashboardState';
+import {
+  deleteTopLevelTabs,
+  handleComponentDrop,
+  clearDashboardHistory,
+} from 'src/dashboard/actions/dashboardLayout';
+import {
+  DASHBOARD_GRID_ID,
+  DASHBOARD_ROOT_DEPTH,
+  DASHBOARD_ROOT_ID,
+  DashboardStandaloneMode,
+} from 'src/dashboard/util/constants';
+import FilterBar from 'src/dashboard/components/nativeFilters/FilterBar';
+import { useUiConfig } from 'src/components/UiConfigContext';
+import ResizableSidebar from 'src/components/ResizableSidebar';
+import {
+  BUILDER_SIDEPANEL_WIDTH,
+  CLOSED_FILTER_BAR_WIDTH,
+  FILTER_BAR_HEADER_HEIGHT,
+  MAIN_HEADER_HEIGHT,
+  OPEN_FILTER_BAR_MAX_WIDTH,
+  OPEN_FILTER_BAR_WIDTH,
+  EMPTY_CONTAINER_Z_INDEX,
+} from 'src/dashboard/constants';
+import { getRootLevelTabsComponent, shouldFocusTabs } from './utils';
+import DashboardContainer from './DashboardContainer';
+import { useNativeFilters } from './state';
+import DashboardWrapper from './DashboardWrapper';
 
-/* ── Design tokens (InsightsHub premium design) ── */
-const COLORS = {
-  brandBlue: '#0A2540',
-  brandBlueDark: '#1a3a5a',
-  accentCyan: '#00D4FF',
-  white: '#FFFFFF',
-  slate300: '#cbd5e1',
-  slate400: '#94a3b8',
-  slate500: '#64748b',
-  slate600: '#475569',
-  slate700: '#334155',
-} as const;
+// @z-index-above-dashboard-charts + 1 = 11
+const FiltersPanel = styled.div<{ width: number; hidden: boolean }>`
+  background-color: ${({ theme }) => theme.colorBgContainer};
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  z-index: 11;
+  width: ${({ width }) => width}px;
+  ${({ hidden }) => hidden && `display: none;`}
+`;
 
-/* ── Captcha helpers ── */
-const generateCaptcha = (): string => {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let result = '';
-  for (let i = 0; i < 6; i += 1) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+const StickyPanel = styled.div<{ width: number }>`
+  position: sticky;
+  top: -1px;
+  width: ${({ width }) => width}px;
+  flex: 0 0 ${({ width }) => width}px;
+`;
+
+// @z-index-above-dashboard-popovers (99) + 1 = 100
+const StyledHeader = styled.div<{ filterBarWidth: number }>`
+  ${({ theme, filterBarWidth }) => css`
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    max-width: calc(100vw - ${filterBarWidth}px);
+border-bottom: none !important;
+box-shadow: none !important;
+background: transparent !important;
+   .dashboard-header,
+    [data-test="dashboard-header-container"] {
+      border-bottom: none !important;
+      box-shadow: none !important;
+    }
+      header,
+.top-nav,
+.Header {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+    .empty-droptarget:before {
+      position: absolute;
+      content: '';
+      display: none;
+      width: calc(100% - ${theme.sizeUnit * 2}px);
+      height: calc(100% - ${theme.sizeUnit * 2}px);
+      left: ${theme.sizeUnit}px;
+      top: ${theme.sizeUnit}px;
+      border: 1px dashed transparent;
+      border-radius: ${theme.borderRadius}px;
+      opacity: 0.5;
+    }
+  `}
+`;
+
+const StyledContent = styled.div<{
+  fullSizeChartId: number | null;
+}>`
+  grid-column: 2;
+  grid-row: 2;
+  // @z-index-above-dashboard-header (100) + 1 = 101
+  ${({ fullSizeChartId }) => fullSizeChartId && `z-index: 101;`}
+`;
+
+const DashboardContentWrapper = styled.div`
+  ${({ theme }) => css`
+    &.dashboard {
+      position: relative;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      /* drop shadow for top-level tabs only */
+
+
+& .dashboard-component-tabs {
+  box-shadow: none !important;
+  border-bottom: none !important;
+}
+
+
+& .ant-tabs-nav {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+
+& .ant-tabs-nav::before,
+& .ant-tabs > .ant-tabs-nav::before,
+& div[class*="ant-tabs"] .ant-tabs-nav::before {
+  border-bottom: none !important;
+  display: none !important;
+}
+
+
+& .ant-tabs-content-holder {
+  box-shadow: none !important;
+}
+
+& .dashboard-content,
+& .dashboard-component-header,
+& .dashboard-header,
+& [data-test="dashboard-header-container"] {
+  border-top: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+  & .dashboard-content > div,
+& .dashboard-content > div:first-child,
+& .dashboard-component-tabs-container {
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+& [data-test="filter-bar"],
+& .dashboard-filter-bar,
+& .ant-divider {
+  border-bottom: none !important;
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+& [data-test="filter-bar"]::before,
+& [data-test="filter-bar"]::after {
+  display: none !important;
+}
+      .dropdown-toggle.btn.btn-primary .caret {
+        color: ${theme.colorText};
+      }
+
+      .background--transparent {
+        background-color: transparent;
+      }
+
+      .background--white {
+        background-color: ${theme.colorBgContainer};
+      }
+    }
+    &.dashboard--editing {
+      .grid-row:after,
+      .dashboard-component-tabs > .hover-menu:hover + div:after {
+        border: 1px dashed transparent;
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .grid-row.grid-row--hovered:after,
+      .dashboard-component-tabs > .grid-row--hovered:after {
+        border: 2px dashed ${theme.colorPrimary};
+      }
+
+      .resizable-container {
+        & .dashboard-component-chart-holder {
+          .dashboard-chart {
+            .chart-container {
+              cursor: move;
+              opacity: 0.2;
+            }
+
+            .slice_container {
+              /* disable chart interactions in edit mode */
+              pointer-events: none;
+            }
+          }
+
+          &:hover .dashboard-chart .chart-container {
+            opacity: 0.7;
+          }
+        }
+
+        &:hover,
+        &.resizable-container--resizing:hover {
+          & > .dashboard-component-chart-holder:after {
+            border: 1px dashed ${theme.colorPrimary};
+          }
+        }
+      }
+
+      .resizable-container--resizing:hover > .grid-row:after,
+      .hover-menu:hover + .grid-row:after,
+      .dashboard-component-tabs > .hover-menu:hover + div:after {
+        border: 1px dashed ${theme.colorPrimary};
+        z-index: 2;
+      }
+
+      .grid-row:after,
+      .dashboard-component-tabs > .hover-menu + div:after {
+        border: 1px dashed ${theme.colorBorder};
+      }
+
+      /* provide hit area in case row contents is edge to edge */
+      .dashboard-component-tabs-content {
+        > .dragdroppable-row {
+          padding-top: ${theme.sizeUnit * 4}px;
+        }
+      }
+
+      .dashboard-component-chart-holder {
+        &:after {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          z-index: 1;
+          pointer-events: none;
+          border: 1px solid transparent;
+        }
+
+        &:hover:after {
+          border: 1px dashed ${theme.colorPrimary};
+          z-index: 2;
+        }
+      }
+
+      .contract-trigger:before {
+        display: none;
+      }
+    }
+
+    & .dashboard-component-tabs-content {
+      & > div:not(:last-child):not(.empty-droptarget) {
+        margin-bottom: ${theme.sizeUnit * 4}px;
+      }
+
+      & > .empty-droptarget {
+        z-index: ${EMPTY_CONTAINER_Z_INDEX};
+        position: absolute;
+        width: 100%;
+      }
+
+      & > .empty-droptarget:first-child:not(.empty-droptarget--full) {
+        height: ${theme.sizeUnit * 4}px;
+        top: 0;
+      }
+
+      & > .empty-droptarget:last-child {
+        height: ${theme.sizeUnit * 4}px;
+        bottom: ${-theme.sizeUnit * 4}px;
+      }
+    }
+  `}
+`;
+
+const StyledDashboardContent = styled.div<{
+  editMode: boolean;
+  marginLeft: number;
+}>`
+  ${({ theme, editMode, marginLeft }) => css`
+    background-color: ${theme.colorBgLayout};
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: auto;
+    flex: 1;
+
+    .grid-container .dashboard-component-tabs {
+      box-shadow: none;
+      padding-left: 0;
+    }
+
+    .grid-container {
+      /* without this, the grid will not get smaller upon toggling the builder panel on */
+      width: 0;
+      flex: 1;
+      position: relative;
+      margin: ${theme.sizeUnit * 4}px;
+      margin-left: ${marginLeft}px;
+
+      ${editMode &&
+    `
+      max-width: calc(100% - ${BUILDER_SIDEPANEL_WIDTH + theme.sizeUnit * 16
+    }px);
+    `}
+
+      /* this is the ParentSize wrapper */
+    & > div:first-child {
+        height: 100% !important;
+      }
+    }
+
+    .dashboard-builder-sidepane {
+      width: ${BUILDER_SIDEPANEL_WIDTH}px;
+      z-index: 1;
+    }
+
+    .dashboard-component-chart-holder {
+      width: 100%;
+      height: 100%;
+      background-color: ${theme.colorBgContainer};
+      position: relative;
+      padding: ${theme.sizeUnit * 4}px;
+      overflow-y: visible;
+
+      // transitionable traits to show filter relevance
+      transition:
+        opacity ${theme.motionDurationMid} ease-in-out,
+        border-color ${theme.motionDurationMid} ease-in-out,
+        box-shadow ${theme.motionDurationMid} ease-in-out;
+
+      &.fade-in {
+        border-radius: ${theme.borderRadius}px;
+        box-shadow:
+          inset 0 0 0 2px ${theme.colorPrimary},
+          0 0 0 3px ${addAlpha(theme.colorPrimary, 0.1)};
+      }
+
+      &.fade-out {
+        border-radius: ${theme.borderRadius}px;
+        box-shadow: none;
+      }
+
+      & .missing-chart-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: auto;
+        justify-content: center;
+
+        .missing-chart-body {
+          font-size: ${theme.fontSizeSM}px;
+          position: relative;
+          display: flex;
+        }
+      }
+    }
+  `}
+`;
+
+const ELEMENT_ON_SCREEN_OPTIONS = {
+  threshold: [1],
 };
 
-const normalizeCaptcha = (value: string): string =>
-  value.replace(/\s+/g, '').toUpperCase();
-
-/* ── Types ── */
-type OAuthProvider = { name: string; icon: string };
-type OIDProvider = { name: string; url: string };
-type Provider = OAuthProvider | OIDProvider;
-
-interface LoginFormValues {
-  username: string;
-  password: string;
-}
-
-enum AuthType {
-  AuthOID = 0,
-  AuthDB = 1,
-  AuthLDAP = 2,
-  AuthOauth = 4,
-}
-
-/* ══════════════════════════════════════════════════════
-   Styled Components — InsightsHub premium design
-   ══════════════════════════════════════════════════════ */
-
-const PageWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  min-height: 100dvh;
-  display: flex;
-  overflow-x: hidden;
-  overflow-y: auto;
-  font-family: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont,
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1023px) {
-    flex-direction: column;
-  }
-`;
-
-/* ── LEFT PANEL: Mesh gradient + glass card ── */
-const LeftPanel = styled.div`
-  position: relative;
-  width: 50%;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
-  background-color: ${COLORS.brandBlue};
-  background-image: radial-gradient(
-      at 0% 0%,
-      hsla(210, 100%, 20%, 1) 0px,
-      transparent 50%
-    ),
-    radial-gradient(
-      at 100% 0%,
-      hsla(190, 100%, 30%, 1) 0px,
-      transparent 50%
-    ),
-    radial-gradient(
-      at 100% 100%,
-      hsla(200, 100%, 15%, 1) 0px,
-      transparent 50%
-    ),
-    radial-gradient(
-      at 0% 100%,
-      hsla(215, 100%, 10%, 1) 0px,
-      transparent 50%
-    );
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: rgba(10, 37, 64, 0.6);
-    backdrop-filter: blur(1px);
-    z-index: 1;
-  }
-
-  @media (max-width: 1023px) {
-    display: none;
-  }
-`;
-
-const GlowLayer = styled.div`
-  position: absolute;
-  inset: 0;
-  opacity: 0.4;
-  z-index: 2;
-`;
-
-const GlowOrb = styled.div<{
-  top?: string;
-  left?: string;
-  bottom?: string;
-  right?: string;
-}>`
-  position: absolute;
-  width: 24rem;
-  height: 24rem;
-  border-radius: 9999px;
-  filter: blur(120px);
-  top: ${({ top }) => top ?? 'auto'};
-  left: ${({ left }) => left ?? 'auto'};
-  bottom: ${({ bottom }) => bottom ?? 'auto'};
-  right: ${({ right }) => right ?? 'auto'};
-`;
-
-const GlassCard = styled.div`
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  max-width: 40rem;
-  margin: 0 4rem;
-  padding: 2.75rem;
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 2rem;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-`;
-
-const LiveTag = styled.div`
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 9999px;
-  background: rgba(0, 212, 255, 0.1);
-  border: 1px solid rgba(0, 212, 255, 0.2);
-  margin-bottom: 2rem;
-`;
-
-const LiveDot = styled.span`
-  position: relative;
-  width: 8px;
-  height: 8px;
-
-  &::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: ${COLORS.accentCyan};
-    animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    background: ${COLORS.accentCyan};
-  }
-
-  @keyframes ping {
-    75%,
-    100% {
-      transform: scale(2);
-      opacity: 0;
-    }
-  }
-`;
-
-const LeftHeadline = styled.h2`
-  font-size: 4.5rem;
-  font-weight: 800;
-  line-height: 1.1;
-  letter-spacing: -0.025em;
-  color: ${COLORS.white};
-  margin: 0 0 1.5rem;
-
-  @media (max-width: 1366px) {
-    font-size: 3.5rem;
-  }
-`;
-
-const GradientText = styled.span`
-  background: linear-gradient(to right, ${COLORS.accentCyan}, #60a5fa);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-`;
-
-const LeftDescription = styled.p`
-  font-size: 1.125rem;
-  font-weight: 500;
-  color: rgba(203, 213, 225, 0.9);
-  line-height: 1.625;
-  margin: 0 0 2.5rem;
-  max-width: 28rem;
-`;
-
-const StatsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 1.5rem;
-  padding-top: 1rem;
-`;
-
-const StatItem = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-`;
-
-const StatValue = styled.span`
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: ${COLORS.white};
-`;
-
-const StatLabel = styled.span`
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: ${COLORS.slate400};
-`;
-
-const LeftLogo = styled.div`
-  position: absolute;
-  bottom: 3rem;
-  left: 4rem;
-  z-index: 10;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-`;
-
-const LogoIconBox = styled.div`
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.75rem;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-`;
-
-const LogoText = styled.span`
-  font-size: 1.25rem;
-  font-weight: 700;
-  letter-spacing: -0.05em;
-  color: ${COLORS.white};
-`;
-
-/* ── RIGHT PANEL: Login form ── */
-const RightPanel = styled.div`
-  flex: 1;
-  width: 50%;
-  min-height: 100dvh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1.5rem 3rem;
-  background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    width: 40%;
-    height: 40%;
-    background: radial-gradient(
-      circle,
-      rgba(0, 212, 255, 0.1) 0%,
-      transparent 70%
-    );
-    top: 10%;
-    right: 10%;
-    z-index: 0;
-  }
-
-  @media (max-width: 1023px) {
-    width: 100%;
-    padding: 1.5rem;
-  }
-
-  @media (max-height: 820px) {
-    justify-content: flex-start;
-    padding-top: 1.25rem;
-    padding-bottom: 1.25rem;
-  }
-`;
-
-const GlassFormContainer = styled.div`
-  position: relative;
-  z-index: 10;
-  width: 100%;
-  max-width: 38rem;
-  padding: 3rem 4rem;
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 2.5rem;
-  box-shadow: 0 8px 32px 0 rgba(10, 37, 64, 0.08);
-
-  @media (max-width: 640px) {
-    padding: 2rem;
-  }
-`;
-
-const MobileLogo = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 2.5rem;
-
-  @media (min-width: 1024px) {
-    display: none;
-  }
-`;
-
-const MobileLogoIcon = styled.div`
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.75rem;
-  background: ${COLORS.brandBlue};
-  color: ${COLORS.white};
-`;
-
-const FormHeading = styled.h1`
-  font-size: 2rem;
-  font-weight: 800;
-  letter-spacing: -0.025em;
-  color: ${COLORS.brandBlue};
-  margin: 0 0 0.75rem;
-  text-align: center;
-
-  @media (min-width: 1024px) {
-    text-align: left;
-  }
-
-  @media (max-width: 1366px) {
-    font-size: 3rem;
-  }
-`;
-
-const FormSubheading = styled.p`
-  font-size: 1rem;
-  font-weight: 500;
-  color: ${COLORS.slate600};
-  margin: 0 0 2.5rem;
-  text-align: center;
-
-  @media (min-width: 1024px) {
-    text-align: left;
-  }
-`;
-
-const FormLabel = styled.label`
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: ${COLORS.slate500};
-  margin-bottom: 0.375rem;
-`;
-
-const InputWrapper = styled.div`
-  position: relative;
-
- .ant-input {
-  border-radius: 1.125rem !important;
-  border: 1px solid rgba(255, 255, 255, 0.4) !important;
-  background: rgba(255, 255, 255, 0.5) !important;
-  backdrop-filter: blur(4px);
-  padding: 1.05rem 3rem 1.05rem 3rem !important;
-  font-size: 1rem !important;
-  color: ${COLORS.brandBlue} !important;
-
-  &:focus {
-    border-color: ${COLORS.brandBlue} !important;
-    background: rgba(255, 255, 255, 0.8) !important;
-    box-shadow: 0 0 0 4px rgba(10, 37, 64, 0.05) !important;
-  }
-
-  &::placeholder {
-    color: ${COLORS.slate400};
-  }
-}
-  .ant-input-prefix {
-    margin-right: 0.5rem;
-    color: ${COLORS.slate400};
-  }
-`;
-
-const InputIcon = styled.span`
-  position: absolute;
-  left: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 1;
-  color: ${COLORS.slate400};
-  pointer-events: none;
-`;
-
-/* Captcha section - styled like "I am not a robot" box */
-const CaptchaSection = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.25rem;
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(4px);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
-  gap: 1rem;
-`;
-
-const CaptchaInputGroup = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex: 1;
-  min-width: 0;
-`;
-
-const CaptchaInputStyled = styled(Input)`
-  width: 29rem;
-  height: 2.5rem !important;
-  border-radius: 0.5rem !important;
-  border: 1px solid rgba(255, 255, 255, 0.5) !important;
-  background: rgba(255, 255, 255, 0.6) !important;
-  font-size: 0.875rem !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.1em !important;
-  text-transform: uppercase !important;
-  color: ${COLORS.brandBlue} !important;
-
-  &:focus {
-    border-color: ${COLORS.brandBlue} !important;
-  }
-`;
-
-const CaptchaBox = styled.div`
-  padding: 0 1rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 0.5rem;
-  background: ${COLORS.brandBlue};
-  color: ${COLORS.white};
-  font-size: 1rem;
-  font-weight: 700;
-  font-style: italic;
-  letter-spacing: 0.25em;
-  font-family: 'Courier New', monospace;
-  min-width: 7.5rem;
-  user-select: none;
-`;
-
-const RefreshBtn = styled.button`
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.6);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.2s ease;
-
-  &:hover {
-    border-color: ${COLORS.brandBlue};
-    background: rgba(255, 255, 255, 0.9);
-  }
-`;
-
-const CaptchaIndicator = styled.div`
-  flex-shrink: 0;
-  color: ${COLORS.slate400};
-`;
-
-const LoginButton = styled(Button)`
-  width: 100%;
-  height: 3rem;
-  border-radius: 1rem;
-  font-size: 1.375rem;
-  font-weight: 700;
-  background: linear-gradient(to right, ${COLORS.brandBlue}, ${COLORS.brandBlueDark}) !important;
-  border: none !important;
-  box-shadow: 0 10px 15px -3px rgba(10, 37, 64, 0.2);
-  transition: all 0.2s ease;
-
-  &:hover {
-    transform: scale(1.01);
-    box-shadow: 0 20px 25px -5px rgba(10, 37, 64, 0.3) !important;
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-`;
-
-const EnterpriseDivider = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 3rem;
-  margin-bottom: 1.5rem;
-  width: 100%;
-`;
-
-const DividerLine = styled.div`
-  width: 2rem;
-  height: 1px;
-  background: ${COLORS.slate300};
-`;
-
-const DividerText = styled.span`
-  font-size: 0.625rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  color: ${COLORS.slate500};
-`;
-
-const EnterpriseIcons = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1.5rem;
-  color: ${COLORS.slate500};
-  margin-bottom: 1.5rem;
-  width: 100%;
-`;
-
-const TermsText = styled.p`
-  font-size: 0.6875rem;
-  text-align: center;
-  color: ${COLORS.slate500};
-  line-height: 1.5;
-  max-width: 15rem;
-  margin: 0 auto;
-`;
-
-const TermsLink = styled.a`
-  color: ${COLORS.brandBlue};
-  font-weight: 600;
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-const ForgotLink = styled.a`
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: ${COLORS.brandBlue};
-  text-decoration: none;
-
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-const EyeIcon = styled.span`
-  position: absolute;
-  right: 1rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: ${COLORS.slate400};
-  cursor: pointer;
-  z-index: 2;
-
-  &:hover {
-    color: ${COLORS.brandBlue};
-  }
-`;
-const OAuthButton = styled(Button)`
-  height: 2.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 1rem;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background: rgba(255, 255, 255, 0.6) !important;
-
-  &:hover {
-    border-color: ${COLORS.brandBlue};
-    color: ${COLORS.brandBlue};
-  }
-`;
-
-/* ══════════════════════════════════════════════════════
-   Component
-   ══════════════════════════════════════════════════════ */
-
-export default function Login() {
-  const [form] = Form.useForm<LoginFormValues>();
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [captchaCode, setCaptchaCode] = useState<string>(generateCaptcha);
-  const [userCaptchaInput, setUserCaptchaInput] = useState<string>('');
+const DashboardBuilder = () => {
   const dispatch = useDispatch();
+  const uiConfig = useUiConfig();
+  const theme = useTheme();
 
-  const bootstrapData = getBootstrapData();
-  const authType: AuthType = bootstrapData.common.conf.AUTH_TYPE;
-  const providers: Provider[] = bootstrapData.common.conf.AUTH_PROVIDERS;
+  const dashboardId = useSelector<RootState, string>(
+    ({ dashboardInfo }) => `${dashboardInfo.id}`,
+  );
+  const dashboardLayout = useSelector<RootState, DashboardLayout>(
+    state => state.dashboardLayout.present,
+  );
+  const editMode = useSelector<RootState, boolean>(
+    state => state.dashboardState.editMode,
+  );
+  const canEdit = useSelector<RootState, boolean>(
+    ({ dashboardInfo }) => dashboardInfo.dash_edit_perm,
+  );
+  const dashboardIsSaving = useSelector<RootState, boolean>(
+    ({ dashboardState }) => dashboardState.dashboardIsSaving,
+  );
+  const fullSizeChartId = useSelector<RootState, number | null>(
+    state => state.dashboardState.fullSizeChartId,
+  );
+  const filterBarOrientation = useSelector<RootState, FilterBarOrientation>(
+    ({ dashboardInfo }) => dashboardInfo.filterBarOrientation,
+  );
+
+  const handleChangeTab = useCallback(
+    ({ pathToTabIndex }: { pathToTabIndex: string[] }) => {
+      dispatch(setDirectPathToChild(pathToTabIndex));
+      window.scrollTo(0, 0);
+    },
+    [dispatch],
+  );
+
+  const handleDeleteTopLevelTabs = useCallback(() => {
+    dispatch(deleteTopLevelTabs());
+
+    const firstTab = getDirectPathToTabIndex(
+      getRootLevelTabsComponent(dashboardLayout),
+      0,
+    );
+    dispatch(setDirectPathToChild(firstTab));
+  }, [dashboardLayout, dispatch]);
+
+  const handleDrop = useCallback(
+    dropResult => dispatch(handleComponentDrop(dropResult)),
+    [dispatch],
+  );
+
+  const headerRef = useRef<HTMLDivElement>(null);
+  const dashboardRoot = dashboardLayout[DASHBOARD_ROOT_ID];
+  const rootChildId = dashboardRoot?.children[0];
+  const topLevelTabs =
+    rootChildId !== DASHBOARD_GRID_ID
+      ? dashboardLayout[rootChildId]
+      : undefined;
+  const standaloneMode = getUrlParam(URL_PARAMS.standalone);
+  const isReport = standaloneMode === DashboardStandaloneMode.Report;
+  const hideDashboardHeader =
+    uiConfig.hideTitle ||
+    standaloneMode === DashboardStandaloneMode.HideNavAndTitle ||
+    isReport;
+
+  const [barTopOffset, setBarTopOffset] = useState(0);
+  const [currentFilterBarWidth, setCurrentFilterBarWidth] = useState(
+    CLOSED_FILTER_BAR_WIDTH,
+  );
 
   useEffect(() => {
-    const link = document.createElement('link');
-    link.href =
-      'https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;500;600&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
+    setBarTopOffset(headerRef.current?.getBoundingClientRect()?.height || 0);
+
+    let observer: ResizeObserver;
+    if (global.hasOwnProperty('ResizeObserver') && headerRef.current) {
+      observer = new ResizeObserver(entries => {
+        setBarTopOffset(
+          current => entries?.[0]?.contentRect?.height || current,
+        );
+      });
+
+      observer.observe(headerRef.current);
+    }
+
     return () => {
-      if (link.parentNode) link.parentNode.removeChild(link);
+      observer?.disconnect();
     };
   }, []);
 
+  const {
+    showDashboard,
+    missingInitialFilters,
+    dashboardFiltersOpen,
+    toggleDashboardFiltersOpen,
+    nativeFiltersEnabled,
+  } = useNativeFilters();
+
+  const [containerRef, isSticky] = useElementOnScreen<HTMLDivElement>(
+    ELEMENT_ON_SCREEN_OPTIONS,
+  );
+
+  const showFilterBar = !editMode && nativeFiltersEnabled;
+
+  const offset =
+    FILTER_BAR_HEADER_HEIGHT +
+    (isSticky || standaloneMode ? 0 : MAIN_HEADER_HEIGHT);
+
+  const filterBarHeight = `calc(100vh - ${offset}px)`;
+  const filterBarOffset = dashboardFiltersOpen ? 0 : barTopOffset + 20;
+
+  const draggableStyle = useMemo(
+    () => ({
+      marginLeft:
+        dashboardFiltersOpen ||
+          editMode ||
+          !nativeFiltersEnabled ||
+          filterBarOrientation === FilterBarOrientation.Horizontal
+          ? 0
+          : -32,
+    }),
+    [
+      dashboardFiltersOpen,
+      editMode,
+      filterBarOrientation,
+      nativeFiltersEnabled,
+    ],
+  );
+
+  // If a new tab was added, update the directPathToChild to reflect it
+  const currentTopLevelTabs = useRef(topLevelTabs);
   useEffect(() => {
-    const loginAttempted = sessionStorage.getItem('login_attempted');
+    const currentTabsLength = currentTopLevelTabs.current?.children?.length;
+    const newTabsLength = topLevelTabs?.children?.length;
 
-    if (loginAttempted === 'true') {
-      sessionStorage.removeItem('login_attempted');
-      dispatch(addDangerToast(t('Invalid username or password')));
-      form.setFieldsValue({ password: '' });
-    }
-  }, [dispatch, form]);
-
-  const handleFormSubmit = (values: LoginFormValues) => {
-    const expectedCaptcha = normalizeCaptcha(captchaCode);
-    const enteredCaptcha = normalizeCaptcha(userCaptchaInput);
-
-    if (!enteredCaptcha || enteredCaptcha !== expectedCaptcha) {
-      dispatch(addDangerToast(t('The verification code is incorrect.')));
-      refreshCaptcha();
-      return;
+    if (
+      currentTabsLength !== undefined &&
+      newTabsLength !== undefined &&
+      newTabsLength > currentTabsLength
+    ) {
+      const lastTab = getDirectPathToTabIndex(
+        getRootLevelTabsComponent(dashboardLayout),
+        newTabsLength - 1,
+      );
+      dispatch(setDirectPathToChild(lastTab));
     }
 
-    setIsLoading(true);
-    sessionStorage.setItem('login_attempted', 'true');
-    SupersetClient.postForm('/login/', values, '');
-  };
+    currentTopLevelTabs.current = topLevelTabs;
+  }, [topLevelTabs]);
 
-  const refreshCaptcha = () => {
-    setCaptchaCode(generateCaptcha());
-    setUserCaptchaInput('');
-  };
-
-  const getProviderIcon = (
-    providerName: string,
-  ): React.JSX.Element | undefined => {
-    if (!providerName || typeof providerName !== 'string') {
-      return undefined;
-    }
-    const iconComponentName = `${capitalize(providerName)}Outlined`;
-    const IconComponent = (Icons as Record<string, React.ComponentType<object>>)[
-      iconComponentName
-    ];
-
-    if (IconComponent && typeof IconComponent === 'function') {
-      return <IconComponent />;
-    }
-    return undefined;
-  };
-
-  const renderOAuthProviders = () => (
-    <Flex justify="center" vertical gap="middle">
-      <Form layout="vertical" requiredMark="optional" form={form}>
-        {providers.map((provider: OAuthProvider | OIDProvider) => (
-          <Form.Item key={provider.name}>
-            <OAuthButton
-              href={`/login/${provider.name}`}
-              block
-              iconPosition="start"
-              icon={getProviderIcon(provider.name)}
-            >
-              {t('Sign in with')} {capitalize(provider.name)}
-            </OAuthButton>
-          </Form.Item>
-        ))}
-      </Form>
-    </Flex>
+  const headerContent = useMemo(
+    () => (
+      <>
+        {!hideDashboardHeader && <DashboardHeader />}
+        {showFilterBar &&
+          filterBarOrientation === FilterBarOrientation.Horizontal && (
+            <FilterBar
+              orientation={FilterBarOrientation.Horizontal}
+              hidden={isReport}
+            />
+          )}
+      </>
+    ),
+    [hideDashboardHeader, showFilterBar, filterBarOrientation, isReport],
   );
 
-  const renderLoginForm = () => (
-    <Form
-      layout="vertical"
-      requiredMark={false}
-      form={form}
-      onFinish={handleFormSubmit}
-    >
-      <Form.Item
-        name="username"
-        rules={[{ required: true, message: t('Please enter your username') }]}
-        style={{ marginBottom: 24 }}
-      >
-        <div>
-          <FormLabel>{t('Username')}</FormLabel>
-          <InputWrapper>
-            <InputIcon>
-              <Icons.MailOutlined iconSize="m" />
-            </InputIcon>
-            <Input
-              placeholder="Username"
-              data-test="username-input"
-              autoFocus
-            />
-          </InputWrapper>
-        </div>
-      </Form.Item>
-
-      <Form.Item
-        name="password"
-        rules={[{ required: true, message: t('Please enter your password') }]}
-        style={{ marginBottom: 24 }}
-      >
-        <div>
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '0.375rem',
-            }}
-          >
-            <FormLabel htmlFor="password">{t('Password')}</FormLabel>
-            {/* <ForgotLink href="#">{t('Forgot?')}</ForgotLink> */}
-          </div>
-            <InputWrapper>
-              <InputIcon>
-                <Icons.LockOutlined iconSize="m" />
-              </InputIcon>
-
-              <Input
-                type={showPassword ? 'text' : 'password'}
-                placeholder="••••••••"
-                data-test="password-input"
+  const renderDraggableContent = useCallback(
+    ({ dropIndicatorProps }: { dropIndicatorProps: JsonObject }) => (
+      <div>
+        {dropIndicatorProps && <div {...dropIndicatorProps} />}
+        {!isReport &&
+          topLevelTabs &&
+          !uiConfig.hideTab &&
+          !uiConfig.hideNav && (
+            <WithPopoverMenu
+              shouldFocus={shouldFocusTabs}
+              menuItems={[
+                <IconButton
+                  key="collapse-tabs"
+                  icon={<Icons.FallOutlined iconSize="xl" />}
+                  label={t('Collapse tab content')}
+                  onClick={handleDeleteTopLevelTabs}
+                />,
+              ]}
+              editMode={editMode}
+            >
+              <DashboardComponent
+                id={topLevelTabs?.id}
+                parentId={DASHBOARD_ROOT_ID}
+                depth={DASHBOARD_ROOT_DEPTH + 1}
+                index={0}
+                renderTabContent={false}
+                renderHoverMenu={false}
+                onChangeTab={handleChangeTab}
               />
-               <EyeIcon onClick={() => setShowPassword(prev => !prev)}>
-        {showPassword ? (
-          <Icons.EyeInvisibleOutlined iconSize="m" />
-        ) : (
-          <Icons.EyeOutlined iconSize="m" />
-        )}
-      </EyeIcon>
-            </InputWrapper>
-          
-        </div>
-      </Form.Item>
-
-      <Form.Item style={{ marginBottom: 24 }}>
-        <CaptchaSection>
-          <CaptchaInputGroup>
-            <CaptchaInputStyled
-              value={userCaptchaInput}
-              onChange={e =>
-                setUserCaptchaInput(e.target.value.toUpperCase().slice(0, 6))
-              }
-              placeholder={t('Enter Captcha')}
-              data-test="captcha-input"
-              maxLength={6}
-            />
-            <CaptchaBox>{captchaCode}</CaptchaBox>
-            <RefreshBtn
-              type="button"
-              aria-label={t('Refresh captcha')}
-              onClick={refreshCaptcha}
-            >
-              <Icons.ReloadOutlined iconSize="m" aria-hidden />
-            </RefreshBtn>
-          </CaptchaInputGroup>
-          {/* <CaptchaIndicator>
-            <Icons.CheckCircleOutlined iconSize="l" aria-hidden />
-          </CaptchaIndicator> */}
-        </CaptchaSection>
-      </Form.Item>
-
-      <Form.Item style={{ marginBottom: 0 }}>
-        <LoginButton
-          type="primary"
-          htmlType="submit"
-          loading={isLoading}
-          data-test="login-button"
-        >
-          {t('Login')}
-        </LoginButton>
-      </Form.Item>
-    </Form>
+            </WithPopoverMenu>
+          )}
+      </div>
+    ),
+    [
+      editMode,
+      handleChangeTab,
+      handleDeleteTopLevelTabs,
+      isReport,
+      topLevelTabs,
+      uiConfig.hideTab,
+      uiConfig.hideNav,
+    ],
   );
+
+  const dashboardContentMarginLeft = !editMode
+    ? theme.sizeUnit * 4
+    : theme.sizeUnit * 8;
+
+  const renderChild = useCallback(
+    adjustedWidth => {
+      const filterBarWidth = dashboardFiltersOpen
+        ? adjustedWidth
+        : CLOSED_FILTER_BAR_WIDTH;
+      if (filterBarWidth !== currentFilterBarWidth) {
+        setCurrentFilterBarWidth(filterBarWidth);
+      }
+      return (
+        <FiltersPanel
+          width={filterBarWidth}
+          hidden={isReport}
+          data-test="dashboard-filters-panel"
+        >
+          <StickyPanel ref={containerRef} width={filterBarWidth}>
+            <ErrorBoundary>
+              <FilterBar
+                orientation={FilterBarOrientation.Vertical}
+                verticalConfig={{
+                  filtersOpen: dashboardFiltersOpen,
+                  toggleFiltersBar: toggleDashboardFiltersOpen,
+                  width: filterBarWidth,
+                  height: filterBarHeight,
+                  offset: filterBarOffset,
+                }}
+              />
+            </ErrorBoundary>
+          </StickyPanel>
+        </FiltersPanel>
+      );
+    },
+    [
+      dashboardFiltersOpen,
+      toggleDashboardFiltersOpen,
+      filterBarHeight,
+      filterBarOffset,
+      isReport,
+    ],
+  );
+
+  const isVerticalFilterBarVisible =
+    showFilterBar && filterBarOrientation === FilterBarOrientation.Vertical;
+  const headerFilterBarWidth = isVerticalFilterBarVisible
+    ? currentFilterBarWidth
+    : 0;
 
   return (
-    <PageWrapper data-test="login-form">
-      {/* Left panel - desktop only */}
-      <LeftPanel>
-        <GlowLayer>
-          <GlowOrb
-            top="25%"
-            left="25%"
-            style={{ background: 'rgba(0, 212, 255, 0.2)' }}
-          />
-          <GlowOrb
-            bottom="25%"
-            right="25%"
-            style={{ background: 'rgba(37, 99, 235, 0.2)' }}
-          />
-        </GlowLayer>
-        <GlassCard>
-          <LiveTag>
-            <LiveDot />
-            <span
-              style={{
-                fontSize: '10px',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.1em',
-                color: COLORS.accentCyan,
+    <DashboardWrapper>
+      {isVerticalFilterBarVisible && (
+        <ResizableSidebar
+          id={`dashboard:${dashboardId}`}
+          enable={dashboardFiltersOpen}
+          minWidth={OPEN_FILTER_BAR_WIDTH}
+          maxWidth={OPEN_FILTER_BAR_MAX_WIDTH}
+          initialWidth={OPEN_FILTER_BAR_WIDTH}
+        >
+          {renderChild}
+        </ResizableSidebar>
+      )}
+      <StyledHeader
+        data-test="dashboard-header-wrapper"
+        ref={headerRef}
+        filterBarWidth={headerFilterBarWidth}
+      >
+        {headerContent}
+        <Droppable
+          data-test="top-level-tabs"
+          className={cx(!topLevelTabs && editMode && 'empty-droptarget')}
+          component={dashboardRoot}
+          parentComponent={null}
+          depth={DASHBOARD_ROOT_DEPTH}
+          index={0}
+          orientation="column"
+          onDrop={handleDrop}
+          editMode={editMode}
+          // you cannot drop on/displace tabs if they already exist
+          disableDragDrop={!!topLevelTabs}
+          style={draggableStyle}
+        >
+          {renderDraggableContent}
+        </Droppable>
+      </StyledHeader>
+      <StyledContent fullSizeChartId={fullSizeChartId}>
+        {!editMode &&
+          !topLevelTabs &&
+          dashboardLayout[DASHBOARD_GRID_ID]?.children?.length === 0 && (
+            <EmptyState
+              title={t('There are no charts added to this dashboard')}
+              size="large"
+              description={
+                canEdit &&
+                t(
+                  'Go to the edit mode to configure the dashboard and add charts',
+                )
+              }
+              buttonText={canEdit && t('Edit the dashboard')}
+              buttonAction={() => {
+                dispatch(setEditMode(true));
+                dispatch(clearDashboardHistory());
               }}
-            >
-              {t('Live Intelligence')}
-            </span>
-          </LiveTag>
-          <LeftHeadline>
-            {t('The Future of')} <br />
-            <GradientText>{t('Contact Center Analytics')}</GradientText>
-          </LeftHeadline>
-          <LeftDescription>
-            {t('Transform every conversation into actionable insight.')}
-          </LeftDescription>
-          <StatsGrid>
-            <StatItem>
-              <StatValue>99.9%</StatValue>
-              <StatLabel>{t('Uptime Reliability')}</StatLabel>
-            </StatItem>
-            <StatItem>
-              <StatValue>{t('Real-time')}</StatValue>
-              <StatLabel>{t('Processing Latency')}</StatLabel>
-            </StatItem>
-          </StatsGrid>
-        </GlassCard>
-        <LeftLogo>
-          <LogoIconBox>
-            <Icons.DashboardOutlined
-              iconSize="m"
-              iconColor={COLORS.accentCyan}
+              image="dashboard.svg"
             />
-          </LogoIconBox>
-          <LogoText>InsightsHub</LogoText>
-        </LeftLogo>
-      </LeftPanel>
-
-      {/* Right panel - login form */}
-      <RightPanel>
-        <GlassFormContainer>
-          <MobileLogo>
-            <MobileLogoIcon>
-              <Icons.DashboardOutlined iconSize="m" />
-            </MobileLogoIcon>
-            <LogoText>InsightsHub</LogoText>
-          </MobileLogo>
-
-          <FormHeading>{t('Welcome to InsightsHub')}</FormHeading>
-          <FormSubheading>{t('Please enter your credentials')}</FormSubheading>
-
-          {authType === AuthType.AuthOID && renderOAuthProviders()}
-          {authType === AuthType.AuthOauth && renderOAuthProviders()}
-          {(authType === AuthType.AuthDB || authType === AuthType.AuthLDAP) &&
-            renderLoginForm()}
-
-          <EnterpriseDivider>
-            <DividerLine />
-            <DividerText>{t('Enterprise Access')}</DividerText>
-            <DividerLine />
-          </EnterpriseDivider>
-          <EnterpriseIcons>
-            <Icons.KeyOutlined iconSize="xl" style={{ cursor: 'help' }} />
-            <Icons.LockOutlined iconSize="xl" style={{ cursor: 'help' }} />
-            <Icons.MonitorOutlined iconSize="xl" style={{ cursor: 'help' }} />
-          </EnterpriseIcons>
-          <TermsText>
-            {t('By logging in, you agree to our')}{' '}
-            <TermsLink href="#">{t('Terms of Service')}</TermsLink>{' '}
-            {t('and')}{' '}
-            <TermsLink href="#">{t('Privacy Policy')}</TermsLink>.
-          </TermsText>
-        </GlassFormContainer>
-      </RightPanel>
-    </PageWrapper>
+          )}
+        <DashboardContentWrapper
+          data-test="dashboard-content-wrapper"
+          className={cx('dashboard', editMode && 'dashboard--editing')}
+        >
+          <StyledDashboardContent
+            className="dashboard-content"
+            editMode={editMode}
+            marginLeft={dashboardContentMarginLeft}
+          >
+            {showDashboard ? (
+              missingInitialFilters.length > 0 ? (
+                <div
+                  css={css`
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    flex: 1;
+                    & div {
+                      width: 500px;
+                    }
+                  `}
+                >
+                  <BasicErrorAlert
+                    title={t('Unable to load dashboard')}
+                    body={t(
+                      `The following filters have the 'Select first filter value by default'
+                    option checked and could not be loaded, which is preventing the dashboard
+                    from rendering: %s`,
+                      missingInitialFilters.join(', '),
+                    )}
+                  />
+                </div>
+              ) : (
+                <DashboardContainer topLevelTabs={topLevelTabs} />
+              )
+            ) : (
+              <Loading />
+            )}
+            {editMode && <BuilderComponentPane topOffset={barTopOffset} />}
+          </StyledDashboardContent>
+        </DashboardContentWrapper>
+      </StyledContent>
+      {dashboardIsSaving && (
+        <Loading
+          css={css`
+            && {
+              position: fixed;
+            }
+          `}
+        />
+      )}
+    </DashboardWrapper>
   );
-}
+};
 
+export default memo(DashboardBuilder);
