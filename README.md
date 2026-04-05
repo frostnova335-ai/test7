@@ -16,157 +16,780 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+/* eslint-env browser */
+import cx from 'classnames';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useMemo,
-  useState,
-} from 'react';
-import {
-  type AnyThemeConfig,
-  type ThemeContextType,
-  Theme,
-  ThemeMode,
+  addAlpha,
+  css,
+  JsonObject,
+  styled,
+  t,
+  useTheme,
+  useElementOnScreen,
 } from '@superset-ui/core';
-import { ThemeController } from './ThemeController';
+import { useDispatch, useSelector } from 'react-redux';
+import { EmptyState, Loading } from '@superset-ui/core/components';
+import { ErrorBoundary, BasicErrorAlert } from 'src/components';
+import BuilderComponentPane from 'src/dashboard/components/BuilderComponentPane';
+import DashboardHeader from 'src/dashboard/components/Header';
+import { Icons } from '@superset-ui/core/components/Icons';
+import IconButton from 'src/dashboard/components/IconButton';
+import { Droppable } from 'src/dashboard/components/dnd/DragDroppable';
+import DashboardComponent from 'src/dashboard/containers/DashboardComponent';
+import WithPopoverMenu from 'src/dashboard/components/menu/WithPopoverMenu';
+import getDirectPathToTabIndex from 'src/dashboard/util/getDirectPathToTabIndex';
+import { URL_PARAMS } from 'src/constants';
+import { getUrlParam } from 'src/utils/urlUtils';
+import {
+  DashboardLayout,
+  FilterBarOrientation,
+  RootState,
+} from 'src/dashboard/types';
+import {
+  setDirectPathToChild,
+  setEditMode,
+} from 'src/dashboard/actions/dashboardState';
+import {
+  deleteTopLevelTabs,
+  handleComponentDrop,
+  clearDashboardHistory,
+} from 'src/dashboard/actions/dashboardLayout';
+import {
+  DASHBOARD_GRID_ID,
+  DASHBOARD_ROOT_DEPTH,
+  DASHBOARD_ROOT_ID,
+  DashboardStandaloneMode,
+} from 'src/dashboard/util/constants';
+import FilterBar from 'src/dashboard/components/nativeFilters/FilterBar';
+import { useUiConfig } from 'src/components/UiConfigContext';
+import ResizableSidebar from 'src/components/ResizableSidebar';
+import {
+  BUILDER_SIDEPANEL_WIDTH,
+  CLOSED_FILTER_BAR_WIDTH,
+  FILTER_BAR_HEADER_HEIGHT,
+  MAIN_HEADER_HEIGHT,
+  OPEN_FILTER_BAR_MAX_WIDTH,
+  OPEN_FILTER_BAR_WIDTH,
+  EMPTY_CONTAINER_Z_INDEX,
+} from 'src/dashboard/constants';
+import { getRootLevelTabsComponent, shouldFocusTabs } from './utils';
+import DashboardContainer from './DashboardContainer';
+import { useNativeFilters } from './state';
+import DashboardWrapper from './DashboardWrapper';
 
-const ThemeContext = createContext<ThemeContextType | null>(null);
+// @z-index-above-dashboard-charts + 1 = 11
+const FiltersPanel = styled.div<{ width: number; hidden: boolean }>`
+  background-color: ${({ theme }) => theme.colorBgContainer};
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  z-index: 11;
+  width: ${({ width }) => width}px;
+  ${({ hidden }) => hidden && `display: none;`}
+`;
 
-interface ThemeProviderProps {
-  children: React.ReactNode;
-  themeController: ThemeController;
-}
+const StickyPanel = styled.div<{ width: number }>`
+  position: sticky;
+  top: -1px;
+  width: ${({ width }) => width}px;
+  flex: 0 0 ${({ width }) => width}px;
+`;
 
-export function SupersetThemeProvider({
-  children,
-  themeController,
-}: ThemeProviderProps): JSX.Element {
-  const [currentTheme, setCurrentTheme] = useState<Theme>(
-    themeController.getTheme(),
+// @z-index-above-dashboard-popovers (99) + 1 = 100
+const StyledHeader = styled.div`
+  ${({ theme }) => css`
+    grid-column: 2;
+    grid-row: 1;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    max-width: 100vw;
+
+    .empty-droptarget:before {
+      position: absolute;
+      content: '';
+      display: none;
+      width: calc(100% - ${theme.sizeUnit * 2}px);
+      height: calc(100% - ${theme.sizeUnit * 2}px);
+      left: ${theme.sizeUnit}px;
+      top: ${theme.sizeUnit}px;
+      border: 1px dashed transparent;
+      border-radius: ${theme.borderRadius}px;
+      opacity: 0.5;
+    }
+  `}
+`;
+
+const StyledContent = styled.div<{
+  fullSizeChartId: number | null;
+}>`
+  grid-column: 2;
+  grid-row: 2;
+  // @z-index-above-dashboard-header (100) + 1 = 101
+  ${({ fullSizeChartId }) => fullSizeChartId && `z-index: 101;`}
+`;
+
+const DashboardContentWrapper = styled.div`
+  ${({ theme }) => css`
+    &.dashboard {
+      position: relative;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+
+      /* drop shadow for top-level tabs only */
+      & .dashboard-component-tabs {
+        box-shadow: 0 ${theme.sizeUnit}px ${theme.sizeUnit}px 0
+          ${addAlpha(theme.colorBorderSecondary, 0.1)};
+        padding-left: ${theme.sizeUnit *
+        2}px; /* note this is added to tab-level padding, to match header */
+      }
+
+      .dropdown-toggle.btn.btn-primary .caret {
+        color: ${theme.colorText};
+      }
+
+      .background--transparent {
+        background-color: transparent;
+      }
+
+      .background--white {
+        background-color: ${theme.colorBgContainer};
+      }
+    }
+    &.dashboard--editing {
+      .grid-row:after,
+      .dashboard-component-tabs > .hover-menu:hover + div:after {
+        border: 1px dashed transparent;
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: 1;
+        pointer-events: none;
+      }
+
+      .grid-row.grid-row--hovered:after,
+      .dashboard-component-tabs > .grid-row--hovered:after {
+        border: 2px dashed ${theme.colorPrimary};
+      }
+
+      .resizable-container {
+        & .dashboard-component-chart-holder {
+          .dashboard-chart {
+            .chart-container {
+              cursor: move;
+              opacity: 0.2;
+            }
+
+            .slice_container {
+              /* disable chart interactions in edit mode */
+              pointer-events: none;
+            }
+          }
+
+          &:hover .dashboard-chart .chart-container {
+            opacity: 0.7;
+          }
+        }
+
+        &:hover,
+        &.resizable-container--resizing:hover {
+          & > .dashboard-component-chart-holder:after,
+          & > .dashboard-component-flip-card:after {
+            border: 1px dashed ${theme.colorPrimary};
+          }
+        }
+      }
+
+      .resizable-container--resizing:hover > .grid-row:after,
+      .hover-menu:hover + .grid-row:after,
+      .dashboard-component-tabs > .hover-menu:hover + div:after {
+        border: 1px dashed ${theme.colorPrimary};
+        z-index: 2;
+      }
+
+      .grid-row:after,
+      .dashboard-component-tabs > .hover-menu + div:after {
+        border: 1px dashed ${theme.colorBorder};
+      }
+
+      /* provide hit area in case row contents is edge to edge */
+      .dashboard-component-tabs-content {
+        > .dragdroppable-row {
+          padding-top: ${theme.sizeUnit * 4}px;
+        }
+      }
+
+      .dashboard-component-chart-holder,
+      .dashboard-component-flip-card {
+        &:after {
+          content: '';
+          position: absolute;
+          width: 100%;
+          height: 100%;
+          top: 0;
+          left: 0;
+          z-index: 1;
+          pointer-events: none;
+          border: 1px solid transparent;
+        }
+
+        &:hover:after {
+          border: 1px dashed ${theme.colorPrimary};
+          z-index: 2;
+        }
+      }
+
+      .contract-trigger:before {
+        display: none;
+      }
+    }
+
+    & .dashboard-component-tabs-content {
+      & > div:not(:last-child):not(.empty-droptarget) {
+        margin-bottom: ${theme.sizeUnit * 4}px;
+      }
+
+      & > .empty-droptarget {
+        z-index: ${EMPTY_CONTAINER_Z_INDEX};
+        position: absolute;
+        width: 100%;
+      }
+
+      & > .empty-droptarget:first-child:not(.empty-droptarget--full) {
+        height: ${theme.sizeUnit * 4}px;
+        top: 0;
+      }
+
+      & > .empty-droptarget:last-child {
+        height: ${theme.sizeUnit * 4}px;
+        bottom: ${-theme.sizeUnit * 4}px;
+      }
+    }
+  `}
+`;
+
+const StyledDashboardContent = styled.div<{
+  editMode: boolean;
+  marginLeft: number;
+  dashboardIsSaving: boolean;
+}>`
+  ${({ theme, editMode, marginLeft, dashboardIsSaving }) => css`
+    background-color: transparent;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: auto;
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    .grid-container .dashboard-component-tabs {
+      box-shadow: none;
+      padding-left: 0;
+    }
+
+    .grid-container {
+      /* without this, the grid will not get smaller upon toggling the builder panel on */
+      width: 0;
+      flex: 1;
+      position: relative;
+      margin: ${theme.sizeUnit * 4}px;
+      margin-left: ${marginLeft}px;
+      overflow: visible;
+
+      ${editMode &&
+      `
+      max-width: calc(100% - ${
+        BUILDER_SIDEPANEL_WIDTH + theme.sizeUnit * 16
+      }px);
+      /* Card look: segregate canvas from page background - more visible shadow and border */
+      background-color: ${theme.colorBgContainer};
+      border: 1px solid ${theme.colorBorder || '#d9d9d9'};
+      border-radius: ${theme.borderRadius}px;
+      box-shadow: 0 4px 12px ${addAlpha(theme.colorText, 0.15)}, 0 2px 4px ${addAlpha(theme.colorText, 0.1)};
+    `}
+
+      /* this is the ParentSize wrapper */
+    & > div:first-child {
+        height: inherit !important;
+      }
+    }
+
+    .dashboard-builder-sidepane {
+      width: ${BUILDER_SIDEPANEL_WIDTH}px;
+      z-index: 1;
+    }
+
+    .dashboard-component-chart-holder,
+    .dashboard-component-flip-card {
+      width: 100%;
+      height: 100%;
+      background-color: ${theme.colorBgContainer};
+      position: relative;
+      padding: ${theme.sizeUnit * 4}px;
+      overflow-y: visible;
+      /* Visual separation from page background (view + edit) */
+      border-radius: 22px;
+      border: 1px solid ${addAlpha('#8ec5ff', 0.8)};
+      @supports (corner-shape: squircle) {
+        corner-shape: squircle;
+      }
+      box-shadow:
+        0 0 0 1px ${addAlpha('#8ec5ff', 0.32)},
+        0 6px 18px ${addAlpha('#69b1ff', 0.24)},
+        0 12px 28px ${addAlpha('#69b1ff', 0.18)};
+
+      // transitionable traits to show filter relevance
+      transition:
+        opacity ${theme.motionDurationMid} ease-in-out,
+        border-color ${theme.motionDurationMid} ease-in-out,
+        box-shadow ${theme.motionDurationMid} ease-in-out;
+
+      &.fade-in {
+        border-radius: 22px;
+        border-color: ${addAlpha(theme.colorPrimary, 0.35)};
+        @supports (corner-shape: squircle) {
+          corner-shape: squircle;
+        }
+        box-shadow:
+          0 0 0 2px ${addAlpha(theme.colorPrimary, 0.24)},
+          0 4px 14px ${addAlpha(theme.colorText, 0.12)},
+          0 10px 24px ${addAlpha(theme.colorPrimary, 0.16)};
+      }
+
+      &.fade-out {
+        border-radius: 22px;
+        @supports (corner-shape: squircle) {
+          corner-shape: squircle;
+        }
+        box-shadow:
+          0 0 0 1px ${addAlpha('#8ec5ff', 0.32)},
+          0 6px 18px ${addAlpha('#69b1ff', 0.24)},
+          0 12px 28px ${addAlpha('#69b1ff', 0.18)};
+      }
+
+      & .missing-chart-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-y: auto;
+        justify-content: center;
+
+        .missing-chart-body {
+          font-size: ${theme.fontSizeSM}px;
+          position: relative;
+          display: flex;
+        }
+      }
+
+      /* Keep chart surfaces clipped to a consistent squircle card shape */
+      & > .dashboard-chart,
+      & > .slice_container {
+        border-radius: inherit;
+        overflow: hidden;
+        @supports (corner-shape: squircle) {
+          corner-shape: squircle;
+        }
+      }
+
+      & > .dashboard-chart .chart-container,
+      & > .dashboard-chart .slice_container {
+        border-radius: inherit;
+        border: none;
+        box-shadow: none;
+        background: transparent;
+        @supports (corner-shape: squircle) {
+          corner-shape: squircle;
+        }
+      }
+    }
+
+    /* Ensure blue border/shadow is visible in dashboard view mode as well */
+    .dashboard-component-chart-holder .dashboard-chart,
+    .dashboard-component-chart-holder .dashboard-chart .chart-container,
+    .dashboard-component-chart-holder .dashboard-chart > div,
+    .dashboard-component-flip-card > div {
+      border-radius: 22px !important;
+      border: none !important;
+      box-shadow: none !important;
+      background: transparent !important;
+      overflow: hidden !important;
+      @supports (corner-shape: squircle) {
+        corner-shape: squircle;
+      }
+    }
+
+    ${dashboardIsSaving &&
+    `
+      .dashboard-component-chart-holder,
+      .dashboard-component-flip-card {
+        border-color: ${addAlpha('#69b1ff', 0.55)};
+        box-shadow:
+          0 0 0 2px ${addAlpha('#69b1ff', 0.25)},
+          0 6px 18px ${addAlpha('#69b1ff', 0.3)},
+          0 12px 28px ${addAlpha('#69b1ff', 0.2)};
+      }
+    `}
+  `}
+`;
+
+const ELEMENT_ON_SCREEN_OPTIONS = {
+  threshold: [1],
+};
+
+const DashboardBuilder = () => {
+  const dispatch = useDispatch();
+  const uiConfig = useUiConfig();
+  const theme = useTheme();
+
+  const dashboardId = useSelector<RootState, string>(
+    ({ dashboardInfo }) => `${dashboardInfo.id}`,
+  );
+  const dashboardLayout = useSelector<RootState, DashboardLayout>(
+    state => state.dashboardLayout.present,
+  );
+  const editMode = useSelector<RootState, boolean>(
+    state => state.dashboardState.editMode,
+  );
+  const canEdit = useSelector<RootState, boolean>(
+    ({ dashboardInfo }) => dashboardInfo.dash_edit_perm,
+  );
+  const dashboardIsSaving = useSelector<RootState, boolean>(
+    ({ dashboardState }) => dashboardState.dashboardIsSaving,
+  );
+  const fullSizeChartId = useSelector<RootState, number | null>(
+    state => state.dashboardState.fullSizeChartId,
+  );
+  const filterBarOrientation = useSelector<RootState, FilterBarOrientation>(
+    ({ dashboardInfo }) => dashboardInfo.filterBarOrientation,
   );
 
-  const [currentThemeMode, setCurrentThemeMode] = useState<ThemeMode>(
-    themeController.getCurrentMode(),
+  const handleChangeTab = useCallback(
+    ({ pathToTabIndex }: { pathToTabIndex: string[] }) => {
+      dispatch(setDirectPathToChild(pathToTabIndex));
+      window.scrollTo(0, 0);
+    },
+    [dispatch],
   );
+
+  const handleDeleteTopLevelTabs = useCallback(() => {
+    dispatch(deleteTopLevelTabs());
+
+    const firstTab = getDirectPathToTabIndex(
+      getRootLevelTabsComponent(dashboardLayout),
+      0,
+    );
+    dispatch(setDirectPathToChild(firstTab));
+  }, [dashboardLayout, dispatch]);
+
+  const handleDrop = useCallback(
+    dropResult => dispatch(handleComponentDrop(dropResult)),
+    [dispatch],
+  );
+
+  const headerRef = useRef<HTMLDivElement>(null);
+  const dashboardRoot = dashboardLayout[DASHBOARD_ROOT_ID];
+  const rootChildId = dashboardRoot?.children[0];
+  const topLevelTabs =
+    rootChildId !== DASHBOARD_GRID_ID
+      ? dashboardLayout[rootChildId]
+      : undefined;
+  const standaloneMode = getUrlParam(URL_PARAMS.standalone);
+  const isReport = standaloneMode === DashboardStandaloneMode.Report;
+  const hideDashboardHeader =
+    uiConfig.hideTitle ||
+    standaloneMode === DashboardStandaloneMode.HideNavAndTitle ||
+    isReport;
+
+  const [barTopOffset, setBarTopOffset] = useState(0);
 
   useEffect(() => {
-    const unsubscribe = themeController.onChange(theme => {
-      setCurrentTheme(theme);
-      setCurrentThemeMode(themeController.getCurrentMode());
-    });
+    setBarTopOffset(headerRef.current?.getBoundingClientRect()?.height || 0);
 
-    return unsubscribe;
-  }, [themeController]);
+    let observer: ResizeObserver;
+    if (global.hasOwnProperty('ResizeObserver') && headerRef.current) {
+      observer = new ResizeObserver(entries => {
+        setBarTopOffset(
+          current => entries?.[0]?.contentRect?.height || current,
+        );
+      });
 
-  const setTheme = useCallback(
-    (config: AnyThemeConfig) => themeController.setTheme(config),
-    [themeController],
+      observer.observe(headerRef.current);
+    }
+
+    return () => {
+      observer?.disconnect();
+    };
+  }, []);
+
+  const {
+    showDashboard,
+    missingInitialFilters,
+    dashboardFiltersOpen,
+    toggleDashboardFiltersOpen,
+    nativeFiltersEnabled,
+  } = useNativeFilters();
+
+  const [containerRef, isSticky] = useElementOnScreen<HTMLDivElement>(
+    ELEMENT_ON_SCREEN_OPTIONS,
   );
 
-  const setThemeMode = useCallback(
-    (newMode: ThemeMode) => themeController.setThemeMode(newMode),
-    [themeController],
-  );
+  const showFilterBar = !editMode && nativeFiltersEnabled;
 
-  const resetTheme = useCallback(
-    () => themeController.resetTheme(),
-    [themeController],
-  );
+  const offset =
+    FILTER_BAR_HEADER_HEIGHT +
+    (isSticky || standaloneMode ? 0 : MAIN_HEADER_HEIGHT);
 
-  // setCrudTheme removed - dashboards should NOT modify the global controller
+  const filterBarHeight = `calc(100vh - ${offset}px)`;
+  const filterBarOffset = dashboardFiltersOpen ? 0 : barTopOffset + 20;
 
-  const setTemporaryTheme = useCallback(
-    (config: AnyThemeConfig) => themeController.setTemporaryTheme(config),
-    [themeController],
-  );
-
-  const clearLocalOverrides = useCallback(
-    () => themeController.clearLocalOverrides(),
-    [themeController],
-  );
-
-  const getCurrentCrudThemeId = useCallback(
-    () => themeController.getCurrentCrudThemeId(),
-    [themeController],
-  );
-
-  const hasDevOverride = useCallback(
-    () => themeController.hasDevOverride(),
-    [themeController],
-  );
-
-  const canSetMode = useCallback(
-    () => themeController.canSetMode(),
-    [themeController],
-  );
-
-  const canSetTheme = useCallback(
-    () => themeController.canSetTheme(),
-    [themeController],
-  );
-
-  const canDetectOSPreference = useCallback(
-    () => themeController.canDetectOSPreference(),
-    [themeController],
-  );
-
-  const createDashboardThemeProvider = useCallback(
-    (themeId: string) => themeController.createDashboardThemeProvider(themeId),
-    [themeController],
-  );
-
-  const contextValue = useMemo(
+  const draggableStyle = useMemo(
     () => ({
-      theme: currentTheme,
-      themeMode: currentThemeMode,
-      setTheme,
-      setThemeMode,
-      resetTheme,
-      setTemporaryTheme,
-      clearLocalOverrides,
-      getCurrentCrudThemeId,
-      hasDevOverride,
-      canSetMode,
-      canSetTheme,
-      canDetectOSPreference,
-      createDashboardThemeProvider,
+      marginLeft:
+        dashboardFiltersOpen ||
+        editMode ||
+        !nativeFiltersEnabled ||
+        filterBarOrientation === FilterBarOrientation.Horizontal
+          ? 0
+          : -32,
     }),
     [
-      currentTheme,
-      currentThemeMode,
-      setTheme,
-      setThemeMode,
-      resetTheme,
-      setTemporaryTheme,
-      clearLocalOverrides,
-      getCurrentCrudThemeId,
-      hasDevOverride,
-      canSetMode,
-      canSetTheme,
-      canDetectOSPreference,
-      createDashboardThemeProvider,
+      dashboardFiltersOpen,
+      editMode,
+      filterBarOrientation,
+      nativeFiltersEnabled,
+    ],
+  );
+
+  // If a new tab was added, update the directPathToChild to reflect it
+  const currentTopLevelTabs = useRef(topLevelTabs);
+  useEffect(() => {
+    const currentTabsLength = currentTopLevelTabs.current?.children?.length;
+    const newTabsLength = topLevelTabs?.children?.length;
+
+    if (
+      currentTabsLength !== undefined &&
+      newTabsLength !== undefined &&
+      newTabsLength > currentTabsLength
+    ) {
+      const lastTab = getDirectPathToTabIndex(
+        getRootLevelTabsComponent(dashboardLayout),
+        newTabsLength - 1,
+      );
+      dispatch(setDirectPathToChild(lastTab));
+    }
+
+    currentTopLevelTabs.current = topLevelTabs;
+  }, [topLevelTabs]);
+
+  const renderDraggableContent = useCallback(
+    ({ dropIndicatorProps }: { dropIndicatorProps: JsonObject }) => (
+      <div>
+        {!hideDashboardHeader && <DashboardHeader />}
+        {showFilterBar &&
+          filterBarOrientation === FilterBarOrientation.Horizontal && (
+            <FilterBar
+              orientation={FilterBarOrientation.Horizontal}
+              hidden={isReport}
+            />
+          )}
+        {dropIndicatorProps && <div {...dropIndicatorProps} />}
+        {!isReport && topLevelTabs && !uiConfig.hideNav && (
+          <WithPopoverMenu
+            shouldFocus={shouldFocusTabs}
+            menuItems={[
+              <IconButton
+                icon={<Icons.FallOutlined iconSize="xl" />}
+                label={t('Collapse tab content')}
+                onClick={handleDeleteTopLevelTabs}
+              />,
+            ]}
+            editMode={editMode}
+          >
+            {/* @ts-ignore */}
+            <DashboardComponent
+              id={topLevelTabs?.id}
+              parentId={DASHBOARD_ROOT_ID}
+              depth={DASHBOARD_ROOT_DEPTH + 1}
+              index={0}
+              renderTabContent={false}
+              renderHoverMenu={false}
+              onChangeTab={handleChangeTab}
+            />
+          </WithPopoverMenu>
+        )}
+      </div>
+    ),
+    [
+      nativeFiltersEnabled,
+      filterBarOrientation,
+      editMode,
+      handleChangeTab,
+      handleDeleteTopLevelTabs,
+      hideDashboardHeader,
+      isReport,
+      topLevelTabs,
+      uiConfig.hideNav,
+    ],
+  );
+
+  const dashboardContentMarginLeft = !editMode
+    ? theme.sizeUnit * 4
+    : theme.sizeUnit * 8;
+
+  const renderChild = useCallback(
+    adjustedWidth => {
+      const filterBarWidth = dashboardFiltersOpen
+        ? adjustedWidth
+        : CLOSED_FILTER_BAR_WIDTH;
+      return (
+        <FiltersPanel
+          width={filterBarWidth}
+          hidden={isReport}
+          data-test="dashboard-filters-panel"
+        >
+          <StickyPanel ref={containerRef} width={filterBarWidth}>
+            <ErrorBoundary>
+              <FilterBar
+                orientation={FilterBarOrientation.Vertical}
+                verticalConfig={{
+                  filtersOpen: dashboardFiltersOpen,
+                  toggleFiltersBar: toggleDashboardFiltersOpen,
+                  width: filterBarWidth,
+                  height: filterBarHeight,
+                  offset: filterBarOffset,
+                }}
+              />
+            </ErrorBoundary>
+          </StickyPanel>
+        </FiltersPanel>
+      );
+    },
+    [
+      dashboardFiltersOpen,
+      toggleDashboardFiltersOpen,
+      filterBarHeight,
+      filterBarOffset,
+      isReport,
     ],
   );
 
   return (
-    <ThemeContext.Provider value={contextValue}>
-      <currentTheme.SupersetThemeProvider>
-        {children}
-      </currentTheme.SupersetThemeProvider>
-    </ThemeContext.Provider>
+    <DashboardWrapper>
+      {showFilterBar &&
+        filterBarOrientation === FilterBarOrientation.Vertical && (
+          <>
+            <ResizableSidebar
+              id={`dashboard:${dashboardId}`}
+              enable={dashboardFiltersOpen}
+              minWidth={OPEN_FILTER_BAR_WIDTH}
+              maxWidth={OPEN_FILTER_BAR_MAX_WIDTH}
+              initialWidth={OPEN_FILTER_BAR_WIDTH}
+            >
+              {renderChild}
+            </ResizableSidebar>
+          </>
+        )}
+      <StyledHeader ref={headerRef}>
+        {/* @ts-ignore */}
+        <Droppable
+          data-test="top-level-tabs"
+          className={cx(!topLevelTabs && editMode && 'empty-droptarget')}
+          component={dashboardRoot}
+          parentComponent={null}
+          depth={DASHBOARD_ROOT_DEPTH}
+          index={0}
+          orientation="column"
+          onDrop={handleDrop}
+          editMode={editMode}
+          // you cannot drop on/displace tabs if they already exist
+          disableDragDrop={!!topLevelTabs}
+          style={draggableStyle}
+        >
+          {renderDraggableContent}
+        </Droppable>
+      </StyledHeader>
+      <StyledContent fullSizeChartId={fullSizeChartId}>
+        {!editMode &&
+          !topLevelTabs &&
+          dashboardLayout[DASHBOARD_GRID_ID]?.children?.length === 0 && (
+            <EmptyState
+              title={t('There are no charts added to this dashboard')}
+              size="large"
+              description={
+                canEdit &&
+                t(
+                  'Go to the edit mode to configure the dashboard and add charts',
+                )
+              }
+              buttonText={canEdit && t('Edit the dashboard')}
+              buttonAction={() => {
+                dispatch(setEditMode(true));
+                dispatch(clearDashboardHistory());
+              }}
+              image="dashboard.svg"
+            />
+          )}
+        <DashboardContentWrapper
+          data-test="dashboard-content-wrapper"
+          className={cx('dashboard', editMode && 'dashboard--editing')}
+        >
+          <StyledDashboardContent
+            className="dashboard-content"
+            editMode={editMode}
+            marginLeft={dashboardContentMarginLeft}
+            dashboardIsSaving={dashboardIsSaving}
+          >
+            {showDashboard ? (
+              missingInitialFilters.length > 0 ? (
+                <div
+                  css={css`
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    justify-content: center;
+                    flex: 1;
+                    & div {
+                      width: 500px;
+                    }
+                  `}
+                >
+                  <BasicErrorAlert
+                    title={t('Unable to load dashboard')}
+                    body={t(
+                      `The following filters have the 'Select first filter value by default'
+                    option checked and could not be loaded, which is preventing the dashboard
+                    from rendering: %s`,
+                      missingInitialFilters.join(', '),
+                    )}
+                  />
+                </div>
+              ) : (
+                <DashboardContainer topLevelTabs={topLevelTabs} />
+              )
+            ) : (
+              <Loading />
+            )}
+            {editMode && <BuilderComponentPane topOffset={barTopOffset} />}
+          </StyledDashboardContent>
+        </DashboardContentWrapper>
+      </StyledContent>
+      {dashboardIsSaving && (
+        <Loading
+          css={css`
+            && {
+              position: fixed;
+            }
+          `}
+        />
+      )}
+    </DashboardWrapper>
   );
-}
+};
 
-/**
- * React hook to use the theme context
- */
-export function useThemeContext(): ThemeContextType {
-  const context: ThemeContextType | null = useContext(ThemeContext);
-
-  if (!context)
-    throw new Error('useThemeContext must be used within a ThemeProvider');
-
-  return context;
-}
+export default memo(DashboardBuilder);
