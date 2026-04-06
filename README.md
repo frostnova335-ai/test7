@@ -21,13 +21,11 @@ import cx from 'classnames';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   addAlpha,
-  css,
   JsonObject,
-  styled,
-  t,
-  useTheme,
   useElementOnScreen,
 } from '@superset-ui/core';
+import { t } from '@apache-superset/core/translation';
+import { styled, css, useTheme } from '@apache-superset/core/theme';
 import { useDispatch, useSelector } from 'react-redux';
 import { EmptyState, Loading } from '@superset-ui/core/components';
 import { ErrorBoundary, BasicErrorAlert } from 'src/components';
@@ -104,7 +102,20 @@ const StyledHeader = styled.div`
     top: 0;
     z-index: 99;
     max-width: 100vw;
-
+border-bottom: none !important;
+box-shadow: none !important;
+background: transparent !important;
+   .dashboard-header,
+    [data-test="dashboard-header-container"] {
+      border-bottom: none !important;
+      box-shadow: none !important;
+    }
+      header,
+.top-nav,
+.Header {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
     .empty-droptarget:before {
       position: absolute;
       content: '';
@@ -140,12 +151,57 @@ const DashboardContentWrapper = styled.div`
 
       /* drop shadow for top-level tabs only */
       & .dashboard-component-tabs {
-        box-shadow: 0 ${theme.sizeUnit}px ${theme.sizeUnit}px 0
-          ${addAlpha(theme.colorBorderSecondary, 0.1)};
-        padding-left: ${theme.sizeUnit *
-        2}px; /* note this is added to tab-level padding, to match header */
-      }
+       box-shadow: none !important;
+  border-bottom: none !important;
+}
 
+
+& .ant-tabs-nav {
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+
+& .ant-tabs-nav::before,
+& .ant-tabs > .ant-tabs-nav::before,
+& div[class*="ant-tabs"] .ant-tabs-nav::before {
+  border-bottom: none !important;
+  display: none !important;
+}
+
+
+& .ant-tabs-content-holder {
+  box-shadow: none !important;
+}
+
+& .dashboard-content,
+& .dashboard-component-header,
+& .dashboard-header,
+& [data-test="dashboard-header-container"] {
+  border-top: none !important;
+  border-bottom: none !important;
+  box-shadow: none !important;
+}
+
+  & .dashboard-content > div,
+& .dashboard-content > div:first-child,
+& .dashboard-component-tabs-container {
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+& [data-test="filter-bar"],
+& .dashboard-filter-bar,
+& .ant-divider {
+  border-bottom: none !important;
+  border-top: none !important;
+  box-shadow: none !important;
+}
+
+& [data-test="filter-bar"]::before,
+& [data-test="filter-bar"]::after {
+  display: none !important;
+}
       .dropdown-toggle.btn.btn-primary .caret {
         color: ${theme.colorText};
       }
@@ -303,10 +359,9 @@ const StyledDashboardContent = styled.div<{
       overflow: visible;
 
       ${editMode &&
-      `
-      max-width: calc(100% - ${
-        BUILDER_SIDEPANEL_WIDTH + theme.sizeUnit * 16
-      }px);
+    `
+      max-width: calc(100% - ${BUILDER_SIDEPANEL_WIDTH + theme.sizeUnit * 16
+    }px);
       /* Card look: segregate canvas from page background - more visible shadow and border */
       background-color: ${theme.colorBgContainer};
       border: 1px solid ${theme.colorBorder || '#d9d9d9'};
@@ -552,9 +607,9 @@ const DashboardBuilder = () => {
     () => ({
       marginLeft:
         dashboardFiltersOpen ||
-        editMode ||
-        !nativeFiltersEnabled ||
-        filterBarOrientation === FilterBarOrientation.Horizontal
+          editMode ||
+          !nativeFiltersEnabled ||
+          filterBarOrientation === FilterBarOrientation.Horizontal
           ? 0
           : -32,
     }),
