@@ -1,770 +1,544 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { PlayCircleOutlined, PauseCircleOutlined } from '@ant-design/icons';
-import { t } from '@superset-ui/core';
-
-const playButtonStyle: React.CSSProperties = {
-  cursor: 'pointer',
-  display: 'inline-flex',
-  alignItems: 'center',
-  color: '#2893B3',
-  fontSize: 20,
-};
-
-interface PlayButtonProps {
-  audioUrl: string | null;
-  title?: string;
-}
-
-let globalAudio: HTMLAudioElement | null = null;
-let globalAudioSrc: string | null = null;
-let listeners: Array<() => void> = [];
-
-function notifyListeners() {
-  listeners.forEach(listener => listener());
-}
-
-function ensureGlobalAudio(): HTMLAudioElement {
-  if (globalAudio) {
-    return globalAudio;
-  }
-  globalAudio = new Audio();
-  globalAudio.preload = 'none';
-  globalAudio.addEventListener('play', notifyListeners);
-  globalAudio.addEventListener('pause', notifyListeners);
-  globalAudio.addEventListener('ended', notifyListeners);
-  globalAudio.addEventListener('error', notifyListeners);
-  globalAudio.addEventListener('waiting', notifyListeners);
-  globalAudio.addEventListener('canplay', notifyListeners);
-  return globalAudio;
-}
-
-function subscribe(listener: () => void): () => void {
-  listeners.push(listener);
-  return () => {
-    listeners = listeners.filter(entry => entry !== listener);
-  };
-}
-
-function normalizeUrl(url: string): string {
-  try {
-    const parsed = new URL(url, window.location.origin);
-    return `${parsed.origin}${parsed.pathname}`;
-  } catch {
-    return url.trim();
-  }
-}
-
 /**
- * Build absolute URL for reliable loading (e.g. when app is behind proxy).
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
-function toAbsoluteUrl(audioUrl: string): string {
-  try {
-    if (audioUrl.startsWith('http://') || audioUrl.startsWith('https://')) {
-      return audioUrl;
-    }
-    return new URL(audioUrl, window.location.origin).href;
-  } catch {
-    return '';
-  }
-}
-
-function safePlay(audio: HTMLAudioElement) {
-  const playPromise = audio.play();
-  if (playPromise && typeof playPromise.catch === 'function') {
-    playPromise.catch(() => {
-      // no-op: absorb async playback errors (e.g. missing/unsupported source)
-      // so they do not surface as unhandled runtime errors.
-    });
-  }
-}
-
-/**
- * Play button backed by a shared HTMLAudioElement so only one row plays at a time.
- */
-export default function PlayButton({ audioUrl, title }: PlayButtonProps) {
-  const [, setVersion] = useState(0);
-
-  useEffect(
-    () =>
-      subscribe(() => {
-        setVersion(version => version + 1);
-      }),
-    [],
-  );
-
-
-  const absoluteUrl = useMemo(() => {
-    if (!audioUrl || typeof audioUrl !== 'string' || !audioUrl.trim()) {
-      return null;
-    }
-
-    const resolvedUrl = toAbsoluteUrl(audioUrl.trim());
-    return resolvedUrl || null;
-  }, [audioUrl]);
-
-  const audio = globalAudio;
-  const isCurrentSource =
-    absoluteUrl !== null &&
-    typeof globalAudioSrc === 'string' &&
-    normalizeUrl(globalAudioSrc) === normalizeUrl(absoluteUrl);
-  const isThisPlaying = isCurrentSource && !!audio && !audio.paused;
-  const isLoading =
-    isCurrentSource &&
-    !!audio &&
-    audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA;
-  const hasError = isCurrentSource && !!audio && audio.error != null;
-
-  const handleClick = useCallback(
-    (e?: React.MouseEvent | React.KeyboardEvent) => {
-      e?.stopPropagation();
-      e?.preventDefault();
-
-      if (!absoluteUrl) return;
-
-      try {
-        const nextAudio = ensureGlobalAudio();
-        if (isCurrentSource) {
-          if (nextAudio.paused) {
-            safePlay(nextAudio);
-          } else {
-            nextAudio.pause();
-          }
-        } else {
-          nextAudio.pause();
-          nextAudio.src = absoluteUrl;
-          globalAudioSrc = absoluteUrl;
-          safePlay(nextAudio);
-          notifyListeners();
-        }
-      } catch {
-        // no-op: avoid crashing chart render if media playback fails.
-      }
-    },
-    [absoluteUrl, isCurrentSource],
-  );
-
-  if (!absoluteUrl) {
-    return <span aria-hidden>-</span>;
-  }
-
-  const icon = isThisPlaying ? (
-    <PauseCircleOutlined aria-label={t('Pause')} />
-  ) : (
-    <PlayCircleOutlined aria-label={t('Play')} />
-  );
-
-  const tooltipText = title || (isThisPlaying ? t('Pause') : t('Play'));
-
-  return (
-    <span
-      role="button"
-      tabIndex={0}
-      style={playButtonStyle}
-      title={hasError ? undefined : tooltipText}
-      onClick={e => handleClick(e)}
-      onKeyDown={e => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          handleClick(e);
-        }
-      }}
-    >
-      {isLoading && isCurrentSource ? (
-        <span style={{ fontSize: 18 }} aria-label={t('Loading')}>
-          ...
-        </span>
-      ) : (
-        icon
-      )}
-    </span>
-  );
-}
-
-
-
-
-
-import { t } from '@superset-ui/core';
 import {
-  ControlPanelConfig,
-  getStandardizedControls,
-  sharedControls,
-} from '@superset-ui/chart-controls';
+  forwardRef,
+  ReactNode,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
+import {
+  css,
+  getExtensionsRegistry,
+  QueryData,
+  styled,
+  SupersetTheme,
+  t,
+  useTheme,
+} from '@superset-ui/core';
+import { useUiConfig } from 'src/components/UiConfigContext';
+import { isEmbedded } from 'src/dashboard/util/isEmbedded';
+import { Tooltip, EditableTitle, Icons } from '@superset-ui/core/components';
+import { useSelector } from 'react-redux';
+import SliceHeaderControls from 'src/dashboard/components/SliceHeaderControls';
+import { SliceHeaderControlsProps } from 'src/dashboard/components/SliceHeaderControls/types';
+import FiltersBadge from 'src/dashboard/components/FiltersBadge';
+import { RootState } from 'src/dashboard/types';
+import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
+import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
+import RowCountLabel from 'src/components/RowCountLabel';
+import { Link } from 'react-router-dom';
 
-export const controlPanel: ControlPanelConfig = {
-  controlPanelSections: [
-    {
-      label: t('Query'),
-      expanded: true,
-      controlSetRows: [
-        [
-          {
-            name: 'groupby',
-            config: {
-              ...sharedControls.groupby,
-              label: t('Columns'),
-              description: t('Columns to display in the table'),
-              default: [],
-            },
-          },
-        ],
-        ['adhoc_filters'],
-        ['row_limit'],
-        [
-          {
-            name: 'audio_column',
-            config: {
-              type: 'SelectControl',
-              label: t('Audio column'),
-              description: t(
-                'Column that contains the audio filename (e.g. welcome.mp3). ' +
-                  'Files are loaded from the common audio folder.',
-              ),
-              default: null,
-              mapStateToProps: ({ datasource }) => ({
-                choices: (datasource?.columns || []).map(
-                  (col: { column_name: string; verbose_name?: string }) =>
-                    [col.column_name, col.verbose_name || col.column_name],
-                ),
-              }),
-              freeForm: false,
-            },
-          },
-        ],
-        [
-          {
-            name: 'audio_base_path',
-            config: {
-              type: 'TextControl',
-              label: t('Audio base path'),
-              description: t(
-                'Base URL/path for audio files. Default: /static/assets/common-audio/',
-              ),
-              default: '/static/assets/common-audio/',
-            },
-          },
-        ],
-      ],
-    },
-  ],
-  formDataOverrides: formData => {
-    const selectedColumns = getStandardizedControls().popAllColumns();
-    const extractColumnName = (raw: unknown): string | null => {
-      if (typeof raw === 'string') return raw;
-      if (Array.isArray(raw) && raw.length > 0) return extractColumnName(raw[0]);
-      if (typeof raw === 'object' && raw !== null) {
-        const obj = raw as {
-          value?: unknown;
-          column_name?: unknown;
-          label?: unknown;
-        };
-        if (typeof obj.column_name === 'string') return obj.column_name;
-        if (typeof obj.value === 'string') return obj.value;
-        if (obj.value != null) return extractColumnName(obj.value);
-        if (typeof obj.label === 'string') return obj.label;
-      }
-      return null;
-    };
-    const audioColumn = extractColumnName(formData.audio_column);
-    const allColumns =
-      audioColumn && !selectedColumns.includes(audioColumn)
-        ? [...selectedColumns, audioColumn]
-        : selectedColumns;
+const extensionsRegistry = getExtensionsRegistry();
 
-    return {
-      ...formData,
-      // Always include configured Audio column in payload even if not shown as a display column.
-      query_mode: 'raw',
-      all_columns: allColumns,
-      // Compatibility fallback for query builders that ignore raw mode.
-      groupby: allColumns,
-      metrics: [],
-      metric: null,
-      percent_metrics: [],
-      granularity_sqla: null,
-      granularity: null,
-      time_grain_sqla: null,
-      timeseries_limit_metric: null,
-      order_desc: null,
-      orderby: null,
-    };
-  },
+type SliceHeaderProps = SliceHeaderControlsProps & {
+  updateSliceName?: (arg0: string) => void;
+  editMode?: boolean;
+  annotationQuery?: object;
+  annotationError?: object;
+  sliceName?: string;
+  filters: object;
+  handleToggleFullSize: () => void;
+  formData: object;
+  width: number;
+  height: number;
+  exportPivotExcel?: (arg0: string) => void;
 };
 
-
-export { controlPanel } from './controlPanel';
-export { transformProps } from './transformProps';
-
-
-import { DataRecord } from '@superset-ui/core';
-import type { AudioTableProps } from '../types';
-
-interface QueryData {
-  data?: DataRecord[] | { records?: DataRecord[]; columns?: string[] };
-  records?: DataRecord[];
-  colnames?: string[] | { column_name: string }[];
-  columns?: string[] | { column_name: string }[];
-  form_data?: FormData;
-}
-
-interface FormData {
-  audio_column?: unknown;
-  audio_base_path?: string;
-  groupby?: unknown;
-  all_columns?: unknown;
-  slice_id?: number;
-}
-
-export interface AudioTableChartProps {
-  height?: number;
-  width?: number;
-  formData?: FormData;
-  queriesData?: QueryData[];
-}
-
-const AUDIO_EXTENSIONS = /\.(mp3|wav|m4a|aac|ogg|flac|webm)(\?.*)?$/i;
-
-function isLikelyAudioValue(value: unknown): boolean {
-  if (value == null) return false;
-
-  const normalized = (() => {
-    if (typeof value === 'string' || typeof value === 'number') {
-      return String(value).trim();
-    }
-    if (typeof value === 'object' && value !== null && 'value' in value) {
-      const nested = (value as { value?: unknown }).value;
-      return nested == null ? '' : String(nested).trim();
-    }
-    return String(value).trim();
-  })();
-
-  if (!normalized) return false;
-  if (AUDIO_EXTENSIONS.test(normalized)) return true;
-  if (/^https?:\/\//i.test(normalized) && AUDIO_EXTENSIONS.test(normalized)) {
-    return true;
-  }
-
-  return false;
-}
-
-function inferAudioColumnFromData(
-  columnNames: string[],
-  records: DataRecord[],
-): string | null {
-  if (columnNames.length === 0 || records.length === 0) return null;
-
-  const sampleRows = records.slice(0, Math.min(records.length, 50));
-  let bestColumn: string | null = null;
-  let bestScore = 0;
-
-  columnNames.forEach(columnName => {
-    const score = sampleRows.reduce((count, row) => {
-      const value = row[columnName];
-      return count + (isLikelyAudioValue(value) ? 1 : 0);
-    }, 0);
-
-    if (score > bestScore) {
-      bestScore = score;
-      bestColumn = columnName;
-    }
-  });
-
-  return bestScore > 0 ? bestColumn : null;
-}
-
-function getRecordKeys(records: DataRecord[]): string[] {
-  if (records.length === 0) {
-    return [];
-  }
-  const keySet = new Set<string>();
-  records.slice(0, Math.min(records.length, 50)).forEach(row => {
-    Object.keys(row || {}).forEach(key => keySet.add(key));
-  });
-  return Array.from(keySet);
-}
-
-function resolveColumnKey(
-  requestedColumn: string | null,
-  columnNames: string[],
-  recordKeys: string[],
-): string | null {
-  if (!requestedColumn) {
-    return null;
-  }
-  if (columnNames.includes(requestedColumn)) {
-    return requestedColumn;
-  }
-  if (recordKeys.includes(requestedColumn)) {
-    return requestedColumn;
-  }
-
-  const requestedLower = requestedColumn.toLowerCase();
-  const caseInsensitiveMatch =
-    columnNames.find(col => col.toLowerCase() === requestedLower) ||
-    recordKeys.find(col => col.toLowerCase() === requestedLower);
-
-  return caseInsensitiveMatch || null;
-}
-
-function extractGroupbyColumns(rawGroupby: unknown): string[] {
-  if (!Array.isArray(rawGroupby)) {
-    return [];
-  }
-  return rawGroupby
-    .map(item => {
-      if (typeof item === 'string') return item;
-      if (typeof item === 'object' && item !== null) {
-        const value = (item as { column_name?: unknown; value?: unknown })
-          .column_name;
-        if (typeof value === 'string') return value;
-        const altValue = (item as { value?: unknown }).value;
-        if (typeof altValue === 'string') return altValue;
-      }
-      return null;
-    })
-    .filter((item): item is string => typeof item === 'string');
-}
-
-function extractAllColumns(rawColumns: unknown): string[] {
-  if (!Array.isArray(rawColumns)) {
-    return [];
-  }
-  return rawColumns
-    .map(item => {
-      if (typeof item === 'string') return item;
-      if (typeof item === 'object' && item !== null) {
-        const obj = item as {
-          column_name?: unknown;
-          value?: unknown;
-          label?: unknown;
-        };
-        if (typeof obj.column_name === 'string') return obj.column_name;
-        if (typeof obj.value === 'string') return obj.value;
-        if (typeof obj.label === 'string') return obj.label;
-      }
-      return null;
-    })
-    .filter((item): item is string => typeof item === 'string');
-}
-
-function extractColumnName(raw: unknown): string | null {
-  if (raw == null || raw === '') return null;
-  if (typeof raw === 'string') return raw;
-  if (Array.isArray(raw) && raw.length > 0) {
-    return extractColumnName(raw[0]);
-  }
-  if (typeof raw === 'object' && raw !== null) {
-    const obj = raw as {
-      value?: unknown;
-      column_name?: unknown;
-      label?: unknown;
-    };
-    if (typeof obj.column_name === 'string') return obj.column_name;
-    if (typeof obj.value === 'string') return obj.value;
-    if (obj.value != null) return extractColumnName(obj.value);
-    if (typeof obj.label === 'string') return obj.label;
-  }
-  return null;
-}
-
-export function transformProps(chartProps: AudioTableChartProps): AudioTableProps {
-  const { height = 400, width, formData: formDataProp, queriesData } = chartProps;
-  // Legacy API returns full payload as first item: { data, colnames, form_data, ... }
-  const payload = queriesData[0] ?? {};
-  const rawRecords = payload?.data ?? payload?.records ?? [];
-  const records =
-    Array.isArray(rawRecords)
-      ? rawRecords
-      : Array.isArray((rawRecords as { records?: DataRecord[] })?.records)
-        ? (rawRecords as { records: DataRecord[] }).records
-        : [];
-  const columns = payload?.colnames ?? payload?.columns ?? [];
-  // payload.form_data is tied to the executed query and is often the latest.
-  // Merge with chartProps.formData to avoid dropping values in either source.
-  const payloadFormData = (
-    payload as { form_data?: { audio_column?: unknown; audio_base_path?: string } }
-  ).form_data ?? {};
-  const formData = {
-    ...payloadFormData,
-    ...(formDataProp ?? {}),
-  };
-  const selectedColumns = (() => {
-    const fromGroupby = extractGroupbyColumns(formData.groupby);
-    if (fromGroupby.length > 0) {
-      return fromGroupby;
-    }
-    return extractAllColumns(formData.all_columns);
-  })();
-
-  // Ensure columns is string[] (backend may return { column_name, id }[])
-  const columnNames = columns.map((c: string | { column_name: string }) =>
-    typeof c === 'string' ? c : (c as { column_name: string }).column_name,
-  );
-  const recordKeys = getRecordKeys(records);
-
-  // Extract column name: SelectControl may store {value, label} object
-  const audioColName = extractColumnName(formData.audio_column);
-
-  let audioColumnKey = resolveColumnKey(audioColName, columnNames, recordKeys);
-
-  // Fallback: if no audio column configured (e.g. chart saved before setting),
-  // auto-detect common audio column names
-  if (!audioColumnKey && columnNames.length > 0) {
-    const audioLikeColumns = [
-      'audio_url',
-      'audio_uri',
-      'audio_file',
-      'audiofile',
-      'audio',
-      'sound_file',
-      'file',
-    ];
-    const availableColumns = Array.from(new Set([...columnNames, ...recordKeys]));
-    const lowerToOriginal = new Map(
-      availableColumns.map(col => [col.toLowerCase(), col] as const),
-    );
-    const matched = audioLikeColumns.find(col =>
-      lowerToOriginal.has(col.toLowerCase()),
-    );
-    audioColumnKey = matched ? lowerToOriginal.get(matched.toLowerCase()) ?? null : null;
-  }
-
-  // Last fallback: infer the most likely audio column by inspecting sample row values.
-  if (!audioColumnKey) {
-    const availableColumns = Array.from(new Set([...columnNames, ...recordKeys]));
-    audioColumnKey = inferAudioColumnFromData(availableColumns, records);
-  }
-
-  const audioBasePath =
-    formData.audio_base_path?.trim() || '/static/assets/common-audio/';
-  const displayColumns =
-    selectedColumns.length > 0
-      ? selectedColumns.filter(column =>
-          Array.from(new Set([...columnNames, ...recordKeys])).includes(column),
-        )
-      : columnNames.filter(column => column !== audioColumnKey);
-  const visibleColumns =
-    audioColumnKey == null
-      ? displayColumns
-      : displayColumns.filter(column => column !== audioColumnKey);
-
-  return {
-    height,
-    width,
-    data: records,
-    columns: visibleColumns,
-    audioColumnKey,
-    audioBasePath,
-    sliceId:
-      typeof formData.slice_id === 'number' ? formData.slice_id : null,
-  };
-}
-
-
-
-
-
-import { useMemo, useState } from 'react';
-import { TableView } from '@superset-ui/core/components';
-import { styled, t } from '@superset-ui/core';
-import type { AudioTableProps } from './types';
-import PlayButton from './components/PlayButton';
-import HeaderSearchPortal from '../components/HeaderSearchPortal';
-
-const AUDIO_PLAY_COLUMN_ID = '__audio_play__';
-const DEFAULT_AUDIO_BASE_PATH = '/static/assets/common-audio/';
-
-const AudioTableStyles = styled.div<{ height?: number }>`
-  height: ${props => props.height}px;
-  overflow: auto;
-
-  .table-no-hover {
-    width: 100%;
-  }
+const annotationsLoading = t('Annotation layers are still loading.');
+const annotationsError = t('One or more annotation layers failed loading.');
+const CrossFilterIcon = styled(Icons.ApartmentOutlined)`
+  ${({ theme }) => `
+    cursor: default;
+    color: ${theme.colorPrimary};
+    line-height: 1.8;
+  `}
 `;
 
-/**
- * Extract primitive value from cell data. Backend may return {value, label} objects
- * for select/enum columns; React cannot render objects as children.
- */
-function toPrimitive(value: unknown): string | number | null {
-  if (value == null || value === '') {
-    return null;
-  }
-  if (typeof value === 'object' && value !== null && 'value' in value) {
-    const obj = value as { value?: unknown };
-    return obj.value != null ? toPrimitive(obj.value) : null;
-  }
-  if (typeof value === 'object' && value !== null && 'label' in value) {
-    const obj = value as { label?: unknown };
-    return obj.label != null ? toPrimitive(obj.label) : null;
-  }
-  if (typeof value === 'string' || typeof value === 'number') {
-    return value;
-  }
-  return String(value);
-}
+const ChartHeaderStyles = styled.div`
+  ${({ theme }) => css`
+    position: relative;
+    font-size: ${theme.fontSizeLG}px;
+    font-weight: ${theme.fontWeightStrong};
+    margin-bottom: ${theme.sizeUnit}px;
+    display: flex;
+    max-width: 100%;
+    align-items: flex-start;
+    min-height: 0;
 
-/**
- * Build audio URL from base path and filename.
- * Supports: filename only (e.g. "welcome.mp3"), relative path, or full URL.
- */
-function getAudioUrl(value: unknown, basePath: string): string | null {
-  const prim = toPrimitive(value);
-  if (prim == null || prim === '') return null;
-  const str = String(prim).trim();
-  if (!str) return null;
+    & > .header-title {
+      flex: 1 1 auto;
+      min-width: 0;
+      max-width: none;
+      width: 100%;
+      box-sizing: border-box;
+      overflow: visible;
+      text-overflow: clip;
+      white-space: normal;
+      overflow-wrap: anywhere;
 
-  // Full URL - use as-is
-  if (str.startsWith('http://') || str.startsWith('https://')) {
-    return str;
-  }
+      & > span.ant-tooltip-open {
+        display: inline;
+      }
 
-  // Absolute path - prepend window origin if needed
-  if (str.startsWith('/')) {
-    return str;
-  }
+      .title-with-filter-count {
+        display: inline-flex;
+        align-items: center;
+        gap: ${theme.sizeUnit}px;
+        white-space: nowrap;
+        min-width: 0;
+        max-width: 100%;
+      }
 
-  // Filename or relative path - prepend base path
-  const base = basePath.endsWith('/') ? basePath : `${basePath}/`;
-  return base + str;
-}
+      .title-with-filter-count .editable-title,
+      .title-with-filter-count a {
+        display: inline;
+        white-space: inherit;
+      }
 
-function AudioTableContent({
-  className = '',
-  height = 400,
-  data,
-  columns,
-  audioColumnKey,
-  audioBasePath = DEFAULT_AUDIO_BASE_PATH,
-  sliceId,
-}: AudioTableProps) {
-  const [searchText, setSearchText] = useState('');
+      .title-with-filter-count .filter-counts {
+        display: inline-flex;
+        align-items: center;
+        vertical-align: middle;
+        margin-left: 0;
+        margin-right: 0;
+        padding-left: 0;
+        padding-right: 0;
+        background: transparent;
+        border-radius: 0;
+        flex: 0 0 auto;
+      }
 
-  const normalizedSearch = searchText.trim().toLowerCase();
+      .title-with-filter-count .filter-counts .anticon {
+        display: none;
+      }
 
-  const filteredData = useMemo(() => {
-    if (!normalizedSearch) {
-      return data;
+      .title-with-filter-count .filter-counts .ant-badge-count {
+        margin: 0;
+        padding: 0;
+        min-width: auto;
+        height: auto;
+        line-height: inherit;
+        font-size: ${Math.max(theme.fontSizeSM - 1, 10)}px;
+        font-weight: ${theme.fontWeightStrong};
+        color: ${theme.colorPrimary};
+        background: transparent;
+        box-shadow: none;
+        border: 0;
+      }
+
+      .title-inline-warning {
+        display: inline-flex;
+        vertical-align: middle;
+        margin-left: ${theme.sizeUnit}px;
+      }
     }
-    return data.filter(row =>
-      columns.some(col => {
-        const value = toPrimitive(row[col]);
-        if (value == null) return false;
-        return String(value).toLowerCase().includes(normalizedSearch);
-      }),
+
+    &[data-table-viz='true'] > .header-title {
+      overflow-wrap: normal;
+      word-break: normal;
+      white-space: nowrap;
+      padding-right: clamp(110px, 28vw, 220px);
+    }
+
+    &[data-table-viz='true'][data-table-small='true'] > .header-title {
+      padding-right: clamp(52px, 16vw, 90px);
+    }
+
+    &[data-kpi-viz='true'] > .header-title .editable-title,
+    &[data-kpi-viz='true'] > .header-title a {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      padding-left: 0;
+      margin-left: 0;
+      text-indent: 0;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+
+    &[data-table-viz='true'] > .header-title .editable-title,
+    &[data-table-viz='true'] > .header-title a {
+      display: inline;
+      max-width: none;
+      overflow: visible;
+      text-overflow: clip;
+      white-space: nowrap;
+      overflow-wrap: normal;
+      word-break: normal;
+      hyphens: none;
+    }
+
+    & > .header-controls {
+      display: flex;
+      align-items: center;
+      height: 24px;
+      flex: 0 0 auto;
+      min-width: max-content;
+      white-space: nowrap;
+      margin-left: ${theme.sizeUnit}px;
+    }
+
+    &[data-table-viz='true'] > .header-controls {
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 1;
+    }
+
+    .dropdown.btn-group {
+      pointer-events: none;
+      vertical-align: top;
+      & > * {
+        pointer-events: auto;
+      }
+    }
+
+    .dropdown-toggle.btn.btn-default {
+      background: none;
+      border: none;
+      box-shadow: none;
+    }
+
+    .dropdown-menu.dropdown-menu-right {
+      top: ${theme.sizeUnit * 5}px;
+    }
+
+    .divider {
+      margin: ${theme.sizeUnit}px 0;
+    }
+
+    .refresh-tooltip {
+      display: block;
+      height: ${theme.sizeUnit * 4}px;
+      margin: ${theme.sizeUnit}px 0;
+      color: ${theme.colorTextLabel};
+    }
+  `}
+`;
+
+const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
+  (
+    {
+      forceRefresh = () => ({}),
+      updateSliceName = () => ({}),
+      toggleExpandSlice = () => ({}),
+      logExploreChart = () => ({}),
+      logEvent,
+      exportCSV = () => ({}),
+      exportXLSX = () => ({}),
+      editMode = false,
+      annotationQuery = {},
+      annotationError = {},
+      cachedDttm = null,
+      updatedDttm = null,
+      isCached = [],
+      isExpanded = false,
+      sliceName = '',
+      supersetCanExplore = false,
+      supersetCanShare = false,
+      supersetCanCSV = false,
+      exportPivotCSV,
+      exportFullCSV,
+      exportFullXLSX,
+      slice,
+      componentId,
+      dashboardId,
+      addSuccessToast,
+      addDangerToast,
+      handleToggleFullSize,
+      isFullSize,
+      chartStatus,
+      formData,
+      width,
+      height,
+      exportPivotExcel = () => ({}),
+    },
+    ref,
+  ) => {
+    const SliceHeaderExtension = extensionsRegistry.get(
+      'dashboard.slice.header',
     );
-  }, [columns, data, normalizedSearch]);
+    const uiConfig = useUiConfig();
+    const shouldShowRowLimitWarning =
+      !isEmbedded() || uiConfig.showRowLimitWarning;
+    const dashboardPageId = useContext(DashboardPageIdContext);
+    const [headerTooltip, setHeaderTooltip] = useState<ReactNode | null>(null);
+    const headerRef = useRef<HTMLDivElement>(null);
+    const titleContentRef = useRef<HTMLDivElement>(null);
+    const [isTitleWrapped, setIsTitleWrapped] = useState(false);
+    // TODO: change to indicator field after it will be implemented
+    const crossFilterValue = useSelector<RootState, any>(
+      state => state.dataMask[slice?.slice_id]?.filterState?.value,
+    );
+    const isCrossFiltersEnabled = useSelector<RootState, boolean>(
+      ({ dashboardInfo }) => dashboardInfo.crossFiltersEnabled,
+    );
 
-  const tableColumns = useMemo(() => {
-    const dataColumns = columns.map(col => ({
-      accessor: col,
-      Header: col,
-      id: col,
-    }));
+    const firstQueryResponse = useSelector<RootState, QueryData | undefined>(
+      state => state.charts[slice.slice_id].queriesResponse?.[0],
+    );
 
-    const playColumn = {
-      accessor: AUDIO_PLAY_COLUMN_ID,
-      Header: t('Play'),
-      id: AUDIO_PLAY_COLUMN_ID,
-      disableSortBy: true,
-      width: 60,
-    };
+    const theme = useTheme();
 
-    return [...dataColumns, playColumn];
-  }, [columns]);
+    const rowLimit = Number(formData.row_limit || -1);
+    const sqlRowCount = Number(firstQueryResponse?.sql_rowcount || 0);
+    const hasRowLimitWarning =
+      shouldShowRowLimitWarning && sqlRowCount === rowLimit;
 
-  const tableData = useMemo(() => {
-    return filteredData.map(row => {
-      const cells: Record<string, unknown> = {};
-      columns.forEach(col => {
-        const val = row[col];
-        cells[col] = toPrimitive(val) ?? '';
-      });
-      const audioValue = audioColumnKey ? row[audioColumnKey] : null;
-      const audioUrl = getAudioUrl(audioValue, audioBasePath);
-      cells[AUDIO_PLAY_COLUMN_ID] = (
-        <PlayButton audioUrl={audioUrl} title={t('Play audio')} />
-      );
-      return cells;
-    });
-  }, [filteredData, columns, audioColumnKey, audioBasePath]);
+    const canExplore = !editMode && supersetCanExplore;
+    const showFilterCountInTitle = !uiConfig.hideChartControls;
+    const vizType = (slice.viz_type || '').toLowerCase();
+    const isTableViz = vizType.includes('table');
+    const isKpiViz = vizType.includes('big_number');
+    const isSmallTableCard = isTableViz && width <= 320;
+    const displaySliceName =
+      typeof sliceName === 'string' ? sliceName.trim() : sliceName;
 
-  return (
-    <AudioTableStyles
-      data-test="audio-table"
-      className={className}
-      height={height}
-    >
-      <HeaderSearchPortal
-        sliceId={sliceId}
-        count={data.length}
-        value={searchText}
-        onChange={setSearchText}
-      />
-      <TableView
-        className="table-no-hover"
-        columns={tableColumns}
-        data={tableData}
-        withPagination={filteredData.length > 10}
-        pageSize={10}
-      />
-    </AudioTableStyles>
-  );
-}
+    useEffect(() => {
+      const headerElement = headerRef.current;
+      if (canExplore) {
+        setHeaderTooltip(getSliceHeaderTooltip(displaySliceName));
+      } else if (
+        headerElement &&
+        (headerElement.scrollWidth > headerElement.offsetWidth ||
+          headerElement.scrollHeight > headerElement.offsetHeight)
+      ) {
+        setHeaderTooltip(displaySliceName ?? null);
+      } else {
+        setHeaderTooltip(null);
+      }
+    }, [displaySliceName, width, height, canExplore]);
 
-export default function AudioTable(props: AudioTableProps) {
-  return <AudioTableContent {...props} />;
-}
+    useLayoutEffect(() => {
+      const titleElement = titleContentRef.current;
+      if (!titleElement) {
+        setIsTitleWrapped(false);
+        return;
+      }
+      // Detect title wrap/overflow so warning icon can be moved out of text flow.
+      const wrapped =
+        titleElement.scrollWidth > titleElement.clientWidth ||
+        titleElement.scrollHeight > titleElement.clientHeight + 1;
+      setIsTitleWrapped(wrapped);
+    }, [displaySliceName, width, height, showFilterCountInTitle]);
 
+    const exploreUrl = `/explore/?dashboard_page_id=${dashboardPageId}&slice_id=${slice.slice_id}`;
 
+    const renderExploreLink = (title: string) => (
+      <Link
+        to={exploreUrl}
+        css={(theme: SupersetTheme) => css`
+          color: ${theme.colorText};
+          text-decoration: none;
+          :hover {
+            text-decoration: underline;
+          }
+          display: inline;
+          white-space: normal;
+          overflow-wrap: anywhere;
+        `}
+      >
+        {title}
+      </Link>
+    );
 
+    return (
+      <ChartHeaderStyles
+        data-test="slice-header"
+        data-view-mode={!editMode ? 'true' : undefined}
+        data-table-viz={
+          !editMode && isTableViz ? 'true' : undefined
+        }
+        data-table-small={
+          !editMode && isSmallTableCard ? 'true' : undefined
+        }
+        data-kpi-viz={!editMode && isKpiViz ? 'true' : undefined}
+        ref={ref}
+      >
+        <div className="header-title" ref={headerRef}>
+          <Tooltip title={headerTooltip}>
+            {/* this div ensures the hover event triggers correctly and prevents flickering */}
+            <div
+              className={showFilterCountInTitle ? 'title-with-filter-count' : ''}
+              ref={titleContentRef}
+            >
+              <EditableTitle
+                title={
+                  displaySliceName ||
+                  (editMode
+                    ? '---' // this makes an empty title clickable
+                    : '')
+                }
+                canEdit={editMode}
+                onSaveTitle={updateSliceName}
+                showTooltip={false}
+                renderLink={
+                  canExplore && exploreUrl ? renderExploreLink : undefined
+                }
+              />
+              {showFilterCountInTitle && (
+                <FiltersBadge chartId={slice.slice_id} />
+              )}
+              {isSmallTableCard && hasRowLimitWarning && !isTitleWrapped && (
+                <span className="title-inline-warning">
+                  <RowCountLabel
+                    rowcount={sqlRowCount}
+                    limit={rowLimit}
+                    label={
+                      <Icons.WarningOutlined
+                        iconSize="m"
+                        iconColor={theme.colorWarning}
+                      />
+                    }
+                  />
+                </span>
+              )}
+            </div>
+          </Tooltip>
+          {!isTableViz && !!Object.values(annotationQuery).length && (
+            <Tooltip
+              id="annotations-loading-tooltip"
+              placement="top"
+              title={annotationsLoading}
+            >
+              <Icons.ReloadOutlined
+                className="warning"
+                aria-label={annotationsLoading}
+              />
+            </Tooltip>
+          )}
+          {!isTableViz && !!Object.values(annotationError).length && (
+            <Tooltip
+              id="annotation-errors-tooltip"
+              placement="top"
+              title={annotationsError}
+            >
+              <Icons.ExclamationCircleOutlined
+                className="danger"
+                aria-label={annotationsError}
+              />
+            </Tooltip>
+          )}
+        </div>
+        <div className="header-controls">
+          {!editMode && (
+            <>
+              {SliceHeaderExtension && (
+                <SliceHeaderExtension
+                  sliceId={slice.slice_id}
+                  dashboardId={dashboardId}
+                />
+              )}
+              {crossFilterValue && (
+                <Tooltip
+                  placement="top"
+                  title={t(
+                    'This chart applies cross-filters to charts whose datasets contain columns with the same name.',
+                  )}
+                >
+                  <CrossFilterIcon iconSize="m" />
+                </Tooltip>
+              )}
 
+              {hasRowLimitWarning && (!isSmallTableCard || isTitleWrapped) && (
+                <RowCountLabel
+                  rowcount={sqlRowCount}
+                  limit={rowLimit}
+                  label={
+                    <Icons.WarningOutlined
+                      iconSize={isSmallTableCard ? 'm' : 'l'}
+                      iconColor={theme.colorWarning}
+                      css={theme => css`
+                        padding: ${isSmallTableCard ? 0 : theme.sizeUnit}px;
+                      `}
+                    />
+                  }
+                />
+              )}
+              {isTableViz && !!Object.values(annotationQuery).length && (
+                <Tooltip
+                  id="annotations-loading-tooltip-controls"
+                  placement="top"
+                  title={annotationsLoading}
+                >
+                  <Icons.ReloadOutlined
+                    className="warning"
+                    aria-label={annotationsLoading}
+                  />
+                </Tooltip>
+              )}
+              {isTableViz && !!Object.values(annotationError).length && (
+                <Tooltip
+                  id="annotation-errors-tooltip-controls"
+                  placement="top"
+                  title={annotationsError}
+                >
+                  <Icons.ExclamationCircleOutlined
+                    className="danger"
+                    aria-label={annotationsError}
+                  />
+                </Tooltip>
+              )}
+              {!uiConfig.hideChartControls && (
+                <SliceHeaderControls
+                  slice={slice}
+                  isCached={isCached}
+                  isExpanded={isExpanded}
+                  cachedDttm={cachedDttm}
+                  updatedDttm={updatedDttm}
+                  toggleExpandSlice={toggleExpandSlice}
+                  forceRefresh={forceRefresh}
+                  logExploreChart={logExploreChart}
+                  logEvent={logEvent}
+                  exportCSV={exportCSV}
+                  exportPivotCSV={exportPivotCSV}
+                  exportFullCSV={exportFullCSV}
+                  exportXLSX={exportXLSX}
+                  exportFullXLSX={exportFullXLSX}
+                  supersetCanExplore={supersetCanExplore}
+                  supersetCanShare={supersetCanShare}
+                  supersetCanCSV={supersetCanCSV}
+                  componentId={componentId}
+                  dashboardId={dashboardId}
+                  addSuccessToast={addSuccessToast}
+                  addDangerToast={addDangerToast}
+                  handleToggleFullSize={handleToggleFullSize}
+                  isFullSize={isFullSize}
+                  isDescriptionExpanded={isExpanded}
+                  chartStatus={chartStatus}
+                  formData={formData}
+                  exploreUrl={exploreUrl}
+                  crossFiltersEnabled={isCrossFiltersEnabled}
+                  exportPivotExcel={exportPivotExcel}
+                />
+              )}
+            </>
+          )}
+        </div>
+      </ChartHeaderStyles>
+    );
+  },
+);
 
-import { t, ChartMetadata, ChartPlugin } from '@superset-ui/core';
-import { transformProps, controlPanel } from './config';
-// Reuse Table chart thumbnail (audio table is table-like)
-import thumbnail from '../../../plugins/plugin-chart-table/src/images/thumbnail.png';
-import thumbnailDark from '../../../plugins/plugin-chart-table/src/images/thumbnail-dark.png';
-
-const metadata = new ChartMetadata({
-  category: t('Table'),
-  name: t('Audio Table'),
-  description: t(
-    'Table with an audio Play column. Add a column containing audio filenames (e.g. welcome.mp3) ' +
-      'and select it as the audio column. Files load from the common audio folder.',
-  ),
-  tags: [
-    t('Tabular'),
-    t('Audio'),
-  ],
-  thumbnail,
-  thumbnailDark,
-  useLegacyApi: true,
-});
-
-export default class AudioTableChartPlugin extends ChartPlugin {
-  constructor() {
-    super({
-      metadata,
-      transformProps,
-      loadChart: () => import('./AudioTable'),
-      controlPanel,
-    });
-  }
-}
-
-
-
-
-import { DataRecord } from '@superset-ui/core';
-
-export interface AudioTableProps {
-  className?: string;
-  height?: number;
-  width?: number;
-  data: DataRecord[];
-  columns: string[];
-  audioColumnKey: string | null;
-  audioBasePath?: string;
-  sliceId?: number | null;
-}
+export default SliceHeader;
