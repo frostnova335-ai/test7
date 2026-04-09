@@ -1,3 +1,236 @@
+import { useMemo, useState, useEffect, useRef } from 'react';
+import { TableView } from '@superset-ui/core/components';
+import { styled, t } from '@superset-ui/core';
+import type { AudioTableProps } from './types';
+import PlayButton from './components/PlayButton';
+import HeaderSearchPortal from '../components/HeaderSearchPortal';
+import WaveSurfer from 'wavesurfer.js';
+ 
+const AUDIO_PLAY_COLUMN_ID = '__audio_play__';
+const DEFAULT_AUDIO_BASE_PATH = '/static/assets/common-audio/';
+ 
+const AudioTableStyles = styled.div<{ height?: number }>`
+  height: ${props => props.height}px;
+  overflow: auto;
+ 
+  .table-no-hover {
+    width: 100%;
+  }
+`;
+ 
+function toPrimitive(value: unknown): string | number | null {
+  if (value == null || value === '') return null;
+ 
+  if (typeof value === 'object' && value !== null && 'value' in value) {
+    const obj = value as { value?: unknown };
+    return obj.value != null ? toPrimitive(obj.value) : null;
+  }
+ 
+  if (typeof value === 'object' && value !== null && 'label' in value) {
+    const obj = value as { label?: unknown };
+    return obj.label != null ? toPrimitive(obj.label) : null;
+  }
+ 
+  if (typeof value === 'string' || typeof value === 'number') return value;
+ 
+  return String(value);
+}
+ 
+function getAudioUrl(value: unknown, basePath: string): string | null {
+  const prim = toPrimitive(value);
+  if (prim == null || prim === '') return null;
+ 
+  const str = String(prim).trim();
+  if (!str) return null;
+ 
+  if (str.startsWith('http://') || str.startsWith('https://')) return str;
+ 
+  if (str.startsWith('/')) return str;
+ 
+  const base = basePath.endsWith('/') ? basePath : `${basePath}/`;
+  return base + str;
+}
+ 
+function AudioTableContent({
+  className = '',
+  height = 400,
+  data,
+  columns,
+  audioColumnKey,
+  audioBasePath = DEFAULT_AUDIO_BASE_PATH,
+  sliceId,
+}: AudioTableProps) {
+  const [searchText, setSearchText] = useState('');
+ 
+  const waveformRef = useRef<HTMLDivElement | null>(null);
+  const waveRef = useRef<any>(null);
+ 
+  const normalizedSearch = searchText.trim().toLowerCase();
+ 
+  useEffect(() => {
+    if (!waveformRef.current) return;
+ 
+    waveRef.current = WaveSurfer.create({
+      container: waveformRef.current,
+      waveColor: '#3b82f6',
+      progressColor: '#38bdf8',
+      height: 50,
+      barWidth: 2,
+      barGap: 2,
+      backend: 'MediaElement',
+    });
+ 
+    return () => waveRef.current?.destroy();
+  }, []);
+ 
+  useEffect(() => {
+    const handler = (e: any) => {
+      const url = e.detail;
+ 
+      if (!waveRef.current || !url) return;
+ 
+      const ws = waveRef.current;
+ 
+      ws.load(url);
+ 
+      ws.once('ready', () => {
+        ws.play();
+      });
+    };
+ 
+    window.addEventListener('GLOBAL_AUDIO_PLAY', handler);
+ 
+    return () => {
+      window.removeEventListener('GLOBAL_AUDIO_PLAY', handler);
+    };
+  }, []);
+ 
+  const filteredData = useMemo(() => {
+    if (!normalizedSearch) return data;
+ 
+    return data.filter(row =>
+      columns.some(col => {
+        const value = toPrimitive(row[col]);
+        if (value == null) return false;
+        return String(value).toLowerCase().includes(normalizedSearch);
+      }),
+    );
+  }, [columns, data, normalizedSearch]);
+ 
+  const tableColumns = useMemo(() => {
+    const dataColumns = columns.map(col => ({
+      accessor: col,
+      Header: col,
+      id: col,
+    }));
+ 
+    const playColumn = {
+      accessor: AUDIO_PLAY_COLUMN_ID,
+      Header: t('Play'),
+      id: AUDIO_PLAY_COLUMN_ID,
+      disableSortBy: true,
+      width: 60,
+    };
+ 
+    return [...dataColumns, playColumn];
+  }, [columns]);
+ 
+  const tableData = useMemo(() => {
+    return filteredData.map(row => {
+      const cells: Record<string, unknown> = {};
+ 
+      columns.forEach(col => {
+        const val = row[col];
+        cells[col] = toPrimitive(val) ?? '';
+      });
+ 
+      const audioValue = audioColumnKey ? row[audioColumnKey] : null;
+      const audioUrl = getAudioUrl(audioValue, audioBasePath);
+ 
+      cells[AUDIO_PLAY_COLUMN_ID] = (
+        <PlayButton audioUrl={audioUrl} title={t('Play audio')} />
+      );
+ 
+      return cells;
+    });
+  }, [filteredData, columns, audioColumnKey, audioBasePath]);
+ 
+  return (
+    <AudioTableStyles
+      data-test="audio-table"
+      className={className}
+      height={height}
+    >
+      <div
+        style={{
+          background: '#0f172a',
+          padding: 12,
+          borderRadius: 10,
+          marginBottom: 10,
+        }}
+      >
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            onClick={() => waveRef.current?.playPause()}
+            style={{
+              background: '#38bdf8',
+              border: 'none',
+              borderRadius: '50%',
+              width: 36,
+              height: 36,
+              cursor: 'pointer',
+            }}
+          >
+            ▶
+          </button>
+ 
+          <div style={{ flex: 1 }}>
+            <div ref={waveformRef} />
+          </div>
+ 
+          <button
+            onClick={() =>
+              waveRef.current?.setPlaybackRate(
+                waveRef.current.getPlaybackRate() === 1 ? 1.5 : 1,
+              )
+            }
+            style={{
+              background: '#1e293b',
+              color: '#fff',
+              border: 'none',
+              padding: '6px 10px',
+              borderRadius: 6,
+              cursor: 'pointer',
+            }}
+          >
+            1x / 1.5x
+          </button>
+        </div>
+      </div>
+ 
+      <HeaderSearchPortal
+        sliceId={sliceId}
+        count={data.length}
+        value={searchText}
+        onChange={setSearchText}
+      />
+ 
+      <TableView
+        className="table-no-hover"
+        columns={tableColumns}
+        data={tableData}
+        withPagination={filteredData.length > 10}
+        pageSize={10}
+      />
+    </AudioTableStyles>
+  );
+}
+ 
+export default function AudioTable(props: AudioTableProps) {
+  return <AudioTableContent {...props} />;
+}
+
+
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
@@ -16,529 +249,188 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import {
-  forwardRef,
-  ReactNode,
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
-import {
-  css,
-  getExtensionsRegistry,
-  QueryData,
-  styled,
-  SupersetTheme,
-  t,
-  useTheme,
-} from '@superset-ui/core';
-import { useUiConfig } from 'src/components/UiConfigContext';
-import { isEmbedded } from 'src/dashboard/util/isEmbedded';
-import { Tooltip, EditableTitle, Icons } from '@superset-ui/core/components';
-import { useSelector } from 'react-redux';
-import SliceHeaderControls from 'src/dashboard/components/SliceHeaderControls';
-import { SliceHeaderControlsProps } from 'src/dashboard/components/SliceHeaderControls/types';
-import FiltersBadge from 'src/dashboard/components/FiltersBadge';
-import { RootState } from 'src/dashboard/types';
-import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
-import { DashboardPageIdContext } from 'src/dashboard/containers/DashboardPage';
-import RowCountLabel from 'src/components/RowCountLabel';
-import { Link } from 'react-router-dom';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { PlayCircleOutlined, PauseCircleOutlined } from '@ant-design/icons';
+import { t } from '@superset-ui/core';
 
-const extensionsRegistry = getExtensionsRegistry();
-
-type SliceHeaderProps = SliceHeaderControlsProps & {
-  updateSliceName?: (arg0: string) => void;
-  editMode?: boolean;
-  annotationQuery?: object;
-  annotationError?: object;
-  sliceName?: string;
-  filters: object;
-  handleToggleFullSize: () => void;
-  formData: object;
-  width: number;
-  height: number;
-  exportPivotExcel?: (arg0: string) => void;
+const playButtonStyle: React.CSSProperties = {
+  cursor: 'pointer',
+  display: 'inline-flex',
+  alignItems: 'center',
+  color: '#2893B3',
+  fontSize: 20,
 };
 
-const annotationsLoading = t('Annotation layers are still loading.');
-const annotationsError = t('One or more annotation layers failed loading.');
-const CrossFilterIcon = styled(Icons.ApartmentOutlined)`
-  ${({ theme }) => `
-    cursor: default;
-    color: ${theme.colorPrimary};
-    line-height: 1.8;
-  `}
-`;
+interface PlayButtonProps {
+  audioUrl: string | null;
+  title?: string;
+}
 
-const ChartHeaderStyles = styled.div`
-  ${({ theme }) => css`
-    position: relative;
-    font-size: ${theme.fontSizeLG}px;
-    font-weight: ${theme.fontWeightStrong};
-    margin-bottom: ${theme.sizeUnit}px;
-    display: flex;
-    max-width: 100%;
-    align-items: flex-start;
-    min-height: 0;
+let globalAudio: HTMLAudioElement | null = null;
+let globalAudioSrc: string | null = null;
+let listeners: Array<() => void> = [];
 
-    & > .header-title {
-      flex: 1 1 auto;
-      min-width: 0;
-      max-width: none;
-      width: 100%;
-      box-sizing: border-box;
-      overflow: visible;
-      text-overflow: clip;
-      white-space: normal;
-      overflow-wrap: anywhere;
+function notifyListeners() {
+  listeners.forEach(listener => listener());
+}
 
-      & > span.ant-tooltip-open {
-        display: inline;
-      }
+function ensureGlobalAudio(): HTMLAudioElement {
+  if (globalAudio) {
+    return globalAudio;
+  }
+  globalAudio = new Audio();
+  globalAudio.preload = 'none';
+  globalAudio.addEventListener('play', notifyListeners);
+  globalAudio.addEventListener('pause', notifyListeners);
+  globalAudio.addEventListener('ended', notifyListeners);
+  globalAudio.addEventListener('error', notifyListeners);
+  globalAudio.addEventListener('waiting', notifyListeners);
+  globalAudio.addEventListener('canplay', notifyListeners);
+  return globalAudio;
+}
 
-      .title-with-filter-count {
-        display: inline-flex;
-        align-items: center;
-        gap: ${theme.sizeUnit}px;
-        white-space: nowrap;
-        min-width: 0;
-        max-width: 100%;
-      }
+function subscribe(listener: () => void): () => void {
+  listeners.push(listener);
+  return () => {
+    listeners = listeners.filter(entry => entry !== listener);
+  };
+}
 
-      .title-with-filter-count .editable-title,
-      .title-with-filter-count a {
-        display: inline;
-        white-space: inherit;
-      }
+function normalizeUrl(url: string): string {
+  try {
+    const parsed = new URL(url, window.location.origin);
+    return `${parsed.origin}${parsed.pathname}`;
+  } catch {
+    return url.trim();
+  }
+}
 
-      .title-with-filter-count .filter-counts {
-        display: inline-flex;
-        align-items: center;
-        vertical-align: middle;
-        margin-left: 0;
-        margin-right: 0;
-        padding-left: 0;
-        padding-right: 0;
-        background: transparent;
-        border-radius: 0;
-        flex: 0 0 auto;
-      }
+/**
+ * Build absolute URL for reliable loading (e.g. when app is behind proxy).
+ */
+function toAbsoluteUrl(audioUrl: string): string {
+  try {
+    if (audioUrl.startsWith('http://') || audioUrl.startsWith('https://')) {
+      return audioUrl;
+    }
+    return new URL(audioUrl, window.location.origin).href;
+  } catch {
+    return '';
+  }
+}
 
-      .title-with-filter-count .filter-counts .anticon {
-        display: none;
-      }
+function safePlay(audio: HTMLAudioElement) {
+  const playPromise = audio.play();
+  if (playPromise && typeof playPromise.catch === 'function') {
+    playPromise.catch(() => {
+      // no-op: absorb async playback errors (e.g. missing/unsupported source)
+      // so they do not surface as unhandled runtime errors.
+    });
+  }
+}
 
-      .title-with-filter-count .filter-counts .ant-badge-count {
-        margin: 0;
-        padding: 0;
-        min-width: auto;
-        height: auto;
-        line-height: inherit;
-        font-size: ${Math.max(theme.fontSizeSM - 1, 10)}px;
-        font-weight: ${theme.fontWeightStrong};
-        color: ${theme.colorPrimary};
-        background: transparent;
-        box-shadow: none;
-        border: 0;
-      }
+/**
+ * Play button backed by a shared HTMLAudioElement so only one row plays at a time.
+ */
+export default function PlayButton({ audioUrl, title }: PlayButtonProps) {
+  const [, setVersion] = useState(0);
 
-      .title-inline-warning {
-        display: inline-flex;
-        vertical-align: middle;
-        margin-left: ${theme.sizeUnit}px;
-      }
+  useEffect(
+    () =>
+      subscribe(() => {
+        setVersion(version => version + 1);
+      }),
+    [],
+  );
+
+
+  const absoluteUrl = useMemo(() => {
+    if (!audioUrl || typeof audioUrl !== 'string' || !audioUrl.trim()) {
+      return null;
     }
 
-    &[data-table-viz='true'] > .header-title {
-      overflow-wrap: normal;
-      word-break: normal;
-      white-space: nowrap;
-      padding-right: clamp(110px, 28vw, 220px);
-    }
+    const resolvedUrl = toAbsoluteUrl(audioUrl.trim());
+    return resolvedUrl || null;
+  }, [audioUrl]);
 
-    &[data-table-viz='true'][data-table-small='true'] > .header-title {
-      padding-right: clamp(52px, 16vw, 90px);
-    }
+  const audio = globalAudio;
+  const isCurrentSource =
+    absoluteUrl !== null &&
+    typeof globalAudioSrc === 'string' &&
+    normalizeUrl(globalAudioSrc) === normalizeUrl(absoluteUrl);
+  const isThisPlaying = isCurrentSource && !!audio && !audio.paused;
+  const isLoading =
+    isCurrentSource &&
+    !!audio &&
+    audio.readyState < HTMLMediaElement.HAVE_FUTURE_DATA;
+  const hasError = isCurrentSource && !!audio && audio.error != null;
 
-    &[data-kpi-viz='true'] > .header-title .editable-title,
-    &[data-kpi-viz='true'] > .header-title a {
-      display: block;
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      padding-left: 0;
-      margin-left: 0;
-      text-indent: 0;
-      white-space: normal;
-      overflow-wrap: anywhere;
-      word-break: normal;
-    }
+  const handleClick = useCallback(
+    (e?: React.MouseEvent | React.KeyboardEvent) => {
+      e?.stopPropagation();
+      e?.preventDefault();
 
-    &[data-table-viz='true'] > .header-title .editable-title,
-    &[data-table-viz='true'] > .header-title a {
-      display: inline;
-      max-width: none;
-      overflow: visible;
-      text-overflow: clip;
-      white-space: nowrap;
-      overflow-wrap: normal;
-      word-break: normal;
-      hyphens: none;
-    }
+      if (!absoluteUrl) return;
 
-    & > .header-controls {
-      display: flex;
-      align-items: center;
-      height: 24px;
-      flex: 0 0 auto;
-      min-width: max-content;
-      white-space: nowrap;
-      margin-left: ${theme.sizeUnit}px;
-    }
-
-    &[data-table-viz='true'] > .header-controls {
-      position: absolute;
-      top: 0;
-      right: 0;
-      z-index: 1;
-    }
-
-    .dropdown.btn-group {
-      pointer-events: none;
-      vertical-align: top;
-      & > * {
-        pointer-events: auto;
-      }
-    }
-
-    .dropdown-toggle.btn.btn-default {
-      background: none;
-      border: none;
-      box-shadow: none;
-    }
-
-    .dropdown-menu.dropdown-menu-right {
-      top: ${theme.sizeUnit * 5}px;
-    }
-
-    .divider {
-      margin: ${theme.sizeUnit}px 0;
-    }
-
-    .refresh-tooltip {
-      display: block;
-      height: ${theme.sizeUnit * 4}px;
-      margin: ${theme.sizeUnit}px 0;
-      color: ${theme.colorTextLabel};
-    }
-  `}
-`;
-
-const SliceHeader = forwardRef<HTMLDivElement, SliceHeaderProps>(
-  (
-    {
-      forceRefresh = () => ({}),
-      updateSliceName = () => ({}),
-      toggleExpandSlice = () => ({}),
-      logExploreChart = () => ({}),
-      logEvent,
-      exportCSV = () => ({}),
-      exportXLSX = () => ({}),
-      editMode = false,
-      annotationQuery = {},
-      annotationError = {},
-      cachedDttm = null,
-      updatedDttm = null,
-      isCached = [],
-      isExpanded = false,
-      sliceName = '',
-      supersetCanExplore = false,
-      supersetCanShare = false,
-      supersetCanCSV = false,
-      exportPivotCSV,
-      exportFullCSV,
-      exportFullXLSX,
-      slice,
-      componentId,
-      dashboardId,
-      addSuccessToast,
-      addDangerToast,
-      handleToggleFullSize,
-      isFullSize,
-      chartStatus,
-      formData,
-      width,
-      height,
-      exportPivotExcel = () => ({}),
-    },
-    ref,
-  ) => {
-    const SliceHeaderExtension = extensionsRegistry.get(
-      'dashboard.slice.header',
-    );
-    const uiConfig = useUiConfig();
-    const shouldShowRowLimitWarning =
-      !isEmbedded() || uiConfig.showRowLimitWarning;
-    const dashboardPageId = useContext(DashboardPageIdContext);
-    const [headerTooltip, setHeaderTooltip] = useState<ReactNode | null>(null);
-    const headerRef = useRef<HTMLDivElement>(null);
-    const titleContentRef = useRef<HTMLDivElement>(null);
-    const [isTitleWrapped, setIsTitleWrapped] = useState(false);
-    // TODO: change to indicator field after it will be implemented
-    const crossFilterValue = useSelector<RootState, any>(
-      state => state.dataMask[slice?.slice_id]?.filterState?.value,
-    );
-    const isCrossFiltersEnabled = useSelector<RootState, boolean>(
-      ({ dashboardInfo }) => dashboardInfo.crossFiltersEnabled,
-    );
-
-    const firstQueryResponse = useSelector<RootState, QueryData | undefined>(
-      state => state.charts[slice.slice_id].queriesResponse?.[0],
-    );
-
-    const theme = useTheme();
-
-    const rowLimit = Number(formData.row_limit || -1);
-    const sqlRowCount = Number(firstQueryResponse?.sql_rowcount || 0);
-    const hasRowLimitWarning =
-      shouldShowRowLimitWarning && sqlRowCount === rowLimit;
-
-    const canExplore = !editMode && supersetCanExplore;
-    const showFilterCountInTitle = !uiConfig.hideChartControls;
-    const vizType = (slice.viz_type || '').toLowerCase();
-    const isTableViz = vizType.includes('table');
-    const isKpiViz = vizType.includes('big_number');
-    const isSmallTableCard = isTableViz && width <= 320;
-    const displaySliceName =
-      typeof sliceName === 'string' ? sliceName.trim() : sliceName;
-
-    useEffect(() => {
-      const headerElement = headerRef.current;
-      if (canExplore) {
-        setHeaderTooltip(getSliceHeaderTooltip(displaySliceName));
-      } else if (
-        headerElement &&
-        (headerElement.scrollWidth > headerElement.offsetWidth ||
-          headerElement.scrollHeight > headerElement.offsetHeight)
-      ) {
-        setHeaderTooltip(displaySliceName ?? null);
-      } else {
-        setHeaderTooltip(null);
-      }
-    }, [displaySliceName, width, height, canExplore]);
-
-    useLayoutEffect(() => {
-      const titleElement = titleContentRef.current;
-      if (!titleElement) {
-        setIsTitleWrapped(false);
-        return;
-      }
-      // Detect title wrap/overflow so warning icon can be moved out of text flow.
-      const wrapped =
-        titleElement.scrollWidth > titleElement.clientWidth ||
-        titleElement.scrollHeight > titleElement.clientHeight + 1;
-      setIsTitleWrapped(wrapped);
-    }, [displaySliceName, width, height, showFilterCountInTitle]);
-
-    const exploreUrl = `/explore/?dashboard_page_id=${dashboardPageId}&slice_id=${slice.slice_id}`;
-
-    const renderExploreLink = (title: string) => (
-      <Link
-        to={exploreUrl}
-        css={(theme: SupersetTheme) => css`
-          color: ${theme.colorText};
-          text-decoration: none;
-          :hover {
-            text-decoration: underline;
+      try {
+        const nextAudio = ensureGlobalAudio();
+        if (isCurrentSource) {
+          if (nextAudio.paused) {
+            safePlay(nextAudio);
+          } else {
+            nextAudio.pause();
           }
-          display: inline;
-          white-space: normal;
-          overflow-wrap: anywhere;
-        `}
-      >
-        {title}
-      </Link>
-    );
-
-    return (
-      <ChartHeaderStyles
-        data-test="slice-header"
-        data-view-mode={!editMode ? 'true' : undefined}
-        data-table-viz={
-          !editMode && isTableViz ? 'true' : undefined
+        } else {
+          nextAudio.pause();
+          nextAudio.src = absoluteUrl;
+          globalAudioSrc = absoluteUrl;
+          safePlay(nextAudio);
+          notifyListeners();
+          window.dispatchEvent(new CustomEvent('GLOBAL_AUDIO_PLAY', { detail: absoluteUrl }), );
         }
-        data-table-small={
-          !editMode && isSmallTableCard ? 'true' : undefined
+      } catch {
+        // no-op: avoid crashing chart render if media playback fails.
+      }
+    },
+    [absoluteUrl, isCurrentSource],
+  );
+
+  if (!absoluteUrl) {
+    return <span aria-hidden>-</span>;
+  }
+
+  const icon = isThisPlaying ? (
+    <PauseCircleOutlined aria-label={t('Pause')} />
+  ) : (
+    <PlayCircleOutlined aria-label={t('Play')} />
+  );
+
+  const tooltipText = title || (isThisPlaying ? t('Pause') : t('Play'));
+
+  return (
+    <span
+      role="button"
+      tabIndex={0}
+      style={playButtonStyle}
+      title={hasError ? undefined : tooltipText}
+      onClick={e => handleClick(e)}
+      onKeyDown={e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          handleClick(e);
         }
-        data-kpi-viz={!editMode && isKpiViz ? 'true' : undefined}
-        ref={ref}
-      >
-        <div className="header-title" ref={headerRef}>
-          <Tooltip title={headerTooltip}>
-            {/* this div ensures the hover event triggers correctly and prevents flickering */}
-            <div
-              className={showFilterCountInTitle ? 'title-with-filter-count' : ''}
-              ref={titleContentRef}
-            >
-              <EditableTitle
-                title={
-                  displaySliceName ||
-                  (editMode
-                    ? '---' // this makes an empty title clickable
-                    : '')
-                }
-                canEdit={editMode}
-                onSaveTitle={updateSliceName}
-                showTooltip={false}
-                renderLink={
-                  canExplore && exploreUrl ? renderExploreLink : undefined
-                }
-              />
-              {showFilterCountInTitle && (
-                <FiltersBadge chartId={slice.slice_id} />
-              )}
-              {isSmallTableCard && hasRowLimitWarning && !isTitleWrapped && (
-                <span className="title-inline-warning">
-                  <RowCountLabel
-                    rowcount={sqlRowCount}
-                    limit={rowLimit}
-                    label={
-                      <Icons.WarningOutlined
-                        iconSize="m"
-                        iconColor={theme.colorWarning}
-                      />
-                    }
-                  />
-                </span>
-              )}
-            </div>
-          </Tooltip>
-          {!isTableViz && !!Object.values(annotationQuery).length && (
-            <Tooltip
-              id="annotations-loading-tooltip"
-              placement="top"
-              title={annotationsLoading}
-            >
-              <Icons.ReloadOutlined
-                className="warning"
-                aria-label={annotationsLoading}
-              />
-            </Tooltip>
-          )}
-          {!isTableViz && !!Object.values(annotationError).length && (
-            <Tooltip
-              id="annotation-errors-tooltip"
-              placement="top"
-              title={annotationsError}
-            >
-              <Icons.ExclamationCircleOutlined
-                className="danger"
-                aria-label={annotationsError}
-              />
-            </Tooltip>
-          )}
-        </div>
-        <div className="header-controls">
-          {!editMode && (
-            <>
-              {SliceHeaderExtension && (
-                <SliceHeaderExtension
-                  sliceId={slice.slice_id}
-                  dashboardId={dashboardId}
-                />
-              )}
-              {crossFilterValue && (
-                <Tooltip
-                  placement="top"
-                  title={t(
-                    'This chart applies cross-filters to charts whose datasets contain columns with the same name.',
-                  )}
-                >
-                  <CrossFilterIcon iconSize="m" />
-                </Tooltip>
-              )}
+      }}
+    >
+      {isLoading && isCurrentSource ? (
+        <span style={{ fontSize: 18 }} aria-label={t('Loading')}>
+          ...
+        </span>
+      ) : (
+        icon
+      )}
+    </span>
+  );
+}
 
-              {hasRowLimitWarning && (!isSmallTableCard || isTitleWrapped) && (
-                <RowCountLabel
-                  rowcount={sqlRowCount}
-                  limit={rowLimit}
-                  label={
-                    <Icons.WarningOutlined
-                      iconSize={isSmallTableCard ? 'm' : 'l'}
-                      iconColor={theme.colorWarning}
-                      css={theme => css`
-                        padding: ${isSmallTableCard ? 0 : theme.sizeUnit}px;
-                      `}
-                    />
-                  }
-                />
-              )}
-              {isTableViz && !!Object.values(annotationQuery).length && (
-                <Tooltip
-                  id="annotations-loading-tooltip-controls"
-                  placement="top"
-                  title={annotationsLoading}
-                >
-                  <Icons.ReloadOutlined
-                    className="warning"
-                    aria-label={annotationsLoading}
-                  />
-                </Tooltip>
-              )}
-              {isTableViz && !!Object.values(annotationError).length && (
-                <Tooltip
-                  id="annotation-errors-tooltip-controls"
-                  placement="top"
-                  title={annotationsError}
-                >
-                  <Icons.ExclamationCircleOutlined
-                    className="danger"
-                    aria-label={annotationsError}
-                  />
-                </Tooltip>
-              )}
-              {!uiConfig.hideChartControls && (
-                <SliceHeaderControls
-                  slice={slice}
-                  isCached={isCached}
-                  isExpanded={isExpanded}
-                  cachedDttm={cachedDttm}
-                  updatedDttm={updatedDttm}
-                  toggleExpandSlice={toggleExpandSlice}
-                  forceRefresh={forceRefresh}
-                  logExploreChart={logExploreChart}
-                  logEvent={logEvent}
-                  exportCSV={exportCSV}
-                  exportPivotCSV={exportPivotCSV}
-                  exportFullCSV={exportFullCSV}
-                  exportXLSX={exportXLSX}
-                  exportFullXLSX={exportFullXLSX}
-                  supersetCanExplore={supersetCanExplore}
-                  supersetCanShare={supersetCanShare}
-                  supersetCanCSV={supersetCanCSV}
-                  componentId={componentId}
-                  dashboardId={dashboardId}
-                  addSuccessToast={addSuccessToast}
-                  addDangerToast={addDangerToast}
-                  handleToggleFullSize={handleToggleFullSize}
-                  isFullSize={isFullSize}
-                  isDescriptionExpanded={isExpanded}
-                  chartStatus={chartStatus}
-                  formData={formData}
-                  exploreUrl={exploreUrl}
-                  crossFiltersEnabled={isCrossFiltersEnabled}
-                  exportPivotExcel={exportPivotExcel}
-                />
-              )}
-            </>
-          )}
-        </div>
-      </ChartHeaderStyles>
-    );
-  },
-);
 
-export default SliceHeader;
+
+
