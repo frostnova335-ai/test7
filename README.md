@@ -1,423 +1,429 @@
-import { ControlPanelConfig } from '@superset-ui/chart-controls';
+import { t } from '@apache-superset/core/translation';
+import { FrameComponentProps } from '../types';
+import DatePicker from 'antd/es/date-picker';
+import { useState } from 'react';
 
-const config: ControlPanelConfig = {
-  controlPanelSections: [
-    {
-      label: 'Audio Settings',
-      expanded: true,
-      controlSetRows: [
-        [
-          {
-            name: 'audio_url_column',
-            config: {
-              type: 'SelectControl',
-              label: 'Audio URL Column',
-              default: 'audio_url',
-              clearable: false,
-              renderTrigger: false,
-              mapStateToProps: ({ datasource }) => ({
-                choices:
-                  datasource?.columns?.map((col: any) => [
-                    col.column_name,
-                    col.column_name,
-                  ]) || [],
-              }),
-            },
-          },
-        ],
-        [
-          {
-            name: 'label_column',
-            config: {
-              type: 'SelectControl',
-              label: 'Label Column',
-              default: 'audio_name',
-              clearable: false,
-              renderTrigger: false,
-              mapStateToProps: ({ datasource }) => ({
-                choices:
-                  datasource?.columns?.map((col: any) => [
-                    col.column_name,
-                    col.column_name,
-                  ]) || [],
-              }),
-            },
-          },
-        ],
-        [
-          {
-            name: 'gradient_start',
-            config: {
-              type: 'ColorPickerControl',
-              label: 'Gradient Start',
-              default: '#6366F1',
-              renderTrigger: true,
-            },
-          },
-          {
-            name: 'gradient_end',
-            config: {
-              type: 'ColorPickerControl',
-              label: 'Gradient End',
-              default: '#8B5CF6',
-              renderTrigger: true,
-            },
-          },
-        ],
-        [
-          {
-            name: 'row_limit',
-            config: {
-              type: 'TextControl',
-              label: 'Number of Audios',
-              default: 5,
-              renderTrigger: false,
-            },
-          },
-        ],
-      ],
-    },
-  ],
-};
+export function CurrentCalendarFrame({ onChange, value }: FrameComponentProps) {
+  const { RangePicker } = DatePicker;
 
-export default config;
+  const [showCalendar, setShowCalendar] = useState(false);
 
+  const options = [
+    { label: '7D', value: 'Last 7 days' },
+    { label: '30D', value: 'Last 30 days' },
+    { label: '90D', value: 'Last 90 days' },
+    { label: 'ALL', value: 'CUSTOM' },
+  ];
 
-
-
-import React, { useRef, useState } from 'react';
-
-function formatTime(seconds: number) {
-  if (!seconds || isNaN(seconds)) return '00:00';
-
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(
-    2,
-    '0',
-  )}`;
-}
-
-function AudioPlayer({
-  src,
-  gradientStart,
-  gradientEnd,
-}: {
-  src: string;
-  gradientStart: string;
-  gradientEnd: string;
-}) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const barRef = useRef<HTMLDivElement>(null);
-
-  const [playing, setPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [current, setCurrent] = useState(0);
-
-  const togglePlay = () => {
-    if (!audioRef.current) return;
-
-    if (playing) {
-      audioRef.current.pause();
+  const handleClick = (val: string) => {
+    if (val === 'CUSTOM') {
+      setShowCalendar(true);
     } else {
-      audioRef.current.play();
+      setShowCalendar(false);
+      onChange(val);
     }
-
-    setPlaying(!playing);
-  };
-
-  const skip = (seconds: number) => {
-    if (!audioRef.current) return;
-
-    audioRef.current.currentTime = Math.min(
-      Math.max(audioRef.current.currentTime + seconds, 0),
-      audioRef.current.duration || 0,
-    );
-  };
-
-  const onTimeUpdate = () => {
-    if (!audioRef.current) return;
-
-    const currentTime = audioRef.current.currentTime;
-    const total = audioRef.current.duration || 0;
-
-    setCurrent(currentTime);
-    setDuration(total);
-    setProgress((currentTime / total) * 100 || 0);
-  };
-
-  const seekAudio = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!barRef.current || !audioRef.current) return;
-
-    const rect = barRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-
-    const percent = (clickX / rect.width) * 100;
-
-    audioRef.current.currentTime =
-      (percent / 100) * audioRef.current.duration;
-
-    setProgress(percent);
-  };
-
-  const controlBtnStyle = {
-    width: 42,
-    height: 42,
-    minWidth: 42,
-    borderRadius: '50%',
-    border: 'none',
-    background: '#0F172A',
-    color: '#fff',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 14,
-    fontWeight: 600,
-    flexShrink: 0,
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 14,
-        width: '100%',
-      }}
-    >
-      {/* BACK 5 SEC */}
-      <button
-        onClick={() => skip(-5)}
-        style={controlBtnStyle}
-      >
-       {'<'}
-      </button>
-
-      {/* PLAY BUTTON */}
-      <button
-        onClick={togglePlay}
-        style={{
-          ...controlBtnStyle,
-          width: 48,
-          height: 48,
-          minWidth: 48,
-          fontSize: 18,
-          paddingLeft: playing ? 0 : 3,
-        }}
-      >
-        {playing ? '❚❚' : '▶'}
-      </button>
-
-      {/* FORWARD 5 SEC */}
-      <button
-        onClick={() => skip(5)}
-        style={controlBtnStyle}
-      >
-        {'>'}
-      </button>
-
-      {/* PROGRESS BAR */}
-      <div
-        ref={barRef}
-        onClick={seekAudio}
-        style={{
-          flex: 1,
-          height: 8,
-          borderRadius: 999,
-          background: '#E5E7EB',
-          position: 'relative',
-          cursor: 'pointer',
-        }}
-      >
-        <div
-          style={{
-            width: `${progress}%`,
-            height: '100%',
-            borderRadius: 999,
-            background: `linear-gradient(90deg, ${gradientStart}, ${gradientEnd})`,
-          }}
-        />
-
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: `${progress}%`,
-            transform: 'translate(-50%, -50%)',
-            width: 16,
-            height: 16,
-            borderRadius: '50%',
-            background: gradientEnd,
-            border: '3px solid white',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          }}
-        />
-      </div>
-
-      {/* TIMESTAMP */}
+    <>
+      <div className="section-title">{t('Quick Select')}</div>
       <div
         style={{
-          minWidth: 100,
-          textAlign: 'right',
-          fontSize: 13,
-          fontWeight: 500,
-          color: '#94A3B8',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: 'inline-flex',
+          background: '#f1f5f9',
+          borderRadius: '12px',
+          padding: '4px',
+          gap: '4px',
         }}
       >
-        {formatTime(current)} / {formatTime(duration)}
-      </div>
-
-      <audio
-        ref={audioRef}
-        src={src}
-        preload="metadata"
-        onTimeUpdate={onTimeUpdate}
-        onLoadedMetadata={() => {
-          if (audioRef.current) {
-            setDuration(audioRef.current.duration);
-          }
-        }}
-        onEnded={() => setPlaying(false)}
-      />
-    </div>
-  );
-}
-
-export default function AudioPlayerChart(props: any) {
-  const data = props?.data || [];
-  const formData = props?.formData || {};
-
-  const audioCol = formData.audio_url_column || 'audio_url';
-
-  const gradientStart =
-    formData.gradient_start || '#6366F1';
-
-  const gradientEnd =
-    formData.gradient_end || '#8B5CF6';
-
-  if (!data.length) {
-    return <div>No audio data found</div>;
-  }
-
-  return (
-    <div style={{ padding: 20 }}>
-      {data.map((row: any, index: number) => {
-        const rawUrl = row[audioCol];
-
-        const audioUrl =
-          rawUrl?.startsWith('http')
-            ? rawUrl
-            : `${window.location.origin}${rawUrl}`;
-
-        return (
+        {options.map(opt => (
           <div
-            key={index}
+            key={opt.value}
+            onClick={() => handleClick(opt.value)}
             style={{
-              padding: 20,
-              borderRadius: 14,
-              background: 'rgba(0,0,0,0.88)',
-              border: '1px solid rgb(226,232,240)',
+              padding: '6px 14px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: 500,
+              fontSize: '13px',
+              transition: 'all 0.2s ease',
+              background:
+                value === opt.value || (opt.value === 'CUSTOM' && showCalendar)
+                  ? '#ffffff'
+                  : 'transparent',
+              boxShadow:
+                value === opt.value || (opt.value === 'CUSTOM' && showCalendar)
+                  ? '0 1px 3px rgba(0,0,0,0.1)'
+                  : 'none',
+              color:
+                value === opt.value || (opt.value === 'CUSTOM' && showCalendar)
+                  ? '#0f172a'
+                  : '#64748b',
             }}
           >
-            <AudioPlayer
-              src={audioUrl}
-              gradientStart={gradientStart}
-              gradientEnd={gradientEnd}
-            />
+            {opt.label}
           </div>
-        );
-      })}
-    </div>
+        ))}
+      </div>
+
+      {showCalendar && (
+        <div style={{ marginTop: '16px' }}>
+          <div className="section-title">{t('Select Date Range')}</div>
+
+          <RangePicker
+            style={{ width: '100%' }}
+            onChange={(dates: any, dateStrings: [string, string]) => {
+              if (dateStrings[0] && dateStrings[1]) {
+                onChange(`${dateStrings[0]} : ${dateStrings[1]}`);
+              }
+            }}
+          />
+        </div>
+      )}
+    </>
   );
 }
 
 
+
+
+
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+import { ReactNode, useState, useEffect, useMemo } from 'react';
+import { t } from '@apache-superset/core/translation';
 import {
-  buildQueryContext,
-  QueryFormData,
+  NO_TIME_RANGE,
+  useCSSTextTruncation,
+  fetchTimeRange,
 } from '@superset-ui/core';
-
-export default function buildQuery(formData: QueryFormData) {
-  const customFormData = formData as QueryFormData & {
-    audio_url_column?: string;
-    label_column?: string;
-    row_limit?: number;
-  };
-
-  return buildQueryContext(formData, baseQueryObject => [
-    {
-      ...baseQueryObject,
-
-      columns: [
-        customFormData.label_column || 'audio_name',
-        customFormData.audio_url_column || 'audio_url',
-      ],
-
-      metrics: [],
-
-      row_limit: Number(customFormData.row_limit) || 5,
-    },
-  ]);
-}
-
-
 import {
-  ChartMetadata,
-  ChartPlugin,
-} from '@superset-ui/core';
+  css,
+  styled,
+  useTheme,
+  SupersetTheme,
+} from '@apache-superset/core/theme';
+import {
+  Button,
+  Constants,
+  Divider,
+  Tooltip,
+  Select,
+} from '@superset-ui/core/components';
+import ControlHeader from 'src/explore/components/ControlHeader';
+import { Icons } from '@superset-ui/core/components/Icons';
+import { useDebouncedEffect } from 'src/explore/exploreUtils';
+import { noOp } from 'src/utils/common';
+import ControlPopover from '../ControlPopover/ControlPopover';
 
-import buildQuery from './buildQuery';
-import controlPanel from './config/controlPanel';
-import transformProps from './transformProps';
+import { DateFilterControlProps, FrameType } from './types';
+import {
+  DateFilterTestKey,
+  FRAME_OPTIONS,
+  guessFrame,
+  useDefaultTimeFilter,
+} from './utils';
+import {
+  CommonFrame,
+  CalendarFrame,
+  CustomFrame,
+  AdvancedFrame,
+  DateLabel,
+} from './components';
+import { CurrentCalendarFrame } from './components/CurrentCalendarFrame';
 
-export default class AudioPlayerChartPlugin extends ChartPlugin {
-  constructor() {
-    super({
-      loadChart: () => import('./AudioPlayerChart'),
-      metadata: new ChartMetadata({
-        name: 'Audio Player Chart',
-        description: 'Custom Audio Player Chart',
-        thumbnail: '',
-      }),
-      transformProps,
-      buildQuery,
-      controlPanel,
-    });
+
+const ContentStyleWrapper = styled.div`
+  ${({ theme }) => css`
+    .ant-row {
+      margin-top: 8px;
+    }
+
+    .ant-picker {
+      padding: 4px 17px 4px;
+      border-radius: 4px;
+    }
+
+    .ant-divider-horizontal {
+      margin: 16px 0;
+    }
+
+    .control-label {
+      font-size: ${theme.fontSizeSM}px;
+      line-height: 16px;
+      margin: 8px 0;
+    }
+
+    .section-title {
+      font-style: normal;
+      font-weight: ${theme.fontWeightStrong};
+      font-size: 15px;
+      line-height: 24px;
+      margin-bottom: 8px;
+    }
+
+    .control-anchor-to {
+      margin-top: 16px;
+    }
+
+    .control-anchor-to-datetime {
+      width: 217px;
+    }
+
+    .footer {
+      text-align: right;
+    }
+  `}
+`;
+
+const IconWrapper = styled.span`
+  span {
+    margin-right: ${({ theme }) => 2 * theme.sizeUnit}px;
+    vertical-align: middle;
   }
-}
+  .text {
+    vertical-align: middle;
+  }
+  .error {
+    color: ${({ theme }) => theme.colorError};
+  }
+`;
+
+const getTooltipTitle = (
+  isLabelTruncated: boolean,
+  label: string | undefined,
+  range: string | undefined,
+) =>
+  isLabelTruncated ? (
+    <div>
+      {label && <strong>{label}</strong>}
+      {range && (
+        <div
+          css={(theme: SupersetTheme) => css`
+            margin-top: ${theme.sizeUnit}px;
+          `}
+        >
+          {range}
+        </div>
+      )}
+    </div>
+  ) : (
+    range || null
+  );
+
+export default function DateFilterLabel(props: DateFilterControlProps) {
+  const {
+    name,
+    onChange,
+    onOpenPopover = noOp,
+    onClosePopover = noOp,
+    isOverflowingFilterBar = false,
+  } = props;
+  const defaultTimeFilter = useDefaultTimeFilter();
+
+  const value = props.value ?? defaultTimeFilter;
+  const [actualTimeRange, setActualTimeRange] = useState<string>(value);
+
+  const [show, setShow] = useState<boolean>(false);
+  const guessedFrame = useMemo(() => guessFrame(value), [value]);
+  const [frame, setFrame] = useState<FrameType>(guessedFrame);
+  const [lastFetchedTimeRange, setLastFetchedTimeRange] = useState(value);
+  const [timeRangeValue, setTimeRangeValue] = useState(value);
+  const [validTimeRange, setValidTimeRange] = useState<boolean>(false);
+  const [evalResponse, setEvalResponse] = useState<string>(value);
+  const [tooltipTitle, setTooltipTitle] = useState<ReactNode | null>(value);
+  const theme = useTheme();
+  const [labelRef, labelIsTruncated] = useCSSTextTruncation<HTMLSpanElement>();
+
+  useEffect(() => {
+    if (value === NO_TIME_RANGE) {
+      setActualTimeRange(NO_TIME_RANGE);
+      setTooltipTitle(null);
+      setValidTimeRange(true);
+      return;
+    }
+    fetchTimeRange(value).then(({ value: actualRange, error }) => {
+      if (error) {
+        setEvalResponse(error || '');
+        setValidTimeRange(false);
+        setTooltipTitle(value || null);
+      } else {
+        /*
+          HRT == human readable text
+          ADR == actual datetime range
+          +--------------+------+----------+--------+----------+-----------+
+          |              | Last | Previous | Custom | Advanced | No Filter |
+          +--------------+------+----------+--------+----------+-----------+
+          | control pill | HRT  | HRT      | ADR    | ADR      |   HRT     |
+          +--------------+------+----------+--------+----------+-----------+
+          | tooltip      | ADR  | ADR      | HRT    | HRT      |   ADR     |
+          +--------------+------+----------+--------+----------+-----------+
+        */
+        if (
+          guessedFrame === 'Common' ||
+          guessedFrame === 'Calendar' ||
+          guessedFrame === 'Current' ||
+          guessedFrame === 'No filter'
+        ) {
+          let displayValue = actualRange || value;
+
+          const match = displayValue.match(
+            /(\d{4}-\d{2}-\d{2}).+?(\d{4}-\d{2}-\d{2})/,
+          );
+
+          if (match) {
+            displayValue = `${match[1]} to ${match[2]}`;
+          }
+
+          setActualTimeRange(displayValue);
+
+          setTooltipTitle(
+            getTooltipTitle(labelIsTruncated, displayValue, actualRange),
+          );
+        } else {
+          setActualTimeRange(actualRange || '');
+
+          setTooltipTitle(
+            getTooltipTitle(labelIsTruncated, actualRange, value),
+          );
+        }
+        setValidTimeRange(true);
+      }
+      setLastFetchedTimeRange(value);
+      setEvalResponse(actualRange || value);
+    });
+  }, [guessedFrame, labelIsTruncated, labelRef, value]);
+
+  useDebouncedEffect(
+    () => {
+      if (timeRangeValue === NO_TIME_RANGE) {
+        setEvalResponse(NO_TIME_RANGE);
+        setLastFetchedTimeRange(NO_TIME_RANGE);
+        setValidTimeRange(true);
+        return;
+      }
+      if (lastFetchedTimeRange !== timeRangeValue) {
+        fetchTimeRange(timeRangeValue).then(({ value: actualRange, error }) => {
+          if (error) {
+            setEvalResponse(error || '');
+            setValidTimeRange(false);
+          } else {
+            setEvalResponse(actualRange || '');
+            setValidTimeRange(true);
+          }
+          setLastFetchedTimeRange(timeRangeValue);
+        });
+      }
+    },
+    Constants.SLOW_DEBOUNCE,
+    [timeRangeValue],
+  );
+
+  function onSave() {
+    onChange(timeRangeValue);
+    setShow(false);
+    onClosePopover();
+  }
 
 
+  function onOpen() {
+    setTimeRangeValue(value);
+    setFrame('Current');
+    setShow(true);
+    onOpenPopover();
+  }
 
+  function onHide() {
+    setTimeRangeValue(value);
+    setFrame(guessedFrame);
+    setShow(false);
+    onClosePopover();
+  }
 
-import { ChartProps } from '@superset-ui/core';
-
-export default function transformProps(chartProps: ChartProps) {
-  const payload = chartProps.queriesData?.[0] || {};
-
-  return {
-    data: payload.data || [],
-    formData: chartProps.formData || {},
-    width: chartProps.width,
-    height: chartProps.height,
+  const toggleOverlay = () => {
+    if (show) {
+      onHide();
+    } else {
+      onOpen();
+    }
   };
+
+
+
+  const overlayContent = (
+    <ContentStyleWrapper>
+      <CurrentCalendarFrame
+        value={timeRangeValue}
+        onChange={(val) => {
+          setTimeRangeValue(val);
+          onChange(val);
+        }}
+      />
+    </ContentStyleWrapper>
+  );
+
+  const popoverContent = (
+    <ControlPopover
+      autoAdjustOverflow={false}
+      trigger="click"
+      placement="right"
+      content={overlayContent}
+      title={
+        <IconWrapper>
+          <Icons.EditOutlined />
+          <span className="text">{t('Edit time range')}</span>
+        </IconWrapper>
+      }
+      defaultOpen={show}
+      open={show}
+      onOpenChange={toggleOverlay}
+      overlayStyle={{ width: '600px' }}
+      destroyTooltipOnHide
+      getPopupContainer={nodeTrigger =>
+        isOverflowingFilterBar
+          ? (nodeTrigger.parentNode as HTMLElement)
+          : document.body
+      }
+      overlayClassName="time-range-popover"
+    >
+      <Tooltip placement="top" title={tooltipTitle}>
+        <DateLabel
+          name={name}
+          aria-labelledby={`filter-name-${props.name}`}
+          aria-describedby={`date-label-${props.name}`}
+          label={actualTimeRange}
+          isActive={show}
+          isPlaceholder={actualTimeRange === NO_TIME_RANGE}
+          data-test={DateFilterTestKey.PopoverOverlay}
+          ref={labelRef}
+        />
+      </Tooltip>
+    </ControlPopover>
+  );
+
+  return (
+    <>
+      <ControlHeader {...props} />
+      {popoverContent}
+    </>
+  );
 }
-
-
-
-import { QueryFormData } from '@superset-ui/core';
-
-export interface AudioPlayerFormData extends QueryFormData {
-  audio_url_column: string;
-  label_column: string;
-  row_limit: number;
-}
-
 
 
 
