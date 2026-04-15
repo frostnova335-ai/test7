@@ -1,170 +1,251 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-import { useMemo, useState } from 'react';
-import { TableView } from '@superset-ui/core/components';
-import { styled, t } from '@superset-ui/core';
-import type { AudioTableProps } from './types';
-import PlayButton from './components/PlayButton';
-import HeaderSearchPortal from '../components/HeaderSearchPortal';
+import React, { useRef, useState } from 'react';
 
-const AUDIO_PLAY_COLUMN_ID = '__audio_play__';
-const DEFAULT_AUDIO_BASE_PATH = '/static/assets/common-audio/';
+function formatTime(seconds: number) {
+  if (!seconds || isNaN(seconds)) return '00:00';
 
-const AudioTableStyles = styled.div<{ height?: number }>`
-  height: ${props => props.height}px;
-  overflow: auto;
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
 
-  .table-no-hover {
-    width: 100%;
-  }
-`;
-
-/**
- * Extract primitive value from cell data. Backend may return {value, label} objects
- * for select/enum columns; React cannot render objects as children.
- */
-function toPrimitive(value: unknown): string | number | null {
-  if (value == null || value === '') {
-    return null;
-  }
-  if (typeof value === 'object' && value !== null && 'value' in value) {
-    const obj = value as { value?: unknown };
-    return obj.value != null ? toPrimitive(obj.value) : null;
-  }
-  if (typeof value === 'object' && value !== null && 'label' in value) {
-    const obj = value as { label?: unknown };
-    return obj.label != null ? toPrimitive(obj.label) : null;
-  }
-  if (typeof value === 'string' || typeof value === 'number') {
-    return value;
-  }
-  return String(value);
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(
+    2,
+    '0',
+  )}`;
 }
 
-/**
- * Build audio URL from base path and filename.
- * Supports: filename only (e.g. "welcome.mp3"), relative path, or full URL.
- */
-function getAudioUrl(value: unknown, basePath: string): string | null {
-  const prim = toPrimitive(value);
-  if (prim == null || prim === '') return null;
-  const str = String(prim).trim();
-  if (!str) return null;
+function AudioPlayer({
+  src,
+  gradientStart,
+  gradientEnd,
+}: {
+  src: string;
+  gradientStart: string;
+  gradientEnd: string;
+}) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
 
-  // Full URL - use as-is
-  if (str.startsWith('http://') || str.startsWith('https://')) {
-    return str;
-  }
+  const [playing, setPlaying] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [current, setCurrent] = useState(0);
 
-  // Absolute path - prepend window origin if needed
-  if (str.startsWith('/')) {
-    return str;
-  }
+  const togglePlay = () => {
+    if (!audioRef.current) return;
 
-  // Filename or relative path - prepend base path
-  const base = basePath.endsWith('/') ? basePath : `${basePath}/`;
-  return base + str;
-}
-
-function AudioTableContent({
-  className = '',
-  height = 400,
-  data,
-  columns,
-  audioColumnKey,
-  audioBasePath = DEFAULT_AUDIO_BASE_PATH,
-  sliceId,
-}: AudioTableProps) {
-  const [searchText, setSearchText] = useState('');
-
-  const normalizedSearch = searchText.trim().toLowerCase();
-
-  const filteredData = useMemo(() => {
-    if (!normalizedSearch) {
-      return data;
+    if (playing) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
     }
-    return data.filter(row =>
-      columns.some(col => {
-        const value = toPrimitive(row[col]);
-        if (value == null) return false;
-        return String(value).toLowerCase().includes(normalizedSearch);
-      }),
+
+    setPlaying(!playing);
+  };
+
+  const skip = (seconds: number) => {
+    if (!audioRef.current) return;
+
+    audioRef.current.currentTime = Math.min(
+      Math.max(audioRef.current.currentTime + seconds, 0),
+      audioRef.current.duration || 0,
     );
-  }, [columns, data, normalizedSearch]);
+  };
 
-  const tableColumns = useMemo(() => {
-    const dataColumns = columns.map(col => ({
-      accessor: col,
-      Header: col,
-      id: col,
-    }));
+  const onTimeUpdate = () => {
+    if (!audioRef.current) return;
 
-    const playColumn = {
-      accessor: AUDIO_PLAY_COLUMN_ID,
-      Header: t('Play'),
-      id: AUDIO_PLAY_COLUMN_ID,
-      disableSortBy: true,
-      width: 60,
-    };
+    const currentTime = audioRef.current.currentTime;
+    const total = audioRef.current.duration || 0;
 
-    return [...dataColumns, playColumn];
-  }, [columns]);
+    setCurrent(currentTime);
+    setDuration(total);
+    setProgress((currentTime / total) * 100 || 0);
+  };
 
-  const tableData = useMemo(() => {
-    return filteredData.map(row => {
-      const cells: Record<string, unknown> = {};
-      columns.forEach(col => {
-        const val = row[col];
-        cells[col] = toPrimitive(val) ?? '';
-      });
-      const audioValue = audioColumnKey ? row[audioColumnKey] : null;
-      const audioUrl = getAudioUrl(audioValue, audioBasePath);
-      cells[AUDIO_PLAY_COLUMN_ID] = (
-        <PlayButton audioUrl={audioUrl} title={t('Play audio')} />
-      );
-      return cells;
-    });
-  }, [filteredData, columns, audioColumnKey, audioBasePath]);
+  const seekAudio = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!barRef.current || !audioRef.current) return;
+
+    const rect = barRef.current.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+
+    const percent = (clickX / rect.width) * 100;
+
+    audioRef.current.currentTime =
+      (percent / 100) * audioRef.current.duration;
+
+    setProgress(percent);
+  };
+
+  const controlBtnStyle = {
+    width: 42,
+    height: 42,
+    minWidth: 42,
+    borderRadius: '50%',
+    border: 'none',
+    background: '#0F172A',
+    color: '#fff',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: 14,
+    fontWeight: 600,
+    flexShrink: 0,
+  };
 
   return (
-    <AudioTableStyles
-      data-test="audio-table"
-      className={className}
-      height={height}
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 14,
+        width: '100%',
+      }}
     >
-      <HeaderSearchPortal
-        sliceId={sliceId}
-        count={data.length}
-        value={searchText}
-        onChange={setSearchText}
+      {/* BACK 5 SEC */}
+      <button
+        onClick={() => skip(-5)}
+        style={controlBtnStyle}
+      >
+       {'<'}
+      </button>
+
+      {/* PLAY BUTTON */}
+      <button
+        onClick={togglePlay}
+        style={{
+          ...controlBtnStyle,
+          width: 48,
+          height: 48,
+          minWidth: 48,
+          fontSize: 18,
+          paddingLeft: playing ? 0 : 3,
+        }}
+      >
+        {playing ? '❚❚' : '▶'}
+      </button>
+
+      {/* FORWARD 5 SEC */}
+      <button
+        onClick={() => skip(5)}
+        style={controlBtnStyle}
+      >
+        {'>'}
+      </button>
+
+      {/* PROGRESS BAR */}
+      <div
+        ref={barRef}
+        onClick={seekAudio}
+        style={{
+          flex: 1,
+          height: 8,
+          borderRadius: 999,
+          background: '#E5E7EB',
+          position: 'relative',
+          cursor: 'pointer',
+        }}
+      >
+        <div
+          style={{
+            width: `${progress}%`,
+            height: '100%',
+            borderRadius: 999,
+            background: `linear-gradient(90deg, ${gradientStart}, ${gradientEnd})`,
+          }}
+        />
+
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: `${progress}%`,
+            transform: 'translate(-50%, -50%)',
+            width: 16,
+            height: 16,
+            borderRadius: '50%',
+            background: gradientEnd,
+            border: '3px solid white',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
+          }}
+        />
+      </div>
+
+      {/* TIMESTAMP */}
+      <div
+        style={{
+          minWidth: 100,
+          textAlign: 'right',
+          fontSize: 13,
+          fontWeight: 500,
+          color: '#94A3B8',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        {formatTime(current)} / {formatTime(duration)}
+      </div>
+
+      <audio
+        ref={audioRef}
+        src={src}
+        preload="metadata"
+        onTimeUpdate={onTimeUpdate}
+        onLoadedMetadata={() => {
+          if (audioRef.current) {
+            setDuration(audioRef.current.duration);
+          }
+        }}
+        onEnded={() => setPlaying(false)}
       />
-      <TableView
-        className="table-no-hover"
-        columns={tableColumns}
-        data={tableData}
-        withPagination={filteredData.length > 10}
-        pageSize={10}
-      />
-    </AudioTableStyles>
+    </div>
   );
 }
 
-export default function AudioTable(props: AudioTableProps) {
-  return <AudioTableContent {...props} />;
+export default function AudioPlayerChart(props: any) {
+  const data = props?.data || [];
+  const formData = props?.formData || {};
+
+  const audioCol = formData.audio_url_column || 'audio_url';
+
+  const gradientStart =
+    formData.gradient_start || '#6366F1';
+
+  const gradientEnd =
+    formData.gradient_end || '#8B5CF6';
+
+  if (!data.length) {
+    return <div>No audio data found</div>;
+  }
+
+  return (
+    <div style={{ padding: 20 }}>
+      {data.map((row: any, index: number) => {
+        const rawUrl = row[audioCol];
+
+        const audioUrl =
+          rawUrl?.startsWith('http')
+            ? rawUrl
+            : `${window.location.origin}${rawUrl}`;
+
+        return (
+          <div
+            key={index}
+            style={{
+              padding: 20,
+              borderRadius: 14,
+              background: 'rgba(0,0,0,0.88)',
+              border: '1px solid rgb(226,232,240)',
+            }}
+          >
+            <AudioPlayer
+              src={audioUrl}
+              gradientStart={gradientStart}
+              gradientEnd={gradientEnd}
+            />
+          </div>
+        );
+      })}
+    </div>
+  );
 }
