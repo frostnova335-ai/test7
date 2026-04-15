@@ -4,7 +4,7 @@
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
  * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
+ * "License"); you may use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
@@ -16,111 +16,155 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import rison from 'rison';
-import { isEmpty } from 'lodash';
-import {
-  SupersetClient,
-  getClientErrorObject,
-  ensureIsArray,
-} from '@superset-ui/core';
+import { useMemo, useState } from 'react';
+import { TableView } from '@superset-ui/core/components';
+import { styled, t } from '@superset-ui/core';
+import type { AudioTableProps } from './types';
+import PlayButton from './components/PlayButton';
+import HeaderSearchPortal from '../components/HeaderSearchPortal';
 
-export const SEPARATOR = ' : ';
+const AUDIO_PLAY_COLUMN_ID = '__audio_play__';
+const DEFAULT_AUDIO_BASE_PATH = '/static/assets/common-audio/';
 
-export const buildTimeRangeString = (since: string, until: string): string =>
-  `${since}${SEPARATOR}${until}`;
+const AudioTableStyles = styled.div<{ height?: number }>`
+  height: ${props => props.height}px;
+  overflow: auto;
 
-const formatDateEndpoint = (dttm: string, isStart?: boolean): string =>
-  dttm.replace('T00:00:00', '') || (isStart ? '-∞' : '∞');
+  .table-no-hover {
+    width: 100%;
+  }
+`;
 
-export const formatTimeRange = (
-  timeRange: string,
-  columnPlaceholder = 'col',
-) => {
-  const splitDateRange = timeRange.split(SEPARATOR);
+/**
+ * Extract primitive value from cell data. Backend may return {value, label} objects
+ * for select/enum columns; React cannot render objects as children.
+ */
+function toPrimitive(value: unknown): string | number | null {
+  if (value == null || value === '') {
+    return null;
+  }
+  if (typeof value === 'object' && value !== null && 'value' in value) {
+    const obj = value as { value?: unknown };
+    return obj.value != null ? toPrimitive(obj.value) : null;
+  }
+  if (typeof value === 'object' && value !== null && 'label' in value) {
+    const obj = value as { label?: unknown };
+    return obj.label != null ? toPrimitive(obj.label) : null;
+  }
+  if (typeof value === 'string' || typeof value === 'number') {
+    return value;
+  }
+  return String(value);
+}
 
-  if (splitDateRange.length === 1) return timeRange;
+/**
+ * Build audio URL from base path and filename.
+ * Supports: filename only (e.g. "welcome.mp3"), relative path, or full URL.
+ */
+function getAudioUrl(value: unknown, basePath: string): string | null {
+  const prim = toPrimitive(value);
+  if (prim == null || prim === '') return null;
+  const str = String(prim).trim();
+  if (!str) return null;
 
-  const since = formatDateEndpoint(splitDateRange[0], true);
-  const until = formatDateEndpoint(splitDateRange[1]);
-
-  if (since === '-∞' && until === '∞') {
-    return 'No filter';
+  // Full URL - use as-is
+  if (str.startsWith('http://') || str.startsWith('https://')) {
+    return str;
   }
 
-  if (since === '-∞') {
-    return `Until ${until}`;
+  // Absolute path - prepend window origin if needed
+  if (str.startsWith('/')) {
+    return str;
   }
 
-  if (until === '∞') {
-    return `${since} onwards`;
-  }
+  // Filename or relative path - prepend base path
+  const base = basePath.endsWith('/') ? basePath : `${basePath}/`;
+  return base + str;
+}
 
-  return `${since} to ${until}`;
-};
+function AudioTableContent({
+  className = '',
+  height = 400,
+  data,
+  columns,
+  audioColumnKey,
+  audioBasePath = DEFAULT_AUDIO_BASE_PATH,
+  sliceId,
+}: AudioTableProps) {
+  const [searchText, setSearchText] = useState('');
 
-export const formatTimeRangeComparison = (
-  initialTimeRange: string,
-  shiftedTimeRange: string,
-  columnPlaceholder = 'col',
-) => {
-  const splitInitialDateRange = initialTimeRange.split(SEPARATOR);
-  const splitShiftedDateRange = shiftedTimeRange.split(SEPARATOR);
-  return `${columnPlaceholder}: ${formatDateEndpoint(
-    splitInitialDateRange[0],
-    true,
-  )} to ${formatDateEndpoint(splitInitialDateRange[1])} vs
-  ${formatDateEndpoint(splitShiftedDateRange[0], true)} to ${formatDateEndpoint(
-    splitShiftedDateRange[1],
-  )}`;
-};
+  const normalizedSearch = searchText.trim().toLowerCase();
 
-export const fetchTimeRange = async (
-  timeRange: string,
-  columnPlaceholder = 'col',
-  shifts?: string[],
-) => {
-  let query;
-  let endpoint;
-  if (!isEmpty(shifts)) {
-    const timeRanges = ensureIsArray(shifts).map(shift => ({
-      timeRange,
-      shift,
-    }));
-    query = rison.encode_uri([{ timeRange }, ...timeRanges]);
-    endpoint = `/api/v1/time_range/?q=${query}`;
-  } else {
-    query = rison.encode_uri(timeRange);
-    endpoint = `/api/v1/time_range/?q=${query}`;
-  }
-  try {
-    const response = await SupersetClient.get({ endpoint });
-    if (isEmpty(shifts)) {
-      const timeRangeString = buildTimeRangeString(
-        response?.json?.result[0]?.since || '',
-        response?.json?.result[0]?.until || '',
-      );
-      return {
-        value: formatTimeRange(timeRangeString, columnPlaceholder),
-      };
+  const filteredData = useMemo(() => {
+    if (!normalizedSearch) {
+      return data;
     }
-    const timeRanges = response?.json?.result.map((result: any) =>
-      buildTimeRangeString(result.since, result.until),
+    return data.filter(row =>
+      columns.some(col => {
+        const value = toPrimitive(row[col]);
+        if (value == null) return false;
+        return String(value).toLowerCase().includes(normalizedSearch);
+      }),
     );
-    return {
-      value: timeRanges
-        .slice(1)
-        .map((timeRange: string) =>
-          formatTimeRangeComparison(
-            timeRanges[0],
-            timeRange,
-            columnPlaceholder,
-          ),
-        ),
+  }, [columns, data, normalizedSearch]);
+
+  const tableColumns = useMemo(() => {
+    const dataColumns = columns.map(col => ({
+      accessor: col,
+      Header: col,
+      id: col,
+    }));
+
+    const playColumn = {
+      accessor: AUDIO_PLAY_COLUMN_ID,
+      Header: t('Play'),
+      id: AUDIO_PLAY_COLUMN_ID,
+      disableSortBy: true,
+      width: 60,
     };
-  } catch (response) {
-    const clientError = await getClientErrorObject(response);
-    return {
-      error: clientError.message || clientError.error || response.statusText,
-    };
-  }
-};
+
+    return [...dataColumns, playColumn];
+  }, [columns]);
+
+  const tableData = useMemo(() => {
+    return filteredData.map(row => {
+      const cells: Record<string, unknown> = {};
+      columns.forEach(col => {
+        const val = row[col];
+        cells[col] = toPrimitive(val) ?? '';
+      });
+      const audioValue = audioColumnKey ? row[audioColumnKey] : null;
+      const audioUrl = getAudioUrl(audioValue, audioBasePath);
+      cells[AUDIO_PLAY_COLUMN_ID] = (
+        <PlayButton audioUrl={audioUrl} title={t('Play audio')} />
+      );
+      return cells;
+    });
+  }, [filteredData, columns, audioColumnKey, audioBasePath]);
+
+  return (
+    <AudioTableStyles
+      data-test="audio-table"
+      className={className}
+      height={height}
+    >
+      <HeaderSearchPortal
+        sliceId={sliceId}
+        count={data.length}
+        value={searchText}
+        onChange={setSearchText}
+      />
+      <TableView
+        className="table-no-hover"
+        columns={tableColumns}
+        data={tableData}
+        withPagination={filteredData.length > 10}
+        pageSize={10}
+      />
+    </AudioTableStyles>
+  );
+}
+
+export default function AudioTable(props: AudioTableProps) {
+  return <AudioTableContent {...props} />;
+}
