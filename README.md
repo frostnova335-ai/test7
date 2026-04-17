@@ -1,251 +1,594 @@
-import React, { useRef, useState } from 'react';
+import { t } from '@apache-superset/core/translation';
+import { FrameComponentProps } from '../types';
+import DatePicker from 'antd/es/date-picker';
+import { useState } from 'react';
 
-function formatTime(seconds: number) {
-  if (!seconds || isNaN(seconds)) return '00:00';
+export function CurrentCalendarFrame({
+  onChange,
+  value,
+}: FrameComponentProps) {
+  const { RangePicker } = DatePicker;
 
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
+  const [showCalendar, setShowCalendar] = useState(false);
 
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(
-    2,
-    '0',
-  )}`;
-}
+  const options = [
+    { label: '1D', value: 'Last 1 day' },
+    { label: '7D', value: 'Last 7 days' },
+    { label: '30D', value: 'Last 30 days' },
+    { label: '90D', value: 'Last 90 days' },
+    { label: 'ALL', value: 'CUSTOM' },
+  ];
 
-function AudioPlayer({
-  src,
-  gradientStart,
-  gradientEnd,
-}: {
-  src: string;
-  gradientStart: string;
-  gradientEnd: string;
-}) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const barRef = useRef<HTMLDivElement>(null);
-
-  const [playing, setPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [duration, setDuration] = useState(0);
-  const [current, setCurrent] = useState(0);
-
-  const togglePlay = () => {
-    if (!audioRef.current) return;
-
-    if (playing) {
-      audioRef.current.pause();
+  const handleClick = (val: string) => {
+    if (val === 'CUSTOM') {
+      setShowCalendar(true);
     } else {
-      audioRef.current.play();
+      setShowCalendar(false);
+      onChange(val);
     }
-
-    setPlaying(!playing);
-  };
-
-  const skip = (seconds: number) => {
-    if (!audioRef.current) return;
-
-    audioRef.current.currentTime = Math.min(
-      Math.max(audioRef.current.currentTime + seconds, 0),
-      audioRef.current.duration || 0,
-    );
-  };
-
-  const onTimeUpdate = () => {
-    if (!audioRef.current) return;
-
-    const currentTime = audioRef.current.currentTime;
-    const total = audioRef.current.duration || 0;
-
-    setCurrent(currentTime);
-    setDuration(total);
-    setProgress((currentTime / total) * 100 || 0);
-  };
-
-  const seekAudio = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!barRef.current || !audioRef.current) return;
-
-    const rect = barRef.current.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-
-    const percent = (clickX / rect.width) * 100;
-
-    audioRef.current.currentTime =
-      (percent / 100) * audioRef.current.duration;
-
-    setProgress(percent);
-  };
-
-  const controlBtnStyle = {
-    width: 42,
-    height: 42,
-    minWidth: 42,
-    borderRadius: '50%',
-    border: 'none',
-    background: '#0F172A',
-    color: '#fff',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 14,
-    fontWeight: 600,
-    flexShrink: 0,
   };
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 14,
-        width: '100%',
-      }}
-    >
-      {/* BACK 5 SEC */}
-      <button
-        onClick={() => skip(-5)}
-        style={controlBtnStyle}
-      >
-       {'<'}
-      </button>
+    <>
+      <div className="section-title">{t('Quick Select')}</div>
 
-      {/* PLAY BUTTON */}
-      <button
-        onClick={togglePlay}
-        style={{
-          ...controlBtnStyle,
-          width: 48,
-          height: 48,
-          minWidth: 48,
-          fontSize: 18,
-          paddingLeft: playing ? 0 : 3,
-        }}
-      >
-        {playing ? '❚❚' : '▶'}
-      </button>
-
-      {/* FORWARD 5 SEC */}
-      <button
-        onClick={() => skip(5)}
-        style={controlBtnStyle}
-      >
-        {'>'}
-      </button>
-
-      {/* PROGRESS BAR */}
-      <div
-        ref={barRef}
-        onClick={seekAudio}
-        style={{
-          flex: 1,
-          height: 8,
-          borderRadius: 999,
-          background: '#E5E7EB',
-          position: 'relative',
-          cursor: 'pointer',
-        }}
-      >
-        <div
-          style={{
-            width: `${progress}%`,
-            height: '100%',
-            borderRadius: 999,
-            background: `linear-gradient(90deg, ${gradientStart}, ${gradientEnd})`,
-          }}
-        />
-
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: `${progress}%`,
-            transform: 'translate(-50%, -50%)',
-            width: 16,
-            height: 16,
-            borderRadius: '50%',
-            background: gradientEnd,
-            border: '3px solid white',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
-          }}
-        />
-      </div>
-
-      {/* TIMESTAMP */}
       <div
         style={{
-          minWidth: 100,
-          textAlign: 'right',
-          fontSize: 13,
-          fontWeight: 500,
-          color: '#94A3B8',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: 'inline-flex',
+          background: '#f1f5f9',
+          borderRadius: '12px',
+          padding: '4px',
+          gap: '4px',
         }}
       >
-        {formatTime(current)} / {formatTime(duration)}
+        {options.map(opt => (
+          <div
+            key={opt.value}
+            onClick={() => handleClick(opt.value)}
+            style={{
+              padding: '6px 14px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              fontWeight: 500,
+              fontSize: '13px',
+              transition: 'all 0.2s ease',
+              background:
+                value === opt.value || (opt.value === 'CUSTOM' && showCalendar)
+                  ? '#ffffff'
+                  : 'transparent',
+              boxShadow:
+                value === opt.value || (opt.value === 'CUSTOM' && showCalendar)
+                  ? '0 1px 3px rgba(0,0,0,0.1)'
+                  : 'none',
+              color:
+                value === opt.value || (opt.value === 'CUSTOM' && showCalendar)
+                  ? '#0f172a'
+                  : '#64748b',
+            }}
+          >
+            {opt.label}
+          </div>
+        ))}
       </div>
 
-      <audio
-        ref={audioRef}
-        src={src}
-        preload="metadata"
-        onTimeUpdate={onTimeUpdate}
-        onLoadedMetadata={() => {
-          if (audioRef.current) {
-            setDuration(audioRef.current.duration);
-          }
-        }}
-        onEnded={() => setPlaying(false)}
-      />
-    </div>
+      {showCalendar && (
+        <div style={{ marginTop: '16px' }}>
+          <div className="section-title">{t('Select Date Range')}</div>
+
+          <RangePicker
+            style={{ width: '100%' }}
+            onChange={(dates: any, dateStrings: [string, string]) => {
+              if (dateStrings[0] && dateStrings[1]) {
+                onChange(`${dateStrings[0]} : ${dateStrings[1]}`);
+              }
+            }}
+          />
+        </div>
+      )}
+    </>
   );
 }
 
-export default function AudioPlayerChart(props: any) {
-  const data = props?.data || [];
-  const formData = props?.formData || {};
 
-  const audioCol = formData.audio_url_column || 'audio_url';
 
-  const gradientStart =
-    formData.gradient_start || '#6366F1';
 
-  const gradientEnd =
-    formData.gradient_end || '#8B5CF6';
 
-  if (!data.length) {
-    return <div>No audio data found</div>;
+
+export type Props = {
+  error: Error;
+};
+
+export default function ErrorMessage({ error }: Props) {
+  // Keep technical logs for developers
+  console.error(error);
+
+  const rawMessage = String(
+    error?.message || error?.stack || '',
+  ).toLowerCase();
+
+  let friendlyMessage =
+    'Something went wrong while loading this chart. Please try again.';
+
+  if (
+    rawMessage.includes('filter') ||
+    rawMessage.includes('column') ||
+    rawMessage.includes('where')
+  ) {
+    friendlyMessage =
+      'Selected filters are not compatible with this chart.';
+  } else if (
+    rawMessage.includes('timeout') ||
+    rawMessage.includes('504')
+  ) {
+    friendlyMessage =
+      'The request timed out. Please try again.';
+  } else if (
+    rawMessage.includes('no data') ||
+    rawMessage.includes('empty')
+  ) {
+    friendlyMessage =
+      'No data available for the selected filters.';
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      {data.map((row: any, index: number) => {
-        const rawUrl = row[audioCol];
-
-        const audioUrl =
-          rawUrl?.startsWith('http')
-            ? rawUrl
-            : `${window.location.origin}${rawUrl}`;
-
-        return (
-          <div
-            key={index}
-            style={{
-              padding: 20,
-              borderRadius: 14,
-              background: 'rgba(0,0,0,0.88)',
-              border: '1px solid rgb(226,232,240)',
-            }}
-          >
-            <AudioPlayer
-              src={audioUrl}
-              gradientStart={gradientStart}
-              gradientEnd={gradientEnd}
-            />
-          </div>
-        );
-      })}
+    <div
+      className="alert alert-warning"
+      style={{
+        padding: '16px',
+        borderRadius: '8px',
+        textAlign: 'center',
+        fontWeight: 500,
+      }}
+    >
+      {friendlyMessage}
     </div>
   );
 }
+
+
+
+
+
+
+
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+import {
+  FC,
+  memo,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
+
+import { t } from '@apache-superset/core/translation';
+import {
+  ChartDataResponseResult,
+  Behavior,
+  DataMask,
+  isFeatureEnabled,
+  FeatureFlag,
+  getChartMetadataRegistry,
+  JsonObject,
+  QueryFormData,
+  SuperChart,
+  ClientErrorObject,
+  getClientErrorObject,
+  isChartCustomization,
+} from '@superset-ui/core';
+import { styled } from '@apache-superset/core/theme';
+import { useDispatch, useSelector } from 'react-redux';
+import { isEqual, isEqualWith } from 'lodash';
+import { getChartDataRequest } from 'src/components/Chart/chartAction';
+import { ErrorAlert, ErrorMessageWithStackTrace } from 'src/components';
+import { Loading, Constants } from '@superset-ui/core/components';
+import { waitForAsyncData } from 'src/middleware/asyncEvent';
+import { FilterBarOrientation, RootState } from 'src/dashboard/types';
+import {
+  onFiltersRefreshSuccess,
+  setDirectPathToChild,
+} from 'src/dashboard/actions/dashboardState';
+import {
+  setHoveredChartCustomization,
+  unsetHoveredChartCustomization,
+} from 'src/dashboard/actions/nativeFilters';
+import { RESPONSIVE_WIDTH } from 'src/filters/components/common';
+import { dispatchHoverAction, dispatchFocusAction } from './utils';
+import { FilterControlProps } from './types';
+import { getFormData } from '../../utils';
+import { useFilterDependencies } from './state';
+import { useFilterOutlined } from '../useFilterOutlined';
+
+const HEIGHT = 32;
+
+// Overrides superset-ui height with min-height
+const StyledDiv = styled.div<{
+  orientation: FilterBarOrientation;
+  overflow: boolean;
+}>`
+  padding-bottom: ${({ theme, orientation, overflow }) =>
+    orientation === FilterBarOrientation.Horizontal && !overflow
+      ? 0
+      : (theme?.sizeUnit ?? 4)}px;
+
+  & > div {
+    height: auto !important;
+    min-height: ${HEIGHT}px;
+  }
+`;
+
+const queriesDataPlaceholder = [{ data: [{}] }];
+
+const useShouldFilterRefresh = () => {
+  const isDashboardRefreshing = useSelector<RootState, boolean>(
+    state => state.dashboardState.isRefreshing,
+  );
+  const isFilterRefreshing = useSelector<RootState, boolean>(
+    state => state.dashboardState.isFiltersRefreshing,
+  );
+
+  // trigger filter requests only after charts requests were triggered
+  return !isDashboardRefreshing && isFilterRefreshing;
+};
+
+export type FilterValueProps = FilterControlProps;
+
+const FilterValue: FC<FilterValueProps> = ({
+  dataMaskSelected,
+  filter,
+  onFilterSelectionChange,
+  inView = true,
+  showOverflow,
+  parentRef,
+  setFilterActive,
+  orientation = FilterBarOrientation.Vertical,
+  overflow = false,
+  validateStatus,
+  clearAllTrigger,
+  onClearAllComplete,
+}) => {
+  const { id, targets, filterType } = filter;
+  const isCustomization = isChartCustomization(filter);
+  const adhocFilters = isCustomization ? undefined : filter.adhoc_filters;
+  const timeRange = isCustomization ? undefined : filter.time_range;
+  const granularitySqla = isCustomization ? undefined : filter.granularity_sqla;
+  const metadata = getChartMetadataRegistry().get(filterType);
+  const dependencies = useFilterDependencies(id, dataMaskSelected);
+  const shouldRefresh = useShouldFilterRefresh();
+
+  const behaviors = useMemo(
+    () => [
+      isCustomization ? Behavior.ChartCustomization : Behavior.NativeFilter,
+    ],
+    [isCustomization],
+  );
+  const [state, setState] = useState<ChartDataResponseResult[]>([]);
+  const dashboardId = useSelector<RootState, number>(
+    state => state.dashboardInfo.id,
+  );
+
+  const [error, setError] = useState<ClientErrorObject>();
+  const [formData, setFormData] = useState<Partial<QueryFormData>>({
+    inView: false,
+  });
+  const [ownState, setOwnState] = useState<JsonObject>({});
+  const [inViewFirstTime, setInViewFirstTime] = useState(inView);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [target] = targets || [];
+  const {
+    datasetId,
+    column = {},
+  }: Partial<{ datasetId: number; column: { name?: string } }> = target || {};
+  const groupby = column?.name;
+  const hasDataSource = !!datasetId;
+  const [isLoading, setIsLoading] = useState<boolean>(hasDataSource);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const dispatch = useDispatch();
+
+  const { outlinedFilterId, lastUpdated } = useFilterOutlined();
+
+  const handleFilterLoadFinish = useCallback(() => {
+    setIsRefreshing(false);
+    setIsLoading(false);
+    if (shouldRefresh) {
+      dispatch(onFiltersRefreshSuccess());
+    }
+  }, [dispatch, shouldRefresh]);
+
+  useEffect(() => {
+    if (!inViewFirstTime && inView) {
+      setInViewFirstTime(true);
+    }
+  }, [inView, inViewFirstTime, setInViewFirstTime]);
+
+  useEffect(() => {
+    if (!inViewFirstTime) {
+      return;
+    }
+    const newFormData = getFormData({
+      ...filter,
+      datasetId,
+      dependencies,
+      groupby,
+      adhoc_filters: adhocFilters,
+      time_range: timeRange,
+      granularity_sqla: granularitySqla,
+      dashboardId,
+    });
+    const filterOwnState = filter.dataMask?.ownState || {};
+    if ((filter.cascadeParentIds ?? []).length) {
+      // Prevent unnecessary backend requests by validating parent filter selections first
+
+      let selectedParentFilterValueCounts = 0;
+
+      (filter.cascadeParentIds ?? []).forEach(pId => {
+        const extraFormData = dataMaskSelected?.[pId]?.extraFormData;
+        if (extraFormData?.filters?.length) {
+          selectedParentFilterValueCounts += extraFormData.filters.length;
+        } else if (extraFormData?.time_range) {
+          selectedParentFilterValueCounts += 1;
+        }
+      });
+
+      // check if all parent filters with defaults have a value selected
+
+      let depsCount = dependencies.filters?.length ?? 0;
+
+      if (dependencies?.time_range) {
+        depsCount += 1;
+      }
+      if (selectedParentFilterValueCounts !== depsCount) {
+        // child filter should not request backend until it
+        // has all the required information from parent filters
+        return;
+      }
+    }
+
+    // TODO: We should try to improve our useEffect hooks to depend more on
+    // granular information instead of big objects that require deep comparison.
+    const customizer = (
+      objValue: Partial<QueryFormData>,
+      othValue: Partial<QueryFormData>,
+      key: string,
+    ) => (key === 'url_params' ? true : undefined);
+    if (
+      !isRefreshing &&
+      (!isEqualWith(formData, newFormData, customizer) ||
+        !isEqual(ownState, filterOwnState) ||
+        shouldRefresh)
+    ) {
+      setFormData(newFormData);
+      setOwnState(filterOwnState);
+      if (!hasDataSource) {
+        return;
+      }
+      setIsRefreshing(true);
+      getChartDataRequest({
+        formData: newFormData,
+        force: shouldRefresh,
+        ownState: filterOwnState,
+      })
+        .then(({ response, json }) => {
+          if (isFeatureEnabled(FeatureFlag.GlobalAsyncQueries)) {
+            // deal with getChartDataRequest transforming the response data
+            const result = 'result' in json ? json.result[0] : json;
+            if (response.status === 200) {
+              setState([result as ChartDataResponseResult]);
+              handleFilterLoadFinish();
+            } else if (response.status === 202) {
+              waitForAsyncData(result as Parameters<typeof waitForAsyncData>[0])
+                .then((asyncResult: ChartDataResponseResult[]) => {
+                  setState(asyncResult);
+                  handleFilterLoadFinish();
+                })
+                .catch((error: Response) => {
+                  getClientErrorObject(error).then(clientErrorObject => {
+                    setError(clientErrorObject);
+                    handleFilterLoadFinish();
+                  });
+                });
+            } else {
+              throw new Error(
+                `Received unexpected response status (${response.status}) while fetching chart data`,
+              );
+            }
+          } else {
+            setState(json.result as ChartDataResponseResult[]);
+            setError(undefined);
+            handleFilterLoadFinish();
+          }
+        })
+        .catch((error: Response) => {
+          getClientErrorObject(error).then(clientErrorObject => {
+            setError(clientErrorObject);
+            handleFilterLoadFinish();
+          });
+        });
+    }
+  }, [
+    inViewFirstTime,
+    dependencies,
+    datasetId,
+    groupby,
+    handleFilterLoadFinish,
+    filter,
+    hasDataSource,
+    isRefreshing,
+    shouldRefresh,
+    dataMaskSelected,
+  ]);
+
+  useEffect(() => {
+    if (outlinedFilterId && outlinedFilterId === filter.id) {
+      setTimeout(
+        () => {
+          inputRef?.current?.focus();
+        },
+        overflow ? Constants.FAST_DEBOUNCE : 0,
+      );
+    }
+  }, [inputRef, outlinedFilterId, lastUpdated, filter.id, overflow]);
+
+  const setDataMask = useCallback(
+    (dataMask: DataMask) => onFilterSelectionChange(filter, dataMask),
+    [filter, onFilterSelectionChange],
+  );
+
+  const setFocusedFilter = useCallback(() => {
+    if (isCustomization) {
+      return;
+    }
+    if (outlinedFilterId !== id) {
+      dispatchFocusAction(dispatch, id);
+    }
+  }, [dispatch, id, outlinedFilterId, isCustomization]);
+
+  const unsetFocusedFilter = useCallback(() => {
+    if (isCustomization) {
+      return;
+    }
+    dispatchFocusAction(dispatch);
+    if (outlinedFilterId === id) {
+      dispatch(setDirectPathToChild([]));
+    }
+  }, [dispatch, id, outlinedFilterId, isCustomization]);
+
+  const setHoveredFilter = useCallback(() => {
+    if (isCustomization) {
+      dispatch(setHoveredChartCustomization(id));
+    } else {
+      dispatchHoverAction(dispatch, id);
+    }
+  }, [dispatch, id, isCustomization]);
+
+  const unsetHoveredFilter = useCallback(() => {
+    if (isCustomization) {
+      dispatch(unsetHoveredChartCustomization());
+    } else {
+      dispatchHoverAction(dispatch);
+    }
+  }, [dispatch, isCustomization]);
+
+  const hooks = useMemo(
+    () => ({
+      setDataMask,
+      setHoveredFilter,
+      unsetHoveredFilter,
+      setFocusedFilter,
+      unsetFocusedFilter,
+      setFilterActive,
+      clearAllTrigger,
+      onClearAllComplete,
+    }),
+    [
+      setDataMask,
+      setFilterActive,
+      setHoveredFilter,
+      unsetHoveredFilter,
+      setFocusedFilter,
+      unsetFocusedFilter,
+      clearAllTrigger,
+      onClearAllComplete,
+    ],
+  );
+
+  const filterState = useMemo(
+    () => ({
+      ...filter.dataMask?.filterState,
+      validateStatus,
+    }),
+    [filter.dataMask?.filterState, validateStatus],
+  );
+
+  const displaySettings = useMemo(
+    () => ({
+      filterBarOrientation: orientation,
+      isOverflowingFilterBar: overflow,
+    }),
+    [orientation, overflow],
+  );
+
+  if (error) {
+    const errorMessage = (error?.message || '').toLowerCase();
+
+    let friendlyMessage = 'Unable to load filter options.';
+
+    if (errorMessage.includes('network')) {
+      friendlyMessage = 'Unable to load filter options.';
+    } else if (errorMessage.includes('timeout')) {
+      friendlyMessage = 'Filter request timed out.';
+    } else if (
+      errorMessage.includes('column') ||
+      errorMessage.includes('missing')
+    ) {
+      friendlyMessage = 'Filter configuration is invalid.';
+    }
+
+    return (
+      <div
+        style={{
+          fontSize: '13px',
+          color: '#666',
+          padding: '6px 4px',
+          fontWeight: 500,
+        }}
+      >
+        {friendlyMessage}
+      </div>
+    );
+  }
+
+  return (
+    <StyledDiv
+      data-test="form-item-value"
+      orientation={orientation}
+      overflow={overflow}
+    >
+      {isLoading ? (
+        <Loading position="inline-centered" size="s" muted />
+      ) : (
+        <SuperChart
+          height={HEIGHT}
+          width={RESPONSIVE_WIDTH}
+          showOverflow={showOverflow}
+          formData={formData}
+          displaySettings={displaySettings}
+          parentRef={parentRef}
+          inputRef={inputRef}
+          // For charts that don't have datasource we need workaround for empty placeholder
+          queriesData={hasDataSource ? state : queriesDataPlaceholder}
+          chartType={filterType}
+          behaviors={behaviors}
+          filterState={filterState}
+          ownState={filter.dataMask?.ownState}
+          enableNoResults={metadata?.enableNoResults}
+          isRefreshing={isRefreshing}
+          hooks={hooks}
+        />
+      )}
+    </StyledDiv>
+  );
+};
+export default memo(FilterValue);
+
+
+
+
