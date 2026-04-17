@@ -1,594 +1,106 @@
-import { t } from '@apache-superset/core/translation';
-import { FrameComponentProps } from '../types';
-import DatePicker from 'antd/es/date-picker';
-import { useState } from 'react';
-
-export function CurrentCalendarFrame({
-  onChange,
-  value,
-}: FrameComponentProps) {
-  const { RangePicker } = DatePicker;
-
-  const [showCalendar, setShowCalendar] = useState(false);
-
-  const options = [
-    { label: '1D', value: 'Last 1 day' },
-    { label: '7D', value: 'Last 7 days' },
-    { label: '30D', value: 'Last 30 days' },
-    { label: '90D', value: 'Last 90 days' },
-    { label: 'ALL', value: 'CUSTOM' },
-  ];
-
-  const handleClick = (val: string) => {
-    if (val === 'CUSTOM') {
-      setShowCalendar(true);
-    } else {
-      setShowCalendar(false);
-      onChange(val);
-    }
-  };
-
-  return (
-    <>
-      <div className="section-title">{t('Quick Select')}</div>
-
-      <div
-        style={{
-          display: 'inline-flex',
-          background: '#f1f5f9',
-          borderRadius: '12px',
-          padding: '4px',
-          gap: '4px',
-        }}
-      >
-        {options.map(opt => (
-          <div
-            key={opt.value}
-            onClick={() => handleClick(opt.value)}
-            style={{
-              padding: '6px 14px',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              fontWeight: 500,
-              fontSize: '13px',
-              transition: 'all 0.2s ease',
-              background:
-                value === opt.value || (opt.value === 'CUSTOM' && showCalendar)
-                  ? '#ffffff'
-                  : 'transparent',
-              boxShadow:
-                value === opt.value || (opt.value === 'CUSTOM' && showCalendar)
-                  ? '0 1px 3px rgba(0,0,0,0.1)'
-                  : 'none',
-              color:
-                value === opt.value || (opt.value === 'CUSTOM' && showCalendar)
-                  ? '#0f172a'
-                  : '#64748b',
-            }}
-          >
-            {opt.label}
-          </div>
-        ))}
-      </div>
-
-      {showCalendar && (
-        <div style={{ marginTop: '16px' }}>
-          <div className="section-title">{t('Select Date Range')}</div>
-
-          <RangePicker
-            style={{ width: '100%' }}
-            onChange={(dates: any, dateStrings: [string, string]) => {
-              if (dateStrings[0] && dateStrings[1]) {
-                onChange(`${dateStrings[0]} : ${dateStrings[1]}`);
-              }
-            }}
-          />
-        </div>
-      )}
-    </>
-  );
-}
-
-
-
-
-
-
-export type Props = {
-  error: Error;
-};
-
-export default function ErrorMessage({ error }: Props) {
-  // Keep technical logs for developers
-  console.error(error);
-
-  const rawMessage = String(
-    error?.message || error?.stack || '',
-  ).toLowerCase();
-
-  let friendlyMessage =
-    'Something went wrong while loading this chart. Please try again.';
-
-  if (
-    rawMessage.includes('filter') ||
-    rawMessage.includes('column') ||
-    rawMessage.includes('where')
-  ) {
-    friendlyMessage =
-      'Selected filters are not compatible with this chart.';
-  } else if (
-    rawMessage.includes('timeout') ||
-    rawMessage.includes('504')
-  ) {
-    friendlyMessage =
-      'The request timed out. Please try again.';
-  } else if (
-    rawMessage.includes('no data') ||
-    rawMessage.includes('empty')
-  ) {
-    friendlyMessage =
-      'No data available for the selected filters.';
-  }
-
-  return (
-    <div
-      className="alert alert-warning"
-      style={{
-        padding: '16px',
-        borderRadius: '8px',
-        textAlign: 'center',
-        fontWeight: 500,
-      }}
-    >
-      {friendlyMessage}
-    </div>
-  );
-}
-
-
-
-
-
-
-
 /**
  * Licensed to the Apache Software Foundation (ASF) under one
  * or more contributor license agreements.  See the NOTICE file
  * distributed with this work for additional information
  * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
+ * to you under the Apache License, Version 2.0
  */
-import {
-  FC,
-  memo,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
 
-import { t } from '@apache-superset/core/translation';
-import {
-  ChartDataResponseResult,
-  Behavior,
-  DataMask,
-  isFeatureEnabled,
-  FeatureFlag,
-  getChartMetadataRegistry,
-  JsonObject,
-  QueryFormData,
-  SuperChart,
-  ClientErrorObject,
-  getClientErrorObject,
-  isChartCustomization,
-} from '@superset-ui/core';
-import { styled } from '@apache-superset/core/theme';
-import { useDispatch, useSelector } from 'react-redux';
-import { isEqual, isEqualWith } from 'lodash';
-import { getChartDataRequest } from 'src/components/Chart/chartAction';
-import { ErrorAlert, ErrorMessageWithStackTrace } from 'src/components';
-import { Loading, Constants } from '@superset-ui/core/components';
-import { waitForAsyncData } from 'src/middleware/asyncEvent';
-import { FilterBarOrientation, RootState } from 'src/dashboard/types';
-import {
-  onFiltersRefreshSuccess,
-  setDirectPathToChild,
-} from 'src/dashboard/actions/dashboardState';
-import {
-  setHoveredChartCustomization,
-  unsetHoveredChartCustomization,
-} from 'src/dashboard/actions/nativeFilters';
-import { RESPONSIVE_WIDTH } from 'src/filters/components/common';
-import { dispatchHoverAction, dispatchFocusAction } from './utils';
-import { FilterControlProps } from './types';
-import { getFormData } from '../../utils';
-import { useFilterDependencies } from './state';
-import { useFilterOutlined } from '../useFilterOutlined';
+import { ClientErrorObject, SupersetError } from '@superset-ui/core';
+import { FC } from 'react';
+import { useChartOwnerNames } from 'src/hooks/apiResources';
+import { ErrorMessageWithStackTrace } from 'src/components';
+import { ChartSource } from 'src/types/ChartSource';
 
-const HEIGHT = 32;
+export type Props = {
+  chartId: number;
+  error?: SupersetError;
+  subtitle: React.ReactNode;
+  link?: string;
+  source: ChartSource;
+  stackTrace?: string;
+} & Omit<ClientErrorObject, 'error'>;
 
-// Overrides superset-ui height with min-height
-const StyledDiv = styled.div<{
-  orientation: FilterBarOrientation;
-  overflow: boolean;
-}>`
-  padding-bottom: ${({ theme, orientation, overflow }) =>
-    orientation === FilterBarOrientation.Horizontal && !overflow
-      ? 0
-      : (theme?.sizeUnit ?? 4)}px;
+const DEFAULT_CHART_ERROR = 'Unable to Load Chart';
 
-  & > div {
-    height: auto !important;
-    min-height: ${HEIGHT}px;
+const getFriendlyChartError = (error?: SupersetError) => {
+  const msg = (error?.message || '').toLowerCase();
+
+  if (
+    msg.includes('missing dataset') ||
+    msg.includes('dataset associated') ||
+    msg.includes('no longer exists')
+  ) {
+    return 'This chart is temporarily unavailable.';
   }
-`;
 
-const queriesDataPlaceholder = [{ data: [{}] }];
+  if (
+    msg.includes('column') ||
+    msg.includes('missing in dataset') ||
+    msg.includes('does not exist')
+  ) {
+    return 'Some required data is unavailable for the selected filters.';
+  }
 
-const useShouldFilterRefresh = () => {
-  const isDashboardRefreshing = useSelector<RootState, boolean>(
-    state => state.dashboardState.isRefreshing,
-  );
-  const isFilterRefreshing = useSelector<RootState, boolean>(
-    state => state.dashboardState.isFiltersRefreshing,
-  );
+  if (msg.includes('network')) {
+    return 'Unable to fetch data right now. Please try again later.';
+  }
 
-  // trigger filter requests only after charts requests were triggered
-  return !isDashboardRefreshing && isFilterRefreshing;
+  if (msg.includes('timeout')) {
+    return 'Request timed out. Please narrow your filters and try again.';
+  }
+
+  return 'This chart cannot be displayed right now.';
 };
 
-export type FilterValueProps = FilterControlProps;
-
-const FilterValue: FC<FilterValueProps> = ({
-  dataMaskSelected,
-  filter,
-  onFilterSelectionChange,
-  inView = true,
-  showOverflow,
-  parentRef,
-  setFilterActive,
-  orientation = FilterBarOrientation.Vertical,
-  overflow = false,
-  validateStatus,
-  clearAllTrigger,
-  onClearAllComplete,
+export const ChartErrorMessage: FC<Props> = ({
+  chartId,
+  error,
+  ...props
 }) => {
-  const { id, targets, filterType } = filter;
-  const isCustomization = isChartCustomization(filter);
-  const adhocFilters = isCustomization ? undefined : filter.adhoc_filters;
-  const timeRange = isCustomization ? undefined : filter.time_range;
-  const granularitySqla = isCustomization ? undefined : filter.granularity_sqla;
-  const metadata = getChartMetadataRegistry().get(filterType);
-  const dependencies = useFilterDependencies(id, dataMaskSelected);
-  const shouldRefresh = useShouldFilterRefresh();
+  const { result: owners } = useChartOwnerNames(chartId);
 
-  const behaviors = useMemo(
-    () => [
-      isCustomization ? Behavior.ChartCustomization : Behavior.NativeFilter,
-    ],
-    [isCustomization],
-  );
-  const [state, setState] = useState<ChartDataResponseResult[]>([]);
-  const dashboardId = useSelector<RootState, number>(
-    state => state.dashboardInfo.id,
-  );
+  const isExplorePage = window.location.pathname.includes('/explore');
 
-  const [error, setError] = useState<ClientErrorObject>();
-  const [formData, setFormData] = useState<Partial<QueryFormData>>({
-    inView: false,
-  });
-  const [ownState, setOwnState] = useState<JsonObject>({});
-  const [inViewFirstTime, setInViewFirstTime] = useState(inView);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [target] = targets || [];
-  const {
-    datasetId,
-    column = {},
-  }: Partial<{ datasetId: number; column: { name?: string } }> = target || {};
-  const groupby = column?.name;
-  const hasDataSource = !!datasetId;
-  const [isLoading, setIsLoading] = useState<boolean>(hasDataSource);
-  const [isRefreshing, setIsRefreshing] = useState(false);
-  const dispatch = useDispatch();
-
-  const { outlinedFilterId, lastUpdated } = useFilterOutlined();
-
-  const handleFilterLoadFinish = useCallback(() => {
-    setIsRefreshing(false);
-    setIsLoading(false);
-    if (shouldRefresh) {
-      dispatch(onFiltersRefreshSuccess());
-    }
-  }, [dispatch, shouldRefresh]);
-
-  useEffect(() => {
-    if (!inViewFirstTime && inView) {
-      setInViewFirstTime(true);
-    }
-  }, [inView, inViewFirstTime, setInViewFirstTime]);
-
-  useEffect(() => {
-    if (!inViewFirstTime) {
-      return;
-    }
-    const newFormData = getFormData({
-      ...filter,
-      datasetId,
-      dependencies,
-      groupby,
-      adhoc_filters: adhocFilters,
-      time_range: timeRange,
-      granularity_sqla: granularitySqla,
-      dashboardId,
-    });
-    const filterOwnState = filter.dataMask?.ownState || {};
-    if ((filter.cascadeParentIds ?? []).length) {
-      // Prevent unnecessary backend requests by validating parent filter selections first
-
-      let selectedParentFilterValueCounts = 0;
-
-      (filter.cascadeParentIds ?? []).forEach(pId => {
-        const extraFormData = dataMaskSelected?.[pId]?.extraFormData;
-        if (extraFormData?.filters?.length) {
-          selectedParentFilterValueCounts += extraFormData.filters.length;
-        } else if (extraFormData?.time_range) {
-          selectedParentFilterValueCounts += 1;
-        }
-      });
-
-      // check if all parent filters with defaults have a value selected
-
-      let depsCount = dependencies.filters?.length ?? 0;
-
-      if (dependencies?.time_range) {
-        depsCount += 1;
-      }
-      if (selectedParentFilterValueCounts !== depsCount) {
-        // child filter should not request backend until it
-        // has all the required information from parent filters
-        return;
-      }
-    }
-
-    // TODO: We should try to improve our useEffect hooks to depend more on
-    // granular information instead of big objects that require deep comparison.
-    const customizer = (
-      objValue: Partial<QueryFormData>,
-      othValue: Partial<QueryFormData>,
-      key: string,
-    ) => (key === 'url_params' ? true : undefined);
-    if (
-      !isRefreshing &&
-      (!isEqualWith(formData, newFormData, customizer) ||
-        !isEqual(ownState, filterOwnState) ||
-        shouldRefresh)
-    ) {
-      setFormData(newFormData);
-      setOwnState(filterOwnState);
-      if (!hasDataSource) {
-        return;
-      }
-      setIsRefreshing(true);
-      getChartDataRequest({
-        formData: newFormData,
-        force: shouldRefresh,
-        ownState: filterOwnState,
-      })
-        .then(({ response, json }) => {
-          if (isFeatureEnabled(FeatureFlag.GlobalAsyncQueries)) {
-            // deal with getChartDataRequest transforming the response data
-            const result = 'result' in json ? json.result[0] : json;
-            if (response.status === 200) {
-              setState([result as ChartDataResponseResult]);
-              handleFilterLoadFinish();
-            } else if (response.status === 202) {
-              waitForAsyncData(result as Parameters<typeof waitForAsyncData>[0])
-                .then((asyncResult: ChartDataResponseResult[]) => {
-                  setState(asyncResult);
-                  handleFilterLoadFinish();
-                })
-                .catch((error: Response) => {
-                  getClientErrorObject(error).then(clientErrorObject => {
-                    setError(clientErrorObject);
-                    handleFilterLoadFinish();
-                  });
-                });
-            } else {
-              throw new Error(
-                `Received unexpected response status (${response.status}) while fetching chart data`,
-              );
-            }
-          } else {
-            setState(json.result as ChartDataResponseResult[]);
-            setError(undefined);
-            handleFilterLoadFinish();
-          }
-        })
-        .catch((error: Response) => {
-          getClientErrorObject(error).then(clientErrorObject => {
-            setError(clientErrorObject);
-            handleFilterLoadFinish();
-          });
-        });
-    }
-  }, [
-    inViewFirstTime,
-    dependencies,
-    datasetId,
-    groupby,
-    handleFilterLoadFinish,
-    filter,
-    hasDataSource,
-    isRefreshing,
-    shouldRefresh,
-    dataMaskSelected,
-  ]);
-
-  useEffect(() => {
-    if (outlinedFilterId && outlinedFilterId === filter.id) {
-      setTimeout(
-        () => {
-          inputRef?.current?.focus();
-        },
-        overflow ? Constants.FAST_DEBOUNCE : 0,
-      );
-    }
-  }, [inputRef, outlinedFilterId, lastUpdated, filter.id, overflow]);
-
-  const setDataMask = useCallback(
-    (dataMask: DataMask) => onFilterSelectionChange(filter, dataMask),
-    [filter, onFilterSelectionChange],
-  );
-
-  const setFocusedFilter = useCallback(() => {
-    if (isCustomization) {
-      return;
-    }
-    if (outlinedFilterId !== id) {
-      dispatchFocusAction(dispatch, id);
-    }
-  }, [dispatch, id, outlinedFilterId, isCustomization]);
-
-  const unsetFocusedFilter = useCallback(() => {
-    if (isCustomization) {
-      return;
-    }
-    dispatchFocusAction(dispatch);
-    if (outlinedFilterId === id) {
-      dispatch(setDirectPathToChild([]));
-    }
-  }, [dispatch, id, outlinedFilterId, isCustomization]);
-
-  const setHoveredFilter = useCallback(() => {
-    if (isCustomization) {
-      dispatch(setHoveredChartCustomization(id));
-    } else {
-      dispatchHoverAction(dispatch, id);
-    }
-  }, [dispatch, id, isCustomization]);
-
-  const unsetHoveredFilter = useCallback(() => {
-    if (isCustomization) {
-      dispatch(unsetHoveredChartCustomization());
-    } else {
-      dispatchHoverAction(dispatch);
-    }
-  }, [dispatch, isCustomization]);
-
-  const hooks = useMemo(
-    () => ({
-      setDataMask,
-      setHoveredFilter,
-      unsetHoveredFilter,
-      setFocusedFilter,
-      unsetFocusedFilter,
-      setFilterActive,
-      clearAllTrigger,
-      onClearAllComplete,
-    }),
-    [
-      setDataMask,
-      setFilterActive,
-      setHoveredFilter,
-      unsetHoveredFilter,
-      setFocusedFilter,
-      unsetFocusedFilter,
-      clearAllTrigger,
-      onClearAllComplete,
-    ],
-  );
-
-  const filterState = useMemo(
-    () => ({
-      ...filter.dataMask?.filterState,
-      validateStatus,
-    }),
-    [filter.dataMask?.filterState, validateStatus],
-  );
-
-  const displaySettings = useMemo(
-    () => ({
-      filterBarOrientation: orientation,
-      isOverflowingFilterBar: overflow,
-    }),
-    [orientation, overflow],
-  );
-
-  if (error) {
-    const errorMessage = (error?.message || '').toLowerCase();
-
-    let friendlyMessage = 'Unable to load filter options.';
-
-    if (errorMessage.includes('network')) {
-      friendlyMessage = 'Unable to load filter options.';
-    } else if (errorMessage.includes('timeout')) {
-      friendlyMessage = 'Filter request timed out.';
-    } else if (
-      errorMessage.includes('column') ||
-      errorMessage.includes('missing')
-    ) {
-      friendlyMessage = 'Filter configuration is invalid.';
-    }
-
+  // DASHBOARD / APP VIEW → Friendly centered message only
+  if (!isExplorePage) {
     return (
       <div
         style={{
-          fontSize: '13px',
-          color: '#666',
-          padding: '6px 4px',
+          width: '100%',
+          height: '100%',
+          minHeight: 220,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
+          fontSize: '15px',
           fontWeight: 500,
+          color: '#666',
+          padding: '20px',
         }}
       >
-        {friendlyMessage}
+        {getFriendlyChartError(error)}
       </div>
     );
   }
 
+  // EXPLORE VIEW → Full developer error
+  const ownedError =
+    error && {
+      ...error,
+      extra: {
+        ...error.extra,
+        owners,
+      },
+    };
+
   return (
-    <StyledDiv
-      data-test="form-item-value"
-      orientation={orientation}
-      overflow={overflow}
-    >
-      {isLoading ? (
-        <Loading position="inline-centered" size="s" muted />
-      ) : (
-        <SuperChart
-          height={HEIGHT}
-          width={RESPONSIVE_WIDTH}
-          showOverflow={showOverflow}
-          formData={formData}
-          displaySettings={displaySettings}
-          parentRef={parentRef}
-          inputRef={inputRef}
-          // For charts that don't have datasource we need workaround for empty placeholder
-          queriesData={hasDataSource ? state : queriesDataPlaceholder}
-          chartType={filterType}
-          behaviors={behaviors}
-          filterState={filterState}
-          ownState={filter.dataMask?.ownState}
-          enableNoResults={metadata?.enableNoResults}
-          isRefreshing={isRefreshing}
-          hooks={hooks}
-        />
-      )}
-    </StyledDiv>
+    <ErrorMessageWithStackTrace
+      {...props}
+      error={ownedError}
+      title={DEFAULT_CHART_ERROR}
+      closable={false}
+    />
   );
 };
-export default memo(FilterValue);
-
-
-
-
