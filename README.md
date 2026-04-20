@@ -6,15 +6,20 @@ function formatTime(seconds: number) {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
  
-  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(
+    2,
+    '0',
+  )}`;
 }
  
 function AudioPlayer({
   src,
-  playerColor,
+  gradientStart,
+  gradientEnd,
 }: {
   src: string;
-  playerColor: string;
+  gradientStart: string;
+  gradientEnd: string;
 }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
@@ -30,9 +35,7 @@ function AudioPlayer({
     if (playing) {
       audioRef.current.pause();
     } else {
-      audioRef.current.play().catch(err => {
-        console.error('Play failed:', err);
-      });
+      audioRef.current.play();
     }
  
     setPlaying(!playing);
@@ -75,6 +78,7 @@ function AudioPlayer({
   const controlBtnStyle = {
     width: 42,
     height: 42,
+    minWidth: 42,
     borderRadius: '50%',
     border: 'none',
     background: '#0F172A',
@@ -85,22 +89,50 @@ function AudioPlayer({
     justifyContent: 'center',
     fontSize: 14,
     fontWeight: 600,
+    flexShrink: 0,
   };
  
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 14, width: '100%' }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        gap: 14,
+        width: '100%',
+      }}
+    >
+      {/* BACK 5 SEC */}
+      <button
+        onClick={() => skip(-5)}
+        style={controlBtnStyle}
+      >
+       {'<'}
+      </button>
  
-      <button onClick={() => skip(-5)} style={controlBtnStyle}>{'<'}</button>
- 
+      {/* PLAY BUTTON */}
       <button
         onClick={togglePlay}
-        style={{ ...controlBtnStyle, width: 48, height: 48, fontSize: 18 }}
+        style={{
+          ...controlBtnStyle,
+          width: 48,
+          height: 48,
+          minWidth: 48,
+          fontSize: 18,
+          paddingLeft: playing ? 0 : 3,
+        }}
       >
         {playing ? '❚❚' : '▶'}
       </button>
  
-      <button onClick={() => skip(5)} style={controlBtnStyle}>{'>'}</button>
+      {/* FORWARD 5 SEC */}
+      <button
+        onClick={() => skip(5)}
+        style={controlBtnStyle}
+      >
+        {'>'}
+      </button>
  
+      {/* PROGRESS BAR */}
       <div
         ref={barRef}
         onClick={seekAudio}
@@ -118,22 +150,46 @@ function AudioPlayer({
             width: `${progress}%`,
             height: '100%',
             borderRadius: 999,
-            background: playerColor,
+            background: `linear-gradient(90deg, ${gradientStart}, ${gradientEnd})`,
+          }}
+        />
+ 
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: `${progress}%`,
+            transform: 'translate(-50%, -50%)',
+            width: 16,
+            height: 16,
+            borderRadius: '50%',
+            background: gradientEnd,
+            border: '3px solid white',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)',
           }}
         />
       </div>
  
-      <div style={{ minWidth: 100, textAlign: 'right', fontSize: 13 }}>
+      {/* TIMESTAMP */}
+      <div
+        style={{
+          minWidth: 100,
+          textAlign: 'right',
+          fontSize: 13,
+          fontWeight: 500,
+          color: '#94A3B8',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
         {formatTime(current)} / {formatTime(duration)}
       </div>
  
-      {/* ✅ FINAL FIX: direct src */}
       <audio
         ref={audioRef}
         src={src}
         preload="metadata"
-        crossOrigin="anonymous"
-        style={{ display: 'none' }}
         onTimeUpdate={onTimeUpdate}
         onLoadedMetadata={() => {
           if (audioRef.current) {
@@ -141,9 +197,6 @@ function AudioPlayer({
           }
         }}
         onEnded={() => setPlaying(false)}
-        onError={(e) => {
-          console.error('AUDIO ERROR:', src, e);
-        }}
       />
     </div>
   );
@@ -153,8 +206,13 @@ export default function AudioPlayerChart(props: any) {
   const data = props?.data || [];
   const formData = props?.formData || {};
  
-  const audioCol = formData.audio_url_column || 'signed_url';
-  const playerColor = formData.player_color || '#6366F1';
+  const audioCol = formData.audio_url_column || 'audio_url';
+ 
+  const gradientStart =
+    formData.gradient_start || '#6366F1';
+ 
+  const gradientEnd =
+    formData.gradient_end || '#8B5CF6';
  
   if (!data.length) {
     return <div>No audio data found</div>;
@@ -164,20 +222,15 @@ export default function AudioPlayerChart(props: any) {
     <div style={{ padding: 20 }}>
       {data.map((row: any, index: number) => {
         const rawUrl = row[audioCol];
+        const DEFAULT_AUDIO_BASE_PATH = '/static/assets/common-audio/';
  
-        if (!rawUrl) {
-          console.error("Missing audio URL in row:", row);
-          return null;
-        }
- 
-        const audioUrl =
-          typeof rawUrl === 'string' && rawUrl.startsWith('http')
-            ? rawUrl
-            : typeof rawUrl === 'string' && rawUrl.startsWith('/static/')
-              ? `${window.location.origin}${rawUrl}`
-              : rawUrl;
- 
-        console.log("FINAL URL:", audioUrl);
+         const audioUrl =
+          rawUrl?.startsWith('http://') ||
+          rawUrl?.startsWith('https://')
+      ? rawUrl
+      : rawUrl?.startsWith('/static/')
+      ? `${window.location.origin}${rawUrl}`
+      : `${window.location.origin}${DEFAULT_AUDIO_BASE_PATH}${rawUrl}`;
  
         return (
           <div
@@ -185,12 +238,14 @@ export default function AudioPlayerChart(props: any) {
             style={{
               padding: 20,
               borderRadius: 14,
-              background: playerColor,
+              background: 'rgba(0,0,0,0.88)',
+              border: '1px solid rgb(226,232,240)',
             }}
           >
             <AudioPlayer
               src={audioUrl}
-              playerColor={playerColor}
+              gradientStart={gradientStart}
+              gradientEnd={gradientEnd}
             />
           </div>
         );
