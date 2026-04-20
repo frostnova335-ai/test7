@@ -664,6 +664,20 @@ if os.getenv("CYPRESS_CONFIG") == "true":
 
 # -----------------------------
 
+# -----------------------------
+# FIX: Allow audio from S3 (SIGNED URL)
+# -----------------------------
+TALISMAN_CONFIG = {
+    "content_security_policy": {
+        "default-src": ["'self'"],
+        "img-src": ["'self'", "data:", "*"],
+        "media-src": ["'self'", "*"],  
+        "connect-src": ["'self'", "*"],
+        "script-src": ["'self'", "'unsafe-inline'", "'unsafe-eval'", "*"],
+        "style-src": ["'self'", "'unsafe-inline'", "*"],
+    }
+}
+
 try:
 
     import superset_config_docker
