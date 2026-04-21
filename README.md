@@ -1,4 +1,4 @@
-s3://bucket-cx-insightshub-dev/audio_files/
+https://bucket-cx-insightshub-dev.s3.us-east-1.amazonaws.com/audio_files/heartify-flute-music-363036.mp3
 
 import React, { useRef, useState } from 'react';
  
