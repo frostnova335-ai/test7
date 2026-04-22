@@ -1,7 +1,4 @@
-https://bucket-cx-insightshub-engine-deployment.s3.amazonaws.com/audio_files/2025-07-29-12-15-20_679169198508_VOICE_9ce980a5-7a07-4fbb-99f7-e292b18e83f7.mp4?AWSAccessKeyId=ASIA3TD2SHTXMM3YHY5P&Signature=bekQKA9z0nMX5PWlpVw5ls56vK8%3D&x-amz-security-token=IQoJb3JpZ2luX2VjEIL%2F%2F%2F%2F%2F%2F%2F%2F%2F%2FwEaCXVzLWVhc3QtMSJHMEUCIQDa72msreYes%2FfGxHEZBFWSEL%2B5Q0Rff2TgUu7qPEaOBwIgHwBLN8bVd3icQ4J%2FdW5x0EFQmN1WDu2jD482yKFeaXkqugUISxAAGgw3OTY5NzM0ODExOTgiDGrh3GCZMo9Tag6SNSqXBWUh8WAYhktZ8lFE9bjILcbpAJoSaF6ZIsd7aFTaYodFNX7enxftOyVefeY0OxpFvgIJTKNroVuGGZqy1s%2FyUzb052D1nNYwFrPpt7OW%2B6enKE5iv5lauYqXpNESXYNJqFsuXtrOvRMYdEQ1Kaei6G32GNzVLhccJ3olDW%2FMCD2b1yGSvzCR%2BlIvu%2FZypBkWeo6jn8IuPQ%2FyyzZGezJ2wyUn%2FBkFja4uI8e9167KnaiN2yRk2fWlWqp3CK1PMH1KbfO1gSzM%2F8z4Hbgn2IisbrY49UNDJtcr5K22H%2BF791DcGvnJfaDowLru0dT1mgC02C2FlNhNteFugan7prtDBPwgFPyjAYek%2F3y5jVbJLSNiOEGHQEJIHZF7wZlcTR6pLyO%2Ft4q9F5u%2BHWEvCBskWVW5y8M8nq6iE8u6%2B4c8rOPUVm%2BZ47GyX7dO8zseUmcD924l0IlyUb1yyhW9FVvQISHABHIKMQY1S89VZTJqm5cKJcRaEehOY3xBWkZrDEnctuO0tQKN5KG70atXg7zC4qD%2BVn9jzYYgCjD5%2FkZdpMXx7jV%2Fdum6d2u8OV3foHWa6qclCulN9aTyKNlixHn%2FJU88ZzL5o3BM0d9NFNXv4%2BC3t3cfMWpO0QowNrkhFEm7X2iqUFVNIxZZGGf9IGhEhKDXWpqeJRCLvjqyEdGuMBRqR2m3tvx%2FtzlJKG8m%2FBgB2wTonzR6346DeG8fEQyP1nm2C%2FGSbQNn5WfHCR1CDoFKZPcn6L%2BrQPCaKp6zGzjRkicNmt3Si2xBc4dtpHG5uYcEZurZIku%2BI%2Bx4JBTyMqwjVv9w2%2F%2FgBohrQMXV69oFrmAGAeZqfIBWv%2Bf70KLuQb1JtAYPA1QwtByO1Yd1TVUo%2B%2FIr8jhGgzC4uKLPBjqxAbZtlz8BZo1ahdtp%2BuKUlTkS5%2B6wJ%2BFva80Ay5IRa1LbREl0lh5%2BST64eWxLsD2VZL4kjYFuS12AEh94%2FlF7WsAFrf4%2BRPu3DAgHOQi17TiJ7IbGSKdmv07jqA4znCJuZmLEMzNgGW14ZHLDpEvaVcQC5LVhgXn6YxEOMy3tb9fFs1mF5Fo4j21Ls56mPtHmEdaVJBXTURIxU6VFHpbwf2NBsYWiGhqqx5iRIBx2ErPEIg%3D%3D&Expires=1776896020
-
-
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 
 function formatTime(seconds: number) {
   if (!seconds || isNaN(seconds)) return '00:00';
@@ -12,22 +9,72 @@ function formatTime(seconds: number) {
   return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 }
 
-function AudioPlayer({
-  src,
-  color,
-}: {
-  src: string;
-  color: string;
-}) {
-  const audioRef = useRef<HTMLAudioElement>(null);
+function AudioPlayer({ src, color }: { src: string; color: string }) {
+  const audioRef = useRef<HTMLVideoElement>(null);
   const barRef = useRef<HTMLDivElement>(null);
 
   const [playing, setPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [current, setCurrent] = useState(0);
+
+  // 🔥 DEBUG: check URL accessibility
+  useEffect(() => {
+    if (!src) return;
+
+    console.log('🔗 AUDIO URL:', src);
+
+    fetch(src, { method: 'HEAD' })
+      .then(res => {
+        console.log('✅ FETCH SUCCESS:', res.status);
+        console.log('📦 HEADERS:', {
+          contentType: res.headers.get('content-type'),
+          contentLength: res.headers.get('content-length'),
+        });
+      })
+      .catch(err => {
+        console.error('❌ FETCH FAILED (CORS or access issue):', err);
+      });
+  }, [src]);
+
+  // 🔥 attach all audio debug events
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const events = [
+      'loadstart',
+      'loadedmetadata',
+      'loadeddata',
+      'canplay',
+      'canplaythrough',
+      'play',
+      'pause',
+      'ended',
+      'error',
+      'stalled',
+      'waiting',
+    ];
+
+    events.forEach(event => {
+      audio.addEventListener(event, () => {
+        console.log(`🎧 AUDIO EVENT: ${event}`, {
+          currentTime: audio.currentTime,
+          duration: audio.duration,
+          readyState: audio.readyState,
+        });
+      });
+    });
+
+    return () => {
+      events.forEach(event => audio.removeEventListener(event, () => { }));
+    };
+  }, []);
+
   const togglePlay = async () => {
     if (!audioRef.current) return;
+
+    console.log('▶️ TOGGLE PLAY');
 
     try {
       if (playing) {
@@ -37,7 +84,7 @@ function AudioPlayer({
       }
       setPlaying(!playing);
     } catch (err) {
-      console.error('Play failed:', err);
+      console.error('❌ PLAY FAILED:', err);
     }
   };
 
@@ -85,6 +132,9 @@ function AudioPlayer({
     cursor: 'pointer',
   };
 
+  // 🔥 Important trick for mp4 streaming
+  const fixedUrl = src ? src + '#t=0.1' : '';
+
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
 
@@ -99,6 +149,8 @@ function AudioPlayer({
       <button onClick={() => skip(5)} style={controlBtnStyle}>
         {'>'}
       </button>
+
+      {/* progress bar */}
       <div
         ref={barRef}
         onClick={seekAudio}
@@ -139,22 +191,30 @@ function AudioPlayer({
         {formatTime(current)} / {formatTime(duration)}
       </div>
 
-      <audio
+      {/* 🔥 FINAL AUDIO TAG (FIXED) */}
+      <video
         ref={audioRef}
         preload="metadata"
         crossOrigin="anonymous"
-        onTimeUpdate={onTimeUpdate}
+        style={{ display: 'none' }}
+        onLoadStart={() => console.log('🚀 LOAD START:', src)}
         onLoadedMetadata={() => {
+          console.log('✅ METADATA LOADED:', audioRef.current?.duration);
           if (audioRef.current) {
             setDuration(audioRef.current.duration);
           }
         }}
-        onEnded={() => setPlaying(false)}
-        onError={(e) => console.error('AUDIO ERROR:', src, e)}
+        onCanPlay={() => console.log('🎧 CAN PLAY')}
+        onCanPlayThrough={() => console.log('🎧 CAN PLAY THROUGH')}
+        onError={(e) => {
+          console.error('❌ VIDEO ERROR:', src);
+          console.error('ERROR EVENT:', e);
+          console.error('NETWORK STATE:', audioRef.current?.networkState);
+          console.error('READY STATE:', audioRef.current?.readyState);
+        }}
       >
-        <source src={src} type="audio/mp4" />
         <source src={src} type="video/mp4" />
-      </audio>
+      </video>
     </div>
   );
 }
@@ -163,8 +223,10 @@ export default function AudioPlayerChart(props: any) {
   const data = props?.data || [];
   const formData = props?.formData || {};
 
-  const audioCol = formData.audio_url_column || 'url';
+  const audioCol = formData.audio_url_column || 'signed_url';
   const color = formData.color_picker || '#E0F2FE';
+
+  console.log('📊 DATA RECEIVED:', data);
 
   if (!data.length) {
     return <div>No audio data found</div>;
@@ -175,6 +237,8 @@ export default function AudioPlayerChart(props: any) {
       {data.map((row: any, index: number) => {
         const rawUrl = row[audioCol];
         const audioUrl = rawUrl?.trim();
+
+        console.log(`🎵 ROW ${index} URL:`, audioUrl);
 
         return (
           <div
