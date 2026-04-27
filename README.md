@@ -1,18 +1,37 @@
+
 /******************************************************************
-* EXL SERVICE EXECUTIVE PREMIERE - ENHANCED VERSION
+* EXL SERVICE EXECUTIVE PREMIERE - FINAL UNIFIED VERSION
 ******************************************************************/
 
-/* 1. THE CANVAS: Unique Premium Gradient */
-body, #app, .dashboard, .dashboard-content {
+/* 1. THE CANVAS: Global Fixed Gradient */
+html, body, #app, .dashboard, .dashboard-content, .ant-layout {
     background-color: #f0f4f8 !important;
     background-image: 
         radial-gradient(at 0% 0%, rgba(0, 82, 204, 0.08) 0px, transparent 50%), 
         radial-gradient(at 100% 0%, rgba(251, 78, 11, 0.05) 0px, transparent 50%),
         linear-gradient(180deg, #ffffff 0%, #e2e8f0 100%) !important;
     background-attachment: fixed !important;
+    min-height: 100vh !important;
 }
 
-/* 2. CHART TITLES */
+/* 2. HEADER TRANSPARENCY: Fixes the "White Header" issue */
+header, 
+.top-superset-navbar, 
+.ant-layout-header,
+#main-menu,
+.nav-container {
+    background: transparent !important;
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(203, 213, 225, 0.3) !important;
+    box-shadow: none !important;
+}
+
+/* Target the specific logo/brand area */
+.navbar-brand, .header-title, .ant-menu {
+    background: transparent !important;
+}
+
+/* 3. CHART TITLES */
 .chart-header .header-title, 
 .dragdroppable-column .header-title,
 .dashboard-component-chart-holder [data-test="editable-title"] button,
@@ -23,7 +42,7 @@ body, #app, .dashboard, .dashboard-content {
     text-transform: capitalize;
 }
 
-/* 3. THE CARD (Glassmorphism) */
+/* 4. THE CARD (Glassmorphism) */
 .dashboard-component-chart-holder {
     background: rgba(255, 255, 255, 0.85) !important;
     backdrop-filter: blur(8px) !important;
@@ -32,6 +51,7 @@ body, #app, .dashboard, .dashboard-content {
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03) !important;
     padding: 12px !important;
     transition: all 0.3s ease;
+    margin-bottom: 20px;
 }
 
 .dashboard-component-chart-holder:hover {
@@ -39,11 +59,10 @@ body, #app, .dashboard, .dashboard-content {
     border: 1px solid rgba(0, 82, 204, 0.3) !important;
 }
 
-/* 4. BIG NUMBER / KPI VALUES: Bluish & Slightly Smaller */
+/* 5. BIG NUMBER / KPI VALUES */
 .big-number-chart div, 
 .dashboard-component-chart-holder div[data-test="big-number-total"],
 .dashboard-component-chart-holder svg text.main-line {
-    /* Slightly smaller than 48px, with a deep blue-steel tint */
     color: #2563eb !important; 
     fill: #2563eb !important;
     font-weight: 800 !important;
@@ -51,14 +70,14 @@ body, #app, .dashboard, .dashboard-content {
     letter-spacing: -1px;
 }
 
-/* 5. TABLE UI: Super Attractive & Professional */
+/* 6. TABLE UI: Super Attractive & Professional */
 .superset-stylable-table-container, .ant-table-wrapper {
     background: white !important;
     border-radius: 8px;
     overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* Table Headers: Darker, cleaner */
 .ant-table-thead > tr > th {
     background: #f8fafc !important;
     color: #475569 !important;
@@ -68,42 +87,38 @@ body, #app, .dashboard, .dashboard-content {
     padding: 12px 16px !important;
 }
 
-/* Table Cells: Better spacing and typography */
-.ant-table-tbody > tr > td, 
-.ant-table-row td {
+.ant-table-tbody > tr > td {
     color: #1e293b !important;
     font-size: 13px !important;
     padding: 14px 16px !important;
     border-bottom: 1px solid #f1f5f9 !important;
 }
 
-/* Zebra Striping */
 .ant-table-tbody > tr.ant-table-row:nth-child(even) {
     background: #fcfdfe !important;
 }
 
-/* Status Labels / Emphasized text (Specific for your Strategic Health Overview) */
-.ant-table-tbody > tr > td:nth-child(4) { 
-    font-weight: 600; /* Makes the 'Status' column pop */
-}
-
-/* Hover Effect */
 .ant-table-tbody > tr.ant-table-row:hover > td {
     background: rgba(37, 99, 235, 0.04) !important;
 }
 
-/* 6. TAB STYLING (Executive Summary, etc.) */
-.nav-tabs {
-    border-bottom: 2px solid #e2e8f0 !important;
+/* 7. TAB STYLING (Executive Summary, etc.) */
+.nav-tabs, .ant-tabs-nav {
+    background: transparent !important;
+    border-bottom: 2px solid rgba(226, 232, 240, 0.5) !important;
 }
 
-.nav-tabs > li > a {
+.ant-tabs-tab {
+    background: transparent !important;
+}
+
+.nav-tabs > li > a, .ant-tabs-tab-btn {
     font-weight: 600 !important;
     color: #64748b !important;
     border: none !important;
 }
 
-.nav-tabs > li.active > a {
+.nav-tabs > li.active > a, .ant-tabs-tab-active .ant-tabs-tab-btn {
     color: #2563eb !important;
     border-bottom: 3px solid #2563eb !important;
 }
