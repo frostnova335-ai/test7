@@ -33,41 +33,52 @@ import { MenuItem } from '@superset-ui/core/components/Menu';
 import { Icons } from '@superset-ui/core/components/Icons';
 import { Dashboard } from 'src/views/CRUD/types';
 
+
+// Dashboard Description Mapping
+const dashboardDescriptions: Record<number, string> = {
+  50: 'AI Powered Call Analytics',
+  57: 'Sales Performance Dashboard',
+  3: 'Agent Productivity Insights',
+  4: 'Customer Experience Metrics',
+  5: 'Business Intelligence Overview',
+};
+
 const CardContainer = styled.div`
   font-family: 'Poppins', sans-serif;
-  background: #ffffff;
-  border-radius: ${({ theme }) => theme.borderRadius}px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background: #0033cc;
+  border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
-  transition: transform 0.2s, box-shadow 0.2s;
-
-  @supports (corner-shape: squircle) {
-    corner-shape: squircle;
-  }
-
+  transition: 0.3s;
+  padding: 20px;
+ 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
   }
 `;
 
 const ThumbnailContainer = styled.div`
   width: 100%;
-  height: 200px; /* Increased from 160px to 200px */
-  background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%);
-  position: relative;
+  height: 220px;
+  background: #d9d9d9;
+  border-radius: 18px;
+ 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+ 
   overflow: hidden;
-
+ 
   img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    width: 100px;
+    height: 100px;
+    object-fit: contain;
   }
 `;
 
 const CardContent = styled.div`
-  padding: 16px;
+  padding: 20px 10px;
+  text-align: center;
 `;
 
 const TitleRow = styled.div`
@@ -79,17 +90,18 @@ const TitleRow = styled.div`
 
 const TitleText = styled.h3`
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: 20px;
   font-weight: 600;
-  color: #333333;
-  margin: 0;
-  flex: 1;
-  line-height: 1.4;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+  color: white;
+  margin-top: 18px;
+  text-align: center;
+`;
+
+const DescriptionText = styled.p`
+  color: #d6dcff;
+  font-size: 13px;
+  margin-top: 10px;
+  text-align: center;
 `;
 
 const ActionsContainer = styled.div`
@@ -286,6 +298,10 @@ function DashboardCard({
     }
   };
 
+  const dashboardDescription =
+    dashboardDescriptions[dashboard.id] ||
+    'AI Powered Dashboard';
+
   const handleActionClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();
@@ -294,16 +310,14 @@ function DashboardCard({
   return (
     <CardContainer onClick={handleCardClick}>
       <ThumbnailContainer>
-        {showThumbnails && (thumbnailUrl || dashboard.thumbnail_url) ? (
-         <img
-            src={thumbnailUrl || dashboard.thumbnail_url}
-            alt={dashboard.dashboard_title}
-            onError={(e) => {
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-            }}
-          />
-        ) : null}
+        <img
+          src={`/static/assets/images/${dashboard.id}.png`}
+          alt={dashboard.dashboard_title}
+          onError={(e) => {
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+          }}
+        />
 
       </ThumbnailContainer>
       <CardContent>
@@ -311,6 +325,9 @@ function DashboardCard({
           <TitleText title={dashboard.dashboard_title}>
             {dashboard.dashboard_title}
           </TitleText>
+          <DescriptionText>
+            {dashboardDescription}
+          </DescriptionText>
           <ActionsContainer onClick={handleActionClick}>
             {userId && (
               <FaveStar
