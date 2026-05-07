@@ -45,51 +45,67 @@ const dashboardDescriptions: Record<number, string> = {
 
 const CardContainer = styled.div`
   font-family: 'Poppins', sans-serif;
-  background: #ffffff;
-  border-radius: 18px;
+ 
+  background: linear-gradient(
+    135deg,
+    #002b7f 0%,
+    #003c9e 50%,
+    #0050c8 100%
+  );
+ 
+  border-radius: 20px;
   overflow: hidden;
   cursor: pointer;
+ 
   transition: transform 0.2s, box-shadow 0.2s;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+ 
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
  
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
   }
 `;
 
 const ThumbnailContainer = styled.div`
   width: 100%;
-  height: 240px;
- 
-  background: linear-gradient(
-    135deg,
-    #071c4d 0%,
-    #0d2d73 50%,
-    #123b96 100%
-  );
- 
-  border-radius: 18px 18px 0 0;
+  height: 260px;
  
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
  
-  position: relative;
-  overflow: hidden;
+  padding: 30px 20px 10px 20px;
  
   img {
     width: 90px;
     height: 90px;
     object-fit: contain;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
   }
 `;
 
+
 const CardContent = styled.div`
-  padding: 20px 10px;
+  padding: 14px 18px 20px 18px;
+`;
+ 
+const TitleText = styled.h3`
+  font-family: 'Poppins', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: white;
+  margin: 0;
   text-align: center;
+`;
+ 
+const DescriptionText = styled.p`
+  color: #dbe4ff;
+  font-size: 14px;
+  margin-top: 12px;
+  text-align: center;
+  line-height: 22px;
 `;
 
 const TitleRow = styled.div`
@@ -99,35 +115,11 @@ const TitleRow = styled.div`
   gap: 8px;
 `;
 
-const TitleText = styled.h3`
-  font-family: 'Poppins', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: white;
-  margin-top: 18px;
-  text-align: center;
-`;
-
-const DescriptionText = styled.p`
-  color: #d6dcff;
-  font-size: 13px;
-  margin-top: 10px;
-  text-align: center;
-`;
-
 const ActionsContainer = styled.div`
   display: flex;
   align-items: center;
   gap: 4px;
   flex-shrink: 0;
-`;
-
-const MetaRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 8px;
-  gap: 8px;
 `;
 
 const BadgesContainer = styled.div`
@@ -138,18 +130,29 @@ const BadgesContainer = styled.div`
   justify-content: flex-end;
 `;
 
+const MetaRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+ 
+  margin-top: 18px;
+`;
+ 
 const CategoryBadge = styled.span`
-  font-family: 'Poppins', sans-serif;
   font-size: 11px;
   font-weight: 500;
-  padding: 4px 12px;
-  border-radius: ${({ theme }) => theme.borderRadius}px;
-  background-color: #FFFFFF;
-  color: #005071;
-  border: 1px solid #E0E0E0;
-  white-space: nowrap;
-  flex-shrink: 0;
+ 
+  padding: 5px 12px;
+ 
+  border-radius: 20px;
+ 
+  background: rgba(255, 255, 255, 0.15);
+ 
+  color: white;
+ 
+  border: 1px solid rgba(255, 255, 255, 0.2);
 `;
+ 
 
 const PublishedBadge = styled.span<{ isPublished: boolean }>`
   font-family: 'Poppins', sans-serif;
@@ -169,18 +172,19 @@ const IconButton = styled.button`
   border: none;
   padding: 4px;
   cursor: pointer;
+ 
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #666666;
-  border-radius: ${({ theme }) => theme.borderRadiusXS ?? 4}px;
-  transition: background-color 0.2s;
-
+ 
+  color: white;
+ 
+  border-radius: 6px;
+ 
   &:hover {
-    background-color: #f5f5f5;
-    color: #333333;
+    background: rgba(255, 255, 255, 0.12);
   }
-
+ 
   svg {
     width: 18px;
     height: 18px;
@@ -319,82 +323,71 @@ function DashboardCard({
   };
 
   return (
-    <CardContainer onClick={handleCardClick}>
-      <ThumbnailContainer>
-
-        <img
-          src={`/static/assets/images/${dashboard.id}.png`}
-          alt={dashboard.dashboard_title}
-          onError={(e) => {
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-          }}
-        />
-
-        <TitleText
-          style={{
-            color: 'white',
-            fontSize: '22px',
-            fontWeight: 700,
-            margin: 0,
-            textAlign: 'center',
-          }}
-        >
-          {dashboard.dashboard_title}
-        </TitleText>
-
-        <DescriptionText
-          style={{
-            color: '#cbd5ff',
-            fontSize: '14px',
-            marginTop: '10px',
-            textAlign: 'center',
-            width: '80%',
-            lineHeight: '22px',
-          }}
-        >
-          {dashboardDescription}
-        </DescriptionText>
-
-      </ThumbnailContainer>
-      <CardContent>
-        <TitleText title={dashboard.dashboard_title}>
-          {dashboard.dashboard_title}
-        </TitleText>
-        <DescriptionText>
-          {dashboardDescription}
-        </DescriptionText>
-        <TitleRow>
-          <ActionsContainer onClick={handleActionClick}>
-            {userId && (
-              <FaveStar
-                itemId={dashboard.id}
-                saveFaveStar={saveFavoriteStatus}
-                isStarred={favoriteStatus}
-              />
-            )}
-            <Dropdown menu={{ items: menuItems }} trigger={['hover', 'click']}>
-              <IconButton type="button" aria-label="More options">
-                <Icons.MoreOutlined />
-              </IconButton>
-            </Dropdown>
-          </ActionsContainer>
-        </TitleRow>
-        <MetaRow>
-          <BadgesContainer>
-            {dashboard.category && (
-              <CategoryBadge>
-                {dashboard.category}
-              </CategoryBadge>
-            )}
-            <PublishedBadge isPublished={dashboard.published}>
-              {dashboard.published ? t('Published') : t('Draft')}
-            </PublishedBadge>
-          </BadgesContainer>
-        </MetaRow>
-      </CardContent>
-    </CardContainer>
-  );
+  <CardContainer onClick={handleCardClick}>
+ 
+    <ThumbnailContainer>
+ 
+      <img
+        src={`/static/assets/images/${dashboard.id}.png`}
+        alt={dashboard.dashboard_title}
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.style.display = 'none';
+        }}
+      />
+ 
+      <TitleText>
+        {dashboard.dashboard_title}
+      </TitleText>
+ 
+      <DescriptionText>
+        {dashboardDescription}
+      </DescriptionText>
+ 
+    </ThumbnailContainer>
+ 
+    <CardContent>
+ 
+      <TitleRow>
+ 
+        <ActionsContainer onClick={handleActionClick}>
+          {userId && (
+            <FaveStar
+              itemId={dashboard.id}
+              saveFaveStar={saveFavoriteStatus}
+              isStarred={favoriteStatus}
+            />
+          )}
+ 
+          <Dropdown menu={{ items: menuItems }} trigger={['hover', 'click']}>
+            <IconButton type="button" aria-label="More options">
+              <Icons.MoreOutlined />
+            </IconButton>
+          </Dropdown>
+        </ActionsContainer>
+ 
+      </TitleRow>
+ 
+      <MetaRow>
+        <BadgesContainer>
+ 
+          {dashboard.category && (
+            <CategoryBadge>
+              {dashboard.category}
+            </CategoryBadge>
+          )}
+ 
+          <PublishedBadge isPublished={dashboard.published}>
+            {dashboard.published ? t('Published') : t('Draft')}
+          </PublishedBadge>
+ 
+        </BadgesContainer>
+      </MetaRow>
+ 
+    </CardContent>
+ 
+  </CardContainer>
+);
 }
 
 export default DashboardCard;
