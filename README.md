@@ -45,34 +45,45 @@ const dashboardDescriptions: Record<number, string> = {
 
 const CardContainer = styled.div`
   font-family: 'Poppins', sans-serif;
-  background: #0033cc;
-  border-radius: 20px;
+  background: #ffffff;
+  border-radius: 18px;
   overflow: hidden;
   cursor: pointer;
-  transition: 0.3s;
-  padding: 20px;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
  
   &:hover {
     transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
   }
 `;
 
 const ThumbnailContainer = styled.div`
   width: 100%;
-  height: 220px;
-  background: #d9d9d9;
-  border-radius: 18px;
+  height: 240px;
+ 
+  background: linear-gradient(
+    135deg,
+    #071c4d 0%,
+    #0d2d73 50%,
+    #123b96 100%
+  );
+ 
+  border-radius: 18px 18px 0 0;
  
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
  
+  position: relative;
   overflow: hidden;
  
   img {
-    width: 100px;
-    height: 100px;
+    width: 90px;
+    height: 90px;
     object-fit: contain;
+    margin-bottom: 18px;
   }
 `;
 
@@ -310,6 +321,7 @@ function DashboardCard({
   return (
     <CardContainer onClick={handleCardClick}>
       <ThumbnailContainer>
+
         <img
           src={`/static/assets/images/${dashboard.id}.png`}
           alt={dashboard.dashboard_title}
@@ -319,15 +331,40 @@ function DashboardCard({
           }}
         />
 
+        <TitleText
+          style={{
+            color: 'white',
+            fontSize: '22px',
+            fontWeight: 700,
+            margin: 0,
+            textAlign: 'center',
+          }}
+        >
+          {dashboard.dashboard_title}
+        </TitleText>
+
+        <DescriptionText
+          style={{
+            color: '#cbd5ff',
+            fontSize: '14px',
+            marginTop: '10px',
+            textAlign: 'center',
+            width: '80%',
+            lineHeight: '22px',
+          }}
+        >
+          {dashboardDescription}
+        </DescriptionText>
+
       </ThumbnailContainer>
       <CardContent>
+        <TitleText title={dashboard.dashboard_title}>
+          {dashboard.dashboard_title}
+        </TitleText>
+        <DescriptionText>
+          {dashboardDescription}
+        </DescriptionText>
         <TitleRow>
-          <TitleText title={dashboard.dashboard_title}>
-            {dashboard.dashboard_title}
-          </TitleText>
-          <DescriptionText>
-            {dashboardDescription}
-          </DescriptionText>
           <ActionsContainer onClick={handleActionClick}>
             {userId && (
               <FaveStar
