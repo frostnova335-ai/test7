@@ -36,8 +36,8 @@ import { Dashboard } from 'src/views/CRUD/types';
 
 // Dashboard Description Mapping
 const dashboardDescriptions: Record<number, string> = {
-  50: 'AI Powered Call Analytics',
-  57: 'Sales Performance Dashboard',
+  50: 'Turn-by-turn sentiment scoring across every conversation. Generate insights around point of frustration, sentiment recovery, sentiment uplift.',
+  57: 'Repeat contact detection and root cause classification. Identifies policy gaps and agent repeat contact rates across all channels.',
   3: 'Agent Productivity Insights',
   4: 'Customer Experience Metrics',
   5: 'Business Intelligence Overview',
@@ -48,9 +48,9 @@ const CardContainer = styled.div`
  
   background: linear-gradient(
     135deg,
-    #002b7f 0%,
-    #003c9e 50%,
-    #0050c8 100%
+    #ffffff 0%,
+    #dee9f5 45%,
+    #c8e1fa 100%
   );
  
   border-radius: 20px;
@@ -59,11 +59,11 @@ const CardContainer = styled.div`
  
   transition: transform 0.2s, box-shadow 0.2s;
  
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
  
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.18);
   }
 `;
 
@@ -88,20 +88,20 @@ const ThumbnailContainer = styled.div`
 
 
 const CardContent = styled.div`
-  padding: 14px 18px 20px 18px;
+  padding: 0px 18px 18px 18px;
 `;
- 
+
 const TitleText = styled.h3`
   font-family: 'Poppins', sans-serif;
   font-size: 24px;
   font-weight: 700;
-  color: white;
+  color: #003b70;
   margin: 0;
   text-align: center;
 `;
- 
+
 const DescriptionText = styled.p`
-  color: #dbe4ff;
+  color: #245b8f;
   font-size: 14px;
   margin-top: 12px;
   text-align: center;
@@ -118,8 +118,7 @@ const TitleRow = styled.div`
 const ActionsContainer = styled.div`
   display: flex;
   align-items: center;
-  gap: 4px;
-  flex-shrink: 0;
+  gap: 10px;
 `;
 
 const BadgesContainer = styled.div`
@@ -135,9 +134,9 @@ const MetaRow = styled.div`
   align-items: center;
   justify-content: space-between;
  
-  margin-top: 18px;
+  margin-top: 10px;
 `;
- 
+
 const CategoryBadge = styled.span`
   font-size: 11px;
   font-weight: 500;
@@ -146,25 +145,11 @@ const CategoryBadge = styled.span`
  
   border-radius: 20px;
  
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(0, 80, 160, 0.12);
  
-  color: white;
+  color: #004f90;
  
-  border: 1px solid rgba(255, 255, 255, 0.2);
-`;
- 
-
-const PublishedBadge = styled.span<{ isPublished: boolean }>`
-  font-family: 'Poppins', sans-serif;
-  font-size: 11px;
-  font-weight: 500;
-  padding: 4px 10px;
-  border-radius: ${({ theme }) => theme.borderRadius}px;
-  background: ${({ isPublished }) => (isPublished ? '#e6f7e9' : '#f5f5f5')};
-  color: ${({ isPublished }) => (isPublished ? '#52c41a' : '#999999')};
-  border: 1px solid ${({ isPublished }) => (isPublished ? '#b7eb8f' : '#d9d9d9')};
-  white-space: nowrap;
-  flex-shrink: 0;
+  border: 1px solid rgba(0, 80, 160, 0.18);
 `;
 
 const IconButton = styled.button`
@@ -177,18 +162,33 @@ const IconButton = styled.button`
   align-items: center;
   justify-content: center;
  
-  color: white;
+  color: #004f90;
  
   border-radius: 6px;
  
   &:hover {
-    background: rgba(255, 255, 255, 0.12);
+    background: rgba(0, 80, 160, 0.08);
   }
  
   svg {
     width: 18px;
     height: 18px;
   }
+`;
+
+
+
+const PublishedBadge = styled.span<{ isPublished: boolean }>`
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: ${({ theme }) => theme.borderRadius}px;
+  background: ${({ isPublished }) => (isPublished ? '#e6f7e9' : '#f5f5f5')};
+  color: ${({ isPublished }) => (isPublished ? '#52c41a' : '#999999')};
+  border: 1px solid ${({ isPublished }) => (isPublished ? '#b7eb8f' : '#d9d9d9')};
+  white-space: nowrap;
+  flex-shrink: 0;
 `;
 
 interface DashboardCardProps {
@@ -314,8 +314,7 @@ function DashboardCard({
   };
 
   const dashboardDescription =
-    dashboardDescriptions[dashboard.id] ||
-    'AI Powered Dashboard';
+    dashboardDescriptions[dashboard.id];
 
   const handleActionClick = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -323,71 +322,84 @@ function DashboardCard({
   };
 
   return (
-  <CardContainer onClick={handleCardClick}>
- 
-    <ThumbnailContainer>
- 
-      <img
-        src={`/static/assets/images/${dashboard.id}.png`}
-        alt={dashboard.dashboard_title}
-        onError={(e) => {
-          const target = e.target as HTMLImageElement;
-          target.style.display = 'none';
-        }}
-      />
- 
-      <TitleText>
-        {dashboard.dashboard_title}
-      </TitleText>
- 
-      <DescriptionText>
-        {dashboardDescription}
-      </DescriptionText>
- 
-    </ThumbnailContainer>
- 
-    <CardContent>
- 
-      <TitleRow>
- 
-        <ActionsContainer onClick={handleActionClick}>
-          {userId && (
-            <FaveStar
-              itemId={dashboard.id}
-              saveFaveStar={saveFavoriteStatus}
-              isStarred={favoriteStatus}
-            />
-          )}
- 
-          <Dropdown menu={{ items: menuItems }} trigger={['hover', 'click']}>
-            <IconButton type="button" aria-label="More options">
-              <Icons.MoreOutlined />
-            </IconButton>
-          </Dropdown>
-        </ActionsContainer>
- 
-      </TitleRow>
- 
-      <MetaRow>
-        <BadgesContainer>
- 
-          {dashboard.category && (
-            <CategoryBadge>
-              {dashboard.category}
-            </CategoryBadge>
-          )}
- 
-          <PublishedBadge isPublished={dashboard.published}>
-            {dashboard.published ? t('Published') : t('Draft')}
-          </PublishedBadge>
- 
-        </BadgesContainer>
-      </MetaRow>
- 
-    </CardContent>
- 
-  </CardContainer>
-);
+    <CardContainer onClick={handleCardClick}>
+
+      <ThumbnailContainer>
+
+        <img
+          src={`/static/images/${dashboard.id}.png`}
+          alt={dashboard.dashboard_title}
+          onError={(e) => {
+            console.error(
+              `Image not found: /static/images/${dashboard.id}.png`,
+            );
+
+            const target = e.target as HTMLImageElement;
+            target.style.display = 'none';
+          }}
+          style={{
+            width: '90px',
+            height: '90px',
+            objectFit: 'contain',
+            marginBottom: '22px',
+          }}
+        />
+
+        <TitleText>
+          {dashboard.dashboard_title}
+        </TitleText>
+
+        {dashboardDescription && (
+          <DescriptionText>
+            {dashboardDescription}
+          </DescriptionText>
+        )}
+
+      </ThumbnailContainer>
+
+      <CardContent>
+
+        <MetaRow>
+
+          <ActionsContainer onClick={handleActionClick}>
+
+            {userId && (
+              <FaveStar
+                itemId={dashboard.id}
+                saveFaveStar={saveFavoriteStatus}
+                isStarred={favoriteStatus}
+              />
+            )}
+
+            <Dropdown menu={{ items: menuItems }} trigger={['hover', 'click']}>
+              <IconButton type="button" aria-label="More options">
+                <Icons.MoreOutlined />
+              </IconButton>
+            </Dropdown>
+
+          </ActionsContainer>
+
+          <BadgesContainer>
+
+            {dashboard.category && (
+              <CategoryBadge>
+                {dashboard.category}
+              </CategoryBadge>
+            )}
+
+            <PublishedBadge isPublished={dashboard.published}>
+              {dashboard.published ? t('Published') : t('Draft')}
+            </PublishedBadge>
+
+          </BadgesContainer>
+
+        </MetaRow>
+
+      </CardContent>
+
+    </CardContainer>
+  );
+
 }
 
 export default DashboardCard;
