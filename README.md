@@ -68,15 +68,17 @@ const CardContainer = styled.div`
  
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
  
   overflow: hidden;
+ 
+  padding-bottom: 14px;
  
   &:hover {
     transform: translateY(-4px);
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
   }
 `;
+ 
  
 const ThumbnailContainer = styled.div`
   display: flex;
@@ -86,8 +88,8 @@ const ThumbnailContainer = styled.div`
   padding: 18px 18px 0px 18px;
  
   img {
-    width: 42px;
-    height: 42px;
+    width: 34px;
+    height: 34px;
  
     object-fit: contain;
  
@@ -105,11 +107,13 @@ const TitleText = styled.h3`
  
   color: #163b63;
  
-  text-align: left;
+  text-align: center;
  
   margin: 0;
  
   line-height: 1.4;
+ 
+  width: 100%;
 `;
  
 const DescriptionText = styled.p`
@@ -121,12 +125,17 @@ const DescriptionText = styled.p`
  
   line-height: 1.7;
  
-  text-align: left;
+  text-align: center;
  
   margin-top: 10px;
  
-  min-height: 72px;
+  min-height: auto;
+ 
+  max-width: 220px;
+
+  margin-bottom: 8px;
 `;
+ 
  
  
  
@@ -159,7 +168,7 @@ const BadgesContainer = styled.div`
 `;
 
 const OpenButton = styled.div`
-  margin-top: 12px;
+  margin-top: 2px;
  
   display: flex;
   align-items: center;
@@ -413,12 +422,6 @@ function DashboardCard({
 
             const target = e.target as HTMLImageElement;
             target.style.display = 'none';
-          }}
-          style={{
-            width: '90px',
-            height: '90px',
-            objectFit: 'contain',
-            marginBottom: '22px',
           }}
         />
 
