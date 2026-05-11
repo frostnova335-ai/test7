@@ -50,10 +50,10 @@ const CardContainer = styled.div`
   min-height: 360px;
  
   background: linear-gradient(
-    135deg,
+    180deg,
     #ffffff 0%,
-    #eef5fc 45%,
-    #d7ebff 100%
+    #f9fcff 55%,
+    #edf5fd 100%
   );
  
   border-radius: 24px;
@@ -62,7 +62,7 @@ const CardContainer = styled.div`
  
   transition: all 0.25s ease;
  
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.10);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
  
   border-top: 2px solid #f07b2d;
  
@@ -70,11 +70,11 @@ const CardContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
  
-  padding: 0;
+  overflow: hidden;
  
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.14);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
   }
 `;
  
@@ -83,13 +83,17 @@ const ThumbnailContainer = styled.div`
   flex-direction: column;
   align-items: center;
  
-  padding: 24px 18px 0px 18px;
+  padding: 18px 18px 0px 18px;
  
   img {
-    width: 58px;
-    height: 58px;
+    width: 42px;
+    height: 42px;
+ 
     object-fit: contain;
-    margin-bottom: 18px;
+ 
+    margin-bottom: 14px;
+ 
+    align-self: flex-start;
   }
 `;
  
@@ -99,9 +103,9 @@ const TitleText = styled.h3`
   font-size: 16px;
   font-weight: 700;
  
-  color: #133b63;
+  color: #163b63;
  
-  text-align: center;
+  text-align: left;
  
   margin: 0;
  
@@ -109,7 +113,7 @@ const TitleText = styled.h3`
 `;
  
 const DescriptionText = styled.p`
-  color: #5c6f82;
+  color: #66788a;
  
   font-size: 11px;
  
@@ -117,14 +121,13 @@ const DescriptionText = styled.p`
  
   line-height: 1.7;
  
-  text-align: center;
+  text-align: left;
  
-  margin-top: 12px;
- 
-  max-width: 220px;
+  margin-top: 10px;
  
   min-height: 72px;
 `;
+ 
  
  
 
@@ -156,22 +159,21 @@ const BadgesContainer = styled.div`
 `;
 
 const OpenButton = styled.div`
-  margin-top: 14px;
-  margin-bottom: 6px;
+  margin-top: 12px;
  
   display: flex;
   align-items: center;
-  justify-content: center;
+ 
   gap: 8px;
  
   font-size: 15px;
   font-weight: 700;
  
-  color: #123b63;
+  color: #163b63;
  
   span {
     color: #f26a21;
-    font-size: 24px;
+    font-size: 22px;
     line-height: 1;
   }
 `;
@@ -216,41 +218,54 @@ const CategoryBadge = styled.span`
   font-size: 9px;
   font-weight: 600;
  
-  padding: 4px 8px;
+  padding: 4px 10px;
  
-  border-radius: 14px;
+  border-radius: 20px;
  
-  background: rgba(0, 80, 160, 0.10);
+  background: linear-gradient(
+    135deg,
+    rgb(0, 80, 113) 0%,
+    rgb(81, 145, 205) 100%
+  );
  
-  color: #004f90;
+  color: #ffffff;
  
-  border: 1px solid rgba(0, 80, 160, 0.12);
+  border: none;
  
   white-space: nowrap;
+ 
+  box-shadow: 0 2px 8px rgba(81, 145, 205, 0.25);
 `;
  
-const PublishedBadge = styled.span<{ isPublished: boolean }>`
+ 
+const PublishedBadge = styled.span<{ isPublished?: boolean }>`
   font-family: 'Poppins', sans-serif;
  
   font-size: 9px;
   font-weight: 600;
  
-  padding: 4px 8px;
+  padding: 4px 10px;
  
-  border-radius: 14px;
+  border-radius: 20px;
  
   background: ${({ isPublished }) =>
-    isPublished ? '#edf9e7' : '#f3f3f3'};
+    isPublished
+      ? 'linear-gradient(135deg, rgb(0, 80, 113) 0%, rgb(81, 145, 205) 100%)'
+      : '#f4f4f4'};
  
   color: ${({ isPublished }) =>
-    isPublished ? '#58b321' : '#999999'};
+    isPublished ? '#ffffff' : '#999999'};
  
-  border: 1px solid
-    ${({ isPublished }) =>
-      isPublished ? '#c9ecb2' : '#e0e0e0'};
+  border: none;
  
   white-space: nowrap;
+ 
+  box-shadow: ${({ isPublished }) =>
+    isPublished
+      ? '0 2px 8px rgba(81, 145, 205, 0.25)'
+      : 'none'};
 `;
+ 
  
 
 interface DashboardCardProps {
