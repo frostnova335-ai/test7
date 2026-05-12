@@ -98,15 +98,25 @@ const WelcomeSection = styled.div`
 const WelcomeTitle = styled.h1`
   font-family: 'Poppins', sans-serif;
   font-size: 32px;
-  font-weight: 500;
+  font-weight: 600;
   color: #333333;
   margin: 0;
 `;
 
 const UserName = styled.span`
-  color: #4169e1;
+  background: linear-gradient(
+    135deg,
+    rgb(0, 79, 112) 0%,
+    rgb(81, 145, 205) 100%
+  );
+ 
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+ 
   font-weight: 700;
+  letter-spacing: -1px;
 `;
+ 
 
 const WelcomeSubText = styled.p`
   margin-top: 11px;
@@ -471,6 +481,7 @@ const CONFIRM_OVERWRITE_MESSAGE = t(
 );
 
 function Welcome({ user, addDangerToast, addSuccessToast }: WelcomeProps) {
+  console.log("user_data_test",user)
   const currentDate = new Date().toLocaleDateString('en-GB', {
     weekday: 'long',
     day: 'numeric',
@@ -728,7 +739,7 @@ function Welcome({ user, addDangerToast, addSuccessToast }: WelcomeProps) {
         </WelcomeTitle>
 
         <WelcomeSubText>
-          Contact Center InsightsHub • {currentDate}
+          InsightsHub • {currentDate}
         </WelcomeSubText>
       </WelcomeSection>
       {/* Category sections */}
