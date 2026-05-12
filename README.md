@@ -88,7 +88,7 @@ const PageContainer = styled.div`
 `;
 
 const WelcomeSection = styled.div`
-  padding: 28px 48px 0 48px;
+  padding: 40px 72px 10px 72px;
  
   @media (max-width: 768px) {
     padding: 20px 20px 0 20px;
@@ -109,7 +109,7 @@ const UserName = styled.span`
 `;
 
 const WelcomeSubText = styled.p`
-  margin-top: 8px;
+  margin-top: 11px;
   font-size: 14px;
   color: #7a7a7a;
   font-family: 'Poppins', sans-serif;
@@ -444,7 +444,13 @@ export const LoadingCards = ({ cover }: LoadingProps) => (
    Welcome (Home) Component
    ══════════════════════════════════════════════════════ */
 interface WelcomeProps {
-  user: { userId: string | number; roles?: Record<string, [string, string][]> };
+  user: {
+  userId: string | number;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  roles?: Record<string, [string, string][]>;
+};
   addDangerToast: (msg: string) => void;
   addSuccessToast: (msg: string) => void;
 }
@@ -718,7 +724,7 @@ function Welcome({ user, addDangerToast, addSuccessToast }: WelcomeProps) {
       />
       <WelcomeSection>
         <WelcomeTitle>
-          Welcome, <UserName>{user?.userId || 'Admin'}</UserName>
+          Welcome, <UserName>{user?.firstName || user?.username || 'Admin'}</UserName>
         </WelcomeTitle>
 
         <WelcomeSubText>
