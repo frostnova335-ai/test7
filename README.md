@@ -42,7 +42,7 @@ import handleResourceExport from 'src/utils/export';
 
 /* ── Category icons ── */
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-   'Business Strategy': <Icons.FundProjectionScreenOutlined iconSize="l" />,
+  'Business Strategy': <Icons.FundProjectionScreenOutlined iconSize="l" />,
   'Agent Empowerment': <Icons.UsergroupAddOutlined iconSize="l" />,
   'CX and Journey': <Icons.LineChartOutlined iconSize="l" />,
   'Performance Cockpit': <Icons.DashboardOutlined iconSize="l" />,
@@ -85,6 +85,34 @@ const PageContainer = styled.div`
       transparent 35%
     ),
     linear-gradient(180deg, #ffffff 0%, #f8fcfd 100%);
+`;
+
+const WelcomeSection = styled.div`
+  padding: 28px 48px 0 48px;
+ 
+  @media (max-width: 768px) {
+    padding: 20px 20px 0 20px;
+  }
+`;
+
+const WelcomeTitle = styled.h1`
+  font-family: 'Poppins', sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+  color: #333333;
+  margin: 0;
+`;
+
+const UserName = styled.span`
+  color: #4169e1;
+  font-weight: 700;
+`;
+
+const WelcomeSubText = styled.p`
+  margin-top: 8px;
+  font-size: 14px;
+  color: #7a7a7a;
+  font-family: 'Poppins', sans-serif;
 `;
 
 /* ── Category sections container (same pattern as ListView: transparent so gradient shows through) ── */
@@ -425,18 +453,24 @@ const DASHBOARD_LIST_PATH = '/dashboard/list/';
 
 const PASSWORDS_NEEDED_MESSAGE = t(
   'The passwords for the databases below are needed in order to ' +
-    'import them together with the dashboards. Please note that the ' +
-    '"Secure Extra" and "Certificate" sections of ' +
-    'the database configuration are not present in export files, and ' +
-    'should be added manually after the import if they are needed.',
+  'import them together with the dashboards. Please note that the ' +
+  '"Secure Extra" and "Certificate" sections of ' +
+  'the database configuration are not present in export files, and ' +
+  'should be added manually after the import if they are needed.',
 );
 const CONFIRM_OVERWRITE_MESSAGE = t(
   'You are importing one or more dashboards that already exist. ' +
-    'Overwriting might cause you to lose some of your work. Are you ' +
-    'sure you want to overwrite?',
+  'Overwriting might cause you to lose some of your work. Are you ' +
+  'sure you want to overwrite?',
 );
 
 function Welcome({ user, addDangerToast, addSuccessToast }: WelcomeProps) {
+  const currentDate = new Date().toLocaleDateString('en-GB', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
   const history = useHistory();
   const [dashboardsByCategory, setDashboardsByCategory] = useState<
     Record<string, DashboardItem[]>
@@ -682,7 +716,15 @@ function Welcome({ user, addDangerToast, addSuccessToast }: WelcomeProps) {
         showDownloadOption={false}
         useDownloadIconForImport
       />
+      <WelcomeSection>
+        <WelcomeTitle>
+          Welcome, <UserName>{user?.userId || 'Admin'}</UserName>
+        </WelcomeTitle>
 
+        <WelcomeSubText>
+          Contact Center InsightsHub • {currentDate}
+        </WelcomeSubText>
+      </WelcomeSection>
       {/* Category sections */}
       <CategoriesContainer>
         {DASHBOARD_CATEGORIES.map(category => {
