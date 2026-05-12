@@ -1,481 +1,180 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-import { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import {
-  isFeatureEnabled,
-  FeatureFlag,
-  t,
-  SupersetClient,
-  styled,
-} from '@superset-ui/core';
-import {
-  Dropdown,
-  FaveStar,
-} from '@superset-ui/core/components';
-import { MenuItem } from '@superset-ui/core/components/Menu';
-import { Icons } from '@superset-ui/core/components/Icons';
-import { Dashboard } from 'src/views/CRUD/types';
-
-
-// Dashboard Description Mapping
-const dashboardDescriptions: Record<number, string> = {
-  50: 'Turn-by-turn sentiment scoring across every conversation. Generate insights around point of frustration, sentiment recovery, sentiment uplift.',
-  57: 'Repeat contact detection and root cause classification. Identifies policy gaps and agent repeat contact rates across all channels.',
-  3: 'Agent Productivity Insights',
-  4: 'Customer Experience Metrics',
-  5: 'Business Intelligence Overview',
-};
-
-const CardContainer = styled.div`
-  font-family: 'Poppins', sans-serif;
- 
-  width: 285px;
- 
-  height: 270px;
- 
-  background: linear-gradient(
-    180deg,
-    #ffffff 0%,
-    #f9fcff 55%,
-    #edf5fd 100%
-  );
- 
-  border-radius: 24px;
- 
-  cursor: pointer;
- 
-  transition: all 0.25s ease;
- 
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
- 
-  border-top: 2px solid #f07b2d;
- 
-  display: flex;
-  flex-direction: column;
- 
-  overflow: hidden;
- 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
-  }
-`;
- 
- 
- 
-const ThumbnailContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
- 
-  padding: 18px 18px 0px 18px;
- 
-  img {
-    width: 34px;
-    height: 34px;
- 
-    object-fit: contain;
- 
-    margin-bottom: 14px;
- 
-    align-self: flex-start;
-  }
-`;
- 
-const TitleText = styled.h3`
-  font-family: 'Poppins', sans-serif;
- 
-  font-size: 16px;
-  font-weight: 700;
- 
-  color: #163b63;
- 
-  text-align: center;
- 
-  margin: 0;
- 
-  line-height: 1.4;
- 
-  width: 100%;
-`;
- 
-const DescriptionText = styled.p`
-  color: #66788a;
- 
-  font-size: 11px;
- 
-  font-style: italic;
- 
-  line-height: 1.4;
- 
-  text-align: center;
- 
-  margin-top: 10px;
- 
-  min-height: auto;
- 
-  max-width: 220px;
-
-  margin-bottom: 8px;
-`;
- 
- 
- 
- 
-
-
-
-const CardContent = styled.div`
-  margin-top: 14px;
-`;
-
-const TitleRow = styled.div`
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-`;
-
-const ActionsContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-const BadgesContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-  justify-content: flex-end;
-`;
-
-const OpenButton = styled.div`
-  margin-top: 2px;
- 
-  display: flex;
-  align-items: center;
- 
-  gap: 8px;
- 
-  font-size: 15px;
-  font-weight: 700;
- 
-  color: #163b63;
- 
-  span {
-    color: #f26a21;
-    font-size: 22px;
-    line-height: 1;
-  }
-`;
- 
-const MetaRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
- 
-  padding: 12px 14px 14px 14px;
- 
-  margin-top: auto;
-`;
-
-const IconButton = styled.button`
-  background: transparent;
-  border: none;
-  padding: 4px;
-  cursor: pointer;
- 
-  display: flex;
-  align-items: center;
-  justify-content: center;
- 
-  color: #004f90;
- 
-  border-radius: 6px;
- 
-  &:hover {
-    background: rgba(0, 80, 160, 0.08);
-  }
- 
-  svg {
-    width: 18px;
-    height: 18px;
-  }
-`;
-
-
-
-const CategoryBadge = styled.span`
-  font-size: 9px;
-  font-weight: 600;
- 
-  padding: 4px 10px;
- 
-  border-radius: 20px;
- 
-  background: linear-gradient(
-    135deg,
-    rgb(0, 80, 113) 0%,
-    rgb(81, 145, 205) 100%
-  );
- 
-  color: #ffffff;
- 
-  border: none;
- 
-  white-space: nowrap;
- 
-  box-shadow: 0 2px 8px rgba(81, 145, 205, 0.25);
-`;
- 
- 
-const PublishedBadge = styled.span<{ isPublished?: boolean }>`
-  font-family: 'Poppins', sans-serif;
- 
-  font-size: 9px;
-  font-weight: 600;
- 
-  padding: 4px 10px;
- 
-  border-radius: 20px;
- 
-  background: ${({ isPublished }) =>
-    isPublished ? '#eef2f6' : '#f4f4f4'};
- 
-  color: ${({ isPublished }) =>
-    isPublished ? '#5f6b7a' : '#999999'};
- 
-  border: 1px solid #dde5ee;
- 
-  white-space: nowrap;
-`;
- 
- 
-
-interface DashboardCardProps {
-  dashboard: Dashboard;
-  hasPerm: (name: string) => boolean;
-  bulkSelectEnabled: boolean;
-  loading: boolean;
-  openDashboardEditModal?: (d: Dashboard) => void;
-  saveFavoriteStatus: (id: number, isStarred: boolean) => void;
-  favoriteStatus: boolean;
-  userId?: string | number;
-  showThumbnails?: boolean;
-  handleBulkDashboardExport: (dashboardsToExport: Dashboard[]) => void;
-  onDelete: (dashboard: Dashboard) => void;
-}
-
-function DashboardCard({
-  dashboard,
-  hasPerm,
-  bulkSelectEnabled,
-  userId,
-  openDashboardEditModal,
-  favoriteStatus,
-  saveFavoriteStatus,
-  showThumbnails,
-  handleBulkDashboardExport,
-  onDelete,
-}: DashboardCardProps) {
-  const history = useHistory();
-  const canEdit = hasPerm('can_write');
-  const canDelete = hasPerm('can_write');
-  const canExport = hasPerm('can_export');
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
-  const [isFetchingThumbnail, setIsFetchingThumbnail] = useState<boolean>(false);
-
-  useEffect(() => {
-    // Fetch thumbnail only if it's not already fetched
-    if (
-      !isFetchingThumbnail &&
-      dashboard.id &&
-      thumbnailUrl === null &&
-      isFeatureEnabled(FeatureFlag.Thumbnails)
-    ) {
-      // Use existing thumbnail URL if available
-      if (dashboard.thumbnail_url) {
-        setThumbnailUrl(dashboard.thumbnail_url);
-        return;
-      }
-      // Fetch thumbnail from API
-      setIsFetchingThumbnail(true);
-      SupersetClient.get({
-        endpoint: `/api/v1/dashboard/${dashboard.id}`,
-      })
-        .then(({ json = {} }) => {
-          setThumbnailUrl(json.result?.thumbnail_url || '');
-        })
-        .catch(() => {
-          setThumbnailUrl('');
-        })
-        .finally(() => {
-          setIsFetchingThumbnail(false);
-        });
-    }
-  }, [dashboard.id, dashboard.thumbnail_url, isFetchingThumbnail, thumbnailUrl]);
-
-  const menuItems: MenuItem[] = [];
-
-  if (canEdit && openDashboardEditModal) {
-    menuItems.push({
-      key: 'edit',
-      label: (
-        <div
-          role="button"
-          tabIndex={0}
-          className="action-button"
-          onClick={() => openDashboardEditModal(dashboard)}
-          data-test="dashboard-card-option-edit-button"
-        >
-          <Icons.EditOutlined iconSize="l" data-test="edit-alt" /> {t('Edit')}
-        </div>
-      ),
-    });
-  }
-
-  if (canExport) {
-    menuItems.push({
-      key: 'export',
-      label: (
-        <div
-          role="button"
-          tabIndex={0}
-          onClick={() => handleBulkDashboardExport([dashboard])}
-          className="action-button"
-          data-test="dashboard-card-option-export-button"
-        >
-          <Icons.UploadOutlined iconSize="l" /> {t('Export')}
-        </div>
-      ),
-    });
-  }
-
-  if (canDelete) {
-    menuItems.push({
-      key: 'delete',
-      label: (
-        <div
-          role="button"
-          tabIndex={0}
-          className="action-button"
-          onClick={() => onDelete(dashboard)}
-          data-test="dashboard-card-option-delete-button"
-        >
-          <Icons.DeleteOutlined iconSize="l" /> {t('Delete')}
-        </div>
-      ),
-    });
-  }
-
-  const handleCardClick = () => {
-    if (!bulkSelectEnabled) {
-      history.push(dashboard.url);
-    }
-  };
-
-  const dashboardDescription =
-    dashboardDescriptions[dashboard.id];
-
-  const handleActionClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-  };
-
-  return (
-    <CardContainer onClick={handleCardClick}>
-
-      <ThumbnailContainer>
-
-        <img
-          src={`/static/images/${dashboard.id}.png`}
-          alt={dashboard.dashboard_title}
-          onError={(e) => {
-            console.error(
-              `Image not found: /static/images/${dashboard.id}.png`,
-            );
-
-            const target = e.target as HTMLImageElement;
-            target.style.display = 'none';
-          }}
-        />
-
-        <TitleText>
-          {dashboard.dashboard_title}
-        </TitleText>
-
-        {dashboardDescription && (
-          <DescriptionText>
-            {dashboardDescription}
-          </DescriptionText>
-        )}
-        <OpenButton>
-          Open 
-          <span>➜</span>
-        </OpenButton>
-      </ThumbnailContainer>
-
-      <CardContent>
-
-        <MetaRow>
-
-          <ActionsContainer onClick={handleActionClick}>
-
-            {userId && (
-              <FaveStar
-                itemId={dashboard.id}
-                saveFaveStar={saveFavoriteStatus}
-                isStarred={favoriteStatus}
-              />
-            )}
-
-            <Dropdown menu={{ items: menuItems }} trigger={['hover', 'click']}>
-              <IconButton type="button" aria-label="More options">
-                <Icons.MoreOutlined />
-              </IconButton>
-            </Dropdown>
-
-          </ActionsContainer>
-
-          <BadgesContainer>
-
-            {dashboard.category && (
-              <CategoryBadge>
-                {dashboard.category}
-              </CategoryBadge>
-            )}
-
-            <PublishedBadge isPublished={dashboard.published}>
-              {dashboard.published ? t('Published') : t('Draft')}
-            </PublishedBadge>
-
-          </BadgesContainer>
-
-        </MetaRow>
-
-      </CardContent>
-
-    </CardContainer>
-  );
-
-}
-
-export default DashboardCard;
+ => ERROR [superset-worker lean 3/6] RUN --mount=type=cache,target=/app/superset_home/.cache/uv     /app/docker/pip-install.s  37.0s
+------
+ > [superset-worker lean 3/6] RUN --mount=type=cache,target=/app/superset_home/.cache/uv     /app/docker/pip-install.sh --requires-build-essential -r requirements/base.txt &&     uv pip install -e ".[postgres,duckdb]":
+0.271 Installing build-essential for package builds...
+26.22 debconf: unable to initialize frontend: Dialog
+26.22 debconf: (TERM is not set, so the dialog frontend is not usable.)
+26.22 debconf: falling back to frontend: Readline
+26.22 debconf: unable to initialize frontend: Readline
+26.22 debconf: (Can't locate Term/ReadLine.pm in @INC (you may need to install the Term::ReadLine module) (@INC entries checked: /etc/perl /usr/local/lib/x86_64-linux-gnu/perl/5.40.1 /usr/local/share/perl/5.40.1 /usr/lib/x86_64-linux-gnu/perl5/5.40 /usr/share/perl5 /usr/lib/x86_64-linux-gnu/perl-base /usr/lib/x86_64-linux-gnu/perl/5.40 /usr/share/perl/5.40 /usr/local/lib/site_perl) at /usr/share/perl5/Debconf/FrontEnd/Readline.pm line 8, <STDIN> line 48.)
+26.22 debconf: falling back to frontend: Teletype
+26.23 debconf: unable to initialize frontend: Teletype
+26.23 debconf: (This frontend requires a controlling tty.)
+26.23 debconf: falling back to frontend: Noninteractive
+(Reading database ... 9771 files and directories currently installed.)
+28.02 Preparing to unpack .../dpkg_1.22.22_amd64.deb ...
+28.04 Unpacking dpkg (1.22.22) over (1.22.21) ...
+28.31 Setting up dpkg (1.22.22) ...
+28.55 Selecting previously unselected package bzip2.
+(Reading database ... 9771 files and directories currently installed.)
+28.56 Preparing to unpack .../00-bzip2_1.0.8-6_amd64.deb ...
+28.57 Unpacking bzip2 (1.0.8-6) ...
+28.62 Selecting previously unselected package perl-modules-5.40.
+28.62 Preparing to unpack .../01-perl-modules-5.40_5.40.1-6_all.deb ...
+28.63 Unpacking perl-modules-5.40 (5.40.1-6) ...
+29.10 Selecting previously unselected package libgdbm-compat4t64:amd64.
+29.11 Preparing to unpack .../02-libgdbm-compat4t64_1.24-2_amd64.deb ...
+29.12 Unpacking libgdbm-compat4t64:amd64 (1.24-2) ...
+29.19 Selecting previously unselected package libperl5.40:amd64.
+29.19 Preparing to unpack .../03-libperl5.40_5.40.1-6_amd64.deb ...
+29.20 Unpacking libperl5.40:amd64 (5.40.1-6) ...
+29.63 Selecting previously unselected package perl.
+29.63 Preparing to unpack .../04-perl_5.40.1-6_amd64.deb ...
+29.64 Unpacking perl (5.40.1-6) ...
+29.71 Selecting previously unselected package xz-utils.
+29.71 Preparing to unpack .../05-xz-utils_5.8.1-1_amd64.deb ...
+29.72 Unpacking xz-utils (5.8.1-1) ...
+29.80 Selecting previously unselected package libsframe1:amd64.
+29.80 Preparing to unpack .../06-libsframe1_2.44-3_amd64.deb ...
+29.81 Unpacking libsframe1:amd64 (2.44-3) ...
+29.86 Selecting previously unselected package binutils-common:amd64.
+29.86 Preparing to unpack .../07-binutils-common_2.44-3_amd64.deb ...
+29.87 Unpacking binutils-common:amd64 (2.44-3) ...
+30.07 Selecting previously unselected package libbinutils:amd64.
+30.07 Preparing to unpack .../08-libbinutils_2.44-3_amd64.deb ...
+30.07 Unpacking libbinutils:amd64 (2.44-3) ...
+30.16 Selecting previously unselected package libgprofng0:amd64.
+30.17 Preparing to unpack .../09-libgprofng0_2.44-3_amd64.deb ...
+30.17 Unpacking libgprofng0:amd64 (2.44-3) ...
+30.28 Selecting previously unselected package libctf-nobfd0:amd64.
+30.28 Preparing to unpack .../10-libctf-nobfd0_2.44-3_amd64.deb ...
+30.29 Unpacking libctf-nobfd0:amd64 (2.44-3) ...
+30.35 Selecting previously unselected package libctf0:amd64.
+30.35 Preparing to unpack .../11-libctf0_2.44-3_amd64.deb ...
+30.36 Unpacking libctf0:amd64 (2.44-3) ...
+30.42 Selecting previously unselected package libjansson4:amd64.
+30.42 Preparing to unpack .../12-libjansson4_2.14-2+b3_amd64.deb ...
+30.42 Unpacking libjansson4:amd64 (2.14-2+b3) ...
+30.47 Selecting previously unselected package binutils-x86-64-linux-gnu.
+30.47 Preparing to unpack .../13-binutils-x86-64-linux-gnu_2.44-3_amd64.deb ...
+30.48 Unpacking binutils-x86-64-linux-gnu (2.44-3) ...
+30.64 Selecting previously unselected package binutils.
+30.64 Preparing to unpack .../14-binutils_2.44-3_amd64.deb ...
+30.65 Unpacking binutils (2.44-3) ...
+30.73 Selecting previously unselected package libisl23:amd64.
+30.73 Preparing to unpack .../15-libisl23_0.27-1_amd64.deb ...
+30.74 Unpacking libisl23:amd64 (0.27-1) ...
+30.86 Selecting previously unselected package libmpfr6:amd64.
+30.86 Preparing to unpack .../16-libmpfr6_4.2.2-1_amd64.deb ...
+30.87 Unpacking libmpfr6:amd64 (4.2.2-1) ...
+30.94 Selecting previously unselected package libmpc3:amd64.
+30.95 Preparing to unpack .../17-libmpc3_1.3.1-1+b3_amd64.deb ...
+30.95 Unpacking libmpc3:amd64 (1.3.1-1+b3) ...
+31.00 Selecting previously unselected package cpp-14-x86-64-linux-gnu.
+31.00 Preparing to unpack .../18-cpp-14-x86-64-linux-gnu_14.2.0-19_amd64.deb ...
+31.01 Unpacking cpp-14-x86-64-linux-gnu (14.2.0-19) ...
+31.89 Selecting previously unselected package cpp-14.
+31.89 Preparing to unpack .../19-cpp-14_14.2.0-19_amd64.deb ...
+31.90 Unpacking cpp-14 (14.2.0-19) ...
+31.95 Selecting previously unselected package cpp-x86-64-linux-gnu.
+31.95 Preparing to unpack .../20-cpp-x86-64-linux-gnu_4%3a14.2.0-1_amd64.deb ...
+31.96 Unpacking cpp-x86-64-linux-gnu (4:14.2.0-1) ...
+32.02 Selecting previously unselected package cpp.
+32.02 Preparing to unpack .../21-cpp_4%3a14.2.0-1_amd64.deb ...
+32.03 Unpacking cpp (4:14.2.0-1) ...
+32.09 Selecting previously unselected package libcc1-0:amd64.
+32.09 Preparing to unpack .../22-libcc1-0_14.2.0-19_amd64.deb ...
+32.10 Unpacking libcc1-0:amd64 (14.2.0-19) ...
+32.16 Selecting previously unselected package libgomp1:amd64.
+32.16 Preparing to unpack .../23-libgomp1_14.2.0-19_amd64.deb ...
+32.17 Unpacking libgomp1:amd64 (14.2.0-19) ...
+32.23 Selecting previously unselected package libitm1:amd64.
+32.23 Preparing to unpack .../24-libitm1_14.2.0-19_amd64.deb ...
+32.24 Unpacking libitm1:amd64 (14.2.0-19) ...
+32.30 Selecting previously unselected package libatomic1:amd64.
+32.30 Preparing to unpack .../25-libatomic1_14.2.0-19_amd64.deb ...
+32.30 Unpacking libatomic1:amd64 (14.2.0-19) ...
+32.36 Selecting previously unselected package libasan8:amd64.
+32.36 Preparing to unpack .../26-libasan8_14.2.0-19_amd64.deb ...
+32.37 Unpacking libasan8:amd64 (14.2.0-19) ...
+33.18 Selecting previously unselected package liblsan0:amd64.
+33.18 Preparing to unpack .../27-liblsan0_14.2.0-19_amd64.deb ...
+33.19 Unpacking liblsan0:amd64 (14.2.0-19) ...
+33.32 Selecting previously unselected package libtsan2:amd64.
+33.32 Preparing to unpack .../28-libtsan2_14.2.0-19_amd64.deb ...
+33.32 Unpacking libtsan2:amd64 (14.2.0-19) ...
+33.53 Selecting previously unselected package libubsan1:amd64.
+33.53 Preparing to unpack .../29-libubsan1_14.2.0-19_amd64.deb ...
+33.53 Unpacking libubsan1:amd64 (14.2.0-19) ...
+33.66 Selecting previously unselected package libhwasan0:amd64.
+33.66 Preparing to unpack .../30-libhwasan0_14.2.0-19_amd64.deb ...
+33.67 Unpacking libhwasan0:amd64 (14.2.0-19) ...
+34.61 Selecting previously unselected package libquadmath0:amd64.
+34.61 Preparing to unpack .../31-libquadmath0_14.2.0-19_amd64.deb ...
+34.62 Unpacking libquadmath0:amd64 (14.2.0-19) ...
+34.67 Selecting previously unselected package libgcc-14-dev:amd64.
+34.68 Preparing to unpack .../32-libgcc-14-dev_14.2.0-19_amd64.deb ...
+34.68 Unpacking libgcc-14-dev:amd64 (14.2.0-19) ...
+34.84 dpkg: error processing archive /tmp/apt-dpkg-install-RNsZc2/32-libgcc-14-dev_14.2.0-19_amd64.deb (--unpack):
+34.84  cannot copy extracted data for './usr/lib/gcc/x86_64-linux-gnu/14/liblsan.a' to '/usr/lib/gcc/x86_64-linux-gnu/14/liblsan.a.dpkg-new': failed to write (No space left on device)
+34.88 Selecting previously unselected package gcc-14-x86-64-linux-gnu.
+34.88 Preparing to unpack .../33-gcc-14-x86-64-linux-gnu_14.2.0-19_amd64.deb ...
+34.89 Unpacking gcc-14-x86-64-linux-gnu (14.2.0-19) ...
+35.24 dpkg: error processing archive /tmp/apt-dpkg-install-RNsZc2/33-gcc-14-x86-64-linux-gnu_14.2.0-19_amd64.deb (--unpack):
+35.24  cannot copy extracted data for './usr/bin/x86_64-linux-gnu-lto-dump-14' to '/usr/bin/x86_64-linux-gnu-lto-dump-14.dpkg-new': failed to write (No space left on device)
+35.28 Selecting previously unselected package gcc-14.
+35.28 Preparing to unpack .../34-gcc-14_14.2.0-19_amd64.deb ...
+35.29 Unpacking gcc-14 (14.2.0-19) ...
+35.37 Selecting previously unselected package gcc-x86-64-linux-gnu.
+35.37 Preparing to unpack .../35-gcc-x86-64-linux-gnu_4%3a14.2.0-1_amd64.deb ...
+35.38 Unpacking gcc-x86-64-linux-gnu (4:14.2.0-1) ...
+35.44 Selecting previously unselected package gcc.
+35.44 Preparing to unpack .../36-gcc_4%3a14.2.0-1_amd64.deb ...
+35.45 Unpacking gcc (4:14.2.0-1) ...
+35.53 Selecting previously unselected package libstdc++-14-dev:amd64.
+35.53 Preparing to unpack .../37-libstdc++-14-dev_14.2.0-19_amd64.deb ...
+35.53 Unpacking libstdc++-14-dev:amd64 (14.2.0-19) ...
+35.75 dpkg: error processing archive /tmp/apt-dpkg-install-RNsZc2/37-libstdc++-14-dev_14.2.0-19_amd64.deb (--unpack):
+35.75  cannot copy extracted data for './usr/include/c++/14/stdfloat' to '/usr/include/c++/14/stdfloat.dpkg-new': failed to write (No space left on device)
+35.82 Selecting previously unselected package g++-14-x86-64-linux-gnu.
+35.83 Preparing to unpack .../38-g++-14-x86-64-linux-gnu_14.2.0-19_amd64.deb ...
+35.83 Unpacking g++-14-x86-64-linux-gnu (14.2.0-19) ...
+36.20 dpkg: error processing archive /tmp/apt-dpkg-install-RNsZc2/38-g++-14-x86-64-linux-gnu_14.2.0-19_amd64.deb (--unpack):
+36.20  cannot copy extracted data for './usr/libexec/gcc/x86_64-linux-gnu/14/cc1plus' to '/usr/libexec/gcc/x86_64-linux-gnu/14/cc1plus.dpkg-new': failed to write (No space left on device)
+36.23 Selecting previously unselected package g++-14.
+36.23 Preparing to unpack .../39-g++-14_14.2.0-19_amd64.deb ...
+36.24 Unpacking g++-14 (14.2.0-19) ...
+36.29 Selecting previously unselected package g++-x86-64-linux-gnu.
+36.29 Preparing to unpack .../40-g++-x86-64-linux-gnu_4%3a14.2.0-1_amd64.deb ...
+36.30 Unpacking g++-x86-64-linux-gnu (4:14.2.0-1) ...
+36.35 Selecting previously unselected package g++.
+36.36 Preparing to unpack .../41-g++_4%3a14.2.0-1_amd64.deb ...
+36.36 Unpacking g++ (4:14.2.0-1) ...
+36.41 Selecting previously unselected package make.
+36.41 Preparing to unpack .../42-make_4.4.1-2_amd64.deb ...
+36.42 Unpacking make (4.4.1-2) ...
+36.49 Selecting previously unselected package libdpkg-perl.
+36.50 Preparing to unpack .../43-libdpkg-perl_1.22.22_all.deb ...
+36.50 Unpacking libdpkg-perl (1.22.22) ...
+36.61 Selecting previously unselected package patch.
+36.61 Preparing to unpack .../44-patch_2.8-2_amd64.deb ...
+36.62 Unpacking patch (2.8-2) ...
+36.68 Selecting previously unselected package dpkg-dev.
+36.68 Preparing to unpack .../45-dpkg-dev_1.22.22_all.deb ...
+36.69 Unpacking dpkg-dev (1.22.22) ...
+36.81 Selecting previously unselected package build-essential.
+36.82 Preparing to unpack .../46-build-essential_12.12_amd64.deb ...
+36.82 Unpacking build-essential (12.12) ...
+36.89 Errors were encountered while processing:
+36.89  /tmp/apt-dpkg-install-RNsZc2/32-libgcc-14-dev_14.2.0-19_amd64.deb
+36.89  /tmp/apt-dpkg-install-RNsZc2/33-gcc-14-x86-64-linux-gnu_14.2.0-19_amd64.deb
+36.89  /tmp/apt-dpkg-install-RNsZc2/37-libstdc++-14-dev_14.2.0-19_amd64.deb
+36.89  /tmp/apt-dpkg-install-RNsZc2/38-g++-14-x86-64-linux-gnu_14.2.0-19_amd64.deb
+36.93 E: Sub-process /usr/bin/dpkg returned an error code (1)
+------
+[+] build 0/4
+ ⠙ Image bu-digital-insightshub-backend-superset             Building                                                         614.6s
+ ⠙ Image bu-digital-insightshub-backend-superset-init        Building                                                         614.6s
+ ⠙ Image bu-digital-insightshub-backend-superset-worker      Building                                                         614.6s
+ ⠙ Image bu-digital-insightshub-backend-superset-worker-beat Building                                                         614.6s
+target superset: failed to solve: process "/bin/bash -o pipefail -c /app/docker/pip-install.sh --requires-build-essential -r requirements/base.txt &&     uv pip install -e \".[postgres,duckdb]\"" did not complete successfully: exit code: 100
