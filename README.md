@@ -36,11 +36,16 @@ import { Dashboard } from 'src/views/CRUD/types';
 
 // Dashboard Description Mapping
 const dashboardDescriptions: Record<number, string> = {
-  50: 'Turn-by-turn sentiment scoring across every conversation. Generate insights around point of frustration, sentiment recovery, sentiment uplift.',
-  57: 'Repeat contact detection and root cause classification. Identifies policy gaps and agent repeat contact rates across all channels.',
-  3: 'Agent Productivity Insights',
-  4: 'Customer Experience Metrics',
-  5: 'Business Intelligence Overview',
+  23: 'Turn-by-turn sentiment scoring across every conversation. Generate insights around point of frustration, sentiment recovery, sentiment uplift.',
+  43: 'Repeat contact detection and root cause classification. Identifies policy gaps and agent repeat contact rates across all channels.',
+  42: 'CSAT, NPS and CES for 100 % of contacts. Indetifies rootcause behine the low CSAT backed by evidences. Identifies system restrictions and policy gaps responsible for low CSAT across all channels.',
+  3:  'Spot behavioral risks early, prioritize interventions, and help every agent perform at their best.',
+  36: 'Track your performance, progress, and goals in one personalized view. Understand your strengths, improve key metrics, and stay on top of your growth every day.',
+  20: 'Monitor how your Virtual Agent is performing across conversations, resolution rates, and customer interactions. Identify trends, uncover improvement opportunities, and optimize automation for better customer experiences',
+  26: 'Discover high-impact automation opportunities by analyzing interaction volume and process complexity. Prioritize the right transformations to reduce effort, improve efficiency, and maximize operational impact.',
+  25 :'Gain real-time visibility into critical contact center operational metrics and performance trends.',
+  24:'Identify bottlenecks early, optimize workforce efficiency, and keep operations running at peak performance.',
+
 };
 
 const CardContainer = styled.div`
@@ -83,9 +88,10 @@ const CardContainer = styled.div`
 const ThumbnailContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
  
-  padding: 18px 18px 0px 18px;
+  flex: 1;
+ 
+  padding: 18px 18px 0 18px;
  
   img {
     width: 34px;
@@ -123,17 +129,21 @@ const DescriptionText = styled.p`
  
   font-style: italic;
  
-  line-height: 1.4;
+  line-height: 1.5;
  
   text-align: center;
  
   margin-top: 10px;
  
-  min-height: auto;
- 
   max-width: 220px;
-
-  margin-bottom: 8px;
+ 
+  min-height: 68px;
+ 
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+ 
+  margin-bottom: 0;
 `;
 
 
@@ -143,7 +153,7 @@ const DescriptionText = styled.p`
 
 
 const CardContent = styled.div`
-  margin-top: 14px;
+  margin-top: auto;
 `;
 
 const TitleRow = styled.div`
@@ -174,9 +184,9 @@ const OpenButton = styled.div`
   align-items: center;
   justify-content: flex-end;
  
-  margin-top: 10px;
+  margin-top: auto;
  
-  padding-right: 12px;
+  padding-top: 12px;
  
   font-size: 16px;
   font-weight: 700;
@@ -403,7 +413,7 @@ function DashboardCard({
 
   const dashboardDescription =
     dashboardDescriptions[dashboard.id] ||
-    'Comprehensive dashboard insights and analytics for operational monitoring and business performance.';
+    'AI powered analytics and actionable insights to track and optimize performance.';
 
   const handleActionClick = (e: React.MouseEvent) => {
     e.stopPropagation();
