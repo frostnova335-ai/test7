@@ -47,7 +47,8 @@ const CardContainer = styled.div`
   font-family: 'Poppins', sans-serif;
  
   width: 285px;
-  min-height: 360px;
+ 
+  height: fit-content;
  
   background: linear-gradient(
     180deg,
@@ -78,6 +79,7 @@ const CardContainer = styled.div`
     box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
   }
 `;
+ 
  
  
 const ThumbnailContainer = styled.div`
@@ -123,7 +125,7 @@ const DescriptionText = styled.p`
  
   font-style: italic;
  
-  line-height: 1.7;
+  line-height: 1.4;
  
   text-align: center;
  
@@ -143,7 +145,7 @@ const DescriptionText = styled.p`
 
 
 const CardContent = styled.div`
-  margin-top: auto;
+  margin-top: 14px;
 `;
 
 const TitleRow = styled.div`
