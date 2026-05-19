@@ -484,10 +484,6 @@ function SearchView({
 }: SearchViewProps) {
   const suggestions = [
     "calls where customer mentioned competitor",
-    "agent failed to verify identity but still shared account info",
-    "discount offered but customer still churned",
-    "customer expressed suicidal ideation or distress",
-    "long silence after pricing question",
     "repeat caller within 7 days on same issue",
   ];
 
@@ -518,7 +514,7 @@ function SearchView({
           />
           <button className="search-btn" onClick={onSearch}>SEARCH</button>
         </div>
-        <div className="search-type-row">
+        {/* <div className="search-type-row">
           {searchTypes.map(({ key, label }) => (
             <span
               key={key}
@@ -528,7 +524,7 @@ function SearchView({
               {label}
             </span>
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* Suggestions */}
@@ -695,7 +691,6 @@ function DashboardView() {
 interface SavedViewProps { onNavigate: (v: View) => void }
 function SavedView({ onNavigate }: SavedViewProps) {
   const cards = [
-    { icon: "⚠️", name: "Churn Risk Signals",         desc: "Calls where customer explicitly mentioned cancellation or switching provider with unresolved issue",          freq: "Runs nightly",  hits: "312 hits yesterday" },
     { icon: "📋", name: "Compliance: Missing Disclosure", desc: "Agent did not read required regulatory disclosure during call in Retentions or New Sales queue",           freq: "Runs hourly",   hits: "8 hits today" },
     { icon: "🎯", name: "Upsell Miss Detector",        desc: "Customer had high lifetime value, expressed satisfaction, and call ended without any upsell attempt",        freq: "Runs daily",    hits: "56 hits yesterday" },
     { icon: "🔁", name: "Repeat Contact — Same Issue", desc: "Customer calling back within 72 hours with same issue type, indicating prior call did not resolve",          freq: "Runs daily",    hits: "189 hits yesterday" },
@@ -798,7 +793,6 @@ interface SidebarProps {
 
 function Sidebar({ activeView, onNavigate, activeFilters, onToggleFilter }: SidebarProps) {
   const navItems: { view: View; icon: string; label: string; count: string; countStyle?: React.CSSProperties }[] = [
-    { view: "dashboard", icon: "📊", label: "Dashboard",      count: "" },
     { view: "search",    icon: "🔍", label: "Search",         count: "2.4M" },
     { view: "saved",     icon: "⭐", label: "Saved Searches", count: "12" },
     { view: "alerts",    icon: "🔔", label: "Alerts",         count: "3", countStyle: { background: "#e8d0cc", color: "#e84a2e" } },
@@ -806,7 +800,6 @@ function Sidebar({ activeView, onNavigate, activeFilters, onToggleFilter }: Side
 
   const quickFilters = [
     { key: "negative",   label: "😤 Negative" },
-    { key: "churn",      label: "⚠️ Churn Risk" },
     { key: "escalation", label: "🔺 Escalation" },
     { key: "compliance", label: "📋 Compliance" },
     { key: "repeat",     label: "🔁 Repeat Contact" },
@@ -941,7 +934,7 @@ export default function VoiceIQ() {
         .shell {
           display: grid;
           grid-template-columns: 260px 1fr;
-          grid-template-rows: 56px 1fr;
+          grid-template-rows: 1fr;
           min-height: 100vh;
         }
 
@@ -1001,7 +994,8 @@ export default function VoiceIQ() {
         .view.active { display: flex; }
 
         .search-hero {
-          background: var(--ink); padding: 36px 36px 28px;
+          background: linear-gradient(135deg, rgb(0, 79, 112) 0%, rgb(81, 145, 205) 100%);
+          padding: 36px 36px 28px;
           position: relative; overflow: hidden;
         }
         .search-hero::before { content: ''; position: absolute; top: -40px; right: -40px; width: 220px; height: 220px; border-radius: 50%; border: 40px solid rgba(232,74,46,0.1); }
@@ -1015,7 +1009,7 @@ export default function VoiceIQ() {
         .main-search:focus { border-color: var(--accent); }
         .main-search::placeholder { color: rgba(255,255,255,0.3); }
 
-        .search-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: var(--accent); color: #fff; border: none; padding: 9px 20px; border-radius: 7px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; transition: opacity 0.15s; letter-spacing: 0.5px; }
+        .search-btn { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: rgb(242, 106, 33); color: #fff; border: none; padding: 9px 20px; border-radius: 7px; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 12px; cursor: pointer; transition: opacity 0.15s; letter-spacing: 0.5px; }
         .search-btn:hover { opacity: 0.85; }
 
         .search-type-row { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
@@ -1187,24 +1181,6 @@ export default function VoiceIQ() {
       `}</style>
 
       <div className="shell">
-        {/* Top Bar */}
-        <header className="topbar">
-          <div className="logo">Voice<span className="logo-dot">IQ</span></div>
-          <div className="topbar-center">
-            <input
-              className="global-search"
-              type="text"
-              placeholder="Search across 2.4M transcripts..."
-              onClick={() => setActiveView("search")}
-              readOnly
-            />
-          </div>
-          <div className="topbar-right">
-            <span>Corpus: <strong style={{ color: "#fff" }}>2.4M calls</strong></span>
-            <span className="badge">LIVE</span>
-            <span>📊</span>
-          </div>
-        </header>
 
         {/* Sidebar */}
         <Sidebar
