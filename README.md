@@ -16,849 +16,738 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { useHistory } from 'react-router-dom';
-import { SupersetClient, styled, t, JsonObject } from '@superset-ui/core';
+import { useState, useEffect } from 'react';
+import { styled, css, t, useTheme } from '@superset-ui/core';
+import { debounce } from 'lodash';
+import { getUrlParam } from 'src/utils/urlUtils';
+import { MainNav, MenuMode } from '@superset-ui/core/components/Menu';
 import {
-  DeleteModal,
-  ListViewCard,
-  Loading,
+  Tooltip,
+  Grid,
+  Row,
+  Col,
+  Image,
+  Icons,
 } from '@superset-ui/core/components';
-import { ImportModal as ImportModelsModal } from 'src/components/ImportModal';
-import { Icons } from '@superset-ui/core/components/Icons';
-import rison from 'rison';
-import withToasts from 'src/components/MessageToasts/withToasts';
-import { CardContainer, loadingCardCount } from 'src/views/CRUD/utils';
-import { TableTab } from 'src/views/CRUD/types';
+import { GenericLink } from 'src/components';
+import { NavLink, useLocation } from 'react-router-dom';
+import { Typography } from '@superset-ui/core/components/Typography';
+import { useUiConfig } from 'src/components/UiConfigContext';
+import { URL_PARAMS } from 'src/constants';
 import { findPermission } from 'src/utils/findPermission';
-import InsightsViewHeader from 'src/pages/DashboardList/InsightsViewHeader';
-import { DASHBOARD_CATEGORIES } from 'src/dashboard/constants/categories';
-import { navigateTo } from 'src/utils/navigationUtils';
-import { useFavoriteStatus } from 'src/views/CRUD/hooks';
-import { Dashboard } from 'src/views/CRUD/types';
-import DashboardCard from 'src/features/dashboards/DashboardCard';
-import PropertiesModal from 'src/dashboard/components/PropertiesModal';
-import handleResourceExport from 'src/utils/export';
+import getBootstrapData from 'src/utils/getBootstrapData';
+import {
+  MenuObjectChildProps,
+  MenuObjectProps,
+  MenuData,
+  isUserWithPermissionsAndRoles,
+} from 'src/types/bootstrapTypes';
+import RightMenu from './RightMenu';
 
-/* ── Category icons ── */
-const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-  'Business Strategy': <Icons.FundProjectionScreenOutlined iconSize="l" />,
-  'Agent Empowerment': <Icons.UsergroupAddOutlined iconSize="l" />,
-  'Customer Experience': <Icons.LineChartOutlined iconSize="l" />,
-  'IVA Performance & Observability': <Icons.DashboardOutlined iconSize="l" />,
-};
+const relabel = (label?: string) =>
+  label === 'Dashboards' ? 'Home' : label || '';
+const EXPLORE_MENU_NAME = 'Explore';
+const CHART_LIST_URL = '/chart/list/';
+const DATASET_LIST_URL = '/tablemodelview/list/';
+const SQL_QUERY_LIST_URL = '/savedqueryview/list/';
+const DATA_LIST_URL = '/databaseview/list/';
+const DASHBOARD_LIST_URL = '/dashboard/list/';
 
-/* ── Dashboard type (lightweight, only what we need) ── */
-type DashboardItem = Dashboard;
+const isSqlMenuItem = (item: MenuObjectProps) =>
+  item.name === 'SQL Lab' ||
+  item.name === 'SQLLab' ||
+  item.label === 'SQL Lab' ||
+  item.label === 'SQL' ||
+  item.url === '/sqllab/' ||
+  item.url === '/sqllab';
 
-/* ══════════════════════════════════════════════════════
-   Styled Components
-   ══════════════════════════════════════════════════════ */
-
-/* Same gradient as InsightsViews (DashboardList) – single wrapper, extends with content */
-const PageContainer = styled.div`
-  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
-    sans-serif;
-  min-height: 100%;
-  height: 100%;
-  width: 100%;
-  overflow-x: hidden;
-  background:
-    radial-gradient(
-      ellipse at 0% 100%,
-      rgba(93, 192, 216, 0.08) 0%,
-      transparent 50%
-    ),
-    radial-gradient(
-      ellipse at 100% 0%,
-      rgba(212, 238, 245, 0.12) 0%,
-      transparent 40%
-    ),
-    radial-gradient(
-      ellipse at 100% 100%,
-      rgba(125, 211, 232, 0.06) 0%,
-      transparent 30%
-    ),
-    radial-gradient(
-      ellipse at 0% 0%,
-      rgba(232, 244, 248, 0.1) 0%,
-      transparent 35%
-    ),
-    linear-gradient(180deg, #ffffff 0%, #f8fcfd 100%);
-`;
-
-const WelcomeSection = styled.div`
-  padding: 40px 72px 10px 72px;
- 
-  @media (max-width: 768px) {
-    padding: 20px 20px 0 20px;
-  }
-`;
-
-const WelcomeTitle = styled.h1`
-  font-family: 'Poppins', sans-serif;
-  font-size: 32px;
-  font-weight: 600;
-  color: #333333;
-  margin: 0;
-`;
-
-const UserName = styled.span`
-  background: linear-gradient(
-    135deg,
-    rgb(0, 79, 112) 0%,
-    rgb(81, 145, 205) 100%
-  );
- 
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
- 
-  font-weight: 700;
-  letter-spacing: -1px;
-`;
- 
-
-const WelcomeSubText = styled.p`
-  margin-top: 11px;
-  font-size: 14px;
-  color: #7a7a7a;
-  font-family: 'Poppins', sans-serif;
-`;
-
-/* ── Category sections container (same pattern as ListView: transparent so gradient shows through) ── */
-const CategoriesContainer = styled.div`
-  padding: 32px 48px 48px;
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  background: transparent;
-  position: relative;
-  z-index: 1;
-
-  @media (max-width: 768px) {
-    padding: 24px 20px 32px;
-    gap: 32px;
-  }
-`;
-
-/* ── Single category section ── */
-const CategorySection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  padding: 24px 24px 28px;
-  border-radius: 16px;
-  background: transparent;
-`;
-
-const CategoryHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-`;
-
-const CategoryTitleWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-`;
-
-const CategoryIcon = styled.div`
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #005071 0%, #5191cd 100%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  svg,
-  span {
-    color: #ffffff !important;
-  }
-`;
-
-const CategoryTitle = styled.h2`
-  font-family: 'Poppins', sans-serif;
-  font-size: 20px;
-  font-weight: 600;
-  color: #333333;
-  margin: 0;
-`;
-
-const CategoryCount = styled.span`
-  font-family: 'Poppins', sans-serif;
-  font-size: 13px;
-  font-weight: 400;
-  color: #999999;
-  margin-left: 8px;
-`;
-
-/* ── Collapse/Expand button ── */
-const CollapseButton = styled.button<{ isCollapsed: boolean }>`
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  color: #005071;
-
-  &:hover {
-    background: rgba(0, 80, 113, 0.08);
-  }
-
-  svg {
-    transform: rotate(${({ isCollapsed }) => (isCollapsed ? '-90deg' : '0deg')});
-    transition: transform 0.3s ease;
-    font-size: 18px;
-  }
-`;
-
-/* ── Scroll container ── */
-const ScrollWrapper = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-`;
-
-const ScrollButton = styled.button<{ direction: 'left' | 'right' }>`
-  position: absolute;
- 
-  ${({ direction }) =>
-    direction === 'left' ? 'left: -24px;' : 'right: -24px;'}
- 
-  z-index: 5;
-  padding-bottom: 5px;
-  width: 58px;
-  height: 58px;
- 
-  border-radius: 50%;
- 
-  border: 2px solid rgb(242, 106, 33);
- 
-  background: #ffffff;
- 
-  color: rgb(242, 106, 33);
- 
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
- 
-  cursor: pointer;
- 
-  display: flex;
-  align-items: center;
-  justify-content: center;
- 
-  transition: all 0.25s ease;
- 
-  font-size: 38px;
- 
-  font-weight: 700;
- 
-  line-height: 1;
- 
-  &:hover,
-  &:active {
-    background: rgb(242, 106, 33);
- 
-    color: #ffffff;
- 
-    transform: scale(1.08);
-  }
- 
-  @media (max-width: 768px) {
-    width: 46px;
-    height: 46px;
- 
-    font-size: 28px;
- 
-    ${({ direction }) =>
-      direction === 'left'
-        ? 'left: -14px;'
-        : 'right: -14px;'}
-  }
-`;
- 
-
-const ScrollContainer = styled.div`
-  display: flex;
- 
-  gap: 26px;
- 
-  overflow-x: auto;
- 
-  scroll-behavior: smooth;
- 
-  padding: 12px 10px 20px 10px;
- 
-  align-items: stretch;
- 
-  scrollbar-width: none;
- 
-  &::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-const DashboardCardSlot = styled.div`
-  flex: 0 0 285px;
- 
-  min-width: 285px;
- 
-  display: flex;
- 
-  justify-content: center;
-`;
-
-/* ── Empty state ── */
-const EmptyCategory = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 140px;
-  width: 100%;
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 12px;
-  /* Removed dashed border */
-  color: #999999;
-  font-family: 'Poppins', sans-serif;
-  font-size: 14px;
-`;
-
-/* ── Loading state ── */
-const LoadingWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-`;
-
-/* ══════════════════════════════════════════════════════
-   ScrollableDashboardRow Component
-   ══════════════════════════════════════════════════════ */
-interface ScrollableDashboardRowProps {
-  dashboards: DashboardItem[];
-  hasPerm: (name: string) => boolean;
-  userId?: string | number;
-  saveFavoriteStatus: (id: number, isStarred: boolean) => void;
-  favoriteStatus: Record<string, boolean>;
-  onEdit: (dashboard: DashboardItem) => void;
-  onDelete: (dashboard: DashboardItem) => void;
-  onExport: (dashboardsToExport: DashboardItem[]) => void;
+interface MenuProps {
+  data: MenuData;
+  isFrontendRoute?: (path?: string) => boolean;
 }
 
-function ScrollableDashboardRow({
-  dashboards,
-  hasPerm,
-  userId,
-  saveFavoriteStatus,
-  favoriteStatus,
-  onEdit,
-  onDelete,
-  onExport,
-}: ScrollableDashboardRowProps) {
-  const scrollRef = useRef<HTMLDivElement>(null);
-  const [showLeftArrow, setShowLeftArrow] = useState(false);
-  const [showRightArrow, setShowRightArrow] = useState(false);
+const StyledHeader = styled.header`
+  ${({ theme }) => `
+      font-family: 'Poppins', sans-serif;
+       background: linear-gradient(90deg, #d2dae4 0%, #ffffff 100%);
+       border-bottom: none;
+      z-index: 10;
 
-  const checkScrollPosition = useCallback(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    setShowLeftArrow(el.scrollLeft > 10);
-    setShowRightArrow(el.scrollLeft + el.clientWidth < el.scrollWidth - 10);
-  }, []);
+      &:nth-last-of-type(2) nav {
+        margin-bottom: 2px;
+      }
+      .caret {
+        display: none;
+      }
+      & .ant-image{
+        display: contents;
+        height: 100%;
+        padding: ${theme.sizeUnit}px
+          ${theme.sizeUnit * 2}px
+          ${theme.sizeUnit}px
+          ${theme.sizeUnit * 4}px;
+      }
+      .navbar-brand {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        /* must be exactly the height of the Antd navbar */
+        min-height: 50px;
+        padding: ${theme.sizeUnit}px
+          ${theme.sizeUnit * 2}px
+          ${theme.sizeUnit}px
+          ${theme.sizeUnit * 6}px; /* Increased left padding */
+        max-width: ${theme.sizeUnit * theme.brandIconMaxWidth}px;
+        img {
+          height: 100%;
+          object-fit: contain;
+        }
+        &:focus {
+          border-color: transparent;
+        }
+        &:focus-visible {
+          border-color: ${theme.colorPrimaryText};
+        }
+      }
+      .navbar-brand-text {
+        border-left: 1px solid rgba(0, 79, 112, 0.2);
+        border-right: 1px solid rgba(0, 79, 112, 0.2);
+        height: 100%;
+        color: #004F70;
+        padding-left: ${theme.sizeUnit * 4}px;
+        padding-right: ${theme.sizeUnit * 4}px;
+        margin-right: ${theme.sizeUnit * 6}px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 16px;
+        font-weight: 600;
+        float: left;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+
+        span {
+          max-width: ${theme.sizeUnit * 58}px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+        @media (max-width: 1127px) {
+          display: none;
+        }
+      }
+      .main-nav {
+        font-family: 'Poppins', sans-serif;
+        font-size: 16px;
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        background: transparent !important;
+        
+        .ant-menu {
+          background: transparent !important;
+          border: none !important;
+        }
+        
+        .ant-menu-item,
+        .ant-menu-submenu-title {
+          color: #004F70 !important; /* Blue color for navigation */
+          font-family: 'Poppins', sans-serif;
+          font-size: 16px;
+          font-weight: 500;
+          text-align: right;
+          background: transparent !important;
+          
+          &:hover,
+          &.ant-menu-submenu-active {
+            color: #004F70 !important;
+            background-color: rgba(221, 238, 245, 0.7) !important;
+          }
+          
+          a {
+            color: #004F70 !important; /* Blue color for navigation */
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            text-align: right;
+            
+            &:hover {
+              color: #004F70 !important;
+            }
+          }
+        }
+
+        /* Active menu item styling - bold blue */
+        .ant-menu-item-selected,
+        .ant-menu-submenu-selected > .ant-menu-submenu-title {
+          font-weight: 700 !important;
+          color: #004F70 !important; /* Bold blue for selected */
+          
+          a {
+            font-weight: 700 !important;
+            color: #004F70 !important;
+          }
+        }
+        
+        /* Make InsightsViews bold when on dashboard list page - handled via selectedKeys */
+      }
+      /* Ensure icons/carets follow navy palette in light header */
+      svg {
+        color: #004F70;
+        fill: #004F70;
+      }
+      @media (max-width: 767px) {
+        .navbar-brand {
+          float: none;
+        }
+      }
+      @media (max-width: 767px) {
+        .ant-menu-item {
+          padding: 0 ${theme.sizeUnit * 6}px 0
+            ${theme.sizeUnit * 3}px !important;
+        }
+        .ant-menu > .ant-menu-item > span > a {
+          padding: 0px;
+        }
+        .main-nav .ant-menu-submenu-title > svg:nth-of-type(1) {
+          display: none;
+        }
+      }
+  `}
+`;
+const { SubMenu } = MainNav;
+
+const StyledSubMenu = styled(SubMenu)`
+  ${({ theme }) => css`
+    .submenu-title-with-caret {
+      display: inline-flex;
+      align-items: center;
+      gap: ${theme.sizeUnit}px;
+    }
+
+    [data-icon="caret-down"] {
+      color: ${theme.colorIcon};
+      font-size: ${theme.fontSizeXS}px;
+      margin-left: ${theme.sizeUnit}px;
+    }
+    &.ant-menu-submenu {
+        padding: ${theme.sizeUnit * 2}px ${theme.sizeUnit * 4}px;
+        display: flex;
+        align-items: center;
+        height: 100%;  &.ant-menu-submenu-active {
+    .ant-menu-title-content {
+      color: ${theme.colorPrimary};
+    }
+  }
+  `}
+`;
+const { useBreakpoint } = Grid;
+
+const menuTitleWithCaret = (label?: string) => (
+  <span className="submenu-title-with-caret">
+    <span>{label}</span>
+    <Icons.CaretDownOutlined iconSize="xs" data-icon="caret-down" />
+  </span>
+);
+
+export function Menu({
+  data: {
+    menu,
+    brand,
+    navbar_right: navbarRight,
+    settings,
+    environment_tag: environmentTag,
+  },
+  isFrontendRoute = () => false,
+}: MenuProps) {
+  const [showMenu, setMenu] = useState<MenuMode>('horizontal');
+  const screens = useBreakpoint();
+  const uiConfig = useUiConfig();
+  const theme = useTheme();
 
   useEffect(() => {
-    checkScrollPosition();
-    const el = scrollRef.current;
-    if (el) {
-      el.addEventListener('scroll', checkScrollPosition);
-      window.addEventListener('resize', checkScrollPosition);
+    function handleResize() {
+      if (window.innerWidth <= 767) {
+        setMenu('inline');
+      } else setMenu('horizontal');
     }
-    return () => {
-      if (el) el.removeEventListener('scroll', checkScrollPosition);
-      window.removeEventListener('resize', checkScrollPosition);
-    };
-  }, [checkScrollPosition, dashboards]);
+    handleResize();
+    const windowResize = debounce(() => handleResize(), 10);
+    window.addEventListener('resize', windowResize);
+    return () => window.removeEventListener('resize', windowResize);
+  }, []);
 
-  const scroll = (direction: 'left' | 'right') => {
-    const el = scrollRef.current;
-    if (!el) return;
-    const scrollAmount = 340; // card width + gap
-    el.scrollBy({
-      left: direction === 'left' ? -scrollAmount : scrollAmount,
-      behavior: 'smooth',
-    });
-  };
-
-  if (dashboards.length === 0) {
-    return <EmptyCategory>{t('No dashboards in this category')}</EmptyCategory>;
+  enum Paths {
+    Explore = '/explore',
+    Dashboard = '/dashboard',
+    Chart = '/chart',
+    Datasets = '/tablemodelview',
+    Database = '/databaseview',
+    SavedQuery = '/savedqueryview',
+    SqlLab = '/sqllab',
+    Definition = '/insightshub/definition',
+    CcaasArchitecture = '/insightshub/architecture',
+    Engage = '/insightshub/engage',
+    StrategyRoadmap = '/insightshub/strategy-roadmap',
+    AskAnalytics = '/insightshub/ask-analytics',
   }
 
+  const defaultTabSelection: string[] = [];
+  const [activeTabs, setActiveTabs] = useState(defaultTabSelection);
+  const location = useLocation();
+  useEffect(() => {
+    let cancelled = false;
+    const path = location.pathname;
+
+    const updateTabs = () => {
+      if (cancelled) return;
+
+      switch (true) {
+        case path.startsWith('/insightshub/welcome') ||
+          path.startsWith(Paths.Dashboard) ||
+          path.includes('/dashboard/list/'):
+          // When on home (welcome) or dashboard list, mark Dashboards as active (label is 'InsightsViews')
+          setActiveTabs(['Dashboards']);
+          break;
+        case path.startsWith(Paths.Chart) ||
+          path.startsWith(Paths.Explore) ||
+          path.startsWith(Paths.Datasets) ||
+          path.startsWith(Paths.Database) ||
+          path.startsWith(Paths.SavedQuery) ||
+          path.startsWith(Paths.SqlLab):
+          setActiveTabs([EXPLORE_MENU_NAME]);
+          break;
+        case path.startsWith(Paths.Definition):
+          setActiveTabs(['Definition']);
+          break;
+        case path.startsWith(Paths.CcaasArchitecture):
+          setActiveTabs(['CcaasArchitecture']);
+          break;
+        case path.startsWith(Paths.Engage):
+        case path.startsWith(Paths.StrategyRoadmap):
+        case path.startsWith(Paths.AskAnalytics):
+          setActiveTabs(['Engage']);
+          break;
+        default:
+          setActiveTabs(defaultTabSelection);
+      }
+    };
+
+    updateTabs();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [location.pathname]);
+
+  const standalone = getUrlParam(URL_PARAMS.standalone);
+  if (standalone || uiConfig.hideNav) return <></>;
+
+  const renderMenuChild = (
+    child: MenuObjectProps | string,
+    index1: number,
+    parentLabel?: string,
+  ) => {
+    if (typeof child === 'string' && child === '-' && parentLabel !== 'Data') {
+      return <MainNav.Divider key={`$${index1}`} />;
+    }
+    if (typeof child === 'string') {
+      return null;
+    }
+    if (child.childs?.length) {
+      return (
+        <StyledSubMenu
+          key={`${child.name || child.label}-${index1}`}
+          title={menuTitleWithCaret(child.label)}
+          icon={<></>}
+        >
+          {child.childs.map((nestedChild, nestedIndex) =>
+            renderMenuChild(nestedChild, nestedIndex, child.label),
+          )}
+        </StyledSubMenu>
+      );
+    }
+    return (
+      <MainNav.Item key={`${child.label}`}>
+        {child.isFrontendRoute ? (
+          <NavLink to={child.url || ''} exact activeClassName="is-active">
+            {child.label}
+          </NavLink>
+        ) : (
+          <Typography.Link href={child.url}>{child.label}</Typography.Link>
+        )}
+      </MainNav.Item>
+    );
+  };
+
+  const renderSubMenu = ({
+    label,
+    name,
+    childs,
+    url,
+    index,
+    isFrontendRoute,
+  }: MenuObjectProps) => {
+    // Use name as key for matching with activeTabs (name is the original key, label is relabeled for display)
+    // For Dashboards, name is 'Dashboards' but label is 'InsightsViews' after relabeling
+    const menuKey = name || label;
+    if (url && isFrontendRoute) {
+      return (
+        <MainNav.Item key={menuKey} role="presentation">
+          <NavLink role="button" to={url} activeClassName="is-active">
+            {label}
+          </NavLink>
+        </MainNav.Item>
+      );
+    }
+   
+    return (
+      <StyledSubMenu
+        key={menuKey}
+        title={menuTitleWithCaret(label)}
+        icon={<></>}
+      >
+        {childs?.map((child: MenuObjectChildProps | string, index1: number) =>
+          renderMenuChild(child, index1, label),
+        )}
+      </StyledSubMenu>
+    );
+  };
+  const renderBrand = () => {
+    let link;
+    if (theme.brandLogoUrl) {
+      let style = { padding: '0px', margin: '0px' } as React.CSSProperties;
+      if (theme.brandLogoHeight) {
+        style = { ...style, height: theme.brandLogoHeight, minHeight: '0px' };
+      }
+      if (theme.brandLogoMargin) {
+        style = { ...style, margin: theme.brandLogoMargin };
+      }
+      link = (
+        <Typography.Link
+          href={theme.brandLogoHref}
+          className="navbar-brand"
+          style={style}
+        >
+          <Image
+            preview={false}
+            src={theme.brandLogoUrl}
+            alt={theme.brandLogoAlt || 'Apache Superset'}
+          />
+        </Typography.Link>
+      );
+    } else if (isFrontendRoute(window.location.pathname)) {
+      // ---------------------------------------------------------------------------------
+      // TODO: deprecate this once Theme is fully rolled out
+      // Kept as is for backwards compatibility with the old theme system / superset_config.py
+      link = (
+        <GenericLink className="navbar-brand" to={brand.path}>
+          <Image preview={false} src={brand.icon} alt={brand.alt} />
+        </GenericLink>
+      );
+    } else {
+      link = (
+        <Typography.Link
+          className="navbar-brand"
+          href={brand.path}
+          tabIndex={-1}
+        >
+          <Image preview={false} src={brand.icon} alt={brand.alt} />
+        </Typography.Link>
+      );
+    }
+    // ---------------------------------------------------------------------------------
+    return <>{link}</>;
+  };
   return (
-    <ScrollWrapper>
-      {showLeftArrow && (
-        <ScrollButton
-          direction="left"
-          onClick={() => scroll('left')}
-          aria-label={t('Scroll left')}
+    <StyledHeader className="top" id="main-menu" role="navigation">
+      <Row>
+        <Col md={6} xs={24} style={{ display: 'flex' }}>
+          <Tooltip
+            id="brand-tooltip"
+            placement="bottomLeft"
+            title={brand.tooltip}
+            arrow={{ pointAtCenter: true }}
+          >
+            {renderBrand()}
+          </Tooltip>
+          {brand.text && (
+            <div className="navbar-brand-text">
+              <span>{brand.text}</span>
+            </div>
+          )}
+        </Col>
+        <Col
+          md={18}
+          xs={24}
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            paddingRight: '24px',
+          }}
         >
-          ‹
-        </ScrollButton>
-      )}
+          <MainNav
+            mode={showMenu}
+            data-test="navbar-top"
+            className="main-nav"
+            selectedKeys={activeTabs}
+            disabledOverflow
+          >
+            {menu.map((item, index) => {
+              // Preserve original name for key matching, but use relabeled for display
+              const originalName = item.name;
+              // InsightsViews (Dashboards) nav item goes to home/welcome page
+              const isDashboards = originalName === 'Dashboards';
+              const resolvedUrl = isDashboards
+                ? '/insightshub/welcome/'
+                : item.url;
+              const props = {
+                index,
+                ...item,
+                url: resolvedUrl,
+                label: relabel(item.label || item.name),
+                name: originalName, // Keep original name for key matching
+                isFrontendRoute: isFrontendRoute(resolvedUrl),
+                // Clear children for Dashboards to force direct link instead of submenu
+                childs: isDashboards
+                  ? undefined
+                  : item.childs?.map(c => {
+                      if (typeof c === 'string') {
+                        return c;
+                      }
 
-      <ScrollContainer ref={scrollRef}>
-        {dashboards.map(dashboard => (
-          <DashboardCardSlot key={dashboard.id}>
-            <DashboardCard
-              dashboard={dashboard}
-              hasPerm={hasPerm}
-              bulkSelectEnabled={false}
-              showThumbnails
-              userId={userId}
-              loading={false}
-              openDashboardEditModal={onEdit}
-              saveFavoriteStatus={saveFavoriteStatus}
-              favoriteStatus={favoriteStatus[String(dashboard.id)]}
-              handleBulkDashboardExport={onExport}
-              onDelete={onDelete}
-            />
-          </DashboardCardSlot>
-        ))}
-      </ScrollContainer>
+                      return {
+                        ...c,
+                        label: relabel(c.label),
+                        name: c.name, // Keep original name for key matching
+                        isFrontendRoute: isFrontendRoute(c.url),
+                      };
+                    }),
+              };
 
-      {showRightArrow && (
-        <ScrollButton
-          direction="right"
-          onClick={() => scroll('right')}
-          aria-label={t('Scroll right')}
-        >
-          ›
-        </ScrollButton>
-      )}
-    </ScrollWrapper>
+              return renderSubMenu(props);
+            })}
+          </MainNav>
+          <RightMenu
+            align={screens.md ? 'flex-end' : 'flex-start'}
+            settings={settings}
+            navbarRight={navbarRight}
+            isFrontendRoute={isFrontendRoute}
+            environmentTag={environmentTag}
+          />
+        </Col>
+      </Row>
+    </StyledHeader>
   );
 }
 
-/* ── Exports kept for backward compatibility ── */
-export interface ActivityData {
-  [TableTab.Created]?: JsonObject[];
-  [TableTab.Edited]?: JsonObject[];
-  [TableTab.Viewed]?: JsonObject[];
-  [TableTab.Other]?: JsonObject[];
-}
+// transform the menu data to reorganize components
+export default function MenuWrapper({ data, ...rest }: MenuProps) {
+  const wrapperBootstrapUser = getBootstrapData()?.user;
+  const wrapperUserRoles = isUserWithPermissionsAndRoles(wrapperBootstrapUser)
+    ? wrapperBootstrapUser.roles
+    : undefined;
+  const resolveFrontendRoute = rest.isFrontendRoute || (() => false);
 
-interface LoadingProps {
-  cover?: boolean;
-}
+  const newMenuData = {
+    ...data,
+  };
+  // Menu items that should go into settings dropdown
+  const settingsMenus = {
+    Data: true,
+    Security: true,
+    Manage: true,
+  };
 
-export const LoadingCards = ({ cover }: LoadingProps) => (
-  <CardContainer showThumbnails={cover} className="loading-cards">
-    {[...new Array(loadingCardCount)].map((_, index) => (
-      <ListViewCard
-        key={index}
-        cover={cover ? false : <></>}
-        description=""
-        loading
-      />
-    ))}
-  </CardContainer>
-);
+  // Cycle through menu.menu to build out cleanedMenu and settings
+  const cleanedMenu: MenuObjectProps[] = [];
+  const settings: MenuObjectProps[] = [];
+  let chartsEntry: MenuObjectProps | undefined;
+  let dashboardEntry: MenuObjectProps | undefined;
+  let dataEntry: MenuObjectProps | undefined;
+  let datasetsEntry: MenuObjectProps | undefined;
+  let sqlEntry: MenuObjectProps | undefined;
 
-/* ══════════════════════════════════════════════════════
-   Welcome (Home) Component
-   ══════════════════════════════════════════════════════ */
-interface WelcomeProps {
-  user: {
-  userId: string | number;
-  username?: string;
-  firstName?: string;
-  lastName?: string;
-  roles?: Record<string, [string, string][]>;
-};
-  addDangerToast: (msg: string) => void;
-  addSuccessToast: (msg: string) => void;
-}
+  newMenuData.menu.forEach((item: MenuObjectProps) => {
+    if (!item) {
+      return;
+    }
+    if (item.name === 'Charts') {
+      chartsEntry = item;
+      return;
+    }
+    if (item.name === 'Datasets') {
+      datasetsEntry = item;
+      return;
+    }
+    if (item.name === 'Dashboards') {
+      dashboardEntry = item;
+    }
+    if (item.name === 'Data') {
+      dataEntry = item;
+    }
+    if (isSqlMenuItem(item)) {
+      sqlEntry = item;
+      return;
+    }
 
-const DASHBOARD_LIST_PATH = '/dashboard/list/';
+    const children: (MenuObjectProps | string)[] = [];
+    const newItem = {
+      ...item,
+    };
 
-const PASSWORDS_NEEDED_MESSAGE = t(
-  'The passwords for the databases below are needed in order to ' +
-  'import them together with the dashboards. Please note that the ' +
-  '"Secure Extra" and "Certificate" sections of ' +
-  'the database configuration are not present in export files, and ' +
-  'should be added manually after the import if they are needed.',
-);
-const CONFIRM_OVERWRITE_MESSAGE = t(
-  'You are importing one or more dashboards that already exist. ' +
-  'Overwriting might cause you to lose some of your work. Are you ' +
-  'sure you want to overwrite?',
-);
-
-function Welcome({ user, addDangerToast, addSuccessToast }: WelcomeProps) {
-  console.log("user_data_test",user)
-  const currentDate = new Date().toLocaleDateString('en-GB', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
-  const history = useHistory();
-  const [dashboardsByCategory, setDashboardsByCategory] = useState<
-    Record<string, DashboardItem[]>
-  >({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [collapsedCategories, setCollapsedCategories] = useState<Set<string>>(
-    new Set(),
-  );
-  const [searchValue, setSearchValue] = useState('');
-  const [viewMode] = useState<'grid' | 'list'>('grid');
-  const [preparingExport, setPreparingExport] = useState(false);
-  const [editModal, setEditModal] = useState<DashboardItem | undefined>();
-  const [dashboardToDelete, setDashboardToDelete] =
-    useState<DashboardItem | null>(null);
-  const [importingDashboard, showImportModal] = useState(false);
-  const [passwordFields, setPasswordFields] = useState<string[]>([]);
-  const [sshTunnelPasswordFields, setSSHTunnelPasswordFields] = useState<string[]>([]);
-  const [sshTunnelPrivateKeyFields, setSSHTunnelPrivateKeyFields] = useState<string[]>([]);
-  const [sshTunnelPrivateKeyPasswordFields, setSSHTunnelPrivateKeyPasswordFields] = useState<string[]>([]);
-
-  const canCreate = findPermission('can_write', 'Dashboard', user?.roles);
-  const canDelete = findPermission('can_write', 'Dashboard', user?.roles);
-  const canExport = findPermission('can_export', 'Dashboard', user?.roles);
-  const canWrite = findPermission('can_write', 'Dashboard', user?.roles);
-
-  const fetchDashboards = useCallback(async () => {
-    try {
-      const queryParams = rison.encode({
-        columns: [
-          'id',
-          'dashboard_title',
-          'category',
-          'url',
-          'published',
-          'thumbnail_url',
-          'changed_on_delta_humanized',
-          'changed_by',
-          'owners',
-        ],
-        page_size: 100,
-        order_column: 'changed_on',
-        order_direction: 'desc',
-      });
-
-      const response = await SupersetClient.get({
-        endpoint: `/api/v1/dashboard/?q=${queryParams}`,
-      });
-
-      const allDashboards: DashboardItem[] = response.json?.result || [];
-
-      const grouped: Record<string, DashboardItem[]> = {};
-      DASHBOARD_CATEGORIES.forEach(cat => {
-        grouped[cat] = [];
-      });
-
-      allDashboards.forEach(d => {
-        if (d.category && grouped[d.category] !== undefined) {
-          grouped[d.category].push(d);
+    // Filter childs
+    if (item.childs) {
+      item.childs.forEach((child: MenuObjectChildProps | string) => {
+        if (typeof child === 'string') {
+          children.push(child);
+        } else if ((child as MenuObjectChildProps).label) {
+          children.push(child);
         }
       });
 
-      setDashboardsByCategory(grouped);
-    } catch (err) {
-      addDangerToast(t('There was an issue fetching dashboards: %s', String(err)));
-    } finally {
-      setIsLoading(false);
+      newItem.childs = children;
     }
-  }, [addDangerToast]);
 
-  useEffect(() => {
-    fetchDashboards();
-  }, [fetchDashboards]);
-
-  const dashboardIds = useMemo(
-    () =>
-      Object.values(dashboardsByCategory)
-        .flat()
-        .map(dashboard => dashboard.id),
-    [dashboardsByCategory],
-  );
-
-  const [saveFavoriteStatus, favoriteStatus] = useFavoriteStatus(
-    'dashboard',
-    dashboardIds,
-    addDangerToast,
-  );
-
-  const hasPerm = useCallback(
-    (name: string) => {
-      if (name === 'can_export') {
-        return canExport;
-      }
-      if (name === 'can_write') {
-        return canWrite;
-      }
-      return false;
-    },
-    [canExport, canWrite],
-  );
-
-  const handleBulkDashboardExport = useCallback(
-    (dashboardsToExport: DashboardItem[]) => {
-      const ids = dashboardsToExport.map(({ id }) => id);
-      handleResourceExport('dashboard', ids, () => {
-        setPreparingExport(false);
-      });
-      setPreparingExport(true);
-    },
-    [],
-  );
-
-  const handleDashboardEdit = useCallback(
-    (edits: DashboardItem) =>
-      SupersetClient.get({
-        endpoint: `/api/v1/dashboard/${edits.id}`,
-      }).then(
-        () => fetchDashboards(),
-        error =>
-          addDangerToast(
-            t('An error occurred while fetching dashboards: %s', String(error)),
-          ),
-      ),
-    [addDangerToast, fetchDashboards],
-  );
-
-  const handleDashboardDelete = useCallback(async () => {
-    if (!dashboardToDelete) {
-      return;
+    if (!Object.prototype.hasOwnProperty.call(settingsMenus, item.name || '')) {
+      cleanedMenu.push(newItem);
+    } else {
+      settings.push(newItem);
     }
-    try {
-      await SupersetClient.delete({
-        endpoint: `/api/v1/dashboard/${dashboardToDelete.id}`,
-      });
-      addSuccessToast(t('Deleted: %s', dashboardToDelete.dashboard_title));
-      setDashboardsByCategory(current =>
-        Object.fromEntries(
-          Object.entries(current).map(([category, dashboards]) => [
-            category,
-            dashboards.filter(d => d.id !== dashboardToDelete.id),
-          ]),
-        ),
-      );
-    } catch (error) {
-      addDangerToast(
-        t(
-          'There was an issue deleting %s: %s',
-          dashboardToDelete.dashboard_title,
-          String(error),
-        ),
-      );
-    } finally {
-      setDashboardToDelete(null);
-    }
-  }, [addDangerToast, addSuccessToast, dashboardToDelete]);
+  });
 
-  const handleDashboardImport = useCallback(() => {
-    showImportModal(false);
-    fetchDashboards();
-    addSuccessToast(t('Dashboard imported'));
-  }, [addSuccessToast, fetchDashboards]);
-
-  const toggleCategory = useCallback((category: string) => {
-    setCollapsedCategories(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(category)) {
-        newSet.delete(category);
-      } else {
-        newSet.add(category);
-      }
-      return newSet;
+  const exploreChildren: MenuObjectProps[] = [];
+  if (chartsEntry) {
+    exploreChildren.push({
+      label: t('Charts'),
+      name: chartsEntry.name || 'Charts',
+      url: CHART_LIST_URL,
+      isFrontendRoute: resolveFrontendRoute(CHART_LIST_URL),
     });
-  }, []);
-
-  const navigateToList = useCallback(
-    (viewModeParam?: 'card' | 'table') => {
-      const path =
-        viewModeParam !== undefined
-          ? `${DASHBOARD_LIST_PATH}?viewMode=${viewModeParam}`
-          : DASHBOARD_LIST_PATH;
-      history.push(path);
-    },
-    [history],
-  );
-
-  const handleViewModeChange = useCallback(
-    (mode: 'grid' | 'list') => {
-      if (mode === 'list') {
-        navigateToList('table');
-      }
-    },
-    [navigateToList],
-  );
-
-  const handleHeaderDownload = useCallback(() => {
-    const allDashboards = DASHBOARD_CATEGORIES.flatMap(
-      category => dashboardsByCategory[category] || [],
-    );
-    if (allDashboards.length > 0) {
-      handleBulkDashboardExport(allDashboards);
-    }
-  }, [dashboardsByCategory, handleBulkDashboardExport]);
-
-  const filteredBySearch = useMemo(() => {
-    if (!searchValue.trim()) return dashboardsByCategory;
-    const q = searchValue.trim().toLowerCase();
-    const out: Record<string, DashboardItem[]> = {};
-    DASHBOARD_CATEGORIES.forEach(cat => {
-      const list = dashboardsByCategory[cat] || [];
-      out[cat] = list.filter(d =>
-        d.dashboard_title?.toLowerCase().includes(q),
-      );
+  }
+  if (datasetsEntry) {
+    exploreChildren.push({
+      label: t('Dataset'),
+      name: datasetsEntry.name || 'Datasets',
+      url: DATASET_LIST_URL,
+      isFrontendRoute: resolveFrontendRoute(DATASET_LIST_URL),
     });
-    return out;
-  }, [dashboardsByCategory, searchValue]);
-
-  if (isLoading) {
-    return (
-      <PageContainer>
-        <LoadingWrapper>
-          <Loading />
-        </LoadingWrapper>
-      </PageContainer>
-    );
+  }
+  if (sqlEntry) {
+    exploreChildren.push({
+      label: t('SQL Query'),
+      name: 'SQL Query',
+      url: SQL_QUERY_LIST_URL,
+      isFrontendRoute: resolveFrontendRoute(SQL_QUERY_LIST_URL),
+    });
+  }
+  if (dataEntry) {
+    exploreChildren.push({
+      label: t('Data'),
+      name: dataEntry.name || 'Data',
+      url: DATA_LIST_URL,
+      isFrontendRoute: resolveFrontendRoute(DATA_LIST_URL),
+    });
+  }
+  if (dashboardEntry) {
+    exploreChildren.push({
+      label: t('Dashboard'),
+      name: dashboardEntry.name || 'Dashboards',
+      url: DASHBOARD_LIST_URL,
+      isFrontendRoute: resolveFrontendRoute(DASHBOARD_LIST_URL),
+    });
+  }
+  const existingExploreIndex = cleanedMenu.findIndex(
+    item =>
+      item?.name === EXPLORE_MENU_NAME ||
+      item?.label === EXPLORE_MENU_NAME ||
+      item?.url === '/explore/',
+  );
+  if (exploreChildren.length > 0 && existingExploreIndex >= 0) {
+    const existingExplore = cleanedMenu[existingExploreIndex];
+    cleanedMenu[existingExploreIndex] = {
+      ...existingExplore,
+      name: existingExplore.name || EXPLORE_MENU_NAME,
+      label: existingExplore.label || EXPLORE_MENU_NAME,
+      url: undefined,
+      childs: exploreChildren,
+    };
   }
 
-  return (
-    <PageContainer data-test="welcome-page">
-      <InsightsViewHeader
-        searchValue={searchValue}
-        onSearchChange={setSearchValue}
-        onBulkSelect={() => navigateToList()}
-        // Match InsightsViews page behavior: create a new dashboard
-        onAdd={() => navigateTo('/dashboard/new', { assign: true })}
-        onDownload={handleHeaderDownload}
-        onImport={() => showImportModal(true)}
-        viewMode={viewMode}
-        onViewModeChange={handleViewModeChange}
-        canCreate={canCreate}
-        canDelete={canDelete}
-        canExport={canExport}
-        showGridViewOption={false}
-        showListViewOption={false}
-        showDownloadOption={false}
-        useDownloadIconForImport
-      />
-      <WelcomeSection>
-        <WelcomeTitle>
-          Welcome, <UserName>{user?.firstName || user?.username || 'Admin'}</UserName>
-        </WelcomeTitle>
+  // Keep Definition and Engage right after Home/Dashboards
 
-        <WelcomeSubText>
-           AI-powered contact center analytics • {currentDate}
-        </WelcomeSubText>
-      </WelcomeSection>
-      {/* Category sections */}
-      <CategoriesContainer>
-        {DASHBOARD_CATEGORIES.map(category => {
-          const dashboards = filteredBySearch[category] || [];
-          const isCollapsed = collapsedCategories.has(category);
-          return (
-            <CategorySection key={category}>
-              <CategoryHeader>
-                <CategoryTitleWrapper>
-                  <CategoryIcon>
-                    {CATEGORY_ICONS[category] || (
-                      <Icons.AppstoreOutlined iconSize="l" />
-                    )}
-                  </CategoryIcon>
-                  <CategoryTitle>
-                    {t(category)}
-                    {/* <CategoryCount>
-                      ({dashboards.length}{' '}
-                      {dashboards.length === 1
-                        ? t('dashboard')
-                        : t('dashboards')}
-                      )
-                    </CategoryCount> */}
-                  </CategoryTitle>
-                </CategoryTitleWrapper>
-                <CollapseButton
-                  isCollapsed={isCollapsed}
-                  onClick={() => toggleCategory(category)}
-                  aria-label={
-                    isCollapsed
-                      ? t('Expand %s', category)
-                      : t('Collapse %s', category)
-                  }
-                >
-                  <Icons.DownOutlined />
-                </CollapseButton>
-              </CategoryHeader>
-
-              {!isCollapsed && (
-                <ScrollableDashboardRow
-                  dashboards={dashboards}
-                  hasPerm={hasPerm}
-                  userId={user?.userId}
-                  saveFavoriteStatus={saveFavoriteStatus}
-                  favoriteStatus={favoriteStatus}
-                  onEdit={dashboard => setEditModal(dashboard)}
-                  onDelete={dashboard => setDashboardToDelete(dashboard)}
-                  onExport={handleBulkDashboardExport}
-                />
-              )}
-            </CategorySection>
-          );
-        })}
-      </CategoriesContainer>
-      {editModal && (
-        <PropertiesModal
-          dashboardId={editModal.id}
-          show
-          onHide={() => setEditModal(undefined)}
-          onSubmit={handleDashboardEdit}
-        />
-      )}
-      {dashboardToDelete && (
-        <DeleteModal
-          description={
-            <>
-              {t('Are you sure you want to delete')}{' '}
-              <b>{dashboardToDelete.dashboard_title}</b>?
-            </>
-          }
-          onConfirm={handleDashboardDelete}
-          onHide={() => setDashboardToDelete(null)}
-          open={!!dashboardToDelete}
-          title={t('Please confirm')}
-        />
-      )}
-      <ImportModelsModal
-        resourceName="dashboard"
-        resourceLabel={t('dashboard')}
-        passwordsNeededMessage={PASSWORDS_NEEDED_MESSAGE}
-        confirmOverwriteMessage={CONFIRM_OVERWRITE_MESSAGE}
-        addDangerToast={addDangerToast}
-        addSuccessToast={addSuccessToast}
-        onModelImport={handleDashboardImport}
-        show={importingDashboard}
-        onHide={() => showImportModal(false)}
-        passwordFields={passwordFields}
-        setPasswordFields={setPasswordFields}
-        sshTunnelPasswordFields={sshTunnelPasswordFields}
-        setSSHTunnelPasswordFields={setSSHTunnelPasswordFields}
-        sshTunnelPrivateKeyFields={sshTunnelPrivateKeyFields}
-        setSSHTunnelPrivateKeyFields={setSSHTunnelPrivateKeyFields}
-        sshTunnelPrivateKeyPasswordFields={sshTunnelPrivateKeyPasswordFields}
-        setSSHTunnelPrivateKeyPasswordFields={setSSHTunnelPrivateKeyPasswordFields}
-      />
-      {preparingExport && <Loading />}
-    </PageContainer>
+  const homeIndex = cleanedMenu.findIndex(
+    item => item?.name === 'Dashboards' || item?.label === 'Dashboards',
   );
-}
+  if (homeIndex >= 0) {
+    const extractByName = (pageName: string) => {
+      const index = cleanedMenu.findIndex(
+        item => item?.name === pageName || item?.label === pageName,
+      );
+      if (index >= 0) {
+        const [entry] = cleanedMenu.splice(index, 1);
+        return entry;
+      }
+      return undefined;
+    };
 
-export default withToasts(Welcome);
+    const definitionEntry = extractByName('Definition');
+    const ccaasArchitectureEntry = extractByName('CcaasArchitecture');
+    const askAnalyticsEntry = extractByName('AskAnalytics');
+    const strategyRoadmapEntry = extractByName('StrategyRoadmap');
+
+    const engageChildren: MenuObjectChildProps[] = [];
+    if (
+      findPermission('can_read', 'AskAnalytics', wrapperUserRoles) &&
+      askAnalyticsEntry?.url
+    ) {
+      engageChildren.push({
+        label:
+          askAnalyticsEntry.label || askAnalyticsEntry.name || 'Ask Analytics',
+        name: askAnalyticsEntry.name,
+        url: askAnalyticsEntry.url,
+        isFrontendRoute: true,
+      });
+    }
+    if (
+      findPermission('can_read', 'StrategyRoadmap', wrapperUserRoles) &&
+      strategyRoadmapEntry?.url
+    ) {
+      engageChildren.push({
+        label:
+          strategyRoadmapEntry.label ||
+          strategyRoadmapEntry.name ||
+          'Strategy & Roadmap',
+        name: strategyRoadmapEntry.name,
+        url: strategyRoadmapEntry.url,
+        isFrontendRoute: true,
+      });
+    }
+
+    const extractedItems: MenuObjectProps[] = [];
+    if (definitionEntry) {
+      extractedItems.push(definitionEntry);
+    }
+    if (ccaasArchitectureEntry) {
+      extractedItems.push(ccaasArchitectureEntry);
+    }
+    if (engageChildren.length > 0) {
+      extractedItems.push({
+        name: 'Engage',
+        label: 'Engage',
+        childs: engageChildren,
+      });
+    }
+
+    
+    const nextInsertionIndex = homeIndex + 2;
+    if (extractedItems.length > 0) {
+      cleanedMenu.splice(nextInsertionIndex, 0, ...extractedItems);
+    }
+  }
+
+  newMenuData.menu = cleanedMenu;
+  newMenuData.settings = settings;
+
+  return <Menu data={newMenuData} {...rest} />;
+}
