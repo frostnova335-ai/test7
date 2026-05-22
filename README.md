@@ -504,7 +504,7 @@ function SearchView({
         <div className="view active" style={{ flexDirection: "column", height: "100%" }}>
             {/* Search Hero */}
             <div className="search-hero">
-                <div className="search-title">Find any conversation.</div>
+                <div className="search-title">Find any conversation</div>
                 <div className="search-sub">
                     Semantic search across 2.4 million call transcripts — try anything in plain language.
                 </div>
@@ -1135,8 +1135,8 @@ export default function VoiceIQ() {
 
         .search-title {
   font-family: 'Syne', sans-serif;
-  font-size: 38px;
-  font-weight: 500;
+  font-size: 30px;
+  font-weight: 450;
   color: white;
   margin-bottom: 8px;
 }
@@ -1166,7 +1166,7 @@ export default function VoiceIQ() {
   padding: 0 85px 0 24px;
   font-family: 'Syne', sans-serif;
   font-size: 20px;
-  color: #676666;
+  color: #918585;
   outline: none;
   box-shadow:
     0 10px 25px rgba(0,0,0,0.15),
@@ -1264,7 +1264,7 @@ export default function VoiceIQ() {
         .ai-summary {background: linear-gradient(135deg, rgb(0, 79, 112) 0%, rgb(81, 145, 205) 100%); border: 1px solid rgba(232,74,46,0.3); border-radius: 10px; padding: 18px; margin-bottom: 20px; position: relative; overflow: hidden; }
         .ai-summary::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg,var(--accent),var(--accent2)); }
         .ai-summary-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-        .ai-tag { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 2px; color: var(--accent); text-transform: uppercase; }
+        .ai-tag { font-family: 'Syne', sans-serif; font-size: 9px; font-weight: 700; letter-spacing: 2px; color: #ffffff; text-transform: uppercase; }
         .ai-summary-body { font-size: 12px; color: rgba(245,242,235,0.85); line-height: 1.7; }
         .ai-insight-chips { display: flex; gap: 6px; margin-top: 12px; flex-wrap: wrap; }
         .insight-chip { font-size: 10px; padding: 3px 10px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
