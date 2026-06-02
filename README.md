@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback } from "react";
+import apiData from './formateofapi.json';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
