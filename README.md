@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback } from "react";
-import apiData from './formateofapi.json';
+import STATIC_API_DATA from '../formateofapi.json';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -59,126 +59,80 @@ interface SummaryData {
     chips: InsightChip[];
 }
 
-// ─── Static Data ──────────────────────────────────────────────────────────────
+function sentimentToEmotion(sentiment: string): string {
+  const emotionMap: Record<string, string> = {
+    frustrated: "😤 Frustrated",
+    neutral: "😐 Neutral",
+    angry: "😠 Angry",
+    apologetic: "😟 Apologetic",
+    distressed: "😠 Distressed",
+    reassuring: "😌 Reassuring",
+    decided: "😐 Decided",
+    factual: "😐 Factual",
+    soft: "😔 Soft",
+    probing: "💬 Probing",
+    skilled: "🎯 Skilled",
+    offer: "💡 Offer"
+  };
+  return emotionMap[sentiment] || sentiment;
+}
 
+function formatDate(isoTimestamp: string): string {
+  const date = new Date(isoTimestamp);
+  const hours = String(date.getHours()).padStart(2, '0');
+  const minutes = String(date.getMinutes()).padStart(2, '0');
+  return `Today, ${hours}:${minutes}`;
+}
+
+function transformApiData(interactions: any[]): Call[] {
+  return interactions.map((interaction) => {
+    const transcript = interaction.detail_panel.transcript.map((line: any) => ({
+      speaker: line.speaker as "AGENT" | "CUST",
+      text: line.message,
+      time: line.time,
+      emotion: sentimentToEmotion(line.sentiment)
+    }));
+
+    const analysisData = interaction.detail_panel.analysis;
+    const moments = interaction.detail_panel.moments.map((moment: any) => ({
+      time: moment.time,
+      text: moment.text,
+      type: moment.type
+    }));
+
+    return {
+      id: interaction.call_id,
+      agent: interaction.customer_name,
+      date: formatDate(interaction.timestamp),
+      duration: interaction.duration,
+      queue: interaction.queue,
+      sentiment: interaction.sentiment as Sentiment,
+      snippet: interaction.summary,
+      tags: interaction.tags,
+      stats: {
+        duration: interaction.duration,
+        hold: interaction.hold_time,
+        transfers: interaction.transfers,
+        score: interaction.csat
+      },
+      transcript,
+      analysis: {
+        summary: analysisData.conversation_summary,
+        scores: {
+          empathy: analysisData.quality_scores.empathy,
+          firstCallRes: analysisData.quality_scores.fcr,
+          compliance: analysisData.quality_scores.compliance,
+          pace: analysisData.quality_scores.pace
+        },
+        moments
+      }
+    };
+  });
+}
 const AVATARS = ["#e8d0cc", "#ccd4e8", "#cce8d4", "#e8e4cc", "#d4cce8"];
 const COLORS = ["#c0543a", "#3a6bc0", "#3a9c5e", "#9c893a", "#7a3a9c"];
-
-const CALLS: Call[] = [
-    {
-        id: "CC-2024-084721",
-        agent: "Marcus T.",
-        date: "Today, 09:14",
-        duration: "8m 42s",
-        queue: "Billing",
-        sentiment: "negative",
-        snippet:
-            'Customer opened with "I\'ve been charged twice this month and I want an explanation now." Agent attempted to look up account but struggled with system slowness. Customer became increasingly frustrated saying they\'d been loyal for 6 years and this was unacceptable. Agent offered £10 credit but customer rejected it...',
-        tags: ["billing", "churn", "repeat-contact"],
-        stats: { duration: "8m 42s", hold: "2m 10s", transfers: 1, score: 2.1 },
-        transcript: [
-            { speaker: "CUST", text: "Hi, I've been charged twice this month and I need someone to explain this right now.", time: "00:04", emotion: "😤 Frustrated" },
-            { speaker: "AGENT", text: "I completely understand your concern. Let me pull up your account right away. Can I take your account number or postcode to verify?", time: "00:12", emotion: "😐 Neutral" },
-            { speaker: "CUST", text: "It's PO12 4AB. And I've been a customer for six years — six years — and this is the treatment I get.", time: "00:24", emotion: "😠 Angry" },
-            { speaker: "AGENT", text: "I can see your account… there does appear to be a duplicate transaction from the 3rd. I'm so sorry about that. Let me see what I can do here.", time: "01:05", emotion: "😟 Apologetic" },
-            { speaker: "CUST", text: "So can you just tell me — is it going to be refunded? I shouldn't have to fight for this.", time: "01:28", emotion: "😤 Frustrated" },
-            { speaker: "AGENT", text: "Absolutely. I'm going to raise a refund now for the £42.99. It should be back within 3 to 5 working days.", time: "01:41", emotion: "😌 Reassuring" },
-            { speaker: "CUST", text: "Three to five days? I'm living month to month and that's my money. Can't you do it faster?", time: "01:55", emotion: "😠 Distressed" },
-        ],
-        analysis: {
-            summary: "Call involved a billing double-charge that was legitimate. Agent handled the factual resolution correctly but was slow to empathise initially, which caused sentiment to deteriorate further before recovery. Churn risk rated HIGH based on customer language.",
-            scores: { empathy: 55, firstCallRes: 80, compliance: 90, pace: 45 },
-            moments: [
-                { time: "00:04", text: "Customer opened with clear frustration signal — double charge complaint.", type: "⚡ Trigger Event" },
-                { time: "01:05", text: "Agent confirmed issue — this was the critical de-escalation window.", type: "🎯 Key Moment" },
-                { time: "01:55", text: "Customer expressed financial distress — churn language detected.", type: "⚠️ Churn Signal" },
-                { time: "03:12", text: "Agent did not offer expedited refund option — opportunity missed.", type: "❌ Coaching Point" },
-            ],
-        },
-    },
-    {
-        id: "CC-2024-084618",
-        agent: "Priya K.",
-        date: "Today, 08:52",
-        duration: "12m 14s",
-        queue: "Retentions",
-        sentiment: "negative",
-        snippet:
-            "Customer called to cancel their subscription explicitly saying they found a competitor offering the same service at 40% less. Agent Priya handled the call well — probing the competitor details before presenting a personalised retention offer. Customer was close to accepting but ultimately declined saying they needed to think...",
-        tags: ["cancellation", "churn", "competitor-mention"],
-        stats: { duration: "12m 14s", hold: "0m 42s", transfers: 0, score: 3.8 },
-        transcript: [
-            { speaker: "CUST", text: "I'd like to cancel my subscription please. I've found a better deal elsewhere.", time: "00:06", emotion: "😐 Decided" },
-            { speaker: "AGENT", text: "I'm sorry to hear that. Before I process anything, would you mind sharing what you've found? I want to make sure we can't match it for you.", time: "00:14", emotion: "💬 Probing" },
-            { speaker: "CUST", text: "SwitchEasy. They're doing the same plan for £24.99 a month. We pay £42. That's a big difference.", time: "00:28", emotion: "😐 Factual" },
-            { speaker: "AGENT", text: "I appreciate you telling me. So just to understand — is it purely price, or is there something about your experience with us that's also been a factor?", time: "00:40", emotion: "🎯 Skilled" },
-            { speaker: "CUST", text: "Honestly? Mainly price. We've not had a bad experience per se. Just… it's a lot of money.", time: "00:58", emotion: "😔 Soft" },
-            { speaker: "AGENT", text: "That's really helpful. Given you've been with us 3 years and this is purely about price, I can actually offer you our loyalty rate — that would bring you down to £26.99 with all the same features.", time: "01:15", emotion: "💡 Offer" },
-        ],
-        analysis: {
-            summary: "High-quality retention call. Agent correctly identified that this was price-only churn, not experience-driven. Personalised retention offer was appropriate. Lost on a small price gap — follow-up recommended at 7 days.",
-            scores: { empathy: 88, firstCallRes: 70, compliance: 95, pace: 82 },
-            moments: [
-                { time: "00:28", text: "Competitor \"SwitchEasy\" named — first contact with emerging trend.", type: "📊 Competitor Signal" },
-                { time: "00:40", text: "Agent's diagnostic question was textbook — uncovered price-only motive.", type: "⭐ Best Practice" },
-                { time: "01:15", text: "Loyalty rate offer was appropriate and well-timed.", type: "🎯 Retention Moment" },
-            ],
-        },
-    },
-    {
-        id: "CC-2024-084502",
-        agent: "James O.",
-        date: "Today, 08:31",
-        duration: "3m 07s",
-        queue: "Billing",
-        sentiment: "negative",
-        snippet:
-            "Very short call — customer called about unexpected charge and agent did not properly verify account before disclosing the last 4 digits of their card on file. This is a compliance breach — the account verification step was skipped entirely. Customer did not appear fraudulent but the protocol failure is flagged...",
-        tags: ["compliance", "security", "coaching"],
-        stats: { duration: "3m 07s", hold: "0m 0s", transfers: 0, score: 1.2 },
-        transcript: [
-            { speaker: "CUST", text: "Hi yes, I just got a charge for £19.99 and I don't know what it is.", time: "00:06", emotion: "😐 Confused" },
-            { speaker: "AGENT", text: "Sure, let me look that up. Can I take your name?", time: "00:11", emotion: "😐 Neutral" },
-            { speaker: "CUST", text: "Jane Williams.", time: "00:14", emotion: "😐 Neutral" },
-            { speaker: "AGENT", text: "Okay Jane, I can see that charge — it's for your annual plan renewal. The card ending 4821 was charged on the 2nd.", time: "00:22", emotion: "😐 Neutral" },
-            { speaker: "CUST", text: "Oh okay, that makes sense. Thanks.", time: "00:31", emotion: "😊 Resolved" },
-        ],
-        analysis: {
-            summary: "CRITICAL COMPLIANCE FAILURE: Agent disclosed card details (last 4 digits) without completing the mandatory 3-point account verification. Call resolved factually but represents a security protocol breach requiring immediate coaching.",
-            scores: { empathy: 60, firstCallRes: 100, compliance: 5, pace: 90 },
-            moments: [
-                { time: "00:11", text: "Verification started — only name collected, no postcode, DOB, or account PIN.", type: "⚠️ Protocol Breach" },
-                { time: "00:22", text: "COMPLIANCE FAIL — card data disclosed before completing verification.", type: "🚨 Critical Flag" },
-            ],
-        },
-    },
-    {
-        id: "CC-2024-084390",
-        agent: "Lisa C.",
-        date: "Today, 08:19",
-        duration: "6m 53s",
-        queue: "Technical Support",
-        sentiment: "neutral",
-        snippet:
-            "Customer had a recurring broadband dropout issue — this was their third call in 5 days on the same problem. Previous tickets had been closed without confirmation of resolution. Lisa correctly identified the repeat pattern and escalated to a specialist team rather than applying the same fix again...",
-        tags: ["repeat-contact", "technical", "escalation"],
-        stats: { duration: "6m 53s", hold: "1m 20s", transfers: 1, score: 4.2 },
-        transcript: [
-            { speaker: "CUST", text: "Hi. My broadband is dropping out again. I've called about this twice already this week.", time: "00:06", emotion: "😤 Tired" },
-            { speaker: "AGENT", text: "I'm really sorry to hear that — let me pull up your case notes. I can see the two previous calls… and I can see both times an engineer reset your line remotely. Has it helped at all?", time: "00:18", emotion: "🎯 Empathetic" },
-            { speaker: "CUST", text: "No. It's fine for a day then drops again every evening around 7pm.", time: "00:32", emotion: "😔 Resigned" },
-            { speaker: "AGENT", text: "That time pattern is actually really useful information — evening drops like that often point to a line capacity issue rather than your equipment. I'm not going to do the same reset again. I'm going to escalate this to our network specialist team who can check the exchange level.", time: "00:48", emotion: "💡 Diagnostic" },
-        ],
-        analysis: {
-            summary: "Good call handling of a repeat contact scenario. Agent correctly avoided repeating the failed fix and used the customer's time-specific pattern to identify a likely network-level issue. Escalation was appropriate.",
-            scores: { empathy: 84, firstCallRes: 65, compliance: 100, pace: 78 },
-            moments: [
-                { time: "00:06", text: "Third call — repeat contact detected in case history.", type: "🔁 Repeat Pattern" },
-                { time: "00:48", text: "Agent correctly diagnosed time-pattern and escalated — best practice.", type: "⭐ Best Practice" },
-            ],
-        },
-    },
-];
+// API_SWAP_POINT: Later replace with fetch()
+const CALLS: Call[] = transformApiData(STATIC_API_DATA.response.interactions);
 
 const SUMMARIES: Record<string, SummaryData> = {
     billing: {
@@ -207,6 +161,10 @@ const SUMMARIES: Record<string, SummaryData> = {
         ],
     },
 };
+
+
+
+
 
 // ─── Helper functions ─────────────────────────────────────────────────────────
 
@@ -256,7 +214,7 @@ function AISummaryCard({ text, chips }: AISummaryCardProps) {
     return (
         <div className="ai-summary">
             <div className="ai-summary-header">
-                <span className="ai-tag">✦ AI Summary</span>
+                <span className="ai-tag">âœ¦ AI Summary</span>
             </div>
             <div className="ai-summary-body" dangerouslySetInnerHTML={{ __html: text }} />
             <div className="ai-insight-chips">
@@ -293,7 +251,7 @@ function CallCard({ call, index, isSelected, onSelect }: CallCardProps) {
                     <div className="card-id">{call.id}</div>
                     <div className="card-agent">
                         {call.agent}{" "}
-                        <span style={{ fontWeight: 400, color: "var(--muted)" }}>— {call.queue}</span>
+                        <span style={{ fontWeight: 400, color: "var(--muted)" }}>â€” {call.queue}</span>
                     </div>
                     <div className="card-date">{call.date}</div>
                 </div>
@@ -311,11 +269,11 @@ function CallCard({ call, index, isSelected, onSelect }: CallCardProps) {
             </div>
 
             <div className="card-stats">
-                <span className="card-stat">⏱ <strong>{call.stats.duration}</strong></span>
-                <span className="card-stat">⏸ <strong>{call.stats.hold}</strong> hold</span>
-                <span className="card-stat">↔ <strong>{call.stats.transfers}</strong> transfers</span>
+                <span className="card-stat">â± <strong>{call.stats.duration}</strong></span>
+                <span className="card-stat">â¸ <strong>{call.stats.hold}</strong> hold</span>
+                <span className="card-stat">â†” <strong>{call.stats.transfers}</strong> transfers</span>
                 <span className="card-stat" style={{ color: getStatScoreColor(call.stats.score) }}>
-                    ★ <strong>{call.stats.score}</strong>
+                    â˜… <strong>{call.stats.score}</strong>
                 </span>
             </div>
         </div>
@@ -359,7 +317,7 @@ function AnalysisView({ call }: AnalysisViewProps) {
     return (
         <>
             <div className="analysis-block">
-                <div className="analysis-title">✦ AI Summary</div>
+                <div className="analysis-title">âœ¦ AI Summary</div>
                 <div className="analysis-text">{summary}</div>
             </div>
             <div className="analysis-block">
@@ -408,7 +366,7 @@ function DetailPanel({ selectedCall, activeTab, onTabChange }: DetailPanelProps)
         return (
             <div className="detail-panel">
                 <div className="empty-state" style={{ display: "flex" }}>
-                    <div className="empty-icon">👆</div>
+                    <div className="empty-icon">ðŸ‘†</div>
                     <div className="empty-title">Select a call</div>
                     <div className="empty-text">
                         Click any result on the left to read its full transcript and AI analysis.
@@ -429,11 +387,11 @@ function DetailPanel({ selectedCall, activeTab, onTabChange }: DetailPanelProps)
         <div className="detail-panel" style={{ display: "flex", flexDirection: "column", height: "100%" }}>
             <div className="detail-header">
                 <div className="detail-call-id">{selectedCall.id}</div>
-                <div className="detail-title">{selectedCall.agent} · {selectedCall.queue}</div>
+                <div className="detail-title">{selectedCall.agent} Â· {selectedCall.queue}</div>
                 <div className="detail-meta-row">
-                    <span className="detail-meta-item">📅 {selectedCall.date}</span>
-                    <span className="detail-meta-item">⏱ {selectedCall.duration}</span>
-                    <span className="detail-meta-item">📂 {selectedCall.queue}</span>
+                    <span className="detail-meta-item">ðŸ“… {selectedCall.date}</span>
+                    <span className="detail-meta-item">â± {selectedCall.duration}</span>
+                    <span className="detail-meta-item">ðŸ“‚ {selectedCall.queue}</span>
                     <span className={`detail-meta-item sentiment-badge ${sentClass}`}>
                         {selectedCall.sentiment}
                     </span>
@@ -461,7 +419,7 @@ function DetailPanel({ selectedCall, activeTab, onTabChange }: DetailPanelProps)
     );
 }
 
-// ─── View: Search ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ View: Search â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface SearchViewProps {
     searchQuery: string;
@@ -495,10 +453,10 @@ function SearchView({
     ];
 
     const searchTypes: { key: SearchType; label: string }[] = [
-        { key: "semantic", label: "🧠 Semantic" },
-        { key: "pattern", label: "🔗 Pattern / Sequence" },
-        { key: "similar", label: "🎯 Find Similar" },
-        { key: "anomaly", label: "⚡ Anomaly" },
+        { key: "semantic", label: "ðŸ§  Semantic" },
+        { key: "pattern", label: "ðŸ”— Pattern / Sequence" },
+        { key: "similar", label: "ðŸŽ¯ Find Similar" },
+        { key: "anomaly", label: "âš¡ Anomaly" },
     ];
 
     return (
@@ -507,24 +465,25 @@ function SearchView({
             <div className="search-hero">
                 <div className="search-title">Find any conversation</div>
                 <div className="search-sub">
-                    Semantic search across 2.4 million call transcripts — try anything in plain language.
+                    Semantic search across 2.4 million call transcripts â€” try anything in plain language.
                 </div>
                 <div className="search-box-wrap">
                     <input
                         id="mainSearchInput"
                         className="main-search"
                         type="text"
-                        placeholder="e.g. Customer angry about billing and asked to cancel subscription…"
+                        placeholder="e.g. Customer angry about billing and asked to cancel subscriptionâ€¦"
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         onKeyUp={(e) => {
                             if (e.key === "Enter") {
                                 onSearch();
-                            }
+}
+
                         }}
                     />
                     {/* <button className="search-btn" onClick={onSearch}>
-                        🔍
+                        ðŸ”
                     </button> */}
 
                     <button
@@ -594,15 +553,15 @@ function SearchView({
                 <div style={{ padding: "20px 36px" }}>
                     <div className="pattern-builder">
                         <div className="pattern-header">
-                            <span className="ai-tag">PATTERN SEARCH — build a call sequence</span>
+                            <span className="ai-tag">PATTERN SEARCH â€” build a call sequence</span>
                         </div>
                         <div className="pattern-steps">
                             <div className="pattern-step"><span className="step-num">1</span> Agent offered retention discount</div>
-                            <div className="pattern-arrow">→</div>
+                            <div className="pattern-arrow">â†’</div>
                             <div className="pattern-step"><span className="step-num">2</span> Customer acknowledged offer</div>
-                            <div className="pattern-arrow">→</div>
+                            <div className="pattern-arrow">â†’</div>
                             <div className="pattern-step"><span className="step-num">3</span> Call ended with churn</div>
-                            <div className="pattern-arrow">→</div>
+                            <div className="pattern-arrow">â†’</div>
                             <div className="pattern-step" style={{ borderStyle: "dashed", color: "rgba(255,255,255,0.3)" }}>
                                 + Add step
                             </div>
@@ -666,14 +625,14 @@ function SearchView({
     );
 }
 
-// ─── View: Dashboard ──────────────────────────────────────────────────────────
+// â”€â”€â”€ View: Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function DashboardView() {
     const kpis = [
-        { icon: "📞", val: "1,847", label: "Calls Today", delta: "↑ 12% vs yesterday", dir: "up", valColor: undefined },
-        { icon: "😤", val: "23%", label: "Negative Sentiment", delta: "↑ 4pp — billing spike", dir: "down", valColor: "var(--accent)" },
-        { icon: "✅", val: "68%", label: "First Call Resolution", delta: "↓ 2pp — watch", dir: "down", valColor: "var(--success)" },
-        { icon: "⚠️", val: "41", label: "Compliance Flags", delta: "↑ 8 since yesterday", dir: "down", valColor: "var(--warn)" },
+        { icon: "ðŸ“ž", val: "1,847", label: "Calls Today", delta: "â†‘ 12% vs yesterday", dir: "up", valColor: undefined },
+        { icon: "ðŸ˜¤", val: "23%", label: "Negative Sentiment", delta: "â†‘ 4pp â€” billing spike", dir: "down", valColor: "var(--accent)" },
+        { icon: "âœ…", val: "68%", label: "First Call Resolution", delta: "â†“ 2pp â€” watch", dir: "down", valColor: "var(--success)" },
+        { icon: "âš ï¸", val: "41", label: "Compliance Flags", delta: "â†‘ 8 since yesterday", dir: "down", valColor: "var(--warn)" },
     ];
 
     const trends = [
@@ -685,16 +644,16 @@ function DashboardView() {
     ];
 
     const alerts = [
-        { color: "var(--accent)", text: "Billing complaint volume up 34% in last 2 hours — possible system error", meta: "Triggered 14 min ago · 127 matching calls" },
-        { color: "var(--warn)", text: "Agent Sarah M. — 4 escalations in last 30 min, coaching flag raised", meta: "Triggered 28 min ago · Retentions queue" },
-        { color: "#8a38b2", text: "New competitor mention trend: \"SwitchEasy\" mentioned 47× today (baseline: 3×)", meta: "Triggered 1 hr ago · Emerging signal" },
+        { color: "var(--accent)", text: "Billing complaint volume up 34% in last 2 hours â€” possible system error", meta: "Triggered 14 min ago Â· 127 matching calls" },
+        { color: "var(--warn)", text: "Agent Sarah M. â€” 4 escalations in last 30 min, coaching flag raised", meta: "Triggered 28 min ago Â· Retentions queue" },
+        { color: "#8a38b2", text: "New competitor mention trend: \"SwitchEasy\" mentioned 47Ã— today (baseline: 3Ã—)", meta: "Triggered 1 hr ago Â· Emerging signal" },
     ];
 
     return (
         <div className="view active" style={{ flexDirection: "column" }}>
             <div className="dash-header">
                 <div className="dash-title">Intelligence Dashboard</div>
-                <div className="dash-sub">Real-time analysis across your contact center · Last updated 2 minutes ago</div>
+                <div className="dash-sub">Real-time analysis across your contact center Â· Last updated 2 minutes ago</div>
             </div>
 
             <div className="dash-grid">
@@ -709,7 +668,7 @@ function DashboardView() {
 
             <div className="dash-lower">
                 <div className="dash-widget">
-                    <div className="widget-title">Top Issue Categories — Today</div>
+                    <div className="widget-title">Top Issue Categories â€” Today</div>
                     {trends.map((t) => (
                         <div key={t.label} className="trend-row">
                             <span className="trend-label">{t.label}</span>
@@ -738,16 +697,16 @@ function DashboardView() {
     );
 }
 
-// ─── View: Saved Searches ─────────────────────────────────────────────────────
+// â”€â”€â”€ View: Saved Searches â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface SavedViewProps { onNavigate: (v: View) => void }
 function SavedView({ onNavigate }: SavedViewProps) {
     const cards = [
-        { icon: "📋", name: "Compliance: Missing Disclosure", desc: "Agent did not read required regulatory disclosure during call in Retentions or New Sales queue", freq: "Runs hourly", hits: "8 hits today" },
-        { icon: "🎯", name: "Upsell Miss Detector", desc: "Customer had high lifetime value, expressed satisfaction, and call ended without any upsell attempt", freq: "Runs daily", hits: "56 hits yesterday" },
-        { icon: "🔁", name: "Repeat Contact — Same Issue", desc: "Customer calling back within 72 hours with same issue type, indicating prior call did not resolve", freq: "Runs daily", hits: "189 hits yesterday" },
-        { icon: "🏆", name: "Best Practice Calls", desc: "CSAT ≥ 5, complex issue, resolved on first call — use for agent training library", freq: "Weekly", hits: "44 hits last week" },
-        { icon: "🏢", name: "Competitor Intelligence", desc: "Any mention of named competitor brands with context — pricing, feature comparison, or switching intent", freq: "Runs daily", hits: "91 hits yesterday" },
+        { icon: "ðŸ“‹", name: "Compliance: Missing Disclosure", desc: "Agent did not read required regulatory disclosure during call in Retentions or New Sales queue", freq: "Runs hourly", hits: "8 hits today" },
+        { icon: "ðŸŽ¯", name: "Upsell Miss Detector", desc: "Customer had high lifetime value, expressed satisfaction, and call ended without any upsell attempt", freq: "Runs daily", hits: "56 hits yesterday" },
+        { icon: "ðŸ”", name: "Repeat Contact â€” Same Issue", desc: "Customer calling back within 72 hours with same issue type, indicating prior call did not resolve", freq: "Runs daily", hits: "189 hits yesterday" },
+        { icon: "ðŸ†", name: "Best Practice Calls", desc: "CSAT â‰¥ 5, complex issue, resolved on first call â€” use for agent training library", freq: "Weekly", hits: "44 hits last week" },
+        { icon: "ðŸ¢", name: "Competitor Intelligence", desc: "Any mention of named competitor brands with context â€” pricing, feature comparison, or switching intent", freq: "Runs daily", hits: "91 hits yesterday" },
     ];
 
     return (
@@ -763,8 +722,8 @@ function SavedView({ onNavigate }: SavedViewProps) {
                         <div className="saved-name">{c.name}</div>
                         <div className="saved-desc">{c.desc}</div>
                         <div className="saved-stats">
-                            <span>📅 {c.freq}</span>
-                            <span>→ {c.hits}</span>
+                            <span>ðŸ“… {c.freq}</span>
+                            <span>â†’ {c.hits}</span>
                         </div>
                     </div>
                 ))}
@@ -773,28 +732,28 @@ function SavedView({ onNavigate }: SavedViewProps) {
     );
 }
 
-// ─── View: Alerts ─────────────────────────────────────────────────────────────
+// â”€â”€â”€ View: Alerts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface AlertsViewProps { onNavigate: (v: View) => void }
 function AlertsView({ onNavigate }: AlertsViewProps) {
     const alerts = [
         {
             dot: "var(--accent)", dotAnim: true,
-            sev: "🔴 HIGH — Billing Complaint Spike", age: "14 min ago",
+            sev: "ðŸ”´ HIGH â€” Billing Complaint Spike", age: "14 min ago",
             body: "Billing dispute mentions are up 34% in the last 2 hours compared to the 14-day baseline. 127 calls have been flagged. This pattern correlates with a known billing system incident from 08:42 this morning.",
-            btnLabel: "View 127 Calls →",
+            btnLabel: "View 127 Calls â†’",
         },
         {
             dot: "var(--warn)", dotAnim: false,
-            sev: "🟡 MEDIUM — Agent Coaching Flag", age: "28 min ago",
-            body: "Agent Sarah M. has had 4 escalations in the last 30 minutes — significantly above her baseline of 0.3/hr. Transcript analysis shows repeated use of defensive language when customers challenged charges.",
-            btnLabel: "View Agent Calls →",
+            sev: "ðŸŸ¡ MEDIUM â€” Agent Coaching Flag", age: "28 min ago",
+            body: "Agent Sarah M. has had 4 escalations in the last 30 minutes â€” significantly above her baseline of 0.3/hr. Transcript analysis shows repeated use of defensive language when customers challenged charges.",
+            btnLabel: "View Agent Calls â†’",
         },
         {
             dot: "#8a38b2", dotAnim: false,
-            sev: "🟣 EMERGING — New Competitor Signal", age: "1 hr ago",
+            sev: "ðŸŸ£ EMERGING â€” New Competitor Signal", age: "1 hr ago",
             body: '"SwitchEasy" has been mentioned 47 times today versus a baseline of 3. Customers are referencing their pricing and a "free first month" offer. This may require a competitive response brief.',
-            btnLabel: "Explore Signal →",
+            btnLabel: "Explore Signal â†’",
         },
     ];
 
@@ -834,7 +793,7 @@ function AlertsView({ onNavigate }: AlertsViewProps) {
     );
 }
 
-// ─── Sidebar ──────────────────────────────────────────────────────────────────
+// â”€â”€â”€ Sidebar â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 interface SidebarProps {
     activeView: View;
@@ -845,22 +804,22 @@ interface SidebarProps {
 
 function Sidebar({ activeView, onNavigate, activeFilters, onToggleFilter }: SidebarProps) {
     const navItems: { view: View; icon: string; label: string; count: string; countStyle?: React.CSSProperties }[] = [
-        { view: "search", icon: "🔍", label: "Search", count: "2.4M" },
-        { view: "saved", icon: "⭐", label: "Saved Searches", count: "12" },
-        { view: "alerts", icon: "🔔", label: "Alerts", count: "3", countStyle: { background: "#e8d0cc", color: "#e84a2e" } },
+        { view: "search", icon: "ðŸ”", label: "Search", count: "2.4M" },
+        { view: "saved", icon: "â­", label: "Saved Searches", count: "12" },
+        { view: "alerts", icon: "ðŸ””", label: "Alerts", count: "3", countStyle: { background: "#e8d0cc", color: "#e84a2e" } },
     ];
 
     const quickFilters = [
-        { key: "negative", label: "😤 Negative" },
-        { key: "escalation", label: "🔺 Escalation" },
-        { key: "compliance", label: "📋 Compliance" },
-        { key: "repeat", label: "🔁 Repeat Contact" },
+        { key: "negative", label: "ðŸ˜¤ Negative" },
+        { key: "escalation", label: "ðŸ”º Escalation" },
+        { key: "compliance", label: "ðŸ“‹ Compliance" },
+        { key: "repeat", label: "ðŸ” Repeat Contact" },
     ];
 
     const pulseStats = [
-        { val: "1,847", label: "Calls processed today", delta: "↑ 12% vs yesterday", valColor: undefined, deltaColor: "var(--success)" },
-        { val: "23%", label: "Negative sentiment rate", delta: "↑ 4% — billing spike", valColor: "var(--accent)", deltaColor: "var(--warn)" },
-        { val: "68%", label: "First call resolution", delta: "↓ 2% — investigate", valColor: "var(--success)", deltaColor: "var(--success)" },
+        { val: "1,847", label: "Calls processed today", delta: "â†‘ 12% vs yesterday", valColor: undefined, deltaColor: "var(--success)" },
+        { val: "23%", label: "Negative sentiment rate", delta: "â†‘ 4% â€” billing spike", valColor: "var(--accent)", deltaColor: "var(--warn)" },
+        { val: "68%", label: "First call resolution", delta: "â†“ 2% â€” investigate", valColor: "var(--success)", deltaColor: "var(--success)" },
     ];
 
     return (
@@ -909,7 +868,7 @@ function Sidebar({ activeView, onNavigate, activeFilters, onToggleFilter }: Side
     );
 }
 
-// ─── Root Component ───────────────────────────────────────────────────────────
+// â”€â”€â”€ Root Component â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 export default function VoiceIQ() {
     const [activeView, setActiveView] = useState<View>("search");
@@ -1396,7 +1355,7 @@ export default function VoiceIQ() {
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--muted); }
 
-        @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
 
         @media (max-width: 1100px) {
           .results-area { grid-template-columns: 1fr; }
@@ -1412,39 +1371,39 @@ export default function VoiceIQ() {
         }
       `}</style>
 
-            <div className="shell">
+      <div className="shell">
 
-                {/* Sidebar */}
-                <Sidebar
-                    activeView={activeView}
-                    onNavigate={handleNavigate}
-                    activeFilters={activeFilters}
-                    onToggleFilter={handleToggleFilter}
+        {/* Sidebar */}
+        <Sidebar
+            activeView={activeView}
+            onNavigate={handleNavigate}
+            activeFilters={activeFilters}
+            onToggleFilter={handleToggleFilter}
+        />
+
+        {/* Main content */}
+        <main className="main">
+            {activeView === "search" && (
+                <SearchView
+                    searchQuery={searchQuery}
+                    setSearchQuery={setSearchQuery}
+                    searchType={searchType}
+                    setSearchType={setSearchType}
+                    hasResults={hasResults}
+                    summary={summary}
+                    selectedCall={selectedCall}
+                    activeTab={activeTab}
+                    onSearch={handleSearch}
+                    onUseQuery={handleUseQuery}
+                    onSelectCall={handleSelectCall}
+                    onTabChange={setActiveTab}
                 />
-
-                {/* Main content */}
-                <main className="main">
-                    {activeView === "search" && (
-                        <SearchView
-                            searchQuery={searchQuery}
-                            setSearchQuery={setSearchQuery}
-                            searchType={searchType}
-                            setSearchType={setSearchType}
-                            hasResults={hasResults}
-                            summary={summary}
-                            selectedCall={selectedCall}
-                            activeTab={activeTab}
-                            onSearch={handleSearch}
-                            onUseQuery={handleUseQuery}
-                            onSelectCall={handleSelectCall}
-                            onTabChange={setActiveTab}
-                        />
-                    )}
-                    {activeView === "dashboard" && <DashboardView />}
-                    {activeView === "saved" && <SavedView onNavigate={handleNavigate} />}
-                    {activeView === "alerts" && <AlertsView onNavigate={handleNavigate} />}
-                </main>
-            </div>
-        </>
-    );
+            )}
+            {activeView === "dashboard" && <DashboardView />}
+            {activeView === "saved" && <SavedView onNavigate={handleNavigate} />}
+            {activeView === "alerts" && <AlertsView onNavigate={handleNavigate} />}
+        </main>
+      </div>
+    </>
+  );
 }
