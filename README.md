@@ -134,46 +134,20 @@ const COLORS = ["#c0543a", "#3a6bc0", "#3a9c5e", "#9c893a", "#7a3a9c"];
 // API_SWAP_POINT: Later replace with fetch()
 const CALLS: Call[] = transformApiData(STATIC_API_DATA.response.interactions);
 
-const SUMMARIES: Record<string, SummaryData> = {
-    billing: {
-        text: "247 calls found. The dominant theme is a <strong>billing double-charge incident</strong> concentrated today between 06:00–09:30, affecting 89 unique customers. Secondary cluster: customers questioning annual renewal charges. Average handle time in this set is 9m 14s — 34% above queue baseline. Churn language detected in 31% of matched calls.",
-        chips: [
-            { label: "89 double-charge calls", cls: "red" },
-            { label: "Churn risk: 31%", cls: "red" },
-            { label: "AHT +34%", cls: "blue" },
-            { label: "FCR: 61%", cls: "green" },
-        ],
-    },
-    competitor: {
-        text: '41 calls found mentioning a competitor. <strong>"SwitchEasy"</strong> appears in 47% of matches — a new entrant not previously tracked. Customers referencing competitor are 2.3× more likely to cancel within 14 days. Price is the primary driver (cited in 89% of calls). Only 34% received a retention offer.',
-        chips: [
-            { label: "SwitchEasy ×47 today", cls: "red" },
-            { label: "2.3× churn likelihood", cls: "red" },
-            { label: "Only 34% offered retention", cls: "blue" },
-        ],
-    },
-    default: {
-        text: "Found <strong>247 matching calls</strong> using semantic analysis. Results are ranked by relevance and recency. Negative sentiment detected in 61% of matched calls — significantly above the 23% baseline. Top themes: billing errors, account access issues, and cancellation intent.",
-        chips: [
-            { label: "61% negative sentiment", cls: "red" },
-            { label: "23% baseline", cls: "blue" },
-            { label: "247 results", cls: "green" },
-        ],
-    },
-};
+function getSummaryData(query: string): SummaryData {
+  const ai = STATIC_API_DATA.response.ai_summary;
+  const chips: InsightChip[] = ai.metrics.map((m: any) => ({
+    label: m.label,
+    cls: m.type === "negative" ? "red" : m.type === "baseline" ? "blue" : "green"
+  }));
+  return { text: ai.summary_text, chips };
+}
 
 
 
 
 
 // ─── Helper functions ─────────────────────────────────────────────────────────
-
-function getSummaryKey(q: string): string {
-    const lower = q.toLowerCase();
-    if (lower.includes("billing") || lower.includes("charge")) return "billing";
-    if (lower.includes("competitor") || lower.includes("mention")) return "competitor";
-    return "default";
-}
 
 function getTagClass(tag: string): string {
     if (tag === "compliance") return "tag compliance";
@@ -441,16 +415,7 @@ function SearchView({
     hasResults, summary, selectedCall, activeTab,
     onSearch, onUseQuery, onSelectCall, onTabChange,
 }: SearchViewProps) {
-    const suggestions = [
-        "calls where customer mentioned competitor",
-        "repeat caller within 7 days on same issue",
-        "calls where customer mention process issues",
-        "calls where CSAT is less then 3",
-        "calls where CES is high",
-        "calls where emotion is frustrated",
-        "calls where follow up is promised",
-        "calls where FCR achieved",
-    ];
+    const suggestions: string[] = STATIC_API_DATA.response.suggestions;
 
     const searchTypes: { key: SearchType; label: string }[] = [
         { key: "semantic", label: "ðŸ§  Semantic" },
@@ -579,10 +544,10 @@ function SearchView({
                 <div className="filter-bar">
                     <span className="filter-label">Refine:</span>
                     {[
-                        { opts: ["All Dates", "Today", "Last 7 Days", "Last 30 Days", "Custom Range"] },
-                        { opts: ["All Queues", "Billing", "Technical Support", "Retentions", "New Sales"] },
-                        { opts: ["All Sentiment", "Negative", "Neutral", "Positive"] },
-                        { opts: ["All Outcomes", "Resolved", "Escalated", "Transferred", "Callback Needed"] },
+                        { opts: ["All", ...STATIC_API_DATA.response.filters_available.date_ranges] },
+                        { opts: ["All", ...STATIC_API_DATA.response.filters_available.queues] },
+                        { opts: ["All", ...STATIC_API_DATA.response.filters_available.sentiments] },
+                        { opts: ["All", ...STATIC_API_DATA.response.filters_available.outcomes] },
                     ].map((sel, i) => (
                         <select key={i} className="filter-select">
                             {sel.opts.map((o) => <option key={o}>{o}</option>)}
@@ -628,73 +593,105 @@ function SearchView({
 // â”€â”€â”€ View: Dashboard â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 function DashboardView() {
-    const kpis = [
-        { icon: "ðŸ“ž", val: "1,847", label: "Calls Today", delta: "â†‘ 12% vs yesterday", dir: "up", valColor: undefined },
-        { icon: "ðŸ˜¤", val: "23%", label: "Negative Sentiment", delta: "â†‘ 4pp â€” billing spike", dir: "down", valColor: "var(--accent)" },
-        { icon: "âœ…", val: "68%", label: "First Call Resolution", delta: "â†“ 2pp â€” watch", dir: "down", valColor: "var(--success)" },
-        { icon: "âš ï¸", val: "41", label: "Compliance Flags", delta: "â†‘ 8 since yesterday", dir: "down", valColor: "var(--warn)" },
-    ];
+  const pulse = STATIC_API_DATA.response.todays_pulse;
+  const interactions = STATIC_API_DATA.response.interactions;
 
-    const trends = [
-        { label: "Billing Dispute", pct: 78, color: "var(--accent)" },
-        { label: "Technical Fault", pct: 54, color: "var(--accent2)" },
-        { label: "Account Access", pct: 41, color: "var(--gold)" },
-        { label: "Cancellation", pct: 32, color: "#8a38b2" },
-        { label: "Shipping Delay", pct: 22, color: "var(--success)" },
-    ];
+  const kpis = [
+    {
+      icon: "📞",
+      val: String(pulse.calls_processed),
+      label: "Calls Today",
+      delta: `↑ ${pulse.calls_change_percent}% vs yesterday`,
+      dir: pulse.calls_change_percent > 0 ? "up" : "down",
+      valColor: undefined,
+    },
+    {
+      icon: "😤",
+      val: `${pulse.negative_sentiment_rate}%`,
+      label: "Negative Sentiment",
+      delta: `↑ ${pulse.negative_sentiment_change}pp — billing spike`,
+      dir: "down",
+      valColor: "var(--accent)",
+    },
+    {
+      icon: "✅",
+      val: `${pulse.first_call_resolution}%`,
+      label: "First Call Resolution",
+      delta: `↓ ${Math.abs(pulse.fcr_change)}pp — watch`,
+      dir: "down",
+      valColor: "var(--success)",
+    },
+    {
+      icon: "⚠️",
+      val: String(pulse.alerts.length),
+      label: "Compliance Flags",
+      delta: `↑ ${pulse.alerts.length} since yesterday`,
+      dir: "down",
+      valColor: "var(--warn)",
+    },
+  ];
 
-    const alerts = [
-        { color: "var(--accent)", text: "Billing complaint volume up 34% in last 2 hours â€” possible system error", meta: "Triggered 14 min ago Â· 127 matching calls" },
-        { color: "var(--warn)", text: "Agent Sarah M. â€” 4 escalations in last 30 min, coaching flag raised", meta: "Triggered 28 min ago Â· Retentions queue" },
-        { color: "#8a38b2", text: "New competitor mention trend: \"SwitchEasy\" mentioned 47Ã— today (baseline: 3Ã—)", meta: "Triggered 1 hr ago Â· Emerging signal" },
-    ];
+  const queueCounts: Record<string, number> = {};
+  interactions.forEach((i: any) => {
+    queueCounts[i.queue] = (queueCounts[i.queue] || 0) + 1;
+  });
+  const total = interactions.length;
 
-    return (
-        <div className="view active" style={{ flexDirection: "column" }}>
-            <div className="dash-header">
-                <div className="dash-title">Intelligence Dashboard</div>
-                <div className="dash-sub">Real-time analysis across your contact center Â· Last updated 2 minutes ago</div>
+  const trends = Object.entries(queueCounts).map(([label, count]) => ({
+    label,
+    pct: Math.round((count / total) * 100),
+    color: "var(--accent)",
+  }));
+
+  const alerts = pulse.alerts.map((text: string, i: number) => ({
+    color: i === 0 ? "var(--accent)" : "var(--warn)",
+    text,
+    meta: "Triggered from system",
+  }));
+
+  return (
+    <div className="view active" style={{ flexDirection: "column" }}>
+      <div className="dash-header">
+        <div className="dash-title">Intelligence Dashboard</div>
+        <div className="dash-sub">Real-time analysis across your contact center · Last updated 2 minutes ago</div>
+      </div>
+      <div className="dash-grid">
+        {kpis.map((k) => (
+          <div key={k.label} className="kpi-card" data-icon={k.icon}>
+            <div className="kpi-val" style={k.valColor ? { color: k.valColor } : undefined}>{k.val}</div>
+            <div className="kpi-label">{k.label}</div>
+            <span className={`kpi-delta ${k.dir}`}>{k.delta}</span>
+          </div>
+        ))}
+      </div>
+      <div className="dash-lower">
+        <div className="dash-widget">
+          <div className="widget-title">Top Issue Categories — Today</div>
+          {trends.map((t) => (
+            <div key={t.label} className="trend-row">
+              <span className="trend-label">{t.label}</span>
+              <div className="trend-bar-wrap">
+                <div className="trend-bar" style={{ width: `${t.pct}%`, background: t.color }} />
+              </div>
+              <span className="trend-val">{t.pct}%</span>
             </div>
-
-            <div className="dash-grid">
-                {kpis.map((k) => (
-                    <div key={k.label} className="kpi-card" data-icon={k.icon}>
-                        <div className="kpi-val" style={k.valColor ? { color: k.valColor } : undefined}>{k.val}</div>
-                        <div className="kpi-label">{k.label}</div>
-                        <span className={`kpi-delta ${k.dir}`}>{k.delta}</span>
-                    </div>
-                ))}
-            </div>
-
-            <div className="dash-lower">
-                <div className="dash-widget">
-                    <div className="widget-title">Top Issue Categories â€” Today</div>
-                    {trends.map((t) => (
-                        <div key={t.label} className="trend-row">
-                            <span className="trend-label">{t.label}</span>
-                            <div className="trend-bar-wrap">
-                                <div className="trend-bar" style={{ width: `${t.pct}%`, background: t.color }} />
-                            </div>
-                            <span className="trend-val">{t.pct}%</span>
-                        </div>
-                    ))}
-                </div>
-
-                <div className="dash-widget">
-                    <div className="widget-title">Live Alerts</div>
-                    {alerts.map((a, i) => (
-                        <div key={i} className="alert-item">
-                            <div className="alert-dot" style={{ background: a.color }} />
-                            <div>
-                                <div className="alert-text">{a.text}</div>
-                                <div className="alert-meta">{a.meta}</div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
+          ))}
         </div>
-    );
+        <div className="dash-widget">
+          <div className="widget-title">Live Alerts</div>
+          {alerts.map((a, i) => (
+            <div key={i} className="alert-item">
+              <div className="alert-dot" style={{ background: a.color }} />
+              <div>
+                <div className="alert-text">{a.text}</div>
+                <div className="alert-meta">{a.meta}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 // â”€â”€â”€ View: Saved Searches â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -736,26 +733,15 @@ function SavedView({ onNavigate }: SavedViewProps) {
 
 interface AlertsViewProps { onNavigate: (v: View) => void }
 function AlertsView({ onNavigate }: AlertsViewProps) {
-    const alerts = [
-        {
-            dot: "var(--accent)", dotAnim: true,
-            sev: "ðŸ”´ HIGH â€” Billing Complaint Spike", age: "14 min ago",
-            body: "Billing dispute mentions are up 34% in the last 2 hours compared to the 14-day baseline. 127 calls have been flagged. This pattern correlates with a known billing system incident from 08:42 this morning.",
-            btnLabel: "View 127 Calls â†’",
-        },
-        {
-            dot: "var(--warn)", dotAnim: false,
-            sev: "ðŸŸ¡ MEDIUM â€” Agent Coaching Flag", age: "28 min ago",
-            body: "Agent Sarah M. has had 4 escalations in the last 30 minutes â€” significantly above her baseline of 0.3/hr. Transcript analysis shows repeated use of defensive language when customers challenged charges.",
-            btnLabel: "View Agent Calls â†’",
-        },
-        {
-            dot: "#8a38b2", dotAnim: false,
-            sev: "ðŸŸ£ EMERGING â€” New Competitor Signal", age: "1 hr ago",
-            body: '"SwitchEasy" has been mentioned 47 times today versus a baseline of 3. Customers are referencing their pricing and a "free first month" offer. This may require a competitive response brief.',
-            btnLabel: "Explore Signal â†’",
-        },
-    ];
+    const pulse = STATIC_API_DATA.response.todays_pulse;
+    const alerts = pulse.alerts.map((text: string, i: number) => ({
+      dot: i === 0 ? "var(--accent)" : i === 1 ? "var(--warn)" : "#8a38b2",
+      dotAnim: i === 0,
+      sev: i === 0 ? "🔴 HIGH — Billing Complaint Spike" : i === 1 ? "🟡 MEDIUM — Agent Coaching Flag" : "🟣 EMERGING — New Competitor Signal",
+      age: i === 0 ? "14 min ago" : i === 1 ? "28 min ago" : "1 hr ago",
+      body: text,
+      btnLabel: i === 0 ? "View Calls →" : "View Details →",
+    }));
 
     return (
         <div className="view active" style={{ flexDirection: "column" }}>
@@ -809,17 +795,16 @@ function Sidebar({ activeView, onNavigate, activeFilters, onToggleFilter }: Side
         { view: "alerts", icon: "ðŸ””", label: "Alerts", count: "3", countStyle: { background: "#e8d0cc", color: "#e84a2e" } },
     ];
 
-    const quickFilters = [
-        { key: "negative", label: "ðŸ˜¤ Negative" },
-        { key: "escalation", label: "ðŸ”º Escalation" },
-        { key: "compliance", label: "ðŸ“‹ Compliance" },
-        { key: "repeat", label: "ðŸ” Repeat Contact" },
-    ];
+    const quickFilters = STATIC_API_DATA.response.quick_filters.map((f: any) => ({
+      key: f.label.toLowerCase(),
+      label: f.label,
+    }));
 
+    const pulse = STATIC_API_DATA.response.todays_pulse;
     const pulseStats = [
-        { val: "1,847", label: "Calls processed today", delta: "â†‘ 12% vs yesterday", valColor: undefined, deltaColor: "var(--success)" },
-        { val: "23%", label: "Negative sentiment rate", delta: "â†‘ 4% â€” billing spike", valColor: "var(--accent)", deltaColor: "var(--warn)" },
-        { val: "68%", label: "First call resolution", delta: "â†“ 2% â€” investigate", valColor: "var(--success)", deltaColor: "var(--success)" },
+      { val: String(pulse.calls_processed), label: "Calls processed today", delta: `↑ ${pulse.calls_change_percent}% vs yesterday`, valColor: undefined, deltaColor: "var(--success)" },
+      { val: `${pulse.negative_sentiment_rate}%`, label: "Negative sentiment rate", delta: `↑ ${pulse.negative_sentiment_change}% — billing spike`, valColor: "var(--accent)", deltaColor: "var(--warn)" },
+      { val: `${pulse.first_call_resolution}%`, label: "First call resolution", delta: `↓ ${Math.abs(pulse.fcr_change)}% — investigate`, valColor: "var(--success)", deltaColor: "var(--success)" },
     ];
 
     return (
@@ -925,7 +910,7 @@ export default function VoiceIQ() {
             const mockResponse = {
                 success: true,
                 results: CALLS,
-                summary: SUMMARIES[getSummaryKey(q)]
+                summary: getSummaryData(q)
             };
 
             console.log("SEARCH RESPONSE:", mockResponse);
@@ -934,7 +919,7 @@ export default function VoiceIQ() {
                 UPDATE UI
             */
 
-            setSummary(mockResponse.summary);
+            setSummary(getSummaryData(q));
 
             setHasResults(true);
 
@@ -960,8 +945,7 @@ export default function VoiceIQ() {
 
     const handleUseQuery = useCallback((q: string) => {
         setSearchQuery(q);
-        const key = getSummaryKey(q);
-        setSummary(SUMMARIES[key]);
+        setSummary(getSummaryData(q));
         setHasResults(true);
         setSelectedCall(null);
         setActiveView("search");
