@@ -379,3 +379,24 @@ svg g.nvd3.nv-legend,
     padding-right: 56px !important;
     padding-bottom: 48px !important;
 }
+
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 14 · ECHARTS LEGEND OVERFLOW & SELECTOR FIX
+   ─────────────────────────────────────────────────────────────
+   PROBLEM (visible in Behavior Scorecard):
+   ECharts renders legend items + "All / Inv" selector buttons
+   on a single line. When chart width is narrow the line
+   overflows, items get clipped and selectors collide with
+   legend text.
+
+   FIX STRATEGY:
+   1. Give every chart-holder extra bottom clearance so
+      ECharts has room to flow the legend onto a second line.
+   2. Style the ECharts legend selector buttons
+      (the "All" and "Inv" pill buttons) so they are clearly
+      separated from the legend items and look intentional
+      rather than like overflow artefacts.
+   3. Ensure the echarts canvas wrapper itself never clips
+      the legend row.
+────────────────────────────────────────────────────────────── */
