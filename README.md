@@ -1,6 +1,6 @@
 /* ══════════════════════════════════════════════════════════════════
-   EXL SERVICE — EXECUTIVE PREMIER DASHBOARD  v2.0
-   Complete architecture rewrite. Zero rule conflicts.
+   EXL SERVICE — EXECUTIVE PREMIER DASHBOARD  v2.1
+   Patch release: fixes UI mismatch / legend clipping / text truncation
    Design: Prussian-blue authority, clean white surfaces,
            amber data accents, DM Sans typography.
 ══════════════════════════════════════════════════════════════════ */
@@ -36,6 +36,10 @@
 
 /* ──────────────────────────────────────────────────────────────
    SECTION 2 · GLOBAL BASE
+   FIX v2.1: Removed !important from font-family to prevent
+   metric mismatch when DM Sans hasn't loaded yet. Font now
+   applies as a preference rather than a forced override, which
+   lets Superset's own layout calculations remain valid.
 ────────────────────────────────────────────────────────────── */
 
 *, *::before, *::after {
@@ -46,18 +50,25 @@ body, #app,
 .dashboard,
 .dashboard-container,
 .dragdroppable-content {
-    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-    color: var(--text-primary) !important;
-    background: #EEF2F8 !important;
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color: var(--text-primary);
+    background: #EEF2F8;
     background-image:
         radial-gradient(ellipse at 0% 0%, rgba(37,99,235,0.06) 0%, transparent 55%),
-        radial-gradient(ellipse at 100% 100%, rgba(11,30,61,0.04) 0%, transparent 55%) !important;
-    background-attachment: fixed !important;
+        radial-gradient(ellipse at 100% 100%, rgba(11,30,61,0.04) 0%, transparent 55%);
+    background-attachment: fixed;
 }
 
 .dashboard-content,
 .dashboard-content-editable {
-    background: transparent !important;
+    background: transparent;
+}
+
+/* FIX v2.1: Ensure every chart card explicitly has a white surface
+   background so the global gradient never bleeds through. */
+.dashboard-component-chart-holder,
+.grid-container .dashboard-component-chart-holder {
+    background: var(--surface);
 }
 
 
@@ -103,6 +114,10 @@ body, #app,
 
 /* ──────────────────────────────────────────────────────────────
    SECTION 4 · CHART CARDS  (the main containers)
+   FIX v2.1: Replaced blanket overflow:visible with a smarter
+   approach. Only overflow-y is visible (for labels that extend
+   below), while overflow-x remains hidden to prevent horizontal
+   blowout that was causing legend truncation.
 ────────────────────────────────────────────────────────────── */
 
 .dashboard-component-chart-holder {
@@ -113,7 +128,8 @@ body, #app,
     box-shadow: var(--shadow-sm) !important;
     padding: 20px 22px !important;
     margin-bottom: 20px !important;
-    overflow: visible !important;        /* prevents label clipping in ALL charts */
+    overflow-x: hidden !important;       /* FIX: prevent horizontal blowout */
+    overflow-y: visible !important;      /* allow labels that extend below */
     transition: box-shadow 0.22s ease, border-color 0.22s ease !important;
 }
 
@@ -122,16 +138,19 @@ body, #app,
     border-top-color: var(--amber) !important;
 }
 
-/* Inner slice and chart containers must also allow overflow */
+/* Inner slice and chart containers — controlled overflow */
 .dashboard-component-chart-holder .slice_container,
 .dashboard-component-chart-holder .chart-container,
 .dashboard-component-chart-holder .slice_container > div {
     overflow: visible !important;
+    min-height: 0 !important;            /* FIX: prevent flex squishing */
 }
 
 
 /* ──────────────────────────────────────────────────────────────
    SECTION 5 · CHART CARD TITLES
+   FIX v2.1: Reduced font-weight from 700 to 600 on titles so
+   the DM Sans letterforms don't get clipped at small sizes.
 ────────────────────────────────────────────────────────────── */
 
 .header-title,
@@ -141,9 +160,11 @@ body, #app,
 [data-test="editable-title"] button {
     color: var(--navy) !important;
     font-size: 14px !important;
-    font-weight: 700 !important;
+    font-weight: 600 !important;
     letter-spacing: 0.1px !important;
     text-transform: none !important;
+    white-space: nowrap !important;
+    overflow: visible !important;
 }
 
 /* Subtitle / description line below chart title */
@@ -157,23 +178,34 @@ body, #app,
 
 /* ──────────────────────────────────────────────────────────────
    SECTION 6 · KPI / BIG-NUMBER VALUES
+   FIX v2.1: Reduced font-size from 38px to 32px to prevent
+   clipping inside tight card slots. Added min-width:0 on the
+   parent to allow flexbox shrinking.
 ────────────────────────────────────────────────────────────── */
 
 [data-test="big-number-total"],
 .big-number .header-line,
 .superset-key-value-chart-value {
     color: var(--navy) !important;
-    font-size: 38px !important;
+    font-size: 32px !important;
     font-weight: 700 !important;
-    letter-spacing: -1.5px !important;
-    line-height: 1.05 !important;
+    letter-spacing: -1px !important;
+    line-height: 1.1 !important;
     font-family: "DM Mono", "DM Sans", monospace !important;
+}
+
+/* Parent flex container for big numbers — allow shrinking */
+.dashboard-component-chart-holder .big_number,
+.dashboard-component-chart-holder [class*="big-number"],
+.dashboard-component-chart-holder .header-line {
+    min-width: 0 !important;
+    overflow: visible !important;
 }
 
 /* SVG path for ECharts big numbers */
 svg.superset-svg-big-number text.main-line {
     fill: var(--navy) !important;
-    font-size: 38px !important;
+    font-size: 32px !important;
     font-weight: 700 !important;
 }
 
@@ -187,7 +219,12 @@ svg.superset-svg-big-number text.main-line {
 
 /* ──────────────────────────────────────────────────────────────
    SECTION 7 · CHART LEGEND TEXT
-   Explicit visibility on every selector Superset uses.
+   FIX v2.1: Major rewrite of legend handling.
+   Root cause of truncated legends was:
+     a) overflow:visible pushed legend beyond grid bounds
+     b) No max-width on legend items caused horizontal overflow
+     c) Font metric mismatch from forced !important font-family
+   Fix: Explicit max-width, word-wrap, and proper overflow control.
 ────────────────────────────────────────────────────────────── */
 
 /* NVD3 legends */
@@ -197,6 +234,9 @@ svg.superset-svg-big-number text.main-line {
     font-weight: 600 !important;
     visibility: visible !important;
     opacity: 1 !important;
+    max-width: 120px !important;         /* FIX: cap legend item width */
+    overflow: visible !important;
+    text-overflow: ellipsis !important;
 }
 
 .nv-legendWrap,
@@ -205,6 +245,12 @@ svg g.nvd3.nv-legend,
 .dashboard-component-chart-holder svg g.nvd3.nv-legend {
     visibility: visible !important;
     opacity: 1 !important;
+    overflow: visible !important;
+    max-width: 100% !important;          /* FIX: don't let legend exceed container */
+}
+
+/* NVD3 legend series groups — allow wrapping */
+svg g.nvd3.nv-legend g.nv-series {
     overflow: visible !important;
 }
 
@@ -221,9 +267,20 @@ svg g.nvd3.nv-legend,
     opacity: 1 !important;
 }
 
+/* ECharts legend container — allow wrapping to prevent truncation */
+div.echarts-legend,
+div[class*="legend"] {
+    overflow: visible !important;
+    max-width: 100% !important;
+    flex-wrap: wrap !important;
+}
+
 
 /* ──────────────────────────────────────────────────────────────
    SECTION 8 · EXECUTIVE TABLE DESIGN
+   FIX v2.1: Added explicit white background on table cells and
+   table container to prevent gradient bleed-through. Added
+   word-break to prevent long text from overflowing cells.
 ────────────────────────────────────────────────────────────── */
 
 .superset-stylable-table-container,
@@ -233,6 +290,7 @@ svg g.nvd3.nv-legend,
     width: 100% !important;
     border-radius: var(--radius-inner) !important;
     overflow: hidden !important;
+    background: var(--surface) !important;  /* FIX: explicit surface */
 }
 
 /* Table header row */
@@ -258,6 +316,8 @@ svg g.nvd3.nv-legend,
     padding: 11px 16px !important;
     border-bottom: 1px solid var(--border) !important;
     background: var(--surface) !important;
+    word-break: break-word !important;      /* FIX: prevent long text overflow */
+    overflow-wrap: break-word !important;
 }
 
 /* Zebra striping */
@@ -356,15 +416,12 @@ svg g.nvd3.nv-legend,
 
 /* ──────────────────────────────────────────────────────────────
    SECTION 13 · RURAL BREAKDOWN PIE CHART  (#104)
-   ─────────────────────────────────────────────────────────────
-   ROOT CAUSE: ECharts renders pie labels outside the canvas
-   bounding box, causing them to be clipped by parent overflow.
-
-   FIX STRATEGY (single unified approach, no conflicts):
-   1. Set overflow:visible on every wrapper layer.
-   2. Add breathing room via padding only on .chart-container,
-      which expands the render area without touching the grid slot.
-   No transform. No duplicate position rules.
+   FIX v2.1: Reduced padding from 56px/48px to 32px/28px.
+   The original padding was pushing the pie chart render area
+   beyond the grid slot, causing ECharts labels to render
+   outside the visible bounds. Combined with the new
+   overflow-x:hidden on the card holder, the chart now stays
+   within its container while labels still remain visible.
 ────────────────────────────────────────────────────────────── */
 
 .dashboard-chart-id-104 .dashboard-component-chart-holder,
@@ -376,27 +433,101 @@ svg g.nvd3.nv-legend,
 }
 
 .dashboard-chart-id-104 .chart-container {
-    padding-right: 56px !important;
-    padding-bottom: 48px !important;
+    padding-right: 32px !important;      /* FIX: reduced from 56px */
+    padding-bottom: 28px !important;     /* FIX: reduced from 48px */
 }
 
 
 /* ──────────────────────────────────────────────────────────────
-   SECTION 14 · ECHARTS LEGEND OVERFLOW & SELECTOR FIX
-   ─────────────────────────────────────────────────────────────
-   PROBLEM (visible in Behavior Scorecard):
-   ECharts renders legend items + "All / Inv" selector buttons
-   on a single line. When chart width is narrow the line
-   overflows, items get clipped and selectors collide with
-   legend text.
-
-   FIX STRATEGY:
-   1. Give every chart-holder extra bottom clearance so
-      ECharts has room to flow the legend onto a second line.
-   2. Style the ECharts legend selector buttons
-      (the "All" and "Inv" pill buttons) so they are clearly
-      separated from the legend items and look intentional
-      rather than like overflow artefacts.
-   3. Ensure the echarts canvas wrapper itself never clips
-      the legend row.
+   SECTION 14 · TEXT CONTENT CARDS  (NEW in v2.1)
+   FIX v2.1: Ensure Markdown/text cards have consistent white
+   backgrounds and proper text wrapping. This was causing the
+   left card to show a beige/different background and the text
+   to be cut off at the right edge.
 ────────────────────────────────────────────────────────────── */
+
+.dashboard-component-chart-holder .markdown,
+.dashboard-component-chart-holder .dashboard-markdown,
+.dashboard-component-chart-holder [class*="markdown"],
+.dashboard-component-chart-holder .slice_container p,
+.dashboard-component-chart-holder .slice_container span,
+.dashboard-component-chart-holder .slice_container div {
+    background: transparent !important;   /* inherit card's white surface */
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+    max-width: 100% !important;
+}
+
+/* Ensure text cards don't clip their content */
+.dashboard-component-chart-holder .slice_container {
+    min-height: 0 !important;
+    overflow: visible !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 15 · GRID LAYOUT STABILITY  (NEW in v2.1)
+   FIX v2.1: Ensure the CSS Grid/Flexbox layout doesn't
+   compress cards below their minimum content size, which was
+   causing text truncation and legend clipping. Setting
+   min-width:0 on flex children allows them to shrink
+   gracefully rather than overflowing.
+────────────────────────────────────────────────────────────── */
+
+.dragdroppable-column,
+.dashboard-component,
+.dashboard-component-chart-holder,
+.grid-container .dashboard-component {
+    min-width: 0 !important;
+    min-height: 0 !important;
+}
+
+/* Ensure grid cells don't overflow their designated slots */
+.dashboard-grid,
+.dashboard-content .grid-container {
+    overflow: visible !important;
+}
+
+/* Prevent card content from pushing the card wider than its grid slot */
+.dashboard-component-chart-holder {
+    max-width: 100% !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 16 · FONT LOADING STABILITY  (NEW in v2.1)
+   FIX v2.1: Use font-display:swap via the Google Fonts URL
+   parameter already present in the @import. This section adds
+   a fallback system-font style for chart internals so that
+   if DM Sans hasn't loaded yet, Superset's layout engine
+   doesn't calculate sizes based on wrong font metrics.
+   The key insight: Superset sizes chart containers at render
+   time using the *current* font. If DM Sans loads after
+   render, the container is too small for the new font. By
+   not forcing DM Sans with !important on chart internals,
+   we let Superset use its default font for layout math,
+   then the CSS cascade applies DM Sans visually without
+   breaking the container sizes.
+────────────────────────────────────────────────────────────── */
+
+/* Chart axis labels — use DM Sans but don't force it */
+.nv-axis text,
+.echarts-for-react text {
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 17 · CARD BORDER CONSISTENCY  (NEW in v2.1)
+   FIX v2.1: Ensure ALL chart cards get the same blue top
+   border, including nested cards and cards inside tabs.
+   The original CSS only targeted .dashboard-component-chart-holder
+   but some cards render with additional wrapper classes.
+────────────────────────────────────────────────────────────── */
+
+.dashboard-component-chart-holder,
+.dashboard-component-tabs .dashboard-component-chart-holder,
+.dragdroppable-column .dashboard-component-chart-holder,
+.dashboard-content .dashboard-component-chart-holder {
+    border-top: 3px solid var(--blue) !important;
+}
