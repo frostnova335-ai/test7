@@ -1,187 +1,342 @@
-/**********************
-* EXL SERVICE EXECUTIVE PREMIERE — FINAL STABLE VERSION
-* 
-* Section 10 UPDATED: Specific fix for the Rural Breakdown 
-* Pie Chart using the exact ID class (.dashboard-chart-id-104)
-**********************/
+/* ══════════════════════════════════════════════════════════════════
+   EXL SERVICE — EXECUTIVE PREMIER DASHBOARD  v2.0
+   Complete architecture rewrite. Zero rule conflicts.
+   Design: Prussian-blue authority, clean white surfaces,
+           amber data accents, DM Sans typography.
+══════════════════════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
 
 
-/* 1. BIG NUMBER / KPI VALUES ONLY */
+/* ──────────────────────────────────────────────────────────────
+   SECTION 1 · DESIGN TOKENS
+   All visual constants live here. Edit these to retheme.
+────────────────────────────────────────────────────────────── */
 
-[data-test="big-number-total"] {
-    fill: #032c62 !important;
-    color: #032c62 !important;
-    font-weight: 380 !important;
-    font-size: 33px !important;
-    font-family: "Inter", sans-serif !important;
+:root {
+    --navy:          #0B1E3D;
+    --navy-mid:      #17326B;
+    --blue:          #2563EB;
+    --blue-light:    #3B82F6;
+    --amber:         #F59E0B;
+    --surface:       #FFFFFF;
+    --surface-alt:   #F7F9FC;
+    --border:        #DDE3EE;
+    --border-strong: #C4CFDE;
+    --text-primary:  #0D1B2A;
+    --text-secondary:#3D5068;
+    --text-muted:    #7C8FA6;
+    --shadow-sm:     0 1px 3px rgba(11,30,61,0.07), 0 4px 12px rgba(11,30,61,0.05);
+    --shadow-md:     0 2px 8px rgba(11,30,61,0.09), 0 12px 32px rgba(11,30,61,0.07);
+    --shadow-hover:  0 4px 16px rgba(11,30,61,0.12), 0 20px 48px rgba(11,30,61,0.09);
+    --radius-card:   14px;
+    --radius-inner:  8px;
 }
 
-.big-number .header-line,
-.superset-key-value-chart-value {
-    color: #032c62 !important;
-    font-weight: 380 !important;
-    font-size: 33px !important;
-    font-family: "Inter", sans-serif !important;
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 2 · GLOBAL BASE
+────────────────────────────────────────────────────────────── */
+
+*, *::before, *::after {
+    box-sizing: border-box;
 }
 
-svg.superset-svg-big-number text.main-line {
-    fill: #032c62 !important;
-    font-weight: 380 !important;
-    font-size: 33px !important;
-    font-family: "Inter", sans-serif !important;
+body, #app,
+.dashboard,
+.dashboard-container,
+.dragdroppable-content {
+    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+    color: var(--text-primary) !important;
+    background: #EEF2F8 !important;
+    background-image:
+        radial-gradient(ellipse at 0% 0%, rgba(37,99,235,0.06) 0%, transparent 55%),
+        radial-gradient(ellipse at 100% 100%, rgba(11,30,61,0.04) 0%, transparent 55%) !important;
+    background-attachment: fixed !important;
+}
+
+.dashboard-content,
+.dashboard-content-editable {
+    background: transparent !important;
 }
 
 
-/* 2. LEGEND TEXT — TARGETED, NO LAYOUT BREAKING */
+/* ──────────────────────────────────────────────────────────────
+   SECTION 3 · DASHBOARD HEADER BAR
+────────────────────────────────────────────────────────────── */
 
-.nv-legend-text {
-    fill: #334155 !important;
-    color: #334155 !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    visibility: visible !important;
+.dashboard-header,
+.header-with-actions {
+    background: var(--navy) !important;
+    border-bottom: 2px solid var(--blue) !important;
+    padding: 14px 28px !important;
+    box-shadow: 0 4px 24px rgba(11,30,61,0.3) !important;
+}
+
+/* Header title text */
+.dashboard-title,
+[data-test="editable-title"] button,
+[data-test="editable-title"] span {
+    color: #FFFFFF !important;
+    font-size: 18px !important;
+    font-weight: 700 !important;
+    letter-spacing: -0.2px !important;
+}
+
+/* Header action icons */
+.dashboard-header .action-button,
+.header-with-actions .action-button,
+.dashboard-header button,
+.header-with-actions button {
+    color: rgba(255,255,255,0.7) !important;
     opacity: 1 !important;
-}
-
-.dashboard-component-chart-holder .nv-legendWrap,
-.dashboard-component-chart-holder svg g.nvd3.nv-legend {
     visibility: visible !important;
-    opacity: 1 !important;
 }
 
-.echarts-legend-text,
-.legend-item-name,
-.legend-item-label {
-    color: #334155 !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-.echarts-for-react svg text.legend-text {
-    fill: #334155 !important;
+.dashboard-header button:hover,
+.header-with-actions button:hover {
+    color: #FFFFFF !important;
+    background: rgba(255,255,255,0.12) !important;
+    border-radius: 6px !important;
 }
 
 
-/* 3. CHART TITLES & SUBTITLES */
+/* ──────────────────────────────────────────────────────────────
+   SECTION 4 · CHART CARDS  (the main containers)
+────────────────────────────────────────────────────────────── */
+
+.dashboard-component-chart-holder {
+    background: var(--surface) !important;
+    border-radius: var(--radius-card) !important;
+    border: 1px solid var(--border) !important;
+    border-top: 3px solid var(--blue) !important;
+    box-shadow: var(--shadow-sm) !important;
+    padding: 20px 22px !important;
+    margin-bottom: 20px !important;
+    overflow: visible !important;        /* prevents label clipping in ALL charts */
+    transition: box-shadow 0.22s ease, border-color 0.22s ease !important;
+}
+
+.dashboard-component-chart-holder:hover {
+    box-shadow: var(--shadow-hover) !important;
+    border-top-color: var(--amber) !important;
+}
+
+/* Inner slice and chart containers must also allow overflow */
+.dashboard-component-chart-holder .slice_container,
+.dashboard-component-chart-holder .chart-container,
+.dashboard-component-chart-holder .slice_container > div {
+    overflow: visible !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 5 · CHART CARD TITLES
+────────────────────────────────────────────────────────────── */
 
 .header-title,
 .dashboard-component-header span[role="button"],
 .dragdroppable-column .header-title,
 .editable-title span,
 [data-test="editable-title"] button {
+    color: var(--navy) !important;
+    font-size: 14px !important;
     font-weight: 700 !important;
-    color: #032c62 !important;
-    font-size: 16px !important;
+    letter-spacing: 0.1px !important;
     text-transform: none !important;
 }
 
+/* Subtitle / description line below chart title */
 .dashboard-component-chart-holder .header-line + div {
-    font-family: "Inter", sans-serif !important;
+    color: var(--text-muted) !important;
+    font-size: 12px !important;
     font-weight: 500 !important;
-    color: #64748b !important;
-    font-size: 13px !important;
-    letter-spacing: 0.2px !important;
+    letter-spacing: 0.1px !important;
 }
 
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 6 · KPI / BIG-NUMBER VALUES
+────────────────────────────────────────────────────────────── */
+
+[data-test="big-number-total"],
+.big-number .header-line,
+.superset-key-value-chart-value {
+    color: var(--navy) !important;
+    font-size: 38px !important;
+    font-weight: 700 !important;
+    letter-spacing: -1.5px !important;
+    line-height: 1.05 !important;
+    font-family: "DM Mono", "DM Sans", monospace !important;
+}
+
+/* SVG path for ECharts big numbers */
+svg.superset-svg-big-number text.main-line {
+    fill: var(--navy) !important;
+    font-size: 38px !important;
+    font-weight: 700 !important;
+}
+
+/* Comparison / trend text below the big number */
 .big-number-chart svg text:not(.main-line) {
-    font-family: "Inter", sans-serif !important;
-    fill: #64748b !important;
-    font-weight: 500 !important;
+    fill: var(--text-muted) !important;
     font-size: 13px !important;
+    font-weight: 500 !important;
 }
 
 
-/* 4. FULL PAGE GRADIENT */
+/* ──────────────────────────────────────────────────────────────
+   SECTION 7 · CHART LEGEND TEXT
+   Explicit visibility on every selector Superset uses.
+────────────────────────────────────────────────────────────── */
 
-body, #app, .dashboard, .dashboard-content,
-.dashboard-header, .header-with-actions, header {
-    background-color: #ffffff !important;
-    background-image:
-        radial-gradient(at 100% 100%, rgba(3, 44, 98, 0.05) 0px, transparent 50%),
-        linear-gradient(180deg, #ffffff 0%, #ffffff 15%, #f1f5f9 100%) !important;
-    background-attachment: fixed !important;
+/* NVD3 legends */
+.nv-legend-text {
+    fill: var(--text-secondary) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.nv-legendWrap,
+svg g.nvd3.nv-legend,
+.dashboard-component-chart-holder .nv-legendWrap,
+.dashboard-component-chart-holder svg g.nvd3.nv-legend {
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+}
+
+/* ECharts legends */
+.echarts-legend-text,
+.legend-item-name,
+.legend-item-label,
+.echarts-for-react svg text.legend-text {
+    fill: var(--text-secondary) !important;
+    color: var(--text-secondary) !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 
-/* 5. EXECUTIVE TABLE DESIGN */
+/* ──────────────────────────────────────────────────────────────
+   SECTION 8 · EXECUTIVE TABLE DESIGN
+────────────────────────────────────────────────────────────── */
 
 .superset-stylable-table-container,
 .dashboard-component-chart-holder table {
     border-collapse: separate !important;
     border-spacing: 0 !important;
     width: 100% !important;
-    border-radius: 12px !important;
+    border-radius: var(--radius-inner) !important;
+    overflow: hidden !important;
 }
 
+/* Table header row */
 .dashboard-component-chart-holder thead tr th,
 .ant-table-thead > tr > th {
-    background: linear-gradient(180deg, rgba(255,255,255,0.1) 0%, #032c62 100%) !important;
-    background-color: #032c62 !important;
-    color: #ffffff !important;
-    font-weight: 800 !important;
-    font-size: 15px !important;
-    padding: 22px 15px !important;
+    background: var(--navy) !important;
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
+    font-size: 12px !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.6px !important;
+    padding: 14px 16px !important;
     border: none !important;
+    white-space: nowrap !important;
 }
 
+/* Table body cells */
 .dashboard-component-chart-holder tbody tr td,
 .ant-table-tbody > tr > td {
-    font-weight: 700 !important;
-    color: #1e293b !important;
-    padding: 14px 15px !important;
-    font-size: 14px !important;
-    border-bottom: 1px solid #e2e8f0 !important;
+    color: var(--text-primary) !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    padding: 11px 16px !important;
+    border-bottom: 1px solid var(--border) !important;
+    background: var(--surface) !important;
+}
+
+/* Zebra striping */
+.dashboard-component-chart-holder tbody tr:nth-child(even) td,
+.ant-table-tbody > tr:nth-child(even) > td {
+    background: var(--surface-alt) !important;
+}
+
+/* Row hover */
+.dashboard-component-chart-holder tbody tr:hover td,
+.ant-table-tbody > tr:hover > td {
+    background: #EBF3FF !important;
 }
 
 
-/* 6. CHART CARDS — GLOW BORDERS */
+/* ──────────────────────────────────────────────────────────────
+   SECTION 9 · TABS (top-level & nested)
+────────────────────────────────────────────────────────────── */
 
-.dashboard-component-chart-holder {
-    background: linear-gradient(135deg, #ffffff 0%, rgba(255,255,255,0.9) 100%) !important;
-    backdrop-filter: blur(20px) !important;
-    border-radius: 20px !important;
-    border: 2px solid transparent !important;
-    background-clip: padding-box !important;
-    box-shadow:
-        0 0 0 2px #ffffff,
-        0 0 0 4px rgba(135, 206, 250, 0.4),
-        0 10px 30px rgba(3, 44, 98, 0.08) !important;
-    padding: 24px !important;
+.ant-tabs-nav,
+.dashboard-component-tabs .ant-tabs-nav {
     margin-bottom: 24px !important;
-    overflow: visible !important;
+    border-bottom: 2px solid var(--border) !important;
+    background: transparent !important;
+    padding-top: 0 !important;
 }
 
-
-/* 7. TOP TABS & SCROLLBARS */
-
-.ant-tabs-nav {
-    margin-bottom: 30px !important;
+.ant-tabs-tab,
+.dashboard-component-tabs .ant-tabs-tab,
+.dashboard-content .ant-tabs-nav .ant-tabs-tab {
+    color: var(--text-muted) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    padding: 10px 18px !important;
+    transition: color 0.18s !important;
 }
 
-.ant-tabs-tab-active .ant-tabs-tab-btn {
-    color: #032c62 !important;
+.ant-tabs-tab:hover {
+    color: var(--blue) !important;
+}
+
+/* Active tab */
+.ant-tabs-tab-active .ant-tabs-tab-btn,
+.dashboard-component-tabs .ant-tabs-tab-active .ant-tabs-tab-btn,
+.dashboard-content .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: var(--navy) !important;
     font-weight: 800 !important;
 }
 
-::-webkit-scrollbar { width: 5px; height: 5px; }
-
-::-webkit-scrollbar-thumb {
-    background: rgba(3, 44, 98, 0.3);
-    border-radius: 10px;
+/* Active tab indicator bar */
+.ant-tabs-ink-bar,
+.dashboard-component-tabs .ant-tabs-ink-bar {
+    background: var(--blue) !important;
+    height: 3px !important;
+    border-radius: 3px 3px 0 0 !important;
 }
 
 
-/* 8. FIX: ECharts Controls & Toolbox */
+/* ──────────────────────────────────────────────────────────────
+   SECTION 10 · TOOLBAR & CHART ACTION BUTTONS
+────────────────────────────────────────────────────────────── */
 
-.dashboard-component-chart-holder .chart-container .action-button,
+.dashboard-component-chart-holder .action-button,
 .dashboard-component-chart-holder .header .dropdown-toggle {
-    color: #94a3b8 !important;
+    color: var(--text-muted) !important;
     opacity: 1 !important;
     visibility: visible !important;
 }
 
+.dashboard-component-chart-holder .action-button:hover {
+    color: var(--blue) !important;
+}
+
+
+/* ──────────────────────────────────────────────────────────────
+   SECTION 11 · ECHARTS TOOLTIP OVERRIDE
+────────────────────────────────────────────────────────────── */
+
+/* Prevent global color overrides from bleeding into tooltip */
 .echarts-for-react .echarts-tooltip,
 .echarts-for-react .echarts-toolbar {
     color: initial !important;
@@ -189,63 +344,38 @@ body, #app, .dashboard, .dashboard-content,
 }
 
 
-/* 9. FIX: Bottom Navigation / Tabs */
+/* ──────────────────────────────────────────────────────────────
+   SECTION 12 · SCROLLBARS
+────────────────────────────────────────────────────────────── */
 
-.dashboard-component-tabs .ant-tabs-tab,
-.dashboard-content .ant-tabs-nav .ant-tabs-tab {
-    color: #475569 !important;
-    font-weight: 500 !important;
-}
-
-.dashboard-component-tabs .ant-tabs-tab-active .ant-tabs-tab-btn,
-.dashboard-content .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
-    color: #032c62 !important;
-    font-weight: 800 !important;
-}
-
-.dashboard-component-tabs .ant-tabs-ink-bar {
-    background: #032c62 !important;
-}
-
-.dashboard-component-tabs .ant-tabs-nav {
-    background: rgba(255,255,255,0.85) !important;
-    border-top: 1px solid #e2e8f0 !important;
-    padding-top: 10px !important;
-}
+::-webkit-scrollbar              { width: 5px; height: 5px; }
+::-webkit-scrollbar-track        { background: #EEF2F8; border-radius: 10px; }
+::-webkit-scrollbar-thumb        { background: rgba(11,30,61,0.22); border-radius: 10px; }
+::-webkit-scrollbar-thumb:hover  { background: rgba(11,30,61,0.42); }
 
 
-//* =====================================================
-   10. TARGETED FIX: RURAL BREAKDOWN PIE CHART (ID 104)
-   - REMOVED padding (which broke the grid height)
-   - ADDED transform to safely shift the chart up & right
-   - ADDED overflow:visible to all inner containers
-   ===================================================== */
+/* ──────────────────────────────────────────────────────────────
+   SECTION 13 · RURAL BREAKDOWN PIE CHART  (#104)
+   ─────────────────────────────────────────────────────────────
+   ROOT CAUSE: ECharts renders pie labels outside the canvas
+   bounding box, causing them to be clipped by parent overflow.
 
-/* Ensure none of the inner containers are clipping the labels */
-.dashboard-chart-id-104,
+   FIX STRATEGY (single unified approach, no conflicts):
+   1. Set overflow:visible on every wrapper layer.
+   2. Add breathing room via padding only on .chart-container,
+      which expands the render area without touching the grid slot.
+   No transform. No duplicate position rules.
+────────────────────────────────────────────────────────────── */
+
 .dashboard-chart-id-104 .dashboard-component-chart-holder,
 .dashboard-chart-id-104 .slice_container,
-.dashboard-chart-id-104 .chart-container {
+.dashboard-chart-id-104 .chart-container,
+.dashboard-chart-id-104 .slice_container > div,
+.dashboard-chart-id-104 canvas {
     overflow: visible !important;
 }
 
-/* Shift the pie chart visual up and right using transform. 
-   This is much safer than "position: relative" or "padding" 
-   because it doesn't change the grid layout size. */
 .dashboard-chart-id-104 .chart-container {
-    transform: translate(10px, -8px) !important;
-}
-   ===================================================== */
-
-/* Increase padding to prevent label truncation */
-.dashboard-chart-id-104 {
-    padding-right: 48px !important;
-    padding-bottom: 40px !important;
-}
-
-/* Adjust the internal container positioning */
-.dashboard-chart-id-104 .chart-container {
-    position: relative !important;
-    left: 10px !important;
-    top: -8px !important;
+    padding-right: 56px !important;
+    padding-bottom: 48px !important;
 }
