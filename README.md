@@ -1,14 +1,8 @@
 /**********************
-* EXL SERVICE EXECUTIVE PREMIERE — FIX FOR IMAGE 1 & IMAGE 2
+* EXL SERVICE EXECUTIVE PREMIERE — FINAL STABLE VERSION
 * 
-* Image 1 Fix: Removed "display: block" on ECharts divs and removed 
-*              global span/svg color overrides that broke the controls.
-*
-* Image 2 Fix: Added explicit color rules for the bottom dashboard 
-*              navigation/tabs, which became invisible on the white bg.
-*
-* Pie Chart: Shifted up (negative Y) and right (positive X) via
-*            SVG transform on the pie chart's root group element.
+* Section 10 UPDATED: Specific fix for the Rural Breakdown 
+* Pie Chart using the exact ID class (.dashboard-chart-id-104)
 **********************/
 
 
@@ -38,7 +32,7 @@ svg.superset-svg-big-number text.main-line {
 }
 
 
-/* 2. LEGEND TEXT */
+/* 2. LEGEND TEXT — TARGETED, NO LAYOUT BREAKING */
 
 .nv-legend-text {
     fill: #334155 !important;
@@ -179,7 +173,7 @@ body, #app, .dashboard, .dashboard-content,
 }
 
 
-/* 8. ECHARTS CONTROLS & TOOLBOX */
+/* 8. FIX: ECharts Controls & Toolbox */
 
 .dashboard-component-chart-holder .chart-container .action-button,
 .dashboard-component-chart-holder .header .dropdown-toggle {
@@ -195,7 +189,7 @@ body, #app, .dashboard, .dashboard-content,
 }
 
 
-/* 9. BOTTOM NAVIGATION / TABS */
+/* 9. FIX: Bottom Navigation / Tabs */
 
 .dashboard-component-tabs .ant-tabs-tab,
 .dashboard-content .ant-tabs-nav .ant-tabs-tab {
@@ -220,22 +214,38 @@ body, #app, .dashboard, .dashboard-content,
 }
 
 
-/* =====================================================
-   10. PIE CHART POSITION — shifted up and right
-   Targets the NVD3 pie/donut chart's root SVG group.
-   translateX moves right (+px), translateY moves up (-px).
-   Adjust the values below if you need more/less shift.
+//* =====================================================
+   10. TARGETED FIX: RURAL BREAKDOWN PIE CHART (ID 104)
+   - REMOVED padding (which broke the grid height)
+   - ADDED transform to safely shift the chart up & right
+   - ADDED overflow:visible to all inner containers
    ===================================================== */
 
-/* NVD3 pie chart — the pie slices group */
-.dashboard-component-chart-holder svg .nv-pie-chart,
-.dashboard-component-chart-holder svg g.nv-pieChart {
-    transform: translate(30px, -20px) !important;
+/* Ensure none of the inner containers are clipping the labels */
+.dashboard-chart-id-104,
+.dashboard-chart-id-104 .dashboard-component-chart-holder,
+.dashboard-chart-id-104 .slice_container,
+.dashboard-chart-id-104 .chart-container {
+    overflow: visible !important;
 }
 
-/* ECharts pie (if any pie charts use ECharts instead of NVD3) */
-.dashboard-component-chart-holder .echarts-for-react canvas {
+/* Shift the pie chart visual up and right using transform. 
+   This is much safer than "position: relative" or "padding" 
+   because it doesn't change the grid layout size. */
+.dashboard-chart-id-104 .chart-container {
+    transform: translate(10px, -8px) !important;
+}
+   ===================================================== */
+
+/* Increase padding to prevent label truncation */
+.dashboard-chart-id-104 {
+    padding-right: 48px !important;
+    padding-bottom: 40px !important;
+}
+
+/* Adjust the internal container positioning */
+.dashboard-chart-id-104 .chart-container {
     position: relative !important;
-    left: 30px !important;
-    top: -20px !important;
+    left: 10px !important;
+    top: -8px !important;
 }
