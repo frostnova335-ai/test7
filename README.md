@@ -1,6 +1,7 @@
 /* ══════════════════════════════════════════════════════════════════
-   EXL SERVICE — EXECUTIVE PREMIER DASHBOARD  v2.1
-   Patch release: fixes UI mismatch / legend clipping / text truncation
+   EXL SERVICE — EXECUTIVE PREMIER DASHBOARD  v2.2
+   Patch release: removed blue headline border, fixed garbled
+   legend text, repositioned legend labels higher.
    Design: Prussian-blue authority, clean white surfaces,
            amber data accents, DM Sans typography.
 ══════════════════════════════════════════════════════════════════ */
@@ -124,18 +125,17 @@ body, #app,
     background: var(--surface) !important;
     border-radius: var(--radius-card) !important;
     border: 1px solid var(--border) !important;
-    border-top: 3px solid var(--blue) !important;
+    /* FIX v2.2: Removed blue top border per user request */
     box-shadow: var(--shadow-sm) !important;
     padding: 20px 22px !important;
     margin-bottom: 20px !important;
-    overflow-x: hidden !important;       /* FIX: prevent horizontal blowout */
+    overflow-x: hidden !important;       /* prevent horizontal blowout */
     overflow-y: visible !important;      /* allow labels that extend below */
-    transition: box-shadow 0.22s ease, border-color 0.22s ease !important;
+    transition: box-shadow 0.22s ease !important;
 }
 
 .dashboard-component-chart-holder:hover {
     box-shadow: var(--shadow-hover) !important;
-    border-top-color: var(--amber) !important;
 }
 
 /* Inner slice and chart containers — controlled overflow */
@@ -228,15 +228,17 @@ svg.superset-svg-big-number text.main-line {
 ────────────────────────────────────────────────────────────── */
 
 /* NVD3 legends */
+/* FIX v2.2: Removed font-family override on SVG text to prevent
+   garbled rendering ("Ownershin" / "Fmnathv" artifacts).
+   DM Sans applied to SVG <text> via CSS causes character
+   substitution in NVD3. We use a web-safe stack instead. */
 .nv-legend-text {
     fill: var(--text-secondary) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     font-size: 12px !important;
     font-weight: 600 !important;
     visibility: visible !important;
     opacity: 1 !important;
-    max-width: 120px !important;         /* FIX: cap legend item width */
-    overflow: visible !important;
-    text-overflow: ellipsis !important;
 }
 
 .nv-legendWrap,
@@ -246,7 +248,9 @@ svg g.nvd3.nv-legend,
     visibility: visible !important;
     opacity: 1 !important;
     overflow: visible !important;
-    max-width: 100% !important;          /* FIX: don't let legend exceed container */
+    max-width: 100% !important;
+    /* FIX v2.2: Move legend labels higher up, closer to the chart */
+    transform: translateY(-18px) !important;
 }
 
 /* NVD3 legend series groups — allow wrapping */
@@ -255,12 +259,14 @@ svg g.nvd3.nv-legend g.nv-series {
 }
 
 /* ECharts legends */
+/* FIX v2.2: Same web-safe font stack for SVG legend text */
 .echarts-legend-text,
 .legend-item-name,
 .legend-item-label,
 .echarts-for-react svg text.legend-text {
     fill: var(--text-secondary) !important;
     color: var(--text-secondary) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
     font-size: 12px !important;
     font-weight: 600 !important;
     visibility: visible !important;
@@ -510,24 +516,26 @@ div[class*="legend"] {
    breaking the container sizes.
 ────────────────────────────────────────────────────────────── */
 
-/* Chart axis labels — use DM Sans but don't force it */
+/* FIX v2.2: Do NOT apply DM Sans to SVG chart text.
+   DM Sans on SVG <text> elements causes garbled rendering
+   (characters replaced/substituted). Use system font stack
+   for all chart SVG text to keep labels crystal-clear. */
 .nv-axis text,
-.echarts-for-react text {
-    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+.echarts-for-react text,
+svg text {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
 }
 
 
 /* ──────────────────────────────────────────────────────────────
-   SECTION 17 · CARD BORDER CONSISTENCY  (NEW in v2.1)
-   FIX v2.1: Ensure ALL chart cards get the same blue top
-   border, including nested cards and cards inside tabs.
-   The original CSS only targeted .dashboard-component-chart-holder
-   but some cards render with additional wrapper classes.
+   SECTION 17 · CARD BORDER CONSISTENCY  (v2.2)
+   FIX v2.2: Removed blue top border per user request.
+   Cards now use a uniform 1px border on all sides.
 ────────────────────────────────────────────────────────────── */
 
 .dashboard-component-chart-holder,
 .dashboard-component-tabs .dashboard-component-chart-holder,
 .dragdroppable-column .dashboard-component-chart-holder,
 .dashboard-content .dashboard-component-chart-holder {
-    border-top: 3px solid var(--blue) !important;
+    border: 1px solid var(--border) !important;
 }
