@@ -1,541 +1,289 @@
-/* ══════════════════════════════════════════════════════════════════
-   EXL SERVICE — EXECUTIVE PREMIER DASHBOARD  v2.2
-   Patch release: removed blue headline border, fixed garbled
-   legend text, repositioned legend labels higher.
-   Design: Prussian-blue authority, clean white surfaces,
-           amber data accents, DM Sans typography.
-══════════════════════════════════════════════════════════════════ */
-
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Mono:wght@400;500&display=swap');
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 1 · DESIGN TOKENS
-   All visual constants live here. Edit these to retheme.
-────────────────────────────────────────────────────────────── */
-
-:root {
-    --navy:          #0B1E3D;
-    --navy-mid:      #17326B;
-    --blue:          #2563EB;
-    --blue-light:    #3B82F6;
-    --amber:         #F59E0B;
-    --surface:       #FFFFFF;
-    --surface-alt:   #F7F9FC;
-    --border:        #DDE3EE;
-    --border-strong: #C4CFDE;
-    --text-primary:  #0D1B2A;
-    --text-secondary:#3D5068;
-    --text-muted:    #7C8FA6;
-    --shadow-sm:     0 1px 3px rgba(11,30,61,0.07), 0 4px 12px rgba(11,30,61,0.05);
-    --shadow-md:     0 2px 8px rgba(11,30,61,0.09), 0 12px 32px rgba(11,30,61,0.07);
-    --shadow-hover:  0 4px 16px rgba(11,30,61,0.12), 0 20px 48px rgba(11,30,61,0.09);
-    --radius-card:   14px;
-    --radius-inner:  8px;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 2 · GLOBAL BASE
-   FIX v2.1: Removed !important from font-family to prevent
-   metric mismatch when DM Sans hasn't loaded yet. Font now
-   applies as a preference rather than a forced override, which
-   lets Superset's own layout calculations remain valid.
-────────────────────────────────────────────────────────────── */
-
-*, *::before, *::after {
-    box-sizing: border-box;
-}
-
-body, #app,
-.dashboard,
-.dashboard-container,
-.dragdroppable-content {
-    font-family: "DM Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    color: var(--text-primary);
-    background: #EEF2F8;
-    background-image:
-        radial-gradient(ellipse at 0% 0%, rgba(37,99,235,0.06) 0%, transparent 55%),
-        radial-gradient(ellipse at 100% 100%, rgba(11,30,61,0.04) 0%, transparent 55%);
-    background-attachment: fixed;
-}
-
-.dashboard-content,
-.dashboard-content-editable {
-    background: transparent;
-}
-
-/* FIX v2.1: Ensure every chart card explicitly has a white surface
-   background so the global gradient never bleeds through. */
-.dashboard-component-chart-holder,
-.grid-container .dashboard-component-chart-holder {
-    background: var(--surface);
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 3 · DASHBOARD HEADER BAR
-────────────────────────────────────────────────────────────── */
-
-.dashboard-header,
-.header-with-actions {
-    background: var(--navy) !important;
-    border-bottom: 2px solid var(--blue) !important;
-    padding: 14px 28px !important;
-    box-shadow: 0 4px 24px rgba(11,30,61,0.3) !important;
-}
-
-/* Header title text */
-.dashboard-title,
-[data-test="editable-title"] button,
-[data-test="editable-title"] span {
-    color: #FFFFFF !important;
-    font-size: 18px !important;
-    font-weight: 700 !important;
-    letter-spacing: -0.2px !important;
-}
-
-/* Header action icons */
-.dashboard-header .action-button,
-.header-with-actions .action-button,
-.dashboard-header button,
-.header-with-actions button {
-    color: rgba(255,255,255,0.7) !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-.dashboard-header button:hover,
-.header-with-actions button:hover {
-    color: #FFFFFF !important;
-    background: rgba(255,255,255,0.12) !important;
-    border-radius: 6px !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 4 · CHART CARDS  (the main containers)
-   FIX v2.1: Replaced blanket overflow:visible with a smarter
-   approach. Only overflow-y is visible (for labels that extend
-   below), while overflow-x remains hidden to prevent horizontal
-   blowout that was causing legend truncation.
-────────────────────────────────────────────────────────────── */
-
-.dashboard-component-chart-holder {
-    background: var(--surface) !important;
-    border-radius: var(--radius-card) !important;
-    border: 1px solid var(--border) !important;
-    /* FIX v2.2: Removed blue top border per user request */
-    box-shadow: var(--shadow-sm) !important;
-    padding: 20px 22px !important;
-    margin-bottom: 20px !important;
-    overflow-x: hidden !important;       /* prevent horizontal blowout */
-    overflow-y: visible !important;      /* allow labels that extend below */
-    transition: box-shadow 0.22s ease !important;
-}
-
-.dashboard-component-chart-holder:hover {
-    box-shadow: var(--shadow-hover) !important;
-}
-
-/* Inner slice and chart containers — controlled overflow */
-.dashboard-component-chart-holder .slice_container,
-.dashboard-component-chart-holder .chart-container,
-.dashboard-component-chart-holder .slice_container > div {
-    overflow: visible !important;
-    min-height: 0 !important;            /* FIX: prevent flex squishing */
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 5 · CHART CARD TITLES
-   FIX v2.1: Reduced font-weight from 700 to 600 on titles so
-   the DM Sans letterforms don't get clipped at small sizes.
-────────────────────────────────────────────────────────────── */
-
-.header-title,
-.dashboard-component-header span[role="button"],
-.dragdroppable-column .header-title,
-.editable-title span,
-[data-test="editable-title"] button {
-    color: var(--navy) !important;
-    font-size: 14px !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.1px !important;
-    text-transform: none !important;
-    white-space: nowrap !important;
-    overflow: visible !important;
-}
-
-/* Subtitle / description line below chart title */
-.dashboard-component-chart-holder .header-line + div {
-    color: var(--text-muted) !important;
-    font-size: 12px !important;
-    font-weight: 500 !important;
-    letter-spacing: 0.1px !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 6 · KPI / BIG-NUMBER VALUES
-   FIX v2.1: Reduced font-size from 38px to 32px to prevent
-   clipping inside tight card slots. Added min-width:0 on the
-   parent to allow flexbox shrinking.
-────────────────────────────────────────────────────────────── */
-
-[data-test="big-number-total"],
-.big-number .header-line,
-.superset-key-value-chart-value {
-    color: var(--navy) !important;
-    font-size: 32px !important;
-    font-weight: 700 !important;
-    letter-spacing: -1px !important;
-    line-height: 1.1 !important;
-    font-family: "DM Mono", "DM Sans", monospace !important;
-}
-
-/* Parent flex container for big numbers — allow shrinking */
-.dashboard-component-chart-holder .big_number,
-.dashboard-component-chart-holder [class*="big-number"],
-.dashboard-component-chart-holder .header-line {
-    min-width: 0 !important;
-    overflow: visible !important;
-}
-
-/* SVG path for ECharts big numbers */
-svg.superset-svg-big-number text.main-line {
-    fill: var(--navy) !important;
-    font-size: 32px !important;
-    font-weight: 700 !important;
-}
-
-/* Comparison / trend text below the big number */
-.big-number-chart svg text:not(.main-line) {
-    fill: var(--text-muted) !important;
-    font-size: 13px !important;
-    font-weight: 500 !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 7 · CHART LEGEND TEXT
-   FIX v2.1: Major rewrite of legend handling.
-   Root cause of truncated legends was:
-     a) overflow:visible pushed legend beyond grid bounds
-     b) No max-width on legend items caused horizontal overflow
-     c) Font metric mismatch from forced !important font-family
-   Fix: Explicit max-width, word-wrap, and proper overflow control.
-────────────────────────────────────────────────────────────── */
-
-/* NVD3 legends */
-/* FIX v2.2: Removed font-family override on SVG text to prevent
-   garbled rendering ("Ownershin" / "Fmnathv" artifacts).
-   DM Sans applied to SVG <text> via CSS causes character
-   substitution in NVD3. We use a web-safe stack instead. */
-.nv-legend-text {
-    fill: var(--text-secondary) !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-.nv-legendWrap,
-svg g.nvd3.nv-legend,
-.dashboard-component-chart-holder .nv-legendWrap,
-.dashboard-component-chart-holder svg g.nvd3.nv-legend {
-    visibility: visible !important;
-    opacity: 1 !important;
-    overflow: visible !important;
-    max-width: 100% !important;
-    /* FIX v2.2: Move legend labels higher up, closer to the chart */
-    transform: translateY(-18px) !important;
-}
-
-/* NVD3 legend series groups — allow wrapping */
-svg g.nvd3.nv-legend g.nv-series {
-    overflow: visible !important;
-}
-
-/* ECharts legends */
-/* FIX v2.2: Same web-safe font stack for SVG legend text */
-.echarts-legend-text,
-.legend-item-name,
-.legend-item-label,
-.echarts-for-react svg text.legend-text {
-    fill: var(--text-secondary) !important;
-    color: var(--text-secondary) !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-    font-size: 12px !important;
-    font-weight: 600 !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-/* ECharts legend container — allow wrapping to prevent truncation */
-div.echarts-legend,
-div[class*="legend"] {
-    overflow: visible !important;
-    max-width: 100% !important;
-    flex-wrap: wrap !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 8 · EXECUTIVE TABLE DESIGN
-   FIX v2.1: Added explicit white background on table cells and
-   table container to prevent gradient bleed-through. Added
-   word-break to prevent long text from overflowing cells.
-────────────────────────────────────────────────────────────── */
-
-.superset-stylable-table-container,
-.dashboard-component-chart-holder table {
-    border-collapse: separate !important;
-    border-spacing: 0 !important;
-    width: 100% !important;
-    border-radius: var(--radius-inner) !important;
-    overflow: hidden !important;
-    background: var(--surface) !important;  /* FIX: explicit surface */
-}
-
-/* Table header row */
-.dashboard-component-chart-holder thead tr th,
-.ant-table-thead > tr > th {
-    background: var(--navy) !important;
-    color: #FFFFFF !important;
-    font-weight: 700 !important;
-    font-size: 12px !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.6px !important;
-    padding: 14px 16px !important;
-    border: none !important;
-    white-space: nowrap !important;
-}
-
-/* Table body cells */
-.dashboard-component-chart-holder tbody tr td,
-.ant-table-tbody > tr > td {
-    color: var(--text-primary) !important;
-    font-weight: 500 !important;
-    font-size: 13px !important;
-    padding: 11px 16px !important;
-    border-bottom: 1px solid var(--border) !important;
-    background: var(--surface) !important;
-    word-break: break-word !important;      /* FIX: prevent long text overflow */
-    overflow-wrap: break-word !important;
-}
-
-/* Zebra striping */
-.dashboard-component-chart-holder tbody tr:nth-child(even) td,
-.ant-table-tbody > tr:nth-child(even) > td {
-    background: var(--surface-alt) !important;
-}
-
-/* Row hover */
-.dashboard-component-chart-holder tbody tr:hover td,
-.ant-table-tbody > tr:hover > td {
-    background: #EBF3FF !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 9 · TABS (top-level & nested)
-────────────────────────────────────────────────────────────── */
-
-.ant-tabs-nav,
-.dashboard-component-tabs .ant-tabs-nav {
-    margin-bottom: 24px !important;
-    border-bottom: 2px solid var(--border) !important;
-    background: transparent !important;
-    padding-top: 0 !important;
-}
-
-.ant-tabs-tab,
-.dashboard-component-tabs .ant-tabs-tab,
-.dashboard-content .ant-tabs-nav .ant-tabs-tab {
-    color: var(--text-muted) !important;
-    font-size: 14px !important;
-    font-weight: 500 !important;
-    padding: 10px 18px !important;
-    transition: color 0.18s !important;
-}
-
-.ant-tabs-tab:hover {
-    color: var(--blue) !important;
-}
-
-/* Active tab */
-.ant-tabs-tab-active .ant-tabs-tab-btn,
-.dashboard-component-tabs .ant-tabs-tab-active .ant-tabs-tab-btn,
-.dashboard-content .ant-tabs-nav .ant-tabs-tab-active .ant-tabs-tab-btn {
-    color: var(--navy) !important;
-    font-weight: 800 !important;
-}
-
-/* Active tab indicator bar */
-.ant-tabs-ink-bar,
-.dashboard-component-tabs .ant-tabs-ink-bar {
-    background: var(--blue) !important;
-    height: 3px !important;
-    border-radius: 3px 3px 0 0 !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 10 · TOOLBAR & CHART ACTION BUTTONS
-────────────────────────────────────────────────────────────── */
-
-.dashboard-component-chart-holder .action-button,
-.dashboard-component-chart-holder .header .dropdown-toggle {
-    color: var(--text-muted) !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-.dashboard-component-chart-holder .action-button:hover {
-    color: var(--blue) !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 11 · ECHARTS TOOLTIP OVERRIDE
-────────────────────────────────────────────────────────────── */
-
-/* Prevent global color overrides from bleeding into tooltip */
-.echarts-for-react .echarts-tooltip,
-.echarts-for-react .echarts-toolbar {
-    color: initial !important;
-    fill: initial !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 12 · SCROLLBARS
-────────────────────────────────────────────────────────────── */
-
-::-webkit-scrollbar              { width: 5px; height: 5px; }
-::-webkit-scrollbar-track        { background: #EEF2F8; border-radius: 10px; }
-::-webkit-scrollbar-thumb        { background: rgba(11,30,61,0.22); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover  { background: rgba(11,30,61,0.42); }
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 13 · RURAL BREAKDOWN PIE CHART  (#104)
-   FIX v2.1: Reduced padding from 56px/48px to 32px/28px.
-   The original padding was pushing the pie chart render area
-   beyond the grid slot, causing ECharts labels to render
-   outside the visible bounds. Combined with the new
-   overflow-x:hidden on the card holder, the chart now stays
-   within its container while labels still remain visible.
-────────────────────────────────────────────────────────────── */
-
-.dashboard-chart-id-104 .dashboard-component-chart-holder,
-.dashboard-chart-id-104 .slice_container,
-.dashboard-chart-id-104 .chart-container,
-.dashboard-chart-id-104 .slice_container > div,
-.dashboard-chart-id-104 canvas {
-    overflow: visible !important;
-}
-
-.dashboard-chart-id-104 .chart-container {
-    padding-right: 32px !important;      /* FIX: reduced from 56px */
-    padding-bottom: 28px !important;     /* FIX: reduced from 48px */
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 14 · TEXT CONTENT CARDS  (NEW in v2.1)
-   FIX v2.1: Ensure Markdown/text cards have consistent white
-   backgrounds and proper text wrapping. This was causing the
-   left card to show a beige/different background and the text
-   to be cut off at the right edge.
-────────────────────────────────────────────────────────────── */
-
-.dashboard-component-chart-holder .markdown,
-.dashboard-component-chart-holder .dashboard-markdown,
-.dashboard-component-chart-holder [class*="markdown"],
-.dashboard-component-chart-holder .slice_container p,
-.dashboard-component-chart-holder .slice_container span,
-.dashboard-component-chart-holder .slice_container div {
-    background: transparent !important;   /* inherit card's white surface */
-    word-break: break-word !important;
-    overflow-wrap: break-word !important;
-    max-width: 100% !important;
-}
-
-/* Ensure text cards don't clip their content */
-.dashboard-component-chart-holder .slice_container {
-    min-height: 0 !important;
-    overflow: visible !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 15 · GRID LAYOUT STABILITY  (NEW in v2.1)
-   FIX v2.1: Ensure the CSS Grid/Flexbox layout doesn't
-   compress cards below their minimum content size, which was
-   causing text truncation and legend clipping. Setting
-   min-width:0 on flex children allows them to shrink
-   gracefully rather than overflowing.
-────────────────────────────────────────────────────────────── */
-
-.dragdroppable-column,
-.dashboard-component,
-.dashboard-component-chart-holder,
-.grid-container .dashboard-component {
-    min-width: 0 !important;
-    min-height: 0 !important;
-}
-
-/* Ensure grid cells don't overflow their designated slots */
-.dashboard-grid,
-.dashboard-content .grid-container {
-    overflow: visible !important;
-}
-
-/* Prevent card content from pushing the card wider than its grid slot */
-.dashboard-component-chart-holder {
-    max-width: 100% !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 16 · FONT LOADING STABILITY  (NEW in v2.1)
-   FIX v2.1: Use font-display:swap via the Google Fonts URL
-   parameter already present in the @import. This section adds
-   a fallback system-font style for chart internals so that
-   if DM Sans hasn't loaded yet, Superset's layout engine
-   doesn't calculate sizes based on wrong font metrics.
-   The key insight: Superset sizes chart containers at render
-   time using the *current* font. If DM Sans loads after
-   render, the container is too small for the new font. By
-   not forcing DM Sans with !important on chart internals,
-   we let Superset use its default font for layout math,
-   then the CSS cascade applies DM Sans visually without
-   breaking the container sizes.
-────────────────────────────────────────────────────────────── */
-
-/* FIX v2.2: Do NOT apply DM Sans to SVG chart text.
-   DM Sans on SVG <text> elements causes garbled rendering
-   (characters replaced/substituted). Use system font stack
-   for all chart SVG text to keep labels crystal-clear. */
-.nv-axis text,
-.echarts-for-react text,
-svg text {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important;
-}
-
-
-/* ──────────────────────────────────────────────────────────────
-   SECTION 17 · CARD BORDER CONSISTENCY  (v2.2)
-   FIX v2.2: Removed blue top border per user request.
-   Cards now use a uniform 1px border on all sides.
-────────────────────────────────────────────────────────────── */
-
-.dashboard-component-chart-holder,
-.dashboard-component-tabs .dashboard-component-chart-holder,
-.dragdroppable-column .dashboard-component-chart-holder,
-.dashboard-content .dashboard-component-chart-holder {
-    border: 1px solid var(--border) !important;
-}
+
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+# isort:skip_file
+
+import logging
+import random
+import string
+from typing import Any, Optional, Callable
+from collections.abc import Iterator
+
+import yaml
+
+from superset.commands.chart.export import ExportChartsCommand
+from superset.commands.tag.export import ExportTagsCommand
+from superset.commands.dashboard.exceptions import DashboardNotFoundError
+from superset.commands.dashboard.importers.v1.utils import find_chart_uuids
+from superset.daos.dashboard import DashboardDAO
+from superset.commands.export.models import ExportModelsCommand
+from superset.commands.dataset.export import ExportDatasetsCommand
+from superset.daos.dataset import DatasetDAO
+from superset.models.dashboard import Dashboard
+from superset.models.slice import Slice
+from superset.tags.models import TagType
+from superset.utils.dict_import_export import EXPORT_VERSION
+from superset.utils.file import get_filename
+from superset.utils import json
+from superset.extensions import feature_flag_manager  # Import the feature flag manager
+
+logger = logging.getLogger(__name__)
+
+
+# keys stored as JSON are loaded and the prefix/suffix removed
+JSON_KEYS = {"position_json": "position", "json_metadata": "metadata"}
+DEFAULT_CHART_HEIGHT = 50
+DEFAULT_CHART_WIDTH = 4
+
+
+def suffix(length: int = 8) -> str:
+    return "".join(
+        random.SystemRandom().choice(string.ascii_uppercase + string.digits)
+        for _ in range(length)
+    )
+
+
+def get_default_position(title: str) -> dict[str, Any]:
+    return {
+        "DASHBOARD_VERSION_KEY": "v2",
+        "ROOT_ID": {"children": ["GRID_ID"], "id": "ROOT_ID", "type": "ROOT"},
+        "GRID_ID": {
+            "children": [],
+            "id": "GRID_ID",
+            "parents": ["ROOT_ID"],
+            "type": "GRID",
+        },
+        "HEADER_ID": {"id": "HEADER_ID", "meta": {"text": title}, "type": "HEADER"},
+    }
+
+
+def append_charts(position: dict[str, Any], charts: set[Slice]) -> dict[str, Any]:
+    chart_hashes = [f"CHART-{suffix()}" for _ in charts]
+
+    # if we have ROOT_ID/GRID_ID, append orphan charts to a new row inside the grid
+    row_hash = None
+    if "ROOT_ID" in position and "GRID_ID" in position["ROOT_ID"]["children"]:
+        row_hash = f"ROW-N-{suffix()}"
+        position["GRID_ID"]["children"].append(row_hash)
+        position[row_hash] = {
+            "children": chart_hashes,
+            "id": row_hash,
+            "meta": {"0": "ROOT_ID", "background": "BACKGROUND_TRANSPARENT"},
+            "type": "ROW",
+            "parents": ["ROOT_ID", "GRID_ID"],
+        }
+
+    for chart_hash, chart in zip(chart_hashes, charts, strict=False):
+        position[chart_hash] = {
+            "children": [],
+            "id": chart_hash,
+            "meta": {
+                "chartId": chart.id,
+                "height": DEFAULT_CHART_HEIGHT,
+                "sliceName": chart.slice_name,
+                "uuid": str(chart.uuid),
+                "width": DEFAULT_CHART_WIDTH,
+            },
+            "type": "CHART",
+        }
+        if row_hash:
+            position[chart_hash]["parents"] = ["ROOT_ID", "GRID_ID", row_hash]
+
+    return position
+
+
+class ExportDashboardsCommand(ExportModelsCommand):
+    dao = DashboardDAO
+    not_found = DashboardNotFoundError
+
+    @staticmethod
+    def _file_name(model: Dashboard) -> str:
+        file_name = get_filename(model.dashboard_title, model.id)
+        return f"dashboards/{file_name}.yaml"
+
+    @staticmethod
+    # ruff: noqa: C901
+    def _file_content(model: Dashboard) -> str:
+        payload = model.export_to_dict(
+            recursive=False,
+            include_parent_ref=False,
+            include_defaults=True,
+            export_uuids=True,
+        )
+        # TODO (betodealmeida): move this logic to export_to_dict once this
+        #  becomes the default export endpoint
+        for key, new_name in JSON_KEYS.items():
+            value: Optional[str] = payload.pop(key, None)
+            if value:
+                try:
+                    payload[new_name] = json.loads(value)
+                except (TypeError, json.JSONDecodeError):
+                    logger.info("Unable to decode `%s` field: %s", key, value)
+                    payload[new_name] = {}
+
+        # Extract all native filter datasets and replace native
+        # filter dataset references with uuid
+        for native_filter in payload.get("metadata", {}).get(
+            "native_filter_configuration", []
+        ):
+            for target in native_filter.get("targets", []):
+                dataset_id = target.pop("datasetId", None)
+                if dataset_id is not None:
+                    dataset = DatasetDAO.find_by_id(dataset_id)
+                    if dataset:
+                        target["datasetUuid"] = str(dataset.uuid)
+
+        # Replace display control dataset references with uuid.
+        # datasetId is intentionally preserved alongside datasetUuid so that
+        # bundles remain importable by older versions that do not yet understand
+        # datasetUuid for display-control targets.
+        for customization in (
+            payload.get("metadata", {}).get("chart_customization_config") or []
+        ):
+            for target in customization.get("targets") or []:
+                dataset_id = target.get("datasetId")
+                if dataset_id is not None:
+                    dataset = DatasetDAO.find_by_id(dataset_id)
+                    if dataset:
+                        target["datasetUuid"] = str(dataset.uuid)
+                    else:
+                        logger.warning(
+                            "Dashboard '%s': display control target references "
+                            "missing dataset %s; datasetUuid will not be set",
+                            model.dashboard_title,
+                            dataset_id,
+                        )
+
+        # the mapping between dashboard -> charts is inferred from the position
+        # attribute, so if it's not present we need to add a default config
+        if not payload.get("position"):
+            payload["position"] = get_default_position(model.dashboard_title)
+
+        # if any charts or not referenced in position, we need to add them
+        # in a new row
+        referenced_charts = find_chart_uuids(payload["position"])
+        orphan_charts = {
+            chart for chart in model.slices if str(chart.uuid) not in referenced_charts
+        }
+
+        if orphan_charts:
+            payload["position"] = append_charts(payload["position"], orphan_charts)
+
+        # Add theme UUID for proper cross-system imports
+        payload["theme_uuid"] = str(model.theme.uuid) if model.theme else None
+
+        # Include role assignments (DASHBOARD_RBAC). Role IDs are
+        # environment-local, so emit names — the import side resolves them
+        # back to roles in the destination environment. The key is omitted
+        # entirely when there are no role restrictions; older import code
+        # treats "missing" as "no restriction" and an empty list could
+        # confuse importers that distinguish the two states.
+        role_names = sorted(role.name for role in (model.roles or []))
+        if role_names:
+            payload["roles"] = role_names
+
+        payload["version"] = EXPORT_VERSION
+
+        # Check if the TAGGING_SYSTEM feature is enabled
+        if feature_flag_manager.is_feature_enabled("TAGGING_SYSTEM"):
+            tags = model.tags if hasattr(model, "tags") else []
+            payload["tags"] = [tag.name for tag in tags if tag.type == TagType.custom]
+
+        file_content = yaml.safe_dump(payload, sort_keys=False)
+        return file_content
+
+    @staticmethod
+    # ruff: noqa: C901
+    def _export(
+        model: Dashboard, export_related: bool = True
+    ) -> Iterator[tuple[str, Callable[[], str]]]:
+        yield (
+            ExportDashboardsCommand._file_name(model),
+            lambda: ExportDashboardsCommand._file_content(model),
+        )
+
+        if export_related:
+            chart_ids = [chart.id for chart in model.slices]
+            dashboard_ids = model.id
+            command = ExportChartsCommand(chart_ids)
+            command.disable_tag_export()
+            yield from command.run()
+            command.enable_tag_export()
+            if feature_flag_manager.is_feature_enabled("TAGGING_SYSTEM"):
+                yield from ExportTagsCommand.export(
+                    dashboard_ids=dashboard_ids, chart_ids=chart_ids
+                )
+
+            # Export related theme
+            if model.theme:
+                from superset.commands.theme.export import ExportThemesCommand
+
+                yield from ExportThemesCommand([model.theme.id]).run()
+
+        payload = model.export_to_dict(
+            recursive=False,
+            include_parent_ref=False,
+            include_defaults=True,
+            export_uuids=True,
+        )
+        # TODO (betodealmeida): move this logic to export_to_dict once this
+        #  becomes the default export endpoint
+        for key, new_name in JSON_KEYS.items():
+            value: Optional[str] = payload.pop(key, None)
+            if value:
+                try:
+                    payload[new_name] = json.loads(value)
+                except (TypeError, json.JSONDecodeError):
+                    logger.info("Unable to decode `%s` field: %s", key, value)
+                    payload[new_name] = {}
+
+        if export_related:
+            # Extract all native filter datasets and export referenced datasets
+            for native_filter in payload.get("metadata", {}).get(
+                "native_filter_configuration", []
+            ):
+                for target in native_filter.get("targets", []):
+                    dataset_id = target.pop("datasetId", None)
+                    if dataset_id is not None:
+                        dataset = DatasetDAO.find_by_id(dataset_id)
+                        if dataset:
+                            yield from ExportDatasetsCommand([dataset_id]).run()
+
+            # Export datasets referenced by display controls
+            for customization in (
+                payload.get("metadata", {}).get("chart_customization_config") or []
+            ):
+                for target in customization.get("targets") or []:
+                    dataset_id = target.get("datasetId")
+                    if dataset_id is not None:
+                        dataset = DatasetDAO.find_by_id(dataset_id)
+                        if dataset:
+                            yield from ExportDatasetsCommand([dataset_id]).run()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
