@@ -1,804 +1,581 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { omit } from 'lodash';
-import jsonStringify from 'json-stringify-pretty-compact';
-import {
-  Form,
-  Modal,
-  Collapse,
-  CollapseLabelInModal,
-  JsonEditor,
-} from '@superset-ui/core/components';
-import { useJsonValidation } from '@superset-ui/core/components/AsyncAceEditor';
-import { type TagType } from 'src/components';
-import rison from 'rison';
-import {
-  ensureIsArray,
-  isFeatureEnabled,
-  FeatureFlag,
-  getCategoricalSchemeRegistry,
-  SupersetClient,
-  t,
-  getClientErrorObject,
-} from '@superset-ui/core';
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+import re
+from typing import Any, Mapping, Union
 
-import withToasts from 'src/components/MessageToasts/withToasts';
-import { fetchTags, OBJECT_TYPES } from 'src/features/tags/tags';
-import {
-  applyColors,
-  getColorNamespace,
-  getFreshLabelsColorMapEntries,
-} from 'src/utils/colorScheme';
-import { useDispatch } from 'react-redux';
-import {
-  setColorScheme,
-  setDashboardMetadata,
-} from 'src/dashboard/actions/dashboardState';
-import { areObjectsEqual } from 'src/reduxUtils';
-import { StandardModal, useModalValidation } from 'src/components/Modal';
-import {
-  BasicInfoSection,
-  AccessSection,
-  StylingSection,
-  RefreshSection,
-  CertificationSection,
-  AdvancedSection,
-} from './sections';
+from marshmallow import fields, post_dump, post_load, pre_load, Schema
+from marshmallow.validate import Length, OneOf, ValidationError
 
-type PropertiesModalProps = {
-  dashboardId: number;
-  dashboardTitle?: string;
-  dashboardInfo?: Record<string, any>;
-  show?: boolean;
-  onHide?: () => void;
-  colorScheme?: string;
-  onSubmit?: (params: Record<string, any>) => void;
-  addSuccessToast: (message: string) => void;
-  addDangerToast: (message: string) => void;
-  onlyApply?: boolean;
-};
+from superset import security_manager
+from superset.tags.models import TagType
+from superset.utils import json
 
-type Roles = { id: number; name: string }[];
-type Owners = {
-  id: number;
-  full_name?: string;
-  first_name?: string;
-  last_name?: string;
-}[];
-type DashboardInfo = {
-  id: number;
-  title: string;
-  slug: string;
-  certifiedBy: string;
-  certificationDetails: string;
-  isManagedExternally: boolean;
-  metadata: Record<string, any>;
-  common?: {
-    conf?: {
-      SUPERSET_DASHBOARD_PERIODICAL_REFRESH_LIMIT?: number;
-    };
-  };
-};
-
-const PropertiesModal = ({
-  addSuccessToast,
-  addDangerToast,
-  colorScheme: currentColorScheme,
-  dashboardId,
-  dashboardInfo: currentDashboardInfo,
-  dashboardTitle,
-  onHide = () => {},
-  onlyApply = false,
-  onSubmit = () => {},
-  show = false,
-}: PropertiesModalProps) => {
-  const dispatch = useDispatch();
-  const [form] = Form.useForm();
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [isApplying, setIsApplying] = useState(false);
-  const [colorScheme, setCurrentColorScheme] = useState(currentColorScheme);
-  const [jsonMetadata, setJsonMetadata] = useState('');
-  const [dashboardInfo, setDashboardInfo] = useState<DashboardInfo>();
-
-  // JSON validation for metadata
-  const jsonAnnotations = useJsonValidation(jsonMetadata, {
-    errorPrefix: 'Invalid JSON metadata',
-  });
-  const [owners, setOwners] = useState<Owners>([]);
-  const [roles, setRoles] = useState<Roles>([]);
-  const saveLabel = onlyApply ? t('Apply') : t('Save');
-  const [tags, setTags] = useState<TagType[]>([]);
-  const [customCss, setCustomCss] = useState('');
-  const [refreshFrequency, setRefreshFrequency] = useState(0);
-  const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
-  const [themes, setThemes] = useState<
-    Array<{
-      id: number;
-      theme_name: string;
-    }>
-  >([]);
-  const categoricalSchemeRegistry = getCategoricalSchemeRegistry();
-  const originalDashboardMetadata = useRef<Record<string, any>>({});
-
-  const handleErrorResponse = async (response: Response) => {
-    const { error, statusText, message } = await getClientErrorObject(response);
-    let errorText = error || statusText || t('An error has occurred');
-    if (typeof message === 'object' && 'json_metadata' in message) {
-      errorText = (message as { json_metadata: string }).json_metadata;
-    } else if (typeof message === 'string') {
-      errorText = message;
-
-      if (message === 'Forbidden') {
-        errorText = t('You do not have permission to edit this dashboard');
-      }
-    }
-
-    Modal.error({
-      title: t('Error'),
-      content: errorText,
-      okButtonProps: { danger: true, className: 'btn-danger' },
-    });
-  };
-
-  const handleDashboardData = useCallback(
-    dashboardData => {
-      const {
-        id,
-        dashboard_title,
-        category,
-        slug,
-        certified_by,
-        certification_details,
-        owners,
-        roles,
-        metadata,
-        is_managed_externally,
-        theme,
-        css,
-      } = dashboardData;
-      const dashboardInfo = {
-        id,
-        title: dashboard_title,
-        category: category ?? undefined,
-        slug: slug || '',
-        certifiedBy: certified_by || '',
-        certificationDetails: certification_details || '',
-        isManagedExternally: is_managed_externally || false,
-        css: css || '',
-        metadata,
-      };
-
-      form.setFieldsValue(dashboardInfo);
-      setDashboardInfo(dashboardInfo);
-      setOwners(owners);
-      setRoles(roles);
-      setCustomCss(css || '');
-      setCurrentColorScheme(metadata?.color_scheme);
-      setSelectedThemeId(theme?.id || null);
-
-      const metaDataCopy = omit(metadata, [
-        'positions',
-        'shared_label_colors',
-        'map_label_colors',
-        'color_scheme_domain',
-      ]);
-
-      setJsonMetadata(metaDataCopy ? jsonStringify(metaDataCopy) : '');
-      setRefreshFrequency(metadata?.refresh_frequency || 0);
-      originalDashboardMetadata.current = metadata;
+get_delete_ids_schema = {"type": "array", "items": {"type": "integer"}}
+get_export_ids_schema = {"type": "array", "items": {"type": "integer"}}
+get_fav_star_ids_schema = {"type": "array", "items": {"type": "integer"}}
+thumbnail_query_schema = {
+    "type": "object",
+    "properties": {"force": {"type": "boolean"}},
+}
+width_height_schema = {
+    "type": "array",
+    "items": {"type": "integer"},
+}
+screenshot_query_schema = {
+    "type": "object",
+    "properties": {
+        "force": {"type": "boolean"},
+        "permalink": {"type": "string"},
+        "window_size": width_height_schema,
+        "thumb_size": width_height_schema,
     },
-    [form],
-  );
+}
+dashboard_title_description = "A title for the dashboard."
+category_description = "Category for the dashboard. One of: Performance Cockpit, Agent Empowerment, CX and Journey, Business Strategy."
+slug_description = "Unique identifying part for the web address of the dashboard."
+owners_description = (
+    "Owner are users ids allowed to delete or change this dashboard. "
+    "If left empty you will be one of the owners of the dashboard."
+)
+roles_description = (
+    "Roles is a list which defines access to the dashboard. "
+    "These roles are always applied in addition to restrictions on dataset "
+    "level access. "
+    "If no roles defined then the dashboard is available to all roles."
+)
+position_json_description = (
+    "This json object describes the positioning of the widgets "
+    "in the dashboard. It is dynamically generated when "
+    "adjusting the widgets size and positions by using "
+    "drag & drop in the dashboard view"
+)
+css_description = "Override CSS for the dashboard."
+json_metadata_description = (
+    "This JSON object is generated dynamically when clicking "
+    "the save or overwrite button in the dashboard view. "
+    "It is exposed here for reference and for power users who may want to alter "
+    " specific parameters."
+)
+published_description = (
+    "Determines whether or not this dashboard is visible in the list of all dashboards."
+)
+charts_description = (
+    "The names of the dashboard's charts. Names are used for legacy reasons."
+)
+certified_by_description = "Person or group that has certified this dashboard"
+certification_details_description = "Details of the certification"
+tags_description = "Tags to be associated with the dashboard"
 
-  const fetchDashboardDetails = useCallback(() => {
-    // We fetch the dashboard details because not all code
-    // that renders this component have all the values we need.
-    // At some point when we have a more consistent frontend
-    // datamodel, the dashboard could probably just be passed as a prop.
-    SupersetClient.get({
-      endpoint: `/api/v1/dashboard/${dashboardId}`,
-    }).then(response => {
-      const dashboard = response.json.result;
-      const jsonMetadataObj = dashboard.json_metadata?.length
-        ? JSON.parse(dashboard.json_metadata)
-        : {};
-
-      handleDashboardData({
-        ...dashboard,
-        metadata: jsonMetadataObj,
-      });
-
-      setIsLoading(false);
-    }, handleErrorResponse);
-  }, [dashboardId, handleDashboardData]);
-
-  const getJsonMetadata = () => {
-    try {
-      const jsonMetadataObj = jsonMetadata?.length
-        ? JSON.parse(jsonMetadata)
-        : {};
-      return jsonMetadataObj;
-    } catch (_) {
-      return {};
-    }
-  };
-
-  const handleOnChangeOwners = (owners: { value: number; label: string }[]) => {
-    const parsedOwners: Owners = ensureIsArray(owners).map(o => ({
-      id: o.value,
-      full_name: o.label,
-    }));
-    setOwners(parsedOwners);
-  };
-
-  const handleOnChangeRoles = (roles: { value: number; label: string }[]) => {
-    const parsedRoles: Roles = ensureIsArray(roles).map(r => ({
-      id: r.value,
-      name: r.label,
-    }));
-    setRoles(parsedRoles);
-  };
-
-  const handleOnCancel = () => onHide();
-
-  const onColorSchemeChange = (
-    colorScheme = '',
-    { updateMetadata = true } = {},
-  ) => {
-    // check that color_scheme is valid
-    const colorChoices = categoricalSchemeRegistry.keys();
-    const jsonMetadataObj = getJsonMetadata();
-
-    // only fire if the color_scheme is present and invalid
-    if (colorScheme && !colorChoices.includes(colorScheme)) {
-      Modal.error({
-        title: t('Error'),
-        content: t('A valid color scheme is required'),
-        okButtonProps: { danger: true, className: 'btn-danger' },
-      });
-      onHide();
-      throw new Error('A valid color scheme is required');
-    }
-
-    jsonMetadataObj.color_scheme = colorScheme;
-    jsonMetadataObj.label_colors = jsonMetadataObj.label_colors || {};
-
-    setCurrentColorScheme(colorScheme);
-    dispatch(setColorScheme(colorScheme));
-
-    // update metadata to match selection
-    if (updateMetadata) {
-      setJsonMetadata(jsonStringify(jsonMetadataObj));
-    }
-  };
-
-  const onFinish = () => {
-    const formValues = form.getFieldsValue();
-    const {
-      title,
-      slug,
-      certifiedBy,
-      certificationDetails,
-      category,
-    } = formValues;
-    let currentJsonMetadata = jsonMetadata;
-
-    // validate currentJsonMetadata
-    let metadata;
-    try {
-      if (
-        !currentJsonMetadata.startsWith('{') ||
-        !currentJsonMetadata.endsWith('}')
-      ) {
-        throw new Error();
-      }
-      metadata = JSON.parse(currentJsonMetadata);
-    } catch (error) {
-      addDangerToast(t('JSON metadata is invalid!'));
-      return;
-    }
-
-    const colorNamespace = getColorNamespace(metadata?.color_namespace);
-    // color scheme in json metadata has precedence over selection
-    const updatedColorScheme = metadata?.color_scheme || colorScheme;
-    const shouldGoFresh =
-      updatedColorScheme !== originalDashboardMetadata.current.color_scheme;
-    const shouldResetCustomLabels = !areObjectsEqual(
-      originalDashboardMetadata.current.label_colors || {},
-      metadata?.label_colors || {},
-    );
-    const currentCustomLabels = Object.keys(metadata?.label_colors || {});
-    const prevCustomLabels = Object.keys(
-      originalDashboardMetadata.current.label_colors || {},
-    );
-    const resettableCustomLabels =
-      currentCustomLabels.length > 0 ? currentCustomLabels : prevCustomLabels;
-    const freshCustomLabels =
-      shouldResetCustomLabels && resettableCustomLabels.length > 0
-        ? resettableCustomLabels
-        : false;
-    const jsonMetadataObj = getJsonMetadata();
-    jsonMetadataObj.refresh_frequency = refreshFrequency;
-    const customLabelColors = jsonMetadataObj.label_colors || {};
-    const updatedDashboardMetadata = {
-      ...originalDashboardMetadata.current,
-      label_colors: customLabelColors,
-      color_scheme: updatedColorScheme,
-    };
-
-    originalDashboardMetadata.current = updatedDashboardMetadata;
-    applyColors(updatedDashboardMetadata, shouldGoFresh || freshCustomLabels);
-    dispatch(
-      setDashboardMetadata({
-        ...updatedDashboardMetadata,
-        map_label_colors: getFreshLabelsColorMapEntries(customLabelColors),
-      }),
-    );
-
-    onColorSchemeChange(updatedColorScheme, {
-      updateMetadata: false,
-    });
-
-    currentJsonMetadata = jsonStringify(jsonMetadataObj);
-
-    const moreOnSubmitProps: { roles?: Roles; tags?: TagType[] } = {};
-    const morePutProps: {
-      roles?: number[];
-      tags?: (string | number | undefined)[];
-    } = {};
-    if (isFeatureEnabled(FeatureFlag.DashboardRbac)) {
-      moreOnSubmitProps.roles = roles;
-      morePutProps.roles = (roles || []).map(r => r.id);
-    }
-    if (isFeatureEnabled(FeatureFlag.TaggingSystem)) {
-      moreOnSubmitProps.tags = tags;
-      morePutProps.tags = tags.map(tag => tag.id);
-    }
-    const onSubmitProps = {
-      id: dashboardId,
-      title,
-      slug,
-      category,
-      jsonMetadata: currentJsonMetadata,
-      owners,
-      colorScheme: currentColorScheme,
-      colorNamespace,
-      certifiedBy,
-      certificationDetails,
-      themeId: selectedThemeId,
-      css: customCss,
-      ...moreOnSubmitProps,
-    };
-    if (onlyApply) {
-      setIsApplying(true);
-      try {
-        onSubmit(onSubmitProps);
-        onHide();
-        addSuccessToast(t('Dashboard properties updated'));
-      } catch (error) {
-        console.error('Apply failed:', error);
-      } finally {
-        setIsApplying(false);
-      }
-    } else {
-      // Validate category is selected
-      if (!category) {
-        addDangerToast(t('Dashboard category is required'));
-        return;
-      }
-
-      const saveData = {
-        dashboard_title: title,
-        category,
-        slug: slug || null,
-        json_metadata: currentJsonMetadata || null,
-        owners: (owners || []).map(o => o.id),
-        certified_by: certifiedBy || null,
-        certification_details:
-          certifiedBy && certificationDetails ? certificationDetails : null,
-        css: customCss || null,
-        theme_id: selectedThemeId,
-        ...morePutProps,
-      };
-
-      SupersetClient.put({
-        endpoint: `/api/v1/dashboard/${dashboardId}`,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(saveData),
-      }).then(() => {
-        onSubmit(onSubmitProps);
-        onHide();
-        addSuccessToast(t('The dashboard has been saved'));
-      }, handleErrorResponse);
-    }
-  };
-
-  useEffect(() => {
-    if (show) {
-      // Reset loading state when modal opens
-      setIsLoading(true);
-
-      if (!currentDashboardInfo) {
-        fetchDashboardDetails();
-      } else {
-        handleDashboardData(currentDashboardInfo);
-        // Data is immediately available, so we can stop loading
-        setIsLoading(false);
-      }
-
-      // Category should be explicitly selected by user, no default value
-
-      // Fetch themes (excluding system themes)
-      const themeQuery = rison.encode({
-        columns: ['id', 'theme_name', 'is_system'],
-        filters: [
-          {
-            col: 'is_system',
-            opr: 'eq',
-            value: false,
-          },
-        ],
-      });
-      SupersetClient.get({ endpoint: `/api/v1/theme/?q=${themeQuery}` })
-        .then(({ json }) => {
-          const fetchedThemes = json.result;
-          setThemes(fetchedThemes);
-        })
-        .catch(() => {
-          addDangerToast(
-            t('An error occurred while fetching available themes'),
-          );
-        });
-    }
-
-    JsonEditor.preload();
-  }, [
-    currentDashboardInfo,
-    fetchDashboardDetails,
-    handleDashboardData,
-    show,
-    addDangerToast,
-    form,
-  ]);
-
-  useEffect(() => {
-    // the title can be changed inline in the dashboard, this catches it
-    if (
-      dashboardTitle &&
-      dashboardInfo &&
-      dashboardInfo.title !== dashboardTitle
-    ) {
-      form.setFieldsValue({
-        ...dashboardInfo,
-        title: dashboardTitle,
-      });
-    }
-  }, [dashboardInfo, dashboardTitle, form]);
-
-  useEffect(() => {
-    if (!isFeatureEnabled(FeatureFlag.TaggingSystem)) return;
-    try {
-      fetchTags(
-        {
-          objectType: OBJECT_TYPES.DASHBOARD,
-          objectId: dashboardId,
-          includeTypes: false,
-        },
-        (tags: TagType[]) => setTags(tags),
-        (error: Response) => {
-          addDangerToast(`Error fetching tags: ${error.text}`);
-        },
-      );
-    } catch (error) {
-      handleErrorResponse(error);
-    }
-  }, [dashboardId]);
-
-  const handleChangeTags = (tags: { label: string; value: number }[]) => {
-    const parsedTags: TagType[] = ensureIsArray(tags).map(r => ({
-      id: r.value,
-      name: r.label,
-    }));
-    setTags(parsedTags);
-  };
-
-  const handleClearTags = () => {
-    setTags([]);
-  };
-
-  // Section handlers for extracted components
-  const handleThemeChange = (value: any) => setSelectedThemeId(value || null);
-  const handleRefreshFrequencyChange = (value: any) =>
-    setRefreshFrequency(value);
-
-  // Helper function for styling section
-  const hasCustomLabelsColor = !!Object.keys(
-    getJsonMetadata()?.label_colors || {},
-  ).length;
-
-  // Validation setup
-  const modalSections = useMemo(
-    () => [
-      {
-        key: 'basic',
-        name: t('General information'),
-        validator: () => {
-          const errors = [];
-          const values = form.getFieldsValue();
-
-          // Check validation - only add if title is empty
-          if (!values.title || values.title.trim().length === 0) {
-            errors.push(t('Dashboard name is required'));
-          }
-
-          // Category must be explicitly selected (no default)
-          if (!values.category || values.category.trim().length === 0) {
-            errors.push(t('Dashboard category is required'));
-          }
-
-          return errors;
-        },
-      },
-      {
-        key: 'access',
-        name: t('Access & ownership'),
-        validator: () => [],
-      },
-      {
-        key: 'styling',
-        name: t('Styling'),
-        validator: () => [],
-      },
-      {
-        key: 'refresh',
-        name: t('Refresh settings'),
-        validator: () => {
-          const errors = [];
-          const refreshLimit =
-            dashboardInfo?.common?.conf
-              ?.SUPERSET_DASHBOARD_PERIODICAL_REFRESH_LIMIT;
-          if (
-            refreshLimit &&
-            refreshFrequency > 0 &&
-            refreshFrequency < refreshLimit
-          ) {
-            errors.push(
-              t(
-                'Refresh frequency must be at least %s seconds',
-                refreshLimit / 1000,
-              ),
-            );
-          }
-          return errors;
-        },
-      },
-      {
-        key: 'certification',
-        name: t('Certification'),
-        validator: () => [],
-      },
-      {
-        key: 'advanced',
-        name: t('Advanced settings'),
-        validator: () => {
-          if (jsonAnnotations.length > 0) {
-            return [t('Invalid JSON metadata')];
-          }
-          return [];
-        },
-      },
-    ],
-    [form, jsonAnnotations, refreshFrequency, dashboardInfo],
-  );
-
-  const {
-    validationStatus,
-    validateAll,
-    validateSection,
-    errorTooltip,
-    hasErrors,
-  } = useModalValidation({
-    sections: modalSections,
-  });
-
-  // Validate basic section when title changes
-  useEffect(() => {
-    validateSection('basic');
-  }, [dashboardTitle, validateSection]);
-
-  // Validate advanced section when JSON changes
-  useEffect(() => {
-    validateSection('advanced');
-  }, [jsonMetadata, validateSection]);
-
-  // Validate refresh section when refresh frequency changes
-  useEffect(() => {
-    validateSection('refresh');
-  }, [refreshFrequency, validateSection]);
-
-  return (
-    <StandardModal
-      show={show}
-      onHide={handleOnCancel}
-      onSave={() => {
-        if (validateAll()) {
-          form.submit();
+openapi_spec_methods_override = {
+    "get": {"get": {"summary": "Get a dashboard detail information"}},
+    "get_list": {
+        "get": {
+            "summary": "Get a list of dashboards",
+            "description": "Gets a list of dashboards, use Rison or JSON query "
+            "parameters for filtering, sorting, pagination and "
+            " for selecting specific columns and metadata.",
         }
-      }}
-      title={t('Dashboard properties')}
-      isEditMode
-      saveDisabled={dashboardInfo?.isManagedExternally || hasErrors}
-      saveLoading={isApplying}
-      contentLoading={isLoading}
-      errorTooltip={
-        dashboardInfo?.isManagedExternally
-          ? t(
-              "This dashboard is managed externally, and can't be edited in Superset",
-            )
-          : errorTooltip
-      }
-      saveText={saveLabel}
-      wrapProps={{ 'data-test': 'properties-edit-modal' }}
-    >
-      <Form
-        form={form}
-        onFinish={onFinish}
-        onFieldsChange={() => {
-          // Re-validate sections when form fields change
-          setTimeout(() => validateSection('basic'), 100);
-        }}
-        data-test="dashboard-edit-properties-form"
-        layout="vertical"
-        initialValues={{
-          ...dashboardInfo,
-          category: dashboardInfo?.category ?? undefined,
-        }}
-      >
-        <Collapse
-          expandIconPosition="end"
-          defaultActiveKey="basic"
-          accordion
-          modalMode
-          items={[
-            {
-              key: 'basic',
-              label: (
-                <CollapseLabelInModal
-                  title={t('General information')}
-                  subtitle={t('Dashboard name and URL configuration')}
-                  validateCheckStatus={!validationStatus.basic?.hasErrors}
-                  testId="basic-section"
-                />
-              ),
-              children: (
-                <BasicInfoSection
-                  form={form}
-                  validationStatus={validationStatus}
-                />
-              ),
-            },
-            {
-              key: 'access',
-              label: (
-                <CollapseLabelInModal
-                  title={t('Access & ownership')}
-                  subtitle={t('Manage dashboard owners and access permissions')}
-                  validateCheckStatus={!validationStatus.access?.hasErrors}
-                  testId="access-section"
-                />
-              ),
-              children: (
-                <AccessSection
-                  isLoading={isLoading}
-                  owners={owners}
-                  roles={roles}
-                  tags={tags}
-                  onChangeOwners={handleOnChangeOwners}
-                  onChangeRoles={handleOnChangeRoles}
-                  onChangeTags={handleChangeTags}
-                  onClearTags={handleClearTags}
-                />
-              ),
-            },
-            {
-              key: 'styling',
-              label: (
-                <CollapseLabelInModal
-                  title={t('Styling')}
-                  subtitle={t(
-                    'Configure dashboard appearance, colors, and custom CSS',
-                  )}
-                  validateCheckStatus={!validationStatus.styling?.hasErrors}
-                  testId="styling-section"
-                />
-              ),
-              children: (
-                <StylingSection
-                  themes={themes}
-                  selectedThemeId={selectedThemeId}
-                  colorScheme={colorScheme}
-                  customCss={customCss}
-                  hasCustomLabelsColor={hasCustomLabelsColor}
-                  onThemeChange={handleThemeChange}
-                  onColorSchemeChange={onColorSchemeChange}
-                  onCustomCssChange={setCustomCss}
-                  addDangerToast={addDangerToast}
-                />
-              ),
-            },
-            {
-              key: 'refresh',
-              label: (
-                <CollapseLabelInModal
-                  title={t('Refresh settings')}
-                  subtitle={t('Configure automatic dashboard refresh')}
-                  validateCheckStatus={!validationStatus.refresh?.hasErrors}
-                  testId="refresh-section"
-                />
-              ),
-              children: (
-                <RefreshSection
-                  refreshFrequency={refreshFrequency}
-                  onRefreshFrequencyChange={handleRefreshFrequencyChange}
-                />
-              ),
-            },
-            {
-              key: 'certification',
-              label: (
-                <CollapseLabelInModal
-                  title={t('Certification')}
-                  subtitle={t('Add certification details for this dashboard')}
-                  validateCheckStatus={
-                    !validationStatus.certification?.hasErrors
-                  }
-                  testId="certification-section"
-                />
-              ),
-              children: <CertificationSection isLoading={isLoading} />,
-            },
-            {
-              key: 'advanced',
-              label: (
-                <CollapseLabelInModal
-                  title={t('Advanced settings')}
-                  subtitle={t('JSON metadata and advanced configuration')}
-                  validateCheckStatus={!validationStatus.advanced?.hasErrors}
-                  testId="advanced-section"
-                />
-              ),
-              children: (
-                <AdvancedSection
-                  jsonMetadata={jsonMetadata}
-                  jsonAnnotations={jsonAnnotations}
-                  validationStatus={validationStatus}
-                  onJsonMetadataChange={setJsonMetadata}
-                />
-              ),
-            },
-          ]}
-        />
-      </Form>
-    </StandardModal>
-  );
-};
+    },
+    "info": {"get": {"summary": "Get metadata information about this API resource"}},
+    "related": {
+        "get": {"description": "Get a list of all possible owners for a dashboard."}
+    },
+}
 
-export default withToasts(PropertiesModal);
+
+def validate_json(value: Union[bytes, bytearray, str]) -> None:
+    try:
+        json.validate_json(value)
+    except json.JSONDecodeError as ex:
+        raise ValidationError("JSON not valid") from ex
+
+
+def validate_json_metadata(value: Union[bytes, bytearray, str]) -> None:
+    if not value:
+        return
+    try:
+        value_obj = json.loads(value)
+    except json.JSONDecodeError as ex:
+        raise ValidationError("JSON not valid") from ex
+    errors = DashboardJSONMetadataSchema().validate(value_obj, partial=False)
+    if errors:
+        raise ValidationError(errors)
+
+
+class SharedLabelsColorsField(fields.Field):
+    """
+    A custom field that accepts either a list of strings or a dictionary.
+    """
+
+    def _deserialize(
+        self,
+        value: Union[list[str], dict[str, str]],
+        attr: Union[str, None],
+        data: Union[Mapping[str, Any], None],
+        **kwargs: dict[str, Any],
+    ) -> list[str]:
+        if isinstance(value, list):
+            if all(isinstance(item, str) for item in value):
+                return value
+        elif isinstance(value, dict):
+            # Enforce list (for backward compatibility)
+            return []
+
+        raise ValidationError("Not a valid list")
+
+
+class DashboardJSONMetadataSchema(Schema):
+    # native_filter_configuration is for dashboard-native filters
+    native_filter_configuration = fields.List(fields.Dict(), allow_none=True)
+    # chart_configuration for now keeps data about cross-filter scoping for charts
+    chart_configuration = fields.Dict()
+    # global_chart_configuration keeps data about global cross-filter scoping
+    # for charts - can be overridden by chart_configuration for each chart
+    global_chart_configuration = fields.Dict()
+    timed_refresh_immune_slices = fields.List(fields.Integer())
+    # deprecated wrt dashboard-native filters
+    filter_scopes = fields.Dict()
+    expanded_slices = fields.Dict()
+    refresh_frequency = fields.Integer()
+    # deprecated wrt dashboard-native filters
+    default_filters = fields.Str()
+    stagger_refresh = fields.Boolean()
+    stagger_time = fields.Integer()
+    color_scheme = fields.Str(allow_none=True)
+    color_namespace = fields.Str(allow_none=True)
+    positions = fields.Dict(allow_none=True)
+    label_colors = fields.Dict()
+    shared_label_colors = SharedLabelsColorsField()
+    map_label_colors = fields.Dict()
+    color_scheme_domain = fields.List(fields.Str())
+    cross_filters_enabled = fields.Boolean(dump_default=True)
+    # used for v0 import/export
+    import_time = fields.Integer()
+    remote_id = fields.Integer()
+    filter_bar_orientation = fields.Str(allow_none=True)
+    native_filter_migration = fields.Dict()
+
+    @pre_load
+    def remove_show_native_filters(  # pylint: disable=unused-argument
+        self,
+        data: dict[str, Any],
+        **kwargs: Any,
+    ) -> dict[str, Any]:
+        """
+        Remove ``show_native_filters`` from the JSON metadata.
+
+        This field was removed in https://github.com/apache/superset/pull/23228, but might
+        be present in old exports.
+        """  # noqa: E501
+        if "show_native_filters" in data:
+            del data["show_native_filters"]
+
+        return data
+
+
+class UserSchema(Schema):
+    id = fields.Int()
+    username = fields.String()
+    first_name = fields.String()
+    last_name = fields.String()
+
+
+class RolesSchema(Schema):
+    id = fields.Int()
+    name = fields.String()
+
+
+class TagSchema(Schema):
+    id = fields.Int()
+    name = fields.String()
+    type = fields.Enum(TagType, by_value=True)
+
+
+class ThemeSchema(Schema):
+    id = fields.Int()
+    theme_name = fields.String()
+    json_data = fields.String()
+
+
+class DashboardGetResponseSchema(Schema):
+    id = fields.Int()
+    slug = fields.String()
+    url = fields.String()
+    dashboard_title = fields.String(
+        metadata={"description": dashboard_title_description}
+    )
+    category = fields.String(metadata={"description": category_description})
+    thumbnail_url = fields.String(allow_none=True)
+    published = fields.Boolean()
+    css = fields.String(metadata={"description": css_description})
+    theme = fields.Nested(ThemeSchema, allow_none=True)
+    json_metadata = fields.String(metadata={"description": json_metadata_description})
+    position_json = fields.String(metadata={"description": position_json_description})
+    certified_by = fields.String(metadata={"description": certified_by_description})
+    certification_details = fields.String(
+        metadata={"description": certification_details_description}
+    )
+    changed_by_name = fields.String()
+    changed_by = fields.Nested(UserSchema(exclude=["username"]))
+    changed_on = fields.DateTime()
+    created_by = fields.Nested(UserSchema(exclude=["username"]))
+    charts = fields.List(fields.String(metadata={"description": charts_description}))
+    owners = fields.List(fields.Nested(UserSchema(exclude=["username"])))
+    roles = fields.List(fields.Nested(RolesSchema))
+    tags = fields.Nested(TagSchema, many=True)
+    changed_on_humanized = fields.String(data_key="changed_on_delta_humanized")
+    created_on_humanized = fields.String(data_key="created_on_delta_humanized")
+    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
+    uuid = fields.UUID(allow_none=True)
+
+    # pylint: disable=unused-argument
+    @post_dump()
+    def post_dump(self, serialized: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
+        if security_manager.is_guest_user():
+            del serialized["owners"]
+            del serialized["changed_by_name"]
+            del serialized["changed_by"]
+        return serialized
+
+
+class DatabaseSchema(Schema):
+    id = fields.Int()
+    name = fields.String()
+    backend = fields.String()
+    allows_subquery = fields.Bool()
+    allows_cost_estimate = fields.Bool()
+    allows_virtual_table_explore = fields.Bool()
+    disable_data_preview = fields.Bool()
+    disable_drill_to_detail = fields.Bool()
+    allow_multi_catalog = fields.Bool()
+    explore_database_id = fields.Int()
+
+
+class DashboardDatasetSchema(Schema):
+    id = fields.Int()
+    uid = fields.Str()
+    column_formats = fields.Dict()
+    database = fields.Nested(DatabaseSchema)
+    default_endpoint = fields.String()
+    filter_select = fields.Bool()
+    filter_select_enabled = fields.Bool()
+    is_sqllab_view = fields.Bool()
+    name = fields.Str()
+    datasource_name = fields.Str()
+    table_name = fields.Str()
+    type = fields.Str()
+    schema = fields.Str()
+    offset = fields.Int()
+    cache_timeout = fields.Int()
+    params = fields.Str()
+    perm = fields.Str()
+    edit_url = fields.Str()
+    sql = fields.Str()
+    select_star = fields.Str()
+    main_dttm_col = fields.Str()
+    health_check_message = fields.Str()
+    fetch_values_predicate = fields.Str()
+    template_params = fields.Str()
+    owners = fields.List(fields.Dict())
+    columns = fields.List(fields.Dict())
+    column_types = fields.List(fields.Int())
+    column_names = fields.List(fields.Str())
+    metrics = fields.List(fields.Dict())
+    order_by_choices = fields.List(fields.List(fields.Str()))
+    verbose_map = fields.Dict(fields.Str(), fields.Str())
+    time_grain_sqla = fields.List(fields.List(fields.Str()))
+    granularity_sqla = fields.List(fields.List(fields.Str()))
+    normalize_columns = fields.Bool()
+    always_filter_main_dttm = fields.Bool()
+
+    # pylint: disable=unused-argument
+    @post_dump()
+    def post_dump(self, serialized: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
+        if security_manager.is_guest_user():
+            del serialized["owners"]
+            del serialized["database"]
+        return serialized
+
+
+class TabSchema(Schema):
+    # pylint: disable=W0108
+    children = fields.List(fields.Nested(lambda: TabSchema()))
+    value = fields.Str()
+    title = fields.Str()
+    parents = fields.List(fields.Str())
+
+
+class TabsPayloadSchema(Schema):
+    all_tabs = fields.Dict(keys=fields.String(), values=fields.String())
+    tab_tree = fields.List(fields.Nested(lambda: TabSchema))
+
+
+class BaseDashboardSchema(Schema):
+    # pylint: disable=unused-argument
+    @post_load
+    def post_load(self, data: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
+        if data.get("slug"):
+            data["slug"] = data["slug"].strip()
+            data["slug"] = data["slug"].replace(" ", "-")
+            data["slug"] = re.sub(r"[^\w\-]+", "", data["slug"])
+        return data
+
+
+class DashboardPostSchema(BaseDashboardSchema):
+    dashboard_title = fields.String(
+        metadata={"description": dashboard_title_description},
+        allow_none=True,
+        validate=Length(0, 500),
+    )
+    category = fields.String(
+        metadata={"description": category_description},
+        required=True,
+        validate=OneOf(
+            [
+                "Performance Cockpit",
+                "Agent Empowerment",
+                "CX and Journey",
+                "Business Strategy",
+            ]
+        ),
+    )
+    slug = fields.String(
+        metadata={"description": slug_description},
+        allow_none=True,
+        validate=[Length(1, 255)],
+    )
+    owners = fields.List(fields.Integer(metadata={"description": owners_description}))
+    roles = fields.List(fields.Integer(metadata={"description": roles_description}))
+    position_json = fields.String(
+        metadata={"description": position_json_description}, validate=validate_json
+    )
+    css = fields.String(metadata={"description": css_description})
+    theme_id = fields.Integer(
+        metadata={"description": "Theme ID for the dashboard"}, allow_none=True
+    )
+    json_metadata = fields.String(
+        metadata={"description": json_metadata_description},
+        validate=validate_json_metadata,
+    )
+    published = fields.Boolean(metadata={"description": published_description})
+    certified_by = fields.String(
+        metadata={"description": certified_by_description}, allow_none=True
+    )
+    certification_details = fields.String(
+        metadata={"description": certification_details_description}, allow_none=True
+    )
+    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
+    external_url = fields.String(allow_none=True)
+    uuid = fields.UUID(allow_none=True)
+
+
+class DashboardCopySchema(Schema):
+    dashboard_title = fields.String(
+        metadata={"description": dashboard_title_description},
+        allow_none=True,
+        validate=Length(0, 500),
+    )
+    category = fields.String(
+        metadata={"description": category_description},
+        required=True,
+        validate=OneOf(
+            [
+                "Performance Cockpit",
+                "Agent Empowerment",
+                "CX and Journey",
+                "Business Strategy",
+            ]
+        ),
+    )
+    css = fields.String(metadata={"description": css_description})
+    json_metadata = fields.String(
+        metadata={"description": json_metadata_description},
+        validate=validate_json_metadata,
+        required=True,
+    )
+    duplicate_slices = fields.Boolean(
+        metadata={
+            "description": "Whether or not to also copy all charts on the dashboard"
+        }
+    )
+
+
+class DashboardPutSchema(BaseDashboardSchema):
+    dashboard_title = fields.String(
+        metadata={"description": dashboard_title_description},
+        allow_none=True,
+        validate=Length(0, 500),
+    )
+    category = fields.String(
+        metadata={"description": category_description},
+        allow_none=True,
+        validate=OneOf(
+            [
+                "Performance Cockpit",
+                "Agent Empowerment",
+                "CX and Journey",
+                "Business Strategy",
+            ]
+        ),
+    )
+    slug = fields.String(
+        metadata={"description": slug_description},
+        allow_none=True,
+        validate=Length(0, 255),
+    )
+    owners = fields.List(
+        fields.Integer(metadata={"description": owners_description}, allow_none=True)
+    )
+    roles = fields.List(
+        fields.Integer(metadata={"description": roles_description}, allow_none=True)
+    )
+    position_json = fields.String(
+        metadata={"description": position_json_description},
+        allow_none=True,
+        validate=validate_json,
+    )
+    css = fields.String(metadata={"description": css_description}, allow_none=True)
+    theme_id = fields.Integer(
+        metadata={"description": "Theme ID for the dashboard"}, allow_none=True
+    )
+    json_metadata = fields.String(
+        metadata={"description": json_metadata_description},
+        allow_none=True,
+        validate=validate_json_metadata,
+    )
+    published = fields.Boolean(
+        metadata={"description": published_description}, allow_none=True
+    )
+    certified_by = fields.String(
+        metadata={"description": certified_by_description}, allow_none=True
+    )
+    certification_details = fields.String(
+        metadata={"description": certification_details_description}, allow_none=True
+    )
+    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
+    external_url = fields.String(allow_none=True)
+    tags = fields.List(
+        fields.Integer(metadata={"description": tags_description}, allow_none=True)
+    )
+    uuid = fields.UUID(allow_none=True)
+
+
+class DashboardNativeFiltersConfigUpdateSchema(BaseDashboardSchema):
+    deleted = fields.List(fields.String(), allow_none=False)
+    modified = fields.List(fields.Raw(), allow_none=False)
+    reordered = fields.List(fields.String(), allow_none=False)
+
+
+class DashboardColorsConfigUpdateSchema(BaseDashboardSchema):
+    color_namespace = fields.String(allow_none=True)
+    color_scheme = fields.String(allow_none=True)
+    map_label_colors = fields.Dict(allow_none=False)
+    shared_label_colors = SharedLabelsColorsField()
+    label_colors = fields.Dict(allow_none=False)
+    color_scheme_domain = fields.List(fields.String(), allow_none=False)
+
+
+class DashboardScreenshotPostSchema(Schema):
+    dataMask = fields.Dict(  # noqa: N815
+        keys=fields.Str(),
+        values=fields.Raw(),
+        metadata={"description": "An object representing the data mask."},
+    )
+    activeTabs = fields.List(  # noqa: N815
+        fields.Str(), metadata={"description": "A list representing active tabs."}
+    )
+    anchor = fields.String(
+        metadata={"description": "A string representing the anchor."}
+    )
+    urlParams = fields.List(  # noqa: N815
+        fields.Tuple(
+            (fields.Str(), fields.Str()),
+        ),
+        metadata={"description": "A list of tuples, each containing two strings."},
+    )
+
+
+class ChartFavStarResponseResult(Schema):
+    id = fields.Integer(metadata={"description": "The Chart id"})
+    value = fields.Boolean(metadata={"description": "The FaveStar value"})
+
+
+class GetFavStarIdsSchema(Schema):
+    result = fields.List(
+        fields.Nested(ChartFavStarResponseResult),
+        metadata={
+            "description": "A list of results for each corresponding chart in the request"  # noqa: E501
+        },
+    )
+
+
+class ImportV1DashboardSchema(Schema):
+    dashboard_title = fields.String(required=True)
+    category = fields.String(allow_none=True)
+    description = fields.String(allow_none=True)
+    css = fields.String(allow_none=True)
+    slug = fields.String(allow_none=True)
+    uuid = fields.UUID(required=True)
+    position = fields.Dict()
+    metadata = fields.Dict()
+    version = fields.String(required=True)
+    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
+    external_url = fields.String(allow_none=True)
+    certified_by = fields.String(allow_none=True)
+    certification_details = fields.String(allow_none=True)
+    published = fields.Boolean(allow_none=True)
+    tags = fields.List(fields.String(), allow_none=True)
+    theme_uuid = fields.UUID(allow_none=True)
+    theme_id = fields.Integer(allow_none=True)
+
+
+class EmbeddedDashboardConfigSchema(Schema):
+    allowed_domains = fields.List(fields.String(), required=True)
+
+
+class EmbeddedDashboardResponseSchema(Schema):
+    uuid = fields.String()
+    allowed_domains = fields.List(fields.String())
+    dashboard_id = fields.String()
+    changed_on = fields.DateTime()
+    changed_by = fields.Nested(UserSchema)
+
+
+class DashboardCacheScreenshotResponseSchema(Schema):
+    cache_key = fields.String(metadata={"description": "The cache key"})
+    dashboard_url = fields.String(
+        metadata={"description": "The url to render the dashboard"}
+    )
+    image_url = fields.String(
+        metadata={"description": "The url to fetch the screenshot"}
+    )
+    task_status = fields.String(
+        metadata={"description": "The status of the async screenshot"}
+    )
+    task_updated_at = fields.String(
+        metadata={"description": "The timestamp of the last change in status"}
+    )
+
+
+class CacheScreenshotSchema(Schema):
+    dataMask = fields.Dict(keys=fields.Str(), values=fields.Raw(), required=False)  # noqa: N815
+    activeTabs = fields.List(fields.Str(), required=False)  # noqa: N815
+    anchor = fields.Str(required=False)
+    urlParams = fields.List(  # noqa: N815
+        fields.List(fields.Str(), validate=lambda x: len(x) == 2), required=False
+    )
+    permalinkKey = fields.Str(required=False)  # noqa: N815
