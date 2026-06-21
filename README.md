@@ -207,7 +207,6 @@ const Header = () => {
   const [emphasizeUndo, setEmphasizeUndo] = useState(false);
   const [emphasizeRedo, setEmphasizeRedo] = useState(false);
   const [showingPropertiesModal, setShowingPropertiesModal] = useState(false);
-  const [showingDownloadModal, setShowingDownloadModal] = useState(false);
   const [showingRefreshModal, setShowingRefreshModal] = useState(false);
   const [showingEmbedModal, setShowingEmbedModal] = useState(false);
   const [showingReportModal, setShowingReportModal] = useState(false);
@@ -796,29 +795,11 @@ const Header = () => {
                 <Icons.EditOutlined iconSize="m" />
               </Button>
             )}
-            {/* --- CUSTOM DOWNLOAD DATA BUTTON --- */}
-            {!editMode && (
-              <Button
-                buttonStyle="secondary"
-                className="dashboard-download-btn"
-                onClick={() => setShowingDownloadModal(true)}
-                style={{
-                  marginRight: '8px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  height: '36px',
-                }}
-              >
-                <Icons.DownloadOutlined iconSize="m" />
-                {t('Download Data')}
-              </Button>
-            )}
             {dashboardInfo?.id === 61 && (
               <Button
                 buttonStyle="primary"
                 className="observability-btn"
-
+                
                 style={{
                   borderRadius: '14px',
 
@@ -1122,12 +1103,6 @@ const Header = () => {
         onConfirmNavigation={handleConfirmNavigation}
         handleSave={handleSaveAndCloseModal}
       />
-      {showingDownloadModal && (
-        <div style={{ position: 'fixed', zIndex: 1000 }}>
-          {/* We will write the Modal component contents here in the next step! */}
-          {/* For now, this placeholder handles the UI toggle window */}
-        </div>
-      )}
     </div>
   );
 };
