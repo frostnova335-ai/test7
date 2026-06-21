@@ -14,414 +14,256 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-# isort:skip_file
-from unittest.mock import patch
+"""Init
 
-from tests.integration_tests.fixtures.world_bank_dashboard import (
-    load_world_bank_dashboard_with_slices,  # noqa: F401
-    load_world_bank_data,  # noqa: F401
-)
+Revision ID: 4e6a06bad7a8
+Revises: None
+Create Date: 2015-09-21 17:30:38.442998
 
-import pytest
-from flask_appbuilder.models.sqla.interface import SQLAInterface
-import prison
+"""
 
-import tests.integration_tests.test_app  # noqa: F401
-from superset import db, security_manager
-from superset.extensions import appbuilder
-from superset.models.dashboard import Dashboard
-from superset.views.base_api import BaseSupersetModelRestApi, requires_json  # noqa: F401
-from superset.utils import json
+import sqlalchemy as sa
+from alembic import op
 
-from tests.conftest import with_config
-from tests.integration_tests.base_tests import SupersetTestCase
-from tests.integration_tests.constants import ADMIN_USERNAME
+from superset.migrations.shared.utils import create_table
+
+# revision identifiers, used by Alembic.
+revision = "4e6a06bad7a8"
+down_revision = None
 
 
-class Model1Api(BaseSupersetModelRestApi):
-    datamodel = SQLAInterface(Dashboard)
-    allow_browser_login = True
-    class_permission_name = "Dashboard"
-    method_permission_name = {
-        "get_list": "read",
-        "get": "read",
-        "export": "read",
-        "post": "write",
-        "put": "write",
-        "delete": "write",
-        "bulk_delete": "write",
-        "info": "read",
-        "related": "read",
-    }
-
-
-class TestOpenApiSpec(SupersetTestCase):
-    def setUp(self) -> None:
-        appbuilder.add_api(Model1Api)
-
-    def test_open_api_spec(self):
-        """
-        API: Test validate OpenAPI spec
-        :return:
-        """
-        from openapi_spec_validator import validate_spec
-
-        self.login(ADMIN_USERNAME)
-        uri = "api/v1/_openapi"
-        rv = self.client.get(uri)
-        assert rv.status_code == 200
-        response = json.loads(rv.data.decode("utf-8"))
-        validate_spec(response)
-
-
-class TestBaseModelRestApi(SupersetTestCase):
-    @pytest.mark.usefixtures("load_world_bank_dashboard_with_slices")
-    def test_default_missing_declaration_get(self):
-        """
-        API: Test default missing declaration on get
-
-        We want to make sure that not declared list_columns will
-        not render all columns by default but just the model's pk
-        """
-        # Check get list response
-        self.login(ADMIN_USERNAME)
-        uri = "api/v1/model1api/"
-        rv = self.client.get(uri)
-        assert rv.status_code == 200
-        response = json.loads(rv.data.decode("utf-8"))
-        assert response["list_columns"] == ["id"]
-        for result in response["result"]:
-            assert list(result.keys()) == ["id"]
-
-        # Check get response
-        dashboard = db.session.query(Dashboard).first()
-        uri = f"api/v1/model1api/{dashboard.id}"
-        rv = self.client.get(uri)
-        assert rv.status_code == 200
-        response = json.loads(rv.data.decode("utf-8"))
-        assert response["show_columns"] == ["id"]
-        assert list(response["result"].keys()) == ["id"]
-
-    def test_default_missing_declaration_put_spec(self):
-        """
-        API: Test default missing declaration on put openapi spec
-
-        We want to make sure that not declared edit_columns will
-        not render all columns by default but just the model's pk
-        """
-        self.login(ADMIN_USERNAME)
-        uri = "api/v1/_openapi"
-        rv = self.client.get(uri)
-        # dashboard model accepts all fields are null
-        assert rv.status_code == 200
-        response = json.loads(rv.data.decode("utf-8"))
-        expected_mutation_spec = {
-            "properties": {"id": {"type": "integer"}},
-            "type": "object",
-        }
-        assert (
-            response["components"]["schemas"]["Model1Api.post"]
-            == expected_mutation_spec
-        )
-        assert (
-            response["components"]["schemas"]["Model1Api.put"] == expected_mutation_spec
-        )
-
-    def test_default_missing_declaration_post(self):
-        """
-        API: Test default missing declaration on post
-
-        We want to make sure that not declared add_columns will
-        not accept all columns by default
-        """
-        dashboard_data = {
-            "dashboard_title": "title1",
-            "slug": "slug1",
-            "position_json": '{"a": "A"}',
-            "css": "css",
-            "json_metadata": '{"b": "B"}',
-            "published": True,
-        }
-        self.login(ADMIN_USERNAME)
-        uri = "api/v1/model1api/"
-        rv = self.client.post(uri, json=dashboard_data)
-        response = json.loads(rv.data.decode("utf-8"))
-        assert rv.status_code == 422
-        expected_response = {
-            "message": {
-                "css": ["Unknown field."],
-                "dashboard_title": ["Unknown field."],
-                "json_metadata": ["Unknown field."],
-                "position_json": ["Unknown field."],
-                "published": ["Unknown field."],
-                "slug": ["Unknown field."],
-            }
-        }
-        assert response == expected_response
-
-    def test_refuse_invalid_format_request(self):
-        """
-        API: Test invalid format of request
-
-        We want to make sure that non-JSON request are refused
-        """
-        self.login(ADMIN_USERNAME)
-        uri = "api/v1/report/"  # endpoint decorated with @requires_json
-        rv = self.client.post(
-            uri, data="a: value\nb: 1\n", content_type="application/yaml"
-        )
-        assert rv.status_code == 400
-
-    @pytest.mark.usefixtures("load_world_bank_dashboard_with_slices")
-    def test_default_missing_declaration_put(self):
-        """
-        API: Test default missing declaration on put
-
-        We want to make sure that not declared edit_columns will
-        not accept all columns by default
-        """
-        dashboard = db.session.query(Dashboard).first()
-        dashboard_data = {"dashboard_title": "CHANGED", "slug": "CHANGED"}
-        self.login(ADMIN_USERNAME)
-        uri = f"api/v1/model1api/{dashboard.id}"
-        rv = self.client.put(uri, json=dashboard_data)
-        response = json.loads(rv.data.decode("utf-8"))
-        assert rv.status_code == 422
-        expected_response = {
-            "message": {
-                "dashboard_title": ["Unknown field."],
-                "slug": ["Unknown field."],
-            }
-        }
-        assert response == expected_response
-
-
-class ApiOwnersTestCaseMixin:
-    """
-    Implements shared tests for owners related field
-    """
-
-    resource_name: str = ""
-
-    def test_get_related_owners(self):
-        """
-        API: Test get related owners
-        """
-        self.login(ADMIN_USERNAME)
-        uri = f"api/v1/{self.resource_name}/related/owners"
-        rv = self.client.get(uri)
-        assert rv.status_code == 200
-        response = json.loads(rv.data.decode("utf-8"))
-        users = db.session.query(security_manager.user_model).all()
-        expected_users = [str(user) for user in users]
-        assert response["count"] == len(users)
-        # This needs to be implemented like this, because ordering varies between
-        # postgres and mysql
-        response_users = [result["text"] for result in response["result"]]
-        for expected_user in expected_users:
-            assert expected_user in response_users
-
-    def test_get_related_owners_with_extra_filters(self):
-        """
-        API: Test get related owners with extra related query filters
-        """
-        self.login(ADMIN_USERNAME)
-
-        def _base_filter(query):
-            return query.filter_by(username="alpha")
-
-        with patch.dict(
-            "flask.current_app.config",
-            {"EXTRA_RELATED_QUERY_FILTERS": {"user": _base_filter}},
-        ):
-            uri = f"api/v1/{self.resource_name}/related/owners"
-            rv = self.client.get(uri)
-            assert rv.status_code == 200
-            response = json.loads(rv.data.decode("utf-8"))
-            response_users = [result["text"] for result in response["result"]]
-            assert response_users == ["alpha user"]
-
-    def test_get_related_owners_paginated(self):
-        """
-        API: Test get related owners with pagination
-        """
-        self.login(ADMIN_USERNAME)
-        page_size = 1
-        argument = {"page_size": page_size}
-        uri = f"api/v1/{self.resource_name}/related/owners?q={prison.dumps(argument)}"
-        rv = self.client.get(uri)
-        assert rv.status_code == 200
-        response = json.loads(rv.data.decode("utf-8"))
-        users = db.session.query(security_manager.user_model).all()
-
-        # the count should correspond with the total number of users
-        assert response["count"] == len(users)
-
-        # the length of the result should be at most equal to the page size
-        assert len(response["result"]) == min(page_size, len(users))
-
-        # make sure all received users are included in the full set of users
-        all_users = [str(user) for user in users]
-        for received_user in [result["text"] for result in response["result"]]:
-            assert received_user in all_users
-
-    def test_get_ids_related_owners_paginated(self):
-        """
-        API: Test get related owners with pagination returns 422
-        """
-        self.login(ADMIN_USERNAME)
-        argument = {"page": 1, "page_size": 1, "include_ids": [2]}
-        uri = f"api/v1/{self.resource_name}/related/owners?q={prison.dumps(argument)}"
-        rv = self.client.get(uri)
-        assert rv.status_code == 422
-
-    def test_get_filter_related_owners(self):
-        """
-        API: Test get filter related owners
-        """
-        self.login(ADMIN_USERNAME)
-        argument = {"filter": "gamma"}
-        uri = f"api/v1/{self.resource_name}/related/owners?q={prison.dumps(argument)}"
-
-        rv = self.client.get(uri)
-        assert rv.status_code == 200
-        response = json.loads(rv.data.decode("utf-8"))
-        assert 4 == response["count"]
-        sorted_results = sorted(response["result"], key=lambda value: value["text"])
-        expected_results = [
-            {
-                "extra": {"active": True, "email": "gamma@fab.org"},
-                "text": "gamma user",
-                "value": 2,
-            },
-            {
-                "extra": {"active": True, "email": "gamma2@fab.org"},
-                "text": "gamma2 user",
-                "value": 3,
-            },
-            {
-                "extra": {"active": True, "email": "gamma_no_csv@fab.org"},
-                "text": "gamma_no_csv user",
-                "value": 6,
-            },
-            {
-                "extra": {"active": True, "email": "gamma_sqllab@fab.org"},
-                "text": "gamma_sqllab user",
-                "value": 4,
-            },
-        ]
-        # TODO Check me
-        assert expected_results == sorted_results
-
-    @with_config({"EXCLUDE_USERS_FROM_LISTS": ["gamma"]})
-    def test_get_base_filter_related_owners(self):
-        """
-        API: Test get base filter related owners
-        """
-        self.login(ADMIN_USERNAME)
-        uri = f"api/v1/{self.resource_name}/related/owners"
-        gamma_user = (
-            db.session.query(security_manager.user_model)
-            .filter(security_manager.user_model.username == "gamma")
-            .one_or_none()
-        )
-        assert gamma_user is not None
-        users = db.session.query(security_manager.user_model).all()
-
-        rv = self.client.get(uri)
-        assert rv.status_code == 200
-        response = json.loads(rv.data.decode("utf-8"))
-        assert response["count"] == len(users) - 1
-        response_users = [result["text"] for result in response["result"]]
-        assert "gamma user" not in response_users
-
-    @patch(
-        "superset.security.SupersetSecurityManager.get_exclude_users_from_lists",
-        return_value=["gamma"],
+def upgrade():
+    ### commands auto generated by Alembic - please adjust! ###
+    create_table(
+        "clusters",
+        sa.Column("created_on", sa.DateTime(), nullable=False),
+        sa.Column("changed_on", sa.DateTime(), nullable=False),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("cluster_name", sa.String(length=250), nullable=True),
+        sa.Column("coordinator_host", sa.String(length=255), nullable=True),
+        sa.Column("coordinator_port", sa.Integer(), nullable=True),
+        sa.Column("coordinator_endpoint", sa.String(length=255), nullable=True),
+        sa.Column("broker_host", sa.String(length=255), nullable=True),
+        sa.Column("broker_port", sa.Integer(), nullable=True),
+        sa.Column("broker_endpoint", sa.String(length=255), nullable=True),
+        sa.Column("metadata_last_refreshed", sa.DateTime(), nullable=True),
+        sa.Column(
+            "created_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.Column(
+            "changed_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("cluster_name"),
     )
-    def test_get_base_filter_related_owners_on_sm(
-        self, mock_get_exclude_users_from_list
-    ):
-        """
-        API: Test get base filter related owners using security manager
-        """
-        self.login(ADMIN_USERNAME)
-        uri = f"api/v1/{self.resource_name}/related/owners"
-        gamma_user = (
-            db.session.query(security_manager.user_model)
-            .filter(security_manager.user_model.username == "gamma")
-            .one_or_none()
-        )
-        assert gamma_user is not None
-        users = db.session.query(security_manager.user_model).all()
+    create_table(
+        "dashboards",
+        sa.Column("created_on", sa.DateTime(), nullable=False),
+        sa.Column("changed_on", sa.DateTime(), nullable=False),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("dashboard_title", sa.String(length=500), nullable=True),
+        sa.Column("position_json", sa.Text(), nullable=True),
+        sa.Column(
+            "created_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.Column(
+            "changed_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    create_table(
+        "dbs",
+        sa.Column("created_on", sa.DateTime(), nullable=False),
+        sa.Column("changed_on", sa.DateTime(), nullable=False),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("database_name", sa.String(length=250), nullable=True),
+        sa.Column("sqlalchemy_uri", sa.String(length=1024), nullable=True),
+        sa.Column(
+            "created_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.Column(
+            "changed_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("database_name"),
+    )
+    create_table(
+        "datasources",
+        sa.Column("created_on", sa.DateTime(), nullable=False),
+        sa.Column("changed_on", sa.DateTime(), nullable=False),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("datasource_name", sa.String(length=255), nullable=True),
+        sa.Column("is_featured", sa.Boolean(), nullable=True),
+        sa.Column("is_hidden", sa.Boolean(), nullable=True),
+        sa.Column("description", sa.Text(), nullable=True),
+        sa.Column("default_endpoint", sa.Text(), nullable=True),
+        sa.Column("user_id", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True),
+        sa.Column(
+            "cluster_name",
+            sa.String(length=250),
+            sa.ForeignKey("clusters.cluster_name"),
+            nullable=True,
+        ),
+        sa.Column(
+            "created_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.Column(
+            "changed_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("datasource_name"),
+    )
+    create_table(
+        "tables",
+        sa.Column("created_on", sa.DateTime(), nullable=False),
+        sa.Column("changed_on", sa.DateTime(), nullable=False),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("table_name", sa.String(length=250), nullable=True),
+        sa.Column("main_dttm_col", sa.String(length=250), nullable=True),
+        sa.Column("default_endpoint", sa.Text(), nullable=True),
+        sa.Column("database_id", sa.Integer(), sa.ForeignKey("dbs.id"), nullable=False),
+        sa.Column(
+            "created_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.Column(
+            "changed_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("table_name"),
+    )
+    create_table(
+        "columns",
+        sa.Column("created_on", sa.DateTime(), nullable=False),
+        sa.Column("changed_on", sa.DateTime(), nullable=False),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("datasource_name", sa.String(length=255), nullable=True),
+        sa.Column("column_name", sa.String(length=255), nullable=True),
+        sa.Column("is_active", sa.Boolean(), nullable=True),
+        sa.Column("type", sa.String(length=32), nullable=True),
+        sa.Column("groupby", sa.Boolean(), nullable=True),
+        sa.Column("count_distinct", sa.Boolean(), nullable=True),
+        sa.Column("sum", sa.Boolean(), nullable=True),
+        sa.Column("max", sa.Boolean(), nullable=True),
+        sa.Column("min", sa.Boolean(), nullable=True),
+        sa.Column("filterable", sa.Boolean(), nullable=True),
+        sa.Column("description", sa.Text(), nullable=True),
+        sa.Column(
+            "created_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.Column(
+            "changed_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    create_table(
+        "metrics",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("metric_name", sa.String(length=512), nullable=True),
+        sa.Column("verbose_name", sa.String(length=1024), nullable=True),
+        sa.Column("metric_type", sa.String(length=32), nullable=True),
+        sa.Column(
+            "datasource_name",
+            sa.String(length=255),
+            sa.ForeignKey("datasources.datasource_name"),
+            nullable=True,
+        ),
+        sa.Column("json", sa.Text(), nullable=True),
+        sa.Column("description", sa.Text(), nullable=True),
+        sa.ForeignKeyConstraint(["datasource_name"], ["datasources.datasource_name"]),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    create_table(
+        "slices",
+        sa.Column("created_on", sa.DateTime(), nullable=False),
+        sa.Column("changed_on", sa.DateTime(), nullable=False),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("slice_name", sa.String(length=250), nullable=True),
+        sa.Column(
+            "druid_datasource_id",
+            sa.Integer(),
+            sa.ForeignKey("datasources.id"),
+            nullable=True,
+        ),
+        sa.Column("table_id", sa.Integer(), sa.ForeignKey("tables.id"), nullable=True),
+        sa.Column("datasource_type", sa.String(length=200), nullable=True),
+        sa.Column("datasource_name", sa.String(length=2000), nullable=True),
+        sa.Column("viz_type", sa.String(length=250), nullable=True),
+        sa.Column("params", sa.Text(), nullable=True),
+        sa.Column(
+            "created_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.Column(
+            "changed_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    create_table(
+        "sql_metrics",
+        sa.Column("created_on", sa.DateTime(), nullable=False),
+        sa.Column("changed_on", sa.DateTime(), nullable=False),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("metric_name", sa.String(length=512), nullable=True),
+        sa.Column("verbose_name", sa.String(length=1024), nullable=True),
+        sa.Column("metric_type", sa.String(length=32), nullable=True),
+        sa.Column("table_id", sa.Integer(), sa.ForeignKey("tables.id"), nullable=True),
+        sa.Column("expression", sa.Text(), nullable=True),
+        sa.Column("description", sa.Text(), nullable=True),
+        sa.Column(
+            "created_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.Column(
+            "changed_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    create_table(
+        "table_columns",
+        sa.Column("created_on", sa.DateTime(), nullable=False),
+        sa.Column("changed_on", sa.DateTime(), nullable=False),
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("table_id", sa.Integer(), sa.ForeignKey("tables.id"), nullable=True),
+        sa.Column("column_name", sa.String(length=255), nullable=True),
+        sa.Column("is_dttm", sa.Boolean(), nullable=True),
+        sa.Column("is_active", sa.Boolean(), nullable=True),
+        sa.Column("type", sa.String(length=32), nullable=True),
+        sa.Column("groupby", sa.Boolean(), nullable=True),
+        sa.Column("count_distinct", sa.Boolean(), nullable=True),
+        sa.Column("sum", sa.Boolean(), nullable=True),
+        sa.Column("max", sa.Boolean(), nullable=True),
+        sa.Column("min", sa.Boolean(), nullable=True),
+        sa.Column("filterable", sa.Boolean(), nullable=True),
+        sa.Column("description", sa.Text(), nullable=True),
+        sa.Column(
+            "created_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.Column(
+            "changed_by_fk", sa.Integer(), sa.ForeignKey("ab_user.id"), nullable=True
+        ),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    create_table(
+        "dashboard_slices",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column(
+            "dashboard_id", sa.Integer(), sa.ForeignKey("dashboards.id"), nullable=True
+        ),
+        sa.Column("slice_id", sa.Integer(), sa.ForeignKey("slices.id"), nullable=True),
+        sa.PrimaryKeyConstraint("id"),
+    )
+    ### end Alembic commands ###
 
-        rv = self.client.get(uri)
-        assert rv.status_code == 200
-        response = json.loads(rv.data.decode("utf-8"))
-        assert response["count"] == len(users) - 1
-        response_users = [result["text"] for result in response["result"]]
-        assert "gamma user" not in response_users
 
-    def test_get_ids_related_owners(self):
-        """
-        API: Test get filter related owners
-        """
-        self.login(ADMIN_USERNAME)
-        argument = {"filter": "gamma_sqllab", "include_ids": [2]}
-        uri = f"api/v1/{self.resource_name}/related/owners?q={prison.dumps(argument)}"
-
-        rv = self.client.get(uri)
-        response = json.loads(rv.data.decode("utf-8"))
-        assert rv.status_code == 200
-        assert 2 == response["count"]
-        sorted_results = sorted(response["result"], key=lambda value: value["text"])
-        expected_results = [
-            {
-                "extra": {"active": True, "email": "gamma@fab.org"},
-                "text": "gamma user",
-                "value": 2,
-            },
-            {
-                "extra": {"active": True, "email": "gamma_sqllab@fab.org"},
-                "text": "gamma_sqllab user",
-                "value": 4,
-            },
-        ]
-        assert expected_results == sorted_results
-
-    def test_get_repeated_ids_related_owners(self):
-        """
-        API: Test get filter related owners
-        """
-        self.login(ADMIN_USERNAME)
-        argument = {"filter": "gamma_sqllab", "include_ids": [2, 4]}
-        uri = f"api/v1/{self.resource_name}/related/owners?q={prison.dumps(argument)}"
-
-        rv = self.client.get(uri)
-        response = json.loads(rv.data.decode("utf-8"))
-        assert rv.status_code == 200
-        assert 2 == response["count"]
-        sorted_results = sorted(response["result"], key=lambda value: value["text"])
-        expected_results = [
-            {
-                "extra": {"active": True, "email": "gamma@fab.org"},
-                "text": "gamma user",
-                "value": 2,
-            },
-            {
-                "extra": {"active": True, "email": "gamma_sqllab@fab.org"},
-                "text": "gamma_sqllab user",
-                "value": 4,
-            },
-        ]
-        assert expected_results == sorted_results
-
-    def test_get_related_fail(self):
-        """
-        API: Test get related fail
-        """
-        self.login(ADMIN_USERNAME)
-        uri = f"api/v1/{self.resource_name}/related/owner"
-
-        rv = self.client.get(uri)
-        assert rv.status_code == 404
+def downgrade():
+    ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table("dashboard_slices")
+    op.drop_table("table_columns")
+    op.drop_table("sql_metrics")
+    op.drop_table("slices")
+    op.drop_table("metrics")
+    op.drop_table("columns")
+    op.drop_table("tables")
+    op.drop_table("datasources")
+    op.drop_table("dbs")
+    op.drop_table("dashboards")
+    op.drop_table("clusters")
+    ### end Alembic commands ###
