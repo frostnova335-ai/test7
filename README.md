@@ -1,1110 +1,995 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-/* eslint-env browser */
-import { extendedDayjs } from '@superset-ui/core/utils/dates';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-  styled,
-  css,
-  isFeatureEnabled,
-  FeatureFlag,
-  t,
-  getExtensionsRegistry,
-} from '@superset-ui/core';
-import { Global } from '@emotion/react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import {
-  LOG_ACTIONS_PERIODIC_RENDER_DASHBOARD,
-  LOG_ACTIONS_FORCE_REFRESH_DASHBOARD,
-  LOG_ACTIONS_TOGGLE_EDIT_DASHBOARD,
-} from 'src/logger/LogUtils';
-import { Icons } from '@superset-ui/core/components/Icons';
-import {
-  Button,
-  Tooltip,
-  DeleteModal,
-  UnsavedChangesModal,
-  Select,
-} from '@superset-ui/core/components';
-import { findPermission } from 'src/utils/findPermission';
-import { safeStringify } from 'src/utils/safeStringify';
-import PublishedStatus from 'src/dashboard/components/PublishedStatus';
-import UndoRedoKeyListeners from 'src/dashboard/components/UndoRedoKeyListeners';
-import PropertiesModal from 'src/dashboard/components/PropertiesModal';
-import RefreshIntervalModal from 'src/dashboard/components/RefreshIntervalModal';
-import {
-  UNDO_LIMIT,
-  SAVE_TYPE_OVERWRITE,
-  DASHBOARD_POSITION_DATA_LIMIT,
-  DASHBOARD_HEADER_ID,
-} from 'src/dashboard/util/constants';
-import { TagTypeEnum } from 'src/components/Tag/TagType';
-import setPeriodicRunner, {
-  stopPeriodicRender,
-} from 'src/dashboard/util/setPeriodicRunner';
-import ReportModal from 'src/features/reports/ReportModal';
-import { deleteActiveReport } from 'src/features/reports/ReportModal/actions';
-import { PageHeaderWithActions } from '@superset-ui/core/components/PageHeaderWithActions';
-import { useUnsavedChangesPrompt } from 'src/hooks/useUnsavedChangesPrompt';
-import DashboardEmbedModal from '../EmbeddedModal';
-import OverwriteConfirm from '../OverwriteConfirm';
-import {
-  addDangerToast,
-  addSuccessToast,
-  addWarningToast,
-} from '../../../components/MessageToasts/actions';
-import {
-  dashboardTitleChanged,
-  redoLayoutAction,
-  undoLayoutAction,
-  updateDashboardTitle,
-  clearDashboardHistory,
-} from '../../actions/dashboardLayout';
-import {
-  fetchCharts,
-  fetchFaveStar,
-  maxUndoHistoryToast,
-  onChange,
-  onRefresh,
-  saveDashboardRequest,
-  saveFaveStar,
-  savePublished,
-  setEditMode,
-  setMaxUndoHistoryExceeded,
-  setRefreshFrequency,
-  setUnsavedChanges,
-} from '../../actions/dashboardState';
-import { logEvent } from '../../../logger/actions';
-import { dashboardInfoChanged } from '../../actions/dashboardInfo';
-import isDashboardLoading from '../../util/isDashboardLoading';
-import { useChartIds } from '../../util/charts/useChartIds';
-import { useDashboardMetadataBar } from './useDashboardMetadataBar';
-import { useHeaderActionsMenu } from './useHeaderActionsDropdownMenu';
-import { DASHBOARD_CATEGORIES } from 'src/dashboard/constants/categories';
-
-const extensionsRegistry = getExtensionsRegistry();
-
-const headerContainerStyle = theme => css`
-  border-bottom: none;
-`;
-
-const editButtonStyle = theme => css`
-  color: ${theme.colorPrimary};
-`;
-
-const actionButtonsStyle = theme => css`
-  display: flex;
-  align-items: center;
-
-  .action-schedule-report {
-    margin-left: ${theme.sizeUnit * 2}px;
-  }
-
-  .undoRedo {
-    display: flex;
-    margin-right: ${theme.sizeUnit * 2}px;
-  }
-`;
-
-const StyledUndoRedoButton = styled(Button)`
-  // TODO: check if we need this
-  padding: 0;
-  &:hover {
-    background: transparent;
-  }
-`;
-
-const undoRedoStyle = theme => css`
-  color: ${theme.colorIcon};
-  &:hover {
-    color: ${theme.colorIconHover};
-  }
-`;
-
-const undoRedoEmphasized = theme => css`
-  color: ${theme.colorIcon};
-`;
-
-const undoRedoDisabled = theme => css`
-  color: ${theme.colorTextDisabled};
-`;
-
-const saveBtnStyle = theme => css`
-  min-width: ${theme.sizeUnit * 17}px;
-  height: ${theme.sizeUnit * 8}px;
-  span > :first-of-type {
-    margin-right: 0;
-  }
-`;
-
-const discardBtnStyle = theme => css`
-  min-width: ${theme.sizeUnit * 22}px;
-  height: ${theme.sizeUnit * 8}px;
-`;
-
-const categorySelectStyle = theme => css`
-  width: ${theme.sizeUnit * 44}px;
-  min-width: ${theme.sizeUnit * 36}px;
-  max-width: 40vw;
-  margin-right: ${theme.sizeUnit * 2}px;
-  flex: 0 1 auto;
-
-  &.ant-select-single .ant-select-selector {
-    height: ${theme.sizeUnit * 8}px !important;
-    display: flex;
-    align-items: center;
-    border-radius: ${theme.borderRadius}px;
-    border: 1px solid ${theme.colorBorder};
-    background-color: ${theme.colorBgContainer};
-    width: 100%;
-  }
-
-  /* Unselected state: same look as selected (border, background, text) */
-  &.ant-select-single:not(.ant-select-open) .ant-select-selector {
-    border-color: ${theme.colorBorder};
-    background-color: ${theme.colorBgContainer};
-  }
-
-  .ant-select-selection-placeholder {
-    color: ${theme.colorText};
-  }
-
-  .ant-select-selection-item {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-`;
-
-const discardChanges = () => {
-  const url = new URL(window.location.href);
-
-  url.searchParams.delete('edit');
-  window.location.assign(url);
-};
-
-const Header = () => {
-  const dispatch = useDispatch();
-  const [didNotifyMaxUndoHistoryToast, setDidNotifyMaxUndoHistoryToast] =
-    useState(false);
-  const [emphasizeUndo, setEmphasizeUndo] = useState(false);
-  const [emphasizeRedo, setEmphasizeRedo] = useState(false);
-  const [showingPropertiesModal, setShowingPropertiesModal] = useState(false);
-  const [showingRefreshModal, setShowingRefreshModal] = useState(false);
-  const [showingEmbedModal, setShowingEmbedModal] = useState(false);
-  const [showingReportModal, setShowingReportModal] = useState(false);
-  const [currentReportDeleting, setCurrentReportDeleting] = useState(null);
-  const dashboardInfo = useSelector(state => state.dashboardInfo);
-  const layout = useSelector(state => state.dashboardLayout.present);
-  const undoLength = useSelector(state => state.dashboardLayout.past.length);
-  const redoLength = useSelector(state => state.dashboardLayout.future.length);
-  const dataMask = useSelector(state => state.dataMask);
-  const user = useSelector(state => state.user);
-  const chartIds = useChartIds();
-
-  const {
-    expandedSlices,
-    refreshFrequency,
-    shouldPersistRefreshFrequency,
-    customCss,
-    colorNamespace,
-    colorScheme,
-    isStarred,
-    isPublished,
-    hasUnsavedChanges,
-    maxUndoHistoryExceeded,
-    editMode,
-    lastModifiedTime,
-  } = useSelector(
-    state => ({
-      expandedSlices: state.dashboardState.expandedSlices,
-      refreshFrequency: state.dashboardState.refreshFrequency,
-      shouldPersistRefreshFrequency:
-        !!state.dashboardState.shouldPersistRefreshFrequency,
-      customCss: state.dashboardInfo.css,
-      colorNamespace: state.dashboardState.colorNamespace,
-      colorScheme: state.dashboardState.colorScheme,
-      isStarred: !!state.dashboardState.isStarred,
-      isPublished: !!state.dashboardState.isPublished,
-      hasUnsavedChanges: !!state.dashboardState.hasUnsavedChanges,
-      maxUndoHistoryExceeded: !!state.dashboardState.maxUndoHistoryExceeded,
-      editMode: !!state.dashboardState.editMode,
-      lastModifiedTime: state.lastModifiedTime,
-    }),
-    shallowEqual,
-  );
-  const isLoading = useSelector(state => isDashboardLoading(state.charts));
-
-  const refreshTimer = useRef(0);
-  const ctrlYTimeout = useRef(0);
-  const ctrlZTimeout = useRef(0);
-  const prevThemeIdRef = useRef(dashboardInfo.theme?.id ?? null);
-
-  const dashboardTitle = layout[DASHBOARD_HEADER_ID]?.meta?.text;
-  const { slug } = dashboardInfo;
-  const actualLastModifiedTime = Math.max(
-    lastModifiedTime,
-    dashboardInfo.last_modified_time,
-  );
-  const boundActionCreators = useMemo(
-    () =>
-      bindActionCreators(
-        {
-          addSuccessToast,
-          addDangerToast,
-          addWarningToast,
-          onUndo: undoLayoutAction,
-          onRedo: redoLayoutAction,
-          clearDashboardHistory,
-          setEditMode,
-          setUnsavedChanges,
-          fetchFaveStar,
-          saveFaveStar,
-          savePublished,
-          fetchCharts,
-          updateDashboardTitle,
-          onChange,
-          onSave: saveDashboardRequest,
-          setMaxUndoHistoryExceeded,
-          maxUndoHistoryToast,
-          logEvent,
-          setRefreshFrequency,
-          onRefresh,
-          dashboardInfoChanged,
-          dashboardTitleChanged,
-        },
-        dispatch,
-      ),
-    [dispatch],
-  );
-
-  const startPeriodicRender = useCallback(
-    interval => {
-      let intervalMessage;
-
-      if (interval) {
-        const periodicRefreshOptions =
-          dashboardInfo.common?.conf?.DASHBOARD_AUTO_REFRESH_INTERVALS;
-        const predefinedValue = periodicRefreshOptions.find(
-          option => Number(option[0]) === interval / 1000,
-        );
-
-        if (predefinedValue) {
-          intervalMessage = t(predefinedValue[1]);
-        } else {
-          intervalMessage = extendedDayjs
-            .duration(interval, 'millisecond')
-            .humanize();
-        }
-      }
-
-      const fetchCharts = (charts, force = false) =>
-        boundActionCreators.fetchCharts(
-          charts,
-          force,
-          interval * 0.2,
-          dashboardInfo.id,
-        );
-
-      const periodicRender = () => {
-        const { metadata } = dashboardInfo;
-        const immune = metadata.timed_refresh_immune_slices || [];
-        const affectedCharts = chartIds.filter(
-          chartId => immune.indexOf(chartId) === -1,
-        );
-
-        boundActionCreators.logEvent(LOG_ACTIONS_PERIODIC_RENDER_DASHBOARD, {
-          interval,
-          chartCount: affectedCharts.length,
-        });
-        boundActionCreators.addWarningToast(
-          t(
-            `This dashboard is currently auto refreshing; the next auto refresh will be in %s.`,
-            intervalMessage,
-          ),
-        );
-        if (
-          dashboardInfo.common?.conf?.DASHBOARD_AUTO_REFRESH_MODE === 'fetch'
-        ) {
-          // force-refresh while auto-refresh in dashboard
-          return fetchCharts(affectedCharts);
-        }
-        return fetchCharts(affectedCharts, true);
-      };
-
-      refreshTimer.current = setPeriodicRunner({
-        interval,
-        periodicRender,
-        refreshTimer: refreshTimer.current,
-      });
-    },
-    [boundActionCreators, chartIds, dashboardInfo],
-  );
-
-  useEffect(() => {
-    startPeriodicRender(refreshFrequency * 1000);
-  }, [refreshFrequency, startPeriodicRender]);
-
-  // Track theme updates as unsaved changes, but ignore initial hydration.
-  useEffect(() => {
-    const currentThemeId = dashboardInfo.theme?.id ?? null;
-    if (prevThemeIdRef.current === currentThemeId) {
-      return;
-    }
-    prevThemeIdRef.current = currentThemeId;
-    if (editMode) {
-      boundActionCreators.setUnsavedChanges(true);
-    }
-  }, [dashboardInfo.theme, editMode, boundActionCreators]);
-
-  useEffect(() => {
-    if (UNDO_LIMIT - undoLength <= 0 && !didNotifyMaxUndoHistoryToast) {
-      setDidNotifyMaxUndoHistoryToast(true);
-      boundActionCreators.maxUndoHistoryToast();
-    }
-    if (undoLength > UNDO_LIMIT && !maxUndoHistoryExceeded) {
-      boundActionCreators.setMaxUndoHistoryExceeded();
-    }
-  }, [
-    boundActionCreators,
-    didNotifyMaxUndoHistoryToast,
-    maxUndoHistoryExceeded,
-    undoLength,
-  ]);
-
-  useEffect(
-    () => () => {
-      stopPeriodicRender(refreshTimer.current);
-      boundActionCreators.setRefreshFrequency(0);
-      clearTimeout(ctrlYTimeout.current);
-      clearTimeout(ctrlZTimeout.current);
-    },
-    [boundActionCreators],
-  );
-
-  const handleChangeText = useCallback(
-    nextText => {
-      if (nextText && dashboardTitle !== nextText) {
-        boundActionCreators.updateDashboardTitle(nextText);
-        boundActionCreators.onChange();
-      }
-    },
-    [boundActionCreators, dashboardTitle],
-  );
-
-  const handleCtrlY = useCallback(() => {
-    boundActionCreators.onRedo();
-    setEmphasizeRedo(true);
-    if (ctrlYTimeout.current) {
-      clearTimeout(ctrlYTimeout.current);
-    }
-    ctrlYTimeout.current = setTimeout(() => {
-      setEmphasizeRedo(false);
-    }, 100);
-  }, [boundActionCreators]);
-
-  const handleCtrlZ = useCallback(() => {
-    boundActionCreators.onUndo();
-    setEmphasizeUndo(true);
-    if (ctrlZTimeout.current) {
-      clearTimeout(ctrlZTimeout.current);
-    }
-    ctrlZTimeout.current = setTimeout(() => {
-      setEmphasizeUndo(false);
-    }, 100);
-  }, [boundActionCreators]);
-
-  const forceRefresh = useCallback(() => {
-    if (!isLoading) {
-      boundActionCreators.logEvent(LOG_ACTIONS_FORCE_REFRESH_DASHBOARD, {
-        force: true,
-        interval: 0,
-        chartCount: chartIds.length,
-      });
-      return boundActionCreators.onRefresh(chartIds, true, 0, dashboardInfo.id);
-    }
-    return false;
-  }, [boundActionCreators, chartIds, dashboardInfo.id, isLoading]);
-
-  const toggleEditMode = useCallback(() => {
-    boundActionCreators.logEvent(LOG_ACTIONS_TOGGLE_EDIT_DASHBOARD, {
-      edit_mode: !editMode,
-    });
-    boundActionCreators.setEditMode(!editMode);
-  }, [boundActionCreators, editMode]);
-
-  const overwriteDashboard = useCallback(() => {
-    if (!dashboardInfo.category) {
-      boundActionCreators.addDangerToast(t('Dashboard category is required'));
-      return;
-    }
-
-    const currentColorNamespace =
-      dashboardInfo?.metadata?.color_namespace || colorNamespace;
-    const currentColorScheme =
-      dashboardInfo?.metadata?.color_scheme || colorScheme;
-
-    const data = {
-      certified_by: dashboardInfo.certified_by,
-      certification_details: dashboardInfo.certification_details,
-      css: customCss,
-      dashboard_title: dashboardTitle,
-      category: dashboardInfo.category,
-      last_modified_time: actualLastModifiedTime,
-      owners: dashboardInfo.owners,
-      roles: dashboardInfo.roles,
-      slug,
-      tags: (dashboardInfo.tags || []).filter(
-        item => item.type === TagTypeEnum.Custom || !item.type,
-      ),
-      theme_id: dashboardInfo.theme ? dashboardInfo.theme.id : null,
-      metadata: {
-        ...dashboardInfo?.metadata,
-        color_namespace: currentColorNamespace,
-        color_scheme: currentColorScheme,
-        positions: layout,
-        refresh_frequency: shouldPersistRefreshFrequency
-          ? refreshFrequency
-          : dashboardInfo.metadata?.refresh_frequency,
-      },
-    };
-
-    // make sure positions data less than DB storage limitation:
-    const positionJSONLength = safeStringify(layout).length;
-    const limit =
-      dashboardInfo.common?.conf?.SUPERSET_DASHBOARD_POSITION_DATA_LIMIT ||
-      DASHBOARD_POSITION_DATA_LIMIT;
-    if (positionJSONLength >= limit) {
-      boundActionCreators.addDangerToast(
-        t(
-          'Your dashboard is too large. Please reduce its size before saving it.',
-        ),
-      );
-    } else {
-      if (positionJSONLength >= limit * 0.9) {
-        boundActionCreators.addWarningToast(
-          t('Your dashboard is near the size limit.'),
-        );
-      }
-
-      boundActionCreators.onSave(data, dashboardInfo.id, SAVE_TYPE_OVERWRITE);
-    }
-  }, [
-    actualLastModifiedTime,
-    boundActionCreators,
-    colorNamespace,
-    colorScheme,
-    customCss,
-    dashboardInfo.category,
-    dashboardInfo.certification_details,
-    dashboardInfo.certified_by,
-    dashboardInfo.common?.conf?.SUPERSET_DASHBOARD_POSITION_DATA_LIMIT,
-    dashboardInfo.id,
-    dashboardInfo.metadata,
-    dashboardInfo.owners,
-    dashboardInfo.roles,
-    dashboardInfo.tags,
-    dashboardTitle,
-    layout,
-    refreshFrequency,
-    shouldPersistRefreshFrequency,
-    slug,
-  ]);
-
-  const {
-    showModal: showUnsavedChangesModal,
-    setShowModal: setShowUnsavedChangesModal,
-    handleConfirmNavigation,
-    handleSaveAndCloseModal,
-  } = useUnsavedChangesPrompt({
-    hasUnsavedChanges,
-    onSave: overwriteDashboard,
-  });
-
-  const showPropertiesModal = useCallback(() => {
-    setShowingPropertiesModal(true);
-  }, []);
-
-  const hidePropertiesModal = useCallback(() => {
-    setShowingPropertiesModal(false);
-  }, []);
-  const showRefreshModal = useCallback(() => {
-    setShowingRefreshModal(true);
-  }, []);
-  const hideRefreshModal = useCallback(() => {
-    setShowingRefreshModal(false);
-  }, []);
-
-  const showEmbedModal = useCallback(() => {
-    setShowingEmbedModal(true);
-  }, []);
-
-  const hideEmbedModal = useCallback(() => {
-    setShowingEmbedModal(false);
-  }, []);
-
-  const showReportModal = useCallback(() => {
-    setShowingReportModal(true);
-  }, []);
-
-  const hideReportModal = useCallback(() => {
-    setShowingReportModal(false);
-  }, []);
-
-  const metadataBar = useDashboardMetadataBar(dashboardInfo);
-
-  const userCanEdit =
-    dashboardInfo.dash_edit_perm && !dashboardInfo.is_managed_externally;
-  const userCanShare = dashboardInfo.dash_share_perm;
-  const userCanSaveAs = dashboardInfo.dash_save_perm;
-  const userCanCurate =
-    isFeatureEnabled(FeatureFlag.EmbeddedSuperset) &&
-    findPermission('can_set_embedded', 'Dashboard', user.roles);
-  const isEmbedded = !dashboardInfo?.userId;
-
-  const handleOnPropertiesChange = useCallback(
-    updates => {
-      boundActionCreators.dashboardInfoChanged({
-        slug: updates.slug,
-        category: updates.category,
-        metadata: JSON.parse(updates.jsonMetadata || '{}'),
-        certified_by: updates.certifiedBy,
-        certification_details: updates.certificationDetails,
-        owners: updates.owners,
-        roles: updates.roles,
-        tags: updates.tags,
-        theme_id: updates.themeId,
-        css: updates.css,
-      });
-      boundActionCreators.setUnsavedChanges(true);
-
-      if (updates.title && dashboardTitle !== updates.title) {
-        boundActionCreators.updateDashboardTitle(updates.title);
-        boundActionCreators.onChange();
-      }
-    },
-    [boundActionCreators, dashboardTitle],
-  );
-
-  const handleRefreshChange = useCallback(
-    (refreshFrequency, editMode) => {
-      boundActionCreators.setRefreshFrequency(refreshFrequency, !!editMode);
-    },
-    [boundActionCreators],
-  );
-
-  const NavExtension = extensionsRegistry.get('dashboard.nav.right');
-
-  const editableTitleProps = useMemo(
-    () => ({
-      title: dashboardTitle,
-      canEdit: userCanEdit && editMode,
-      onSave: handleChangeText,
-      placeholder: t('Add the name of the dashboard'),
-      label: t('Dashboard title'),
-      showTooltip: false,
-    }),
-    [dashboardTitle, editMode, handleChangeText, userCanEdit],
-  );
-
-  const certifiedBadgeProps = useMemo(
-    () => ({
-      certifiedBy: dashboardInfo.certified_by,
-      details: dashboardInfo.certification_details,
-    }),
-    [dashboardInfo.certification_details, dashboardInfo.certified_by],
-  );
-
-  const faveStarProps = useMemo(
-    () => ({
-      itemId: dashboardInfo.id,
-      fetchFaveStar: boundActionCreators.fetchFaveStar,
-      saveFaveStar: boundActionCreators.saveFaveStar,
-      isStarred,
-      showTooltip: true,
-    }),
-    [
-      boundActionCreators.fetchFaveStar,
-      boundActionCreators.saveFaveStar,
-      dashboardInfo.id,
-      isStarred,
-    ],
-  );
-
-  const titlePanelAdditionalItems = useMemo(
-    () => [
-      !editMode && (
-        <PublishedStatus
-          dashboardId={dashboardInfo.id}
-          isPublished={isPublished}
-          savePublished={boundActionCreators.savePublished}
-          userCanEdit={userCanEdit}
-          userCanSave={userCanSaveAs}
-          visible={!editMode}
-        />
-      ),
-      !editMode && !isEmbedded && null,
-    ],
-    [
-      boundActionCreators.savePublished,
-      dashboardInfo.id,
-      editMode,
-      metadataBar,
-      isEmbedded,
-      isPublished,
-      userCanEdit,
-      userCanSaveAs,
-    ],
-  );
-
-  const rightPanelAdditionalItems = useMemo(
-    () => (
-      <div className="button-container">
-        {userCanSaveAs && (
-          <div className="button-container" data-test="dashboard-edit-actions">
-            {editMode && (
-              <div css={actionButtonsStyle}>
-                <div className="undoRedo">
-                  <Tooltip
-                    id="dashboard-undo-tooltip"
-                    title={t('Undo the action')}
-                  >
-                    <StyledUndoRedoButton
-                      buttonStyle="link"
-                      disabled={undoLength < 1}
-                      onClick={
-                        undoLength > 0 ? boundActionCreators.onUndo : undefined
-                      }
-                    >
-                      <Icons.Undo
-                        css={[
-                          undoRedoStyle,
-                          emphasizeUndo && undoRedoEmphasized,
-                          undoLength < 1 && undoRedoDisabled,
-                        ]}
-                        data-test="undo-action"
-                        iconSize="xl"
-                      />
-                    </StyledUndoRedoButton>
-                  </Tooltip>
-                  <Tooltip
-                    id="dashboard-redo-tooltip"
-                    title={t('Redo the action')}
-                  >
-                    <StyledUndoRedoButton
-                      buttonStyle="link"
-                      disabled={redoLength < 1}
-                      onClick={
-                        redoLength > 0 ? boundActionCreators.onRedo : undefined
-                      }
-                    >
-                      <Icons.Redo
-                        css={[
-                          undoRedoStyle,
-                          emphasizeRedo && undoRedoEmphasized,
-                          redoLength < 1 && undoRedoDisabled,
-                        ]}
-                        data-test="redo-action"
-                        iconSize="xl"
-                      />
-                    </StyledUndoRedoButton>
-                  </Tooltip>
-                </div>
-                <Select
-                  css={categorySelectStyle}
-                  placeholder={t('Select')}
-                  value={dashboardInfo.category || undefined}
-                  options={DASHBOARD_CATEGORIES.map(category => ({
-                    value: category,
-                    label: category,
-                  }))}
-                  // Ensure category order matches Home page (no alphabetical re-sorting)
-                  filterSort={(a, b) =>
-                    DASHBOARD_CATEGORIES.indexOf(String(a?.value)) -
-                    DASHBOARD_CATEGORIES.indexOf(String(b?.value))
-                  }
-                  onChange={value => {
-                    boundActionCreators.dashboardInfoChanged({
-                      ...dashboardInfo,
-                      category: value,
-                    });
-                    boundActionCreators.setUnsavedChanges(true);
-                  }}
-                  data-test="dashboard-header-category-select"
-                />
-                <Button
-                  css={discardBtnStyle}
-                  buttonSize="small"
-                  onClick={discardChanges}
-                  buttonStyle="secondary"
-                  data-test="discard-changes-button"
-                  aria-label={t('Discard')}
-                >
-                  {t('Discard')}
-                </Button>
-                <Button
-                  css={saveBtnStyle}
-                  buttonSize="small"
-                  disabled={!hasUnsavedChanges}
-                  buttonStyle="primary"
-                  onClick={overwriteDashboard}
-                  data-test="header-save-button"
-                  aria-label={t('Save')}
-                >
-                  <Icons.SaveOutlined iconSize="m" />
-                  {t('Save')}
-                </Button>
-              </div>
-            )}
-          </div>
-        )}
-        {editMode ? (
-          <UndoRedoKeyListeners onUndo={handleCtrlZ} onRedo={handleCtrlY} />
-        ) : (
-          <div css={actionButtonsStyle}>
-            {NavExtension && <NavExtension />}
-            {userCanEdit && (
-              <Button
-                buttonStyle="secondary"
-                onClick={() => {
-                  toggleEditMode();
-                  boundActionCreators.clearDashboardHistory?.(); // Resets the `past` as an empty array
-                }}
-                data-test="edit-dashboard-button"
-                className="action-button"
-                css={editButtonStyle}
-                aria-label={t('Edit dashboard')}
-              >
-                <Icons.EditOutlined iconSize="m" />
-              </Button>
-            )}
-            {dashboardInfo?.id === 61 && (
-              <Button
-                buttonStyle="primary"
-                className="observability-btn"
-                
-                style={{
-                  borderRadius: '14px',
-
-                  padding: '10px',
-
-                  fontWeight: 670,
-
-                  fontSize: '12px',
-
-                  letterSpacing: '0.2px',
-
-                  background:
-                    'linear-gradient(135deg, rgb(242, 106, 33) 0%, rgb(255, 140, 66) 100%)',
-
-                  color: '#ffffff',
-
-                  border: 'none',
-
-                  boxShadow: '0 6px 18px rgba(242, 106, 33, 0.28)',
-
-                  display: 'flex',
-
-                  alignItems: 'center',
-
-                  justifyContent: 'center',
-
-                  gap: '9px',
-
-                  minHeight: '36px',
-
-                  position: 'relative',
-
-                  transition: 'all 0.25s ease',
-
-                  cursor: 'pointer',
-
-                  overflow: 'visible',
-                }}
-                onMouseEnter={e => {
-                  e.currentTarget.style.transform = 'translateY(-2px) scale(1.01)';
-                  e.currentTarget.style.boxShadow =
-                    '0 10px 24px rgba(242, 106, 33, 0.38)';
-
-                  const tooltip = e.currentTarget.querySelector(
-                    '.cxloop-tooltip',
-                  );
-
-                  if (tooltip) {
-                    tooltip.style.opacity = '1';
-                    tooltip.style.visibility = 'visible';
-                    tooltip.style.transform = 'translateX(-50%) translateY(0px)';
-                  }
-                }}
-                onMouseLeave={e => {
-                  e.currentTarget.style.transform = 'translateY(0px) scale(1)';
-                  e.currentTarget.style.boxShadow =
-                    '0 6px 18px rgba(242, 106, 33, 0.28)';
-
-                  const tooltip = e.currentTarget.querySelector(
-                    '.cxloop-tooltip',
-                  );
-
-                  if (tooltip) {
-                    tooltip.style.opacity = '0';
-                    tooltip.style.visibility = 'hidden';
-                    tooltip.style.transform = 'translateX(-50%) translateY(8px)';
-                  }
-                }}
-                onClick={() =>
-                  window.open(
-                    'https://cxloop-dev.exlservice.com/cxloop/',
-                    '_blank',
-                  )
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+from __future__ import annotations
+
+import contextlib
+import logging
+import os
+import sys
+from typing import Any, Callable, TYPE_CHECKING
+
+import wtforms_json
+from colorama import Fore, Style
+from deprecation import deprecated
+from flask import abort, current_app, Flask, redirect, request, session, url_for
+from flask_appbuilder import expose, IndexView
+from flask_appbuilder.api import safe
+from flask_appbuilder.utils.base import get_safe_redirect
+
+# using lazy_gettext since initialization happens prior to the request scope
+# and confuses flask-babel
+from flask_babel import lazy_gettext as _, refresh
+from flask_compress import Compress
+from flask_session import Session
+from superset_core import api as core_api
+from werkzeug.middleware.proxy_fix import ProxyFix
+
+from superset.constants import CHANGE_ME_SECRET_KEY
+from superset.core.api.types.models import HostModelsApi
+from superset.core.api.types.query import HostQueryApi
+from superset.core.api.types.rest_api import HostRestApi
+from superset.databases.utils import make_url_safe
+from superset.extensions import (
+    _event_logger,
+    APP_DIR,
+    appbuilder,
+    async_query_manager_factory,
+    cache_manager,
+    celery_app,
+    csrf,
+    db,
+    encrypted_field_factory,
+    feature_flag_manager,
+    machine_auth_provider_factory,
+    manifest_processor,
+    migrate,
+    profiling,
+    results_backend_manager,
+    ssh_manager_factory,
+    stats_logger_manager,
+    talisman,
+)
+from superset.security import SupersetSecurityManager
+from superset.sql.parse import SQLGLOT_DIALECTS
+from superset.superset_typing import FlaskResponse
+from superset.utils.core import is_test, pessimistic_connection_handling
+from superset.utils.decorators import transaction
+from superset.utils.log import DBEventLogger, get_event_logger_from_cfg_value
+
+if TYPE_CHECKING:
+    from superset.app import SupersetApp
+
+logger = logging.getLogger(__name__)
+
+
+class SupersetAppInitializer:  # pylint: disable=too-many-public-methods
+    def __init__(self, app: SupersetApp) -> None:
+        super().__init__()
+
+        self.superset_app = app
+        self.config = app.config
+        self.manifest: dict[Any, Any] = {}
+        self._db_uri_cache: str | None = None  # Cache for valid database URIs
+
+    @deprecated(details="use self.superset_app instead of self.flask_app")  # type: ignore
+    @property
+    def flask_app(self) -> SupersetApp:
+        return self.superset_app
+
+    @property
+    def database_uri(self) -> str:
+        """Lazy property for database URI to avoid early config access issues"""
+        # If we have a cached valid value, return it
+        if self._db_uri_cache is not None:
+            return self._db_uri_cache
+
+        # Try to get the URI from config
+        uri = self.config.get("SQLALCHEMY_DATABASE_URI", "")
+
+        # Check if this is a fallback value that indicates config isn't ready
+        if uri and not any(
+            fallback in uri.lower()
+            for fallback in ["nouser", "nopassword", "nohost", "nodb"]
+        ):
+            # Valid URI - cache it and return
+            self._db_uri_cache = uri
+            return uri
+
+        # Return the fallback value without caching
+        # This allows retry on next access when config might be ready
+        return uri
+
+    def pre_init(self) -> None:
+        """
+        Called before all other init tasks are complete
+        """
+        wtforms_json.init()
+
+        os.makedirs(self.config["DATA_DIR"], exist_ok=True)
+
+    def post_init(self) -> None:
+        """
+        Called after any other init tasks
+        """
+
+    def configure_celery(self) -> None:
+        celery_app.config_from_object(self.config["CELERY_CONFIG"])
+        celery_app.set_default()
+        superset_app = self.superset_app
+
+        # Here, we want to ensure that every call into Celery task has an app context
+        # setup properly
+        task_base = celery_app.Task
+
+        class AppContextTask(task_base):  # type: ignore
+            # pylint: disable=too-few-public-methods
+            abstract = True
+
+            # Grab each call into the task and set up an app context
+            def __call__(self, *args: Any, **kwargs: Any) -> Any:
+                with superset_app.app_context():
+                    return task_base.__call__(self, *args, **kwargs)
+
+        celery_app.Task = AppContextTask
+
+    def init_views(self) -> None:
+        #
+        # We're doing local imports, as several of them import
+        # models which in turn try to import
+        # the global Flask app
+        #
+        # pylint: disable=import-outside-toplevel,too-many-locals,too-many-statements
+        from superset.advanced_data_type.api import AdvancedDataTypeRestApi
+        from superset.annotation_layers.annotations.api import AnnotationRestApi
+        from superset.annotation_layers.api import AnnotationLayerRestApi
+        from superset.async_events.api import AsyncEventsRestApi
+        from superset.available_domains.api import AvailableDomainsRestApi
+        from superset.cachekeys.api import CacheRestApi
+        from superset.charts.api import ChartRestApi
+        from superset.charts.data.api import ChartDataRestApi
+        from superset.css_templates.api import CssTemplateRestApi
+        from superset.dashboards.api import DashboardRestApi
+        from superset.dashboards.filter_state.api import DashboardFilterStateRestApi
+        from superset.dashboards.permalink.api import DashboardPermalinkRestApi
+        from superset.databases.api import DatabaseRestApi
+        from superset.datasets.api import DatasetRestApi
+        from superset.datasets.columns.api import DatasetColumnsRestApi
+        from superset.datasets.metrics.api import DatasetMetricRestApi
+        from superset.datasource.api import DatasourceRestApi
+        from superset.embedded.api import EmbeddedDashboardRestApi
+        from superset.embedded.view import EmbeddedView
+        from superset.explore.api import ExploreRestApi
+        from superset.explore.form_data.api import ExploreFormDataRestApi
+        from superset.explore.permalink.api import ExplorePermalinkRestApi
+        from superset.extensions.view import ExtensionsView
+        from superset.importexport.api import ImportExportRestApi
+        from superset.queries.api import QueryRestApi
+        from superset.queries.saved_queries.api import SavedQueryRestApi
+        from superset.reports.api import ReportScheduleRestApi
+        from superset.reports.logs.api import ReportExecutionLogRestApi
+        from superset.row_level_security.api import RLSRestApi
+        from superset.security.api import (
+            RoleRestAPI,
+            SecurityRestApi,
+            UserRegistrationsRestAPI,
+        )
+        from superset.sqllab.api import SqlLabRestApi
+        from superset.sqllab.permalink.api import SqlLabPermalinkRestApi
+        from superset.tags.api import TagRestApi
+        from superset.themes.api import ThemeRestApi
+        from superset.views.alerts import AlertView, ReportView
+        from superset.views.all_entities import TaggedObjectsModelView
+        from superset.views.ask_analytics import AskAnalyticsApi, AskAnalyticsView
+        from superset.views.annotations import AnnotationLayerView
+        from superset.views.api import Api
+        from superset.views.chart.views import SliceModelView
+        from superset.views.ccaas_architecture import CcaasArchitectureView
+        from superset.views.core import Superset
+        from superset.views.css_templates import CssTemplateModelView
+        from superset.views.dashboard.views import (
+            Dashboard,
+            DashboardModelView,
+        )
+        from superset.views.database.views import DatabaseView
+        from superset.views.definition import DefinitionView
+        from superset.views.datasource.views import DatasetEditor, Datasource
+        from superset.views.dynamic_plugins import DynamicPluginsView
+        from superset.views.error_handling import set_app_error_handlers
+        from superset.views.explore import ExplorePermalinkView, ExploreView
+        from superset.views.groups import GroupsListView
+        from superset.views.log.api import LogRestApi
+        from superset.views.logs import ActionLogView
+        from superset.views.roles import RolesListView
+        from superset.views.strategy_roadmap import StrategyRoadmapView
+        from superset.views.sql_lab.views import (
+            SavedQueryView,
+            TableSchemaView,
+            TabStateView,
+        )
+        from superset.views.sqla import (
+            RowLevelSecurityView,
+            TableModelView,
+        )
+        from superset.views.sqllab import SqllabView
+        from superset.views.tags import TagModelView, TagView
+        from superset.views.themes import ThemeModelView
+        from superset.views.user_info import UserInfoView
+        from superset.views.user_registrations import UserRegistrationsView
+        from superset.views.users.api import CurrentUserRestApi, UserRestApi
+        from superset.views.users_list import UsersListView
+
+        set_app_error_handlers(self.superset_app)
+        self.register_request_handlers()
+
+        # Register health blueprint
+        from superset.views.health import health_blueprint
+
+        self.superset_app.register_blueprint(health_blueprint)
+
+        #
+        # Setup API views
+        #
+        appbuilder.add_api(AnnotationRestApi)
+        appbuilder.add_api(AnnotationLayerRestApi)
+        appbuilder.add_api(AsyncEventsRestApi)
+        appbuilder.add_api(AdvancedDataTypeRestApi)
+        appbuilder.add_api(AvailableDomainsRestApi)
+        appbuilder.add_api(CacheRestApi)
+        appbuilder.add_api(ChartRestApi)
+        appbuilder.add_api(ChartDataRestApi)
+        appbuilder.add_api(CssTemplateRestApi)
+        appbuilder.add_api(ThemeRestApi)
+        appbuilder.add_api(CurrentUserRestApi)
+        appbuilder.add_api(UserRestApi)
+        appbuilder.add_api(DashboardFilterStateRestApi)
+        appbuilder.add_api(DashboardPermalinkRestApi)
+        appbuilder.add_api(DashboardRestApi)
+        appbuilder.add_api(DatabaseRestApi)
+        appbuilder.add_api(DatasetRestApi)
+        appbuilder.add_api(DatasetColumnsRestApi)
+        appbuilder.add_api(DatasetMetricRestApi)
+        appbuilder.add_api(DatasourceRestApi)
+        appbuilder.add_api(EmbeddedDashboardRestApi)
+        appbuilder.add_api(ExploreRestApi)
+        appbuilder.add_api(ExploreFormDataRestApi)
+        appbuilder.add_api(ExplorePermalinkRestApi)
+        appbuilder.add_api(ImportExportRestApi)
+        appbuilder.add_api(AskAnalyticsApi)
+        appbuilder.add_api(QueryRestApi)
+        appbuilder.add_api(ReportScheduleRestApi)
+        appbuilder.add_api(ReportExecutionLogRestApi)
+        appbuilder.add_api(RLSRestApi)
+        appbuilder.add_api(SavedQueryRestApi)
+        appbuilder.add_api(TagRestApi)
+        appbuilder.add_api(SqlLabRestApi)
+        appbuilder.add_api(SqlLabPermalinkRestApi)
+        appbuilder.add_api(LogRestApi)
+
+        if feature_flag_manager.is_feature_enabled("ENABLE_EXTENSIONS"):
+            from superset.extensions.api import ExtensionsRestApi
+
+            appbuilder.add_api(ExtensionsRestApi)
+
+        #
+        # Setup regular views
+        #
+        app_root = appbuilder.app.config["APPLICATION_ROOT"]
+        if app_root.endswith("/"):
+            app_root = app_root.rstrip("/")
+
+        appbuilder.add_link(
+            "Home",
+            label=_("Home"),
+            href="/insightshub/welcome/",
+            cond=lambda: bool(current_app.config["LOGO_TARGET_PATH"]),
+        )
+
+        appbuilder.add_view(
+            DatabaseView,
+            "Databases",
+            label=_("Database Connections"),
+            icon="fa-database",
+            category="Data",
+            category_label=_("Data"),
+        )
+        appbuilder.add_view(
+            DashboardModelView,
+            "Dashboards",
+            label=_("Dashboards"),
+            icon="fa-dashboard",
+            category="",
+            category_icon="",
+        )
+        appbuilder.add_view(
+            SliceModelView,
+            "Charts",
+            label=_("Charts"),
+            icon="fa-bar-chart",
+            category="",
+            category_icon="",
+        )
+
+        appbuilder.add_link(
+            "Datasets",
+            label=_("Datasets"),
+            href=f"{app_root}/tablemodelview/list/",
+            icon="fa-table",
+            category="",
+            category_icon="",
+        )
+        appbuilder.add_view(
+            DefinitionView,
+            "Definition",
+            label=_("Data Dictionary"),
+            icon="fa-book",
+            category="",
+            category_icon="",
+        )
+        appbuilder.add_view(
+            CcaasArchitectureView,
+            "CcaasArchitecture",
+            label=_("Architecture"),
+            icon="fa-sitemap",
+            category="",
+            category_icon="",
+        )
+
+        appbuilder.add_view(
+            StrategyRoadmapView,
+            "StrategyRoadmap",
+            label=_("Strategy & Roadmap"),
+            icon="fa-sitemap",
+            category="",
+            category_icon="",
+        )
+        appbuilder.add_view(
+            AskAnalyticsView,
+            "AskAnalytics",
+            label=_("Ask Analytics"),
+            icon="fa-comments",
+            category="",
+            category_icon="",
+        )
+
+        appbuilder.add_view(
+            RolesListView,
+            "List Roles",
+            label=_("List Roles"),
+            category="Security",
+            category_label=_("Security"),
+            menu_cond=lambda: bool(
+                appbuilder.app.config.get("SUPERSET_SECURITY_VIEW_MENU", True)
+            ),
+        )
+
+        appbuilder.add_view(
+            UserRegistrationsView,
+            "User Registrations",
+            label=_("User Registrations"),
+            category="Security",
+            category_label=_("Security"),
+            menu_cond=lambda: bool(appbuilder.app.config["AUTH_USER_REGISTRATION"]),
+        )
+
+        appbuilder.add_view(
+            UsersListView,
+            "List Users",
+            label=_("List Users"),
+            category="Security",
+            category_label=_("Security"),
+            menu_cond=lambda: bool(
+                appbuilder.app.config.get("SUPERSET_SECURITY_VIEW_MENU", True)
+            ),
+        )
+
+        appbuilder.add_view(
+            GroupsListView,
+            "List Groups",
+            label=_("List Groups"),
+            category="Security",
+            category_label=_("Security"),
+            menu_cond=lambda: bool(
+                appbuilder.app.config.get("SUPERSET_SECURITY_VIEW_MENU", True)
+            ),
+        )
+
+        appbuilder.add_view(
+            DynamicPluginsView,
+            "Plugins",
+            label=_("Plugins"),
+            category="Manage",
+            category_label=_("Manage"),
+            icon="fa-puzzle-piece",
+            menu_cond=lambda: feature_flag_manager.is_feature_enabled(
+                "DYNAMIC_PLUGINS"
+            ),
+        )
+        appbuilder.add_view(
+            CssTemplateModelView,
+            "CSS Templates",
+            label=_("CSS Templates"),
+            icon="fa-css3",
+            category="Manage",
+            category_label=_("Manage"),
+            category_icon="",
+            menu_cond=lambda: feature_flag_manager.is_feature_enabled("CSS_TEMPLATES"),
+        )
+        appbuilder.add_view(
+            ThemeModelView,
+            "Themes",
+            href="/theme/list/",
+            label=_("Themes"),
+            icon="fa-palette",
+            category="Manage",
+            category_label=_("Manage"),
+            category_icon="",
+        )
+
+        appbuilder.add_view(
+            ExtensionsView,
+            "Extensions",
+            label=_("Extensions"),
+            category="Manage",
+            category_label=_("Manage"),
+            menu_cond=lambda: feature_flag_manager.is_feature_enabled(
+                "ENABLE_EXTENSIONS"
+            ),
+        )
+
+        #
+        # Setup views with no menu
+        #
+        appbuilder.add_view_no_menu(Api)
+        appbuilder.add_view_no_menu(Dashboard)
+        appbuilder.add_view_no_menu(Datasource)
+        appbuilder.add_view_no_menu(DatasetEditor)
+        appbuilder.add_view_no_menu(EmbeddedView)
+        appbuilder.add_view_no_menu(ExploreView)
+        appbuilder.add_view_no_menu(ExplorePermalinkView)
+        appbuilder.add_view_no_menu(SavedQueryView)
+        appbuilder.add_view_no_menu(SqllabView)
+        appbuilder.add_view_no_menu(Superset)
+        appbuilder.add_view_no_menu(TableModelView)
+        appbuilder.add_view_no_menu(TableSchemaView)
+        appbuilder.add_view_no_menu(TabStateView)
+        appbuilder.add_view_no_menu(TaggedObjectsModelView)
+        appbuilder.add_view_no_menu(TagView)
+        appbuilder.add_view_no_menu(ReportView)
+        appbuilder.add_view_no_menu(RoleRestAPI)
+        appbuilder.add_view_no_menu(UserInfoView)
+
+        #
+        # Add links
+        #
+        appbuilder.add_link(
+            "SQL Editor",
+            label=_("SQL Lab"),
+            href=f"{app_root}/sqllab/",
+            category_icon="fa-flask",
+            icon="fa-flask",
+            category="SQL Lab",
+            category_label=_("SQL"),
+        )
+        appbuilder.add_link(
+            "Saved Queries",
+            label=_("Saved Queries"),
+            href=f"{app_root}/savedqueryview/list/",
+            icon="fa-save",
+            category="SQL Lab",
+            category_label=_("SQL"),
+        )
+        appbuilder.add_link(
+            "Query Search",
+            label=_("Query History"),
+            href=f"{app_root}/sqllab/history/",
+            icon="fa-search",
+            category_icon="fa-flask",
+            category="SQL Lab",
+            category_label=_("SQL Lab"),
+        )
+        appbuilder.add_view(
+            TagModelView,
+            "Tags",
+            label=_("Tags"),
+            icon="",
+            category_icon="",
+            category="Manage",
+            menu_cond=lambda: feature_flag_manager.is_feature_enabled("TAGGING_SYSTEM"),
+        )
+        appbuilder.add_api(LogRestApi)
+        appbuilder.add_api(UserRegistrationsRestAPI)
+        appbuilder.add_view(
+            ActionLogView,
+            "Action Log",
+            label=_("Action Log"),
+            category="Security",
+            category_label=_("Security"),
+            icon="fa-list-ol",
+            menu_cond=lambda: (
+                self.config["FAB_ADD_SECURITY_VIEWS"]
+                and self.config["SUPERSET_LOG_VIEW"]
+            ),
+        )
+        appbuilder.add_api(SecurityRestApi)
+        #
+        # Conditionally setup email views
+        #
+
+        appbuilder.add_view(
+            AlertView,
+            "Alerts & Report",
+            label=_("Alerts & Reports"),
+            category="Manage",
+            category_label=_("Manage"),
+            icon="fa-exclamation-triangle",
+            menu_cond=lambda: feature_flag_manager.is_feature_enabled("ALERT_REPORTS"),
+        )
+
+        appbuilder.add_view(
+            AnnotationLayerView,
+            "Annotation Layers",
+            label=_("Annotation Layers"),
+            href="AnnotationLayerView.list",
+            icon="fa-comment",
+            category_icon="",
+            category="Manage",
+            category_label=_("Manage"),
+        )
+
+        appbuilder.add_view(
+            RowLevelSecurityView,
+            "Row Level Security",
+            href="RowLevelSecurityView.list",
+            label=_("Row Level Security"),
+            category="Security",
+            category_label=_("Security"),
+            icon="fa-lock",
+        )
+
+    def init_core_api(self) -> None:
+        global core_api
+
+        core_api.models = HostModelsApi()
+        core_api.rest_api = HostRestApi()
+        core_api.query = HostQueryApi()
+
+    def init_extensions(self) -> None:
+        from superset.extensions.utils import (
+            eager_import,
+            get_extensions,
+            install_in_memory_importer,
+        )
+
+        try:
+            extensions = get_extensions()
+        except Exception:  # pylint: disable=broad-except  # noqa: S110
+            # If the db hasn't been initialized yet, an exception will be raised.
+            # It's fine to ignore this, as in this case there are no extensions
+            # present yet.
+            return
+
+        for extension in extensions.values():
+            if backend_files := extension.backend:
+                install_in_memory_importer(backend_files)
+
+            backend = extension.manifest.get("backend")
+
+            if backend and (entrypoints := backend.get("entryPoints")):
+                for entrypoint in entrypoints:
+                    try:
+                        eager_import(entrypoint)
+                    except Exception as ex:  # pylint: disable=broad-except  # noqa: S110
+                        # Surface exceptions during initialization of extensions
+                        print(ex)
+
+    def init_app_in_ctx(self) -> None:
+        """
+        Runs init logic in the context of the app
+        """
+        self.configure_fab()
+        self.configure_url_map_converters()
+        self.configure_data_sources()
+        self.configure_auth_provider()
+        self.configure_async_queries()
+        self.configure_ssh_manager()
+        self.configure_stats_manager()
+
+        # Hook that provides administrators a handle on the Flask APP
+        # after initialization
+        if flask_app_mutator := self.config["FLASK_APP_MUTATOR"]:
+            flask_app_mutator(self.superset_app)
+
+        # Sync configuration to database (themes, etc.)
+        # This can be called separately in multi-tenant environments
+        self.superset_app.sync_config_to_db()
+
+        self.init_views()
+
+        if feature_flag_manager.is_feature_enabled("ENABLE_EXTENSIONS"):
+            self.init_core_api()
+            self.init_extensions()
+
+    def check_secret_key(self) -> None:
+        def log_default_secret_key_warning() -> None:
+            top_banner = 80 * "-" + "\n" + 36 * " " + "WARNING\n" + 80 * "-"
+            bottom_banner = 80 * "-" + "\n" + 80 * "-"
+            logger.warning(top_banner)
+            logger.warning(
+                "A Default SECRET_KEY was detected, please use superset_config.py "
+                "to override it.\n"
+                "Use a strong complex alphanumeric string and use a tool to help"
+                " you generate \n"
+                "a sufficiently random sequence, ex: openssl rand -base64 42 \n"
+                "For more info, see: https://superset.apache.org/docs/"
+                "configuration/configuring-superset#specifying-a-secret_key"
+            )
+            logger.warning(bottom_banner)
+
+        if self.config["SECRET_KEY"] == CHANGE_ME_SECRET_KEY:
+            if (
+                self.superset_app.debug
+                or self.superset_app.config["TESTING"]
+                or is_test()
+            ):
+                logger.warning("Debug mode identified with default secret key")
+                log_default_secret_key_warning()
+                return
+            log_default_secret_key_warning()
+            logger.error("Refusing to start due to insecure SECRET_KEY")
+            sys.exit(1)
+
+    def configure_session(self) -> None:
+        if self.config["SESSION_SERVER_SIDE"]:
+            Session(self.superset_app)
+
+    def register_request_handlers(self) -> None:
+        """Register app-level request handlers"""
+        from flask import Response
+
+        @self.superset_app.after_request
+        def apply_http_headers(response: Response) -> Response:
+            """Applies the configuration's http headers to all responses"""
+            # HTTP_HEADERS is deprecated, this provides backwards compatibility
+            response.headers.extend(
+                {
+                    **self.superset_app.config["OVERRIDE_HTTP_HEADERS"],
+                    **self.superset_app.config["HTTP_HEADERS"],
                 }
-              >
-                <span
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    lineHeight: 1,
-                  }}
-                >
-                  IVA Observability
-                </span>
+            )
 
-                <img
-                  src="/static/images/observability.png"
-                  alt="IVA"
-                  style={{
-                    width: '22px',
-                    height: '22px',
-                    objectFit: 'contain',
+            for k, v in self.superset_app.config["DEFAULT_HTTP_HEADERS"].items():
+                if k not in response.headers:
+                    response.headers[k] = v
+            return response
 
-                    filter: 'brightness(0) invert(1)',
+        @self.superset_app.after_request
+        def cleanup_analytics_memory(response: Response) -> Response:
+            """Force garbage collection after each request if feature flag enabled"""
+            if feature_flag_manager.is_feature_enabled(
+                "FORCE_GARBAGE_COLLECTION_AFTER_EVERY_REQUEST"
+            ):
+                import gc
 
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                />
+                gc.collect()
+            return response
 
-                <div
-                  className="cxloop-tooltip"
-                  style={{
-                    position: 'absolute',
+        @self.superset_app.context_processor
+        def get_common_bootstrap_data() -> dict[str, Any]:
+            # Import here to avoid circular imports
+            from superset.utils import json
+            from superset.views.base import common_bootstrap_payload
 
-                    bottom: '-58px',
+            def serialize_bootstrap_data() -> str:
+                return json.dumps(
+                    {"common": common_bootstrap_payload()},
+                    default=json.pessimistic_json_iso_dttm_ser,
+                )
 
-                    left: '50%',
+            return {"bootstrap_data": serialize_bootstrap_data}
 
-                    transform: 'translateX(-50%) translateY(8px)',
+    def check_and_warn_database_connection(self) -> None:
+        """Check database connection and warn if unavailable"""
+        try:
+            with self.superset_app.app_context():
+                # Simple connection test
+                db.engine.execute("SELECT 1")
+        except Exception:
+            db_uri = self.database_uri
+            safe_uri = make_url_safe(db_uri) if db_uri else "Not configured"
+            print(
+                f"{Fore.RED}ERROR: Cannot connect to database {safe_uri}\n"
+                f"NOTE: Most CLI commands require a database{Style.RESET_ALL}"
+            )
 
-                    background: '#1f2937',
+    def init_app(self) -> None:
+        """
+        Main entry point which will delegate to other methods in
+        order to fully init the app
+        """
+        self.pre_init()
+        self.check_secret_key()
+        self.configure_session()
+        # Configuration of logging must be done first to apply the formatter properly
+        self.configure_logging()
+        # Configuration of feature_flags must be done first to allow init features
+        # conditionally
+        self.configure_feature_flags()
+        self.configure_db_encrypt()
+        self.setup_db()
 
-                    color: '#ffffff',
+        # Check database connection and warn if unavailable
+        self.check_and_warn_database_connection()
 
-                    padding: '10px 16px',
+        self.configure_celery()
+        self.enable_profiling()
+        self.setup_event_logger()
+        self.setup_bundle_manifest()
+        self.register_blueprints()
+        self.configure_wtf()
+        self.configure_middlewares()
+        self.configure_cache()
+        self.set_db_default_isolation()
+        self.configure_sqlglot_dialects()
 
-                    borderRadius: '10px',
+        with self.superset_app.app_context():
+            self.init_app_in_ctx()
 
-                    fontSize: '13px',
+        self.post_init()
 
-                    fontWeight: 600,
+    def set_db_default_isolation(self) -> None:
+        # This block sets the default isolation level for mysql to READ COMMITTED if not
+        # specified in the config. You can set your isolation in the config by using
+        # SQLALCHEMY_ENGINE_OPTIONS
+        eng_options = self.config["SQLALCHEMY_ENGINE_OPTIONS"] or {}
+        isolation_level = eng_options.get("isolation_level")
+        set_isolation_level_to = None
 
-                    whiteSpace: 'nowrap',
+        if not isolation_level:
+            backend = make_url_safe(self.database_uri).get_backend_name()
+            if backend in ("mysql", "postgresql"):
+                set_isolation_level_to = "READ COMMITTED"
 
-                    boxShadow: '0 8px 24px rgba(0,0,0,0.25)',
+        if set_isolation_level_to:
+            logger.debug(
+                "Setting database isolation level to %s",
+                set_isolation_level_to,
+            )
+            with self.superset_app.app_context():
+                db.engine.execution_options(isolation_level=set_isolation_level_to)
 
-                    opacity: 0,
+    def configure_auth_provider(self) -> None:
+        machine_auth_provider_factory.init_app(self.superset_app)
 
-                    visibility: 'hidden',
+    def configure_ssh_manager(self) -> None:
+        ssh_manager_factory.init_app(self.superset_app)
 
-                    transition: 'all 0.25s ease',
+    def configure_stats_manager(self) -> None:
+        stats_logger_manager.init_app(self.superset_app)
 
-                    zIndex: 999,
-                  }}
-                >
-                  Visit CX Loop ↗
-                </div>
-              </Button>
-            )}
-          </div>
-        )}
-      </div>
-    ),
-    [
-      NavExtension,
-      boundActionCreators.onRedo,
-      boundActionCreators.onUndo,
-      boundActionCreators.clearDashboardHistory,
-      editMode,
-      emphasizeRedo,
-      emphasizeUndo,
-      handleCtrlY,
-      handleCtrlZ,
-      hasUnsavedChanges,
-      overwriteDashboard,
-      redoLength,
-      toggleEditMode,
-      undoLength,
-      userCanEdit,
-      userCanSaveAs,
-    ],
-  );
+    def setup_event_logger(self) -> None:
+        _event_logger["event_logger"] = get_event_logger_from_cfg_value(
+            self.superset_app.config.get("EVENT_LOGGER", DBEventLogger())
+        )
 
-  const handleReportDelete = async report => {
-    await dispatch(deleteActiveReport(report));
-    setCurrentReportDeleting(null);
-  };
+    def configure_data_sources(self) -> None:
+        # Registering sources
+        module_datasource_map = self.config["DEFAULT_MODULE_DS_MAP"]
+        module_datasource_map.update(self.config["ADDITIONAL_MODULE_DS_MAP"])
 
-  const [menu, isDropdownVisible, setIsDropdownVisible] = useHeaderActionsMenu({
-    addSuccessToast: boundActionCreators.addSuccessToast,
-    addDangerToast: boundActionCreators.addDangerToast,
-    dashboardInfo,
-    dashboardId: dashboardInfo.id,
-    dashboardTitle,
-    dataMask,
-    layout,
-    expandedSlices,
-    customCss,
-    colorNamespace,
-    colorScheme,
-    onSave: boundActionCreators.onSave,
-    forceRefreshAllCharts: forceRefresh,
-    refreshFrequency,
-    shouldPersistRefreshFrequency,
-    editMode,
-    hasUnsavedChanges,
-    userCanEdit,
-    userCanShare,
-    userCanSave: userCanSaveAs,
-    userCanCurate,
-    isLoading,
-    showReportModal,
-    showPropertiesModal,
-    showRefreshModal,
-    setCurrentReportDeleting,
-    manageEmbedded: showEmbedModal,
-    lastModifiedTime: actualLastModifiedTime,
-    logEvent: boundActionCreators.logEvent,
-  });
-  return (
-    <div
-      css={headerContainerStyle}
-      data-test="dashboard-header-container"
-      data-test-id={dashboardInfo.id}
-      className="dashboard-header-container"
-    >
-      <PageHeaderWithActions
-        editableTitleProps={editableTitleProps}
-        certificatiedBadgeProps={certifiedBadgeProps}
-        faveStarProps={faveStarProps}
-        titlePanelAdditionalItems={titlePanelAdditionalItems}
-        rightPanelAdditionalItems={rightPanelAdditionalItems}
-        menuDropdownProps={{
-          open: isDropdownVisible,
-          onOpenChange: setIsDropdownVisible,
-        }}
-        additionalActionsMenu={menu}
-        showFaveStar={user?.userId && dashboardInfo?.id}
-        showTitlePanelItems
-      />
-      {showingPropertiesModal && (
-        <PropertiesModal
-          dashboardId={dashboardInfo.id}
-          dashboardInfo={dashboardInfo}
-          dashboardTitle={dashboardTitle}
-          show={showingPropertiesModal}
-          onHide={hidePropertiesModal}
-          colorScheme={colorScheme}
-          onSubmit={handleOnPropertiesChange}
-          onlyApply
-        />
-      )}
-      {showingRefreshModal && (
-        <RefreshIntervalModal
-          show={showingRefreshModal}
-          onHide={hideRefreshModal}
-          refreshFrequency={refreshFrequency}
-          onChange={handleRefreshChange}
-          editMode={editMode}
-          refreshLimit={
-            dashboardInfo.common?.conf
-              ?.SUPERSET_DASHBOARD_PERIODICAL_REFRESH_LIMIT
-          }
-          refreshWarning={
-            dashboardInfo.common?.conf?.DASHBOARD_AUTO_REFRESH_WARNING_MESSAGE
-          }
-          addSuccessToast={boundActionCreators.addSuccessToast}
-        />
-      )}
+        # todo(hughhhh): fully remove the datasource config register
+        for module_name, class_names in module_datasource_map.items():
+            class_names = [str(s) for s in class_names]
+            __import__(module_name, fromlist=class_names)
 
-      <ReportModal
-        userId={user.userId}
-        show={showingReportModal}
-        onHide={hideReportModal}
-        userEmail={user.email}
-        dashboardId={dashboardInfo.id}
-        creationMethod="dashboards"
-      />
+    def configure_cache(self) -> None:
+        cache_manager.init_app(self.superset_app)
+        results_backend_manager.init_app(self.superset_app)
 
-      {currentReportDeleting && (
-        <DeleteModal
-          description={t(
-            'This action will permanently delete %s.',
-            currentReportDeleting?.name,
-          )}
-          onConfirm={() => {
-            if (currentReportDeleting) {
-              handleReportDelete(currentReportDeleting);
-            }
-          }}
-          onHide={() => setCurrentReportDeleting(null)}
-          open
-          title={t('Delete Report?')}
-        />
-      )}
+    def configure_feature_flags(self) -> None:
+        feature_flag_manager.init_app(self.superset_app)
 
-      <OverwriteConfirm />
+    def configure_sqlglot_dialects(self) -> None:
+        extensions = self.config["SQLGLOT_DIALECTS_EXTENSIONS"]
 
-      {userCanCurate && (
-        <DashboardEmbedModal
-          show={showingEmbedModal}
-          onHide={hideEmbedModal}
-          dashboardId={dashboardInfo.id}
-        />
-      )}
-      <Global
-        styles={css`
-          .ant-menu-vertical {
-            border-right: none;
-          }
-        `}
-      />
+        if callable(extensions):
+            extensions = extensions()
 
-      <UnsavedChangesModal
-        title={t('Save changes to your dashboard?')}
-        body={t("If you don't save, changes will be lost.")}
-        showModal={showUnsavedChangesModal}
-        onHide={() => setShowUnsavedChangesModal(false)}
-        onConfirmNavigation={handleConfirmNavigation}
-        handleSave={handleSaveAndCloseModal}
-      />
-    </div>
-  );
-};
+        SQLGLOT_DIALECTS.update(extensions)
 
-export default Header;
+    @transaction()
+    def configure_fab(self) -> None:
+        if self.config["SILENCE_FAB"]:
+            logging.getLogger("flask_appbuilder").setLevel(logging.ERROR)
+
+        custom_sm = self.config["CUSTOM_SECURITY_MANAGER"] or SupersetSecurityManager
+        if not issubclass(custom_sm, SupersetSecurityManager):
+            raise Exception(  # pylint: disable=broad-exception-raised
+                """Your CUSTOM_SECURITY_MANAGER must now extend SupersetSecurityManager,
+                 not FAB's security manager.
+                 See [4565] in UPDATING.md"""
+            )
+
+        appbuilder.indexview = SupersetIndexView
+        appbuilder.security_manager_class = custom_sm
+        appbuilder.init_app(self.superset_app, db.session)
+        
+        # Add built package templates to search path as fallback
+        # This helps when editable install has permission issues
+        import os
+        built_template_path = "/app/build/lib/superset/templates"
+        if os.path.exists(built_template_path):
+            if hasattr(self.superset_app.jinja_env.loader, "searchpath"):
+                if built_template_path not in self.superset_app.jinja_env.loader.searchpath:
+                    self.superset_app.jinja_env.loader.searchpath.insert(0, built_template_path)
+                    logger.debug("Added built package templates to search path: %s", built_template_path)
+
+    def configure_url_map_converters(self) -> None:
+        #
+        # Doing local imports here as model importing causes a reference to
+        # app.config to be invoked and we need the current_app to have been setup
+        #
+        # pylint: disable=import-outside-toplevel
+        from superset.utils.url_map_converters import (
+            ObjectTypeConverter,
+            RegexConverter,
+        )
+
+        self.superset_app.url_map.converters["regex"] = RegexConverter
+        self.superset_app.url_map.converters["object_type"] = ObjectTypeConverter
+
+    def configure_middlewares(self) -> None:  # noqa: C901
+        if self.config["ENABLE_CORS"]:
+            # pylint: disable=import-outside-toplevel
+            from flask_cors import CORS
+
+            CORS(self.superset_app, **self.config["CORS_OPTIONS"])
+
+        if self.config["ENABLE_PROXY_FIX"]:
+            self.superset_app.wsgi_app = ProxyFix(
+                self.superset_app.wsgi_app, **self.config["PROXY_FIX_CONFIG"]
+            )
+
+        if self.config["ENABLE_CHUNK_ENCODING"]:
+
+            class ChunkedEncodingFix:  # pylint: disable=too-few-public-methods
+                def __init__(self, app: Flask) -> None:
+                    self.app = app
+
+                def __call__(
+                    self, environ: dict[str, Any], start_response: Callable[..., Any]
+                ) -> Any:
+                    # Setting wsgi.input_terminated tells werkzeug.wsgi to ignore
+                    # content-length and read the stream till the end.
+                    if environ.get("HTTP_TRANSFER_ENCODING", "").lower() == "chunked":
+                        environ["wsgi.input_terminated"] = True
+                    return self.app(environ, start_response)
+
+            self.superset_app.wsgi_app = ChunkedEncodingFix(self.superset_app.wsgi_app)
+
+        if self.config["UPLOAD_FOLDER"]:
+            with contextlib.suppress(OSError):
+                os.makedirs(self.config["UPLOAD_FOLDER"])
+        for middleware in self.config["ADDITIONAL_MIDDLEWARE"]:
+            self.superset_app.wsgi_app = middleware(self.superset_app.wsgi_app)
+
+        # Flask-Compress
+        Compress(self.superset_app)
+
+        # Talisman
+        talisman_enabled = self.config["TALISMAN_ENABLED"]
+        talisman_config = (
+            self.config["TALISMAN_DEV_CONFIG"]
+            if self.superset_app.debug or self.config["DEBUG"]
+            else self.config["TALISMAN_CONFIG"]
+        )
+        csp_warning = self.config["CONTENT_SECURITY_POLICY_WARNING"]
+
+        if talisman_enabled:
+            talisman.init_app(self.superset_app, **talisman_config)
+
+        show_csp_warning = False
+        if (
+            csp_warning
+            and not self.superset_app.debug
+            and (
+                not talisman_enabled
+                or not talisman_config
+                or not talisman_config.get("content_security_policy")
+            )
+        ):
+            show_csp_warning = True
+
+        if show_csp_warning:
+            logger.warning(
+                "We haven't found any Content Security Policy (CSP) defined in "
+                "the configurations. Please make sure to configure CSP using the "
+                "TALISMAN_ENABLED and TALISMAN_CONFIG keys or any other external "
+                "software. Failing to configure CSP have serious security implications. "  # noqa: E501
+                "Check https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP for more "
+                "information. You can disable this warning using the "
+                "CONTENT_SECURITY_POLICY_WARNING key."
+            )
+
+    def configure_logging(self) -> None:
+        self.config["LOGGING_CONFIGURATOR"].configure_logging(
+            self.config, self.superset_app.debug
+        )
+
+    def configure_db_encrypt(self) -> None:
+        encrypted_field_factory.init_app(self.superset_app)
+
+    def setup_db(self) -> None:
+        db.init_app(self.superset_app)
+
+        with self.superset_app.app_context():
+            pessimistic_connection_handling(db.engine)
+
+        migrate.init_app(self.superset_app, db=db, directory=APP_DIR + "/migrations")
+
+    def configure_wtf(self) -> None:
+        if self.config["WTF_CSRF_ENABLED"]:
+            csrf.init_app(self.superset_app)
+            csrf_exempt_list = self.config["WTF_CSRF_EXEMPT_LIST"]
+            for ex in csrf_exempt_list:
+                csrf.exempt(ex)
+
+    def configure_async_queries(self) -> None:
+        if feature_flag_manager.is_feature_enabled("GLOBAL_ASYNC_QUERIES"):
+            async_query_manager_factory.init_app(self.superset_app)
+
+    def register_blueprints(self) -> None:
+        # Register custom blueprints from config
+        for bp in self.config["BLUEPRINTS"]:
+            try:
+                logger.info("Registering blueprint: %s", bp.name)
+                self.superset_app.register_blueprint(bp)
+            except Exception:  # pylint: disable=broad-except
+                logger.exception("blueprint registration failed")
+
+    def setup_bundle_manifest(self) -> None:
+        manifest_processor.init_app(self.superset_app)
+
+    def enable_profiling(self) -> None:
+        if self.config["PROFILING"]:
+            profiling.init_app(self.superset_app)
+
+
+class SupersetIndexView(IndexView):
+    @expose("/")
+    def index(self) -> FlaskResponse:
+        return redirect("/insightshub/welcome")
+
+    @expose("/lang/<string:locale>")
+    @safe
+    def patch_flask_locale(self, locale: str) -> FlaskResponse:
+        """
+        Change user's locale and redirect back to the previous page.
+
+        Overrides FAB's babel.views.LocaleView so we can use the request
+        Referrer as the redirect target, in case our previous page was actually
+        served by the frontend (and thus not added to the session's page_history
+        stack).
+        """
+        if locale not in self.appbuilder.bm.languages:
+            abort(404, description="Locale not supported.")
+        session["locale"] = locale
+        refresh()
+        self.update_redirect()
+
+        if redirect_to := request.headers.get("Referer"):
+            return redirect(get_safe_redirect(redirect_to))
+        return redirect(self.get_redirect())
