@@ -14,472 +14,568 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
-from __future__ import annotations
+import re
+from typing import Any, Mapping, Union
 
-import logging
-import uuid
-from collections import defaultdict, deque
-from typing import Any, Callable
+from marshmallow import fields, post_dump, post_load, pre_load, Schema
+from marshmallow.validate import Length, OneOf, ValidationError
 
-import sqlalchemy as sqla
-from flask import current_app as app
-from flask_appbuilder import Model
-from flask_appbuilder.models.decorators import renders
-from flask_appbuilder.security.sqla.models import User
-from markupsafe import escape, Markup
-from sqlalchemy import (
-    Boolean,
-    Column,
-    ForeignKey,
-    Integer,
-    String,
-    Table,
-    Text,
-    UniqueConstraint,
+from superset import security_manager
+from superset.tags.models import TagType
+from superset.utils import json
+
+get_delete_ids_schema = {"type": "array", "items": {"type": "integer"}}
+get_export_ids_schema = {"type": "array", "items": {"type": "integer"}}
+get_fav_star_ids_schema = {"type": "array", "items": {"type": "integer"}}
+thumbnail_query_schema = {
+    "type": "object",
+    "properties": {"force": {"type": "boolean"}},
+}
+width_height_schema = {
+    "type": "array",
+    "items": {"type": "integer"},
+}
+screenshot_query_schema = {
+    "type": "object",
+    "properties": {
+        "force": {"type": "boolean"},
+        "permalink": {"type": "string"},
+        "window_size": width_height_schema,
+        "thumb_size": width_height_schema,
+    },
+}
+dashboard_title_description = "A title for the dashboard."
+category_description = "Category for the dashboard. One of: Performance Cockpit, Agent Empowerment, CX and Journey, Business Strategy."
+slug_description = "Unique identifying part for the web address of the dashboard."
+owners_description = (
+    "Owner are users ids allowed to delete or change this dashboard. "
+    "If left empty you will be one of the owners of the dashboard."
 )
-from sqlalchemy.engine.base import Connection
-from sqlalchemy.orm import relationship, subqueryload
-from sqlalchemy.orm.mapper import Mapper
-from sqlalchemy.sql.elements import BinaryExpression
+roles_description = (
+    "Roles is a list which defines access to the dashboard. "
+    "These roles are always applied in addition to restrictions on dataset "
+    "level access. "
+    "If no roles defined then the dashboard is available to all roles."
+)
+position_json_description = (
+    "This json object describes the positioning of the widgets "
+    "in the dashboard. It is dynamically generated when "
+    "adjusting the widgets size and positions by using "
+    "drag & drop in the dashboard view"
+)
+css_description = "Override CSS for the dashboard."
+json_metadata_description = (
+    "This JSON object is generated dynamically when clicking "
+    "the save or overwrite button in the dashboard view. "
+    "It is exposed here for reference and for power users who may want to alter "
+    " specific parameters."
+)
+published_description = (
+    "Determines whether or not this dashboard is visible in the list of all dashboards."
+)
+charts_description = (
+    "The names of the dashboard's charts. Names are used for legacy reasons."
+)
+certified_by_description = "Person or group that has certified this dashboard"
+certification_details_description = "Details of the certification"
+tags_description = "Tags to be associated with the dashboard"
 
-from superset import db, is_feature_enabled, security_manager
-from superset.connectors.sqla.models import BaseDatasource, SqlaTable
-from superset.daos.datasource import DatasourceDAO
-from superset.models.helpers import AuditMixinNullable, ImportExportMixin
-from superset.models.slice import Slice
-from superset.models.user_attributes import UserAttribute
-from superset.tasks.thumbnails import cache_dashboard_thumbnail
-from superset.tasks.utils import get_current_user
-from superset.thumbnails.digest import get_dashboard_digest
-from superset.utils import core as utils, json
+openapi_spec_methods_override = {
+    "get": {"get": {"summary": "Get a dashboard detail information"}},
+    "get_list": {
+        "get": {
+            "summary": "Get a list of dashboards",
+            "description": "Gets a list of dashboards, use Rison or JSON query "
+            "parameters for filtering, sorting, pagination and "
+            " for selecting specific columns and metadata.",
+        }
+    },
+    "info": {"get": {"summary": "Get metadata information about this API resource"}},
+    "related": {
+        "get": {"description": "Get a list of all possible owners for a dashboard."}
+    },
+}
 
-metadata = Model.metadata  # pylint: disable=no-member
-logger = logging.getLogger(__name__)
+
+def validate_json(value: Union[bytes, bytearray, str]) -> None:
+    try:
+        json.validate_json(value)
+    except json.JSONDecodeError as ex:
+        raise ValidationError("JSON not valid") from ex
 
 
-def copy_dashboard(_mapper: Mapper, _connection: Connection, target: Dashboard) -> None:
-    dashboard_id = app.config["DASHBOARD_TEMPLATE_ID"]
-    if dashboard_id is None:
+def validate_json_metadata(value: Union[bytes, bytearray, str]) -> None:
+    if not value:
         return
-
-    session = sqla.inspect(target).session  # pylint: disable=disallowed-name
-    new_user = session.query(User).filter_by(id=target.id).first()
-
-    # copy template dashboard to user
-    template = session.query(Dashboard).filter_by(id=int(dashboard_id)).first()
-    dashboard = Dashboard(
-        dashboard_title=template.dashboard_title,
-        position_json=template.position_json,
-        description=template.description,
-        css=template.css,
-        json_metadata=template.json_metadata,
-        slices=template.slices,
-        owners=[new_user],
-    )
-    session.add(dashboard)
-
-    # set dashboard as the welcome dashboard
-    extra_attributes = UserAttribute(
-        user_id=target.id, welcome_dashboard_id=dashboard.id
-    )
-    session.add(extra_attributes)
-    session.commit()  # pylint: disable=consider-using-transaction
-
-
-sqla.event.listen(User, "after_insert", copy_dashboard)
-
-
-dashboard_slices = metadata.tables.get("dashboard_slices") or Table(
-    "dashboard_slices",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("dashboard_id", Integer, ForeignKey("dashboards.id", ondelete="CASCADE")),
-    Column("slice_id", Integer, ForeignKey("slices.id", ondelete="CASCADE")),
-    UniqueConstraint("dashboard_id", "slice_id"),
-    extend_existing=True,
-)
-
-
-dashboard_user = metadata.tables.get("dashboard_user") or Table(
-    "dashboard_user",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column("user_id", Integer, ForeignKey("ab_user.id", ondelete="CASCADE")),
-    Column("dashboard_id", Integer, ForeignKey("dashboards.id", ondelete="CASCADE")),
-    extend_existing=True,
-)
-
-
-DashboardRoles = metadata.tables.get("dashboard_roles") or Table(
-    "dashboard_roles",
-    metadata,
-    Column("id", Integer, primary_key=True),
-    Column(
-        "dashboard_id",
-        Integer,
-        ForeignKey("dashboards.id", ondelete="CASCADE"),
-        nullable=False,
-    ),
-    Column(
-        "role_id",
-        Integer,
-        ForeignKey("ab_role.id", ondelete="CASCADE"),
-        nullable=False,
-    ),
-    extend_existing=True,
-)
-
-
-class Dashboard(AuditMixinNullable, ImportExportMixin, Model):
-    """The dashboard object!"""
-
-    __tablename__ = "dashboards"
-    id = Column(Integer, primary_key=True)
-    dashboard_title = Column(String(500))
-    # Category is nullable in the DB to support initial dashboard creation,
-    # but the UI enforces it as a required field before saving.
-    category = Column(String(100), nullable=True)
-    position_json = Column(utils.MediumText())
-    description = Column(Text)
-    css = Column(utils.MediumText())
-    theme_id = Column(Integer, ForeignKey("themes.id"), nullable=True)
-    certified_by = Column(Text)
-    certification_details = Column(Text)
-    json_metadata = Column(utils.MediumText())
-    slug = Column(String(255), unique=True)
-    slices: list[Slice] = relationship(
-        Slice, secondary=dashboard_slices, backref="dashboards"
-    )
-    owners = relationship(
-        security_manager.user_model,
-        secondary=dashboard_user,
-        passive_deletes=True,
-    )
-    tags = relationship(
-        "Tag",
-        overlaps="objects,tag,tags",
-        secondary="tagged_object",
-        primaryjoin="and_(Dashboard.id == TaggedObject.object_id, "
-        "TaggedObject.object_type == 'dashboard')",
-        secondaryjoin="TaggedObject.tag_id == Tag.id",
-        viewonly=True,  # cascading deletion already handled by superset.tags.models.ObjectUpdater.after_delete  # noqa: E501
-    )
-    theme = relationship("Theme", foreign_keys=[theme_id])
-    published = Column(Boolean, default=False)
-    is_managed_externally = Column(Boolean, nullable=False, default=False)
-    external_url = Column(Text, nullable=True)
-    roles = relationship(security_manager.role_model, secondary=DashboardRoles)
-    embedded = relationship(
-        "EmbeddedDashboard",
-        back_populates="dashboard",
-        cascade="all, delete-orphan",
-    )
-    export_fields = [
-        "dashboard_title",
-        "category",
-        "position_json",
-        "json_metadata",
-        "description",
-        "css",
-        "slug",
-        "certified_by",
-        "certification_details",
-        "published",
-    ]
-    extra_import_fields = ["is_managed_externally", "external_url", "theme_id"]
-
-    def __repr__(self) -> str:
-        return f"Dashboard<{self.id or self.slug}>"
-
-    @property
-    def url(self) -> str:
-        return f"/insightshub/dashboard/{self.slug or self.id}/"
-
-    @staticmethod
-    def get_url(id_: int, slug: str | None = None) -> str:
-        # To be able to generate URL's without instantiating a Dashboard object
-        return f"/insightshub/dashboard/{slug or id_}/"
-
-    @property
-    def datasources(self) -> set[BaseDatasource]:
-        # Verbose but efficient database enumeration of dashboard datasources.
-        datasources_by_cls_model: dict[type[BaseDatasource], set[int]] = defaultdict(
-            set
-        )
-
-        for slc in self.slices:
-            datasources_by_cls_model[slc.cls_model].add(slc.datasource_id)
-
-        return {
-            datasource
-            for cls_model, datasource_ids in datasources_by_cls_model.items()
-            for datasource in db.session.query(cls_model)
-            .filter(cls_model.id.in_(datasource_ids))
-            .all()
-        }
-
-    @property
-    def charts(self) -> list[str]:
-        return [slc.chart for slc in self.slices]
-
-    @property
-    def status(self) -> utils.DashboardStatus:
-        if self.published:
-            return utils.DashboardStatus.PUBLISHED
-        return utils.DashboardStatus.DRAFT
-
-    @renders("dashboard_title")
-    def dashboard_link(self) -> Markup:
-        title = escape(self.dashboard_title or "<empty>")
-        return Markup(f'<a href="{self.url}">{title}</a>')
-
-    @property
-    def digest(self) -> str | None:
-        return get_dashboard_digest(self)
-
-    @property
-    def thumbnail_url(self) -> str | None:
-        """
-        Returns a thumbnail URL with a HEX digest. We want to avoid browser cache
-        if the dashboard has changed
-        """
-        if digest := self.digest:
-            return f"/api/v1/dashboard/{self.id}/thumbnail/{digest}/"
-
-        return None
-
-    @property
-    def changed_by_name(self) -> str:
-        if not self.changed_by:
-            return ""
-        return str(self.changed_by)
-
-    @property
-    def data(self) -> dict[str, Any]:
-        positions = self.position_json
-        if positions:
-            positions = json.loads(positions)
-        return {
-            "id": self.id,
-            "metadata": self.params_dict,
-            "certified_by": self.certified_by,
-            "certification_details": self.certification_details,
-            "css": self.css,
-            "dashboard_title": self.dashboard_title,
-            "published": self.published,
-            "slug": self.slug,
-            "slices": [slc.data for slc in self.slices],
-            "position_json": positions,
-            "last_modified_time": self.changed_on.replace(microsecond=0).timestamp(),
-            "is_managed_externally": self.is_managed_externally,
-        }
-
-    def datasets_trimmed_for_slices(self) -> list[dict[str, Any]]:
-        # Verbose but efficient database enumeration of dashboard datasources.
-        slices_by_datasource: dict[tuple[type[BaseDatasource], int], set[Slice]] = (
-            defaultdict(set)
-        )
-
-        for slc in self.slices:
-            slices_by_datasource[(slc.cls_model, slc.datasource_id)].add(slc)
-
-        result: list[dict[str, Any]] = []
-
-        for (cls_model, datasource_id), slices in slices_by_datasource.items():
-            datasource = (
-                db.session.query(cls_model).filter_by(id=datasource_id).one_or_none()
-            )
-
-            if datasource:
-                # Filter out unneeded fields from the datasource payload
-                result.append(datasource.data_for_slices(slices))
-
-        return result
-
-    @property
-    def params(self) -> str:
-        return self.json_metadata
-
-    @params.setter
-    def params(self, value: str) -> None:
-        self.json_metadata = value
-
-    @property
-    def position(self) -> dict[str, Any]:
-        if self.position_json:
-            return json.loads(self.position_json)
-        return {}
-
-    @property
-    def tabs(self) -> dict[str, Any]:
-        if self.position == {}:
-            return {}
-
-        def get_node(node_id: str) -> dict[str, Any]:
-            """
-            Helper function for getting a node from the position_data
-            """
-            return self.position[node_id]
-
-        def build_tab_tree(
-            node: dict[str, Any], children: list[dict[str, Any]]
-        ) -> None:
-            """
-            Function for building the tab tree structure and list of all tabs
-            """
-
-            new_children: list[dict[str, Any]] = []
-            # new children to overwrite parent's children
-            for child_id in node.get("children", []):
-                child = get_node(child_id)
-                if node["type"] == "TABS":
-                    # if TABS add create a new list and append children to it
-                    # new_children.append(child)
-                    children.append(child)
-                    queue.append((child, new_children))
-                elif node["type"] in ["GRID", "ROOT"]:
-                    queue.append((child, children))
-                elif node["type"] == "TAB":
-                    queue.append((child, new_children))
-            if node["type"] == "TAB":
-                node["children"] = new_children
-                node["title"] = node["meta"]["text"]
-                node["value"] = node["id"]
-                all_tabs[node["id"]] = node["title"]
-
-        root = get_node("ROOT_ID")
-        tab_tree: list[dict[str, Any]] = []
-        all_tabs: dict[str, str] = {}
-        queue: deque[tuple[dict[str, Any], list[dict[str, Any]]]] = deque()
-        queue.append((root, tab_tree))
-        while queue:
-            node, children = queue.popleft()
-            build_tab_tree(node, children)
-
-        return {"all_tabs": all_tabs, "tab_tree": tab_tree}
-
-    # Screenshot automation disabled
-    # def update_thumbnail(self) -> None:
-    #     cache_dashboard_thumbnail.delay(
-    #         current_user=get_current_user(),
-    #         dashboard_id=self.id,
-    #         force=True,
-    #     )
-
-    @classmethod
-    def export_dashboards(  # pylint: disable=too-many-locals
-        cls,
-        dashboard_ids: set[int],
-    ) -> str:
-        copied_dashboards = []
-        datasource_ids = set()
-        for dashboard_id in dashboard_ids:
-            # make sure that dashboard_id is an integer
-            dashboard_id = int(dashboard_id)
-            dashboard = (
-                db.session.query(Dashboard)
-                .options(subqueryload(Dashboard.slices))
-                .filter_by(id=dashboard_id)
-                .first()
-            )
-            # remove ids and relations (like owners, created by, slices, ...)
-            copied_dashboard = dashboard.copy()
-            for slc in dashboard.slices:
-                datasource_ids.add((slc.datasource_id, slc.datasource_type))
-                copied_slc = slc.copy()
-                # save original id into json
-                # we need it to update dashboard's json metadata on import
-                copied_slc.id = slc.id
-                # add extra params for the import
-                copied_slc.alter_params(
-                    remote_id=slc.id,
-                    datasource_name=slc.datasource.datasource_name,
-                    schema=slc.datasource.schema,
-                    database_name=slc.datasource.database.name,
-                )
-                # set slices without creating ORM relations
-                slices = copied_dashboard.__dict__.setdefault("slices", [])
-                slices.append(copied_slc)
-
-            json_metadata = json.loads(dashboard.json_metadata)
-            native_filter_configuration: list[dict[str, Any]] = json_metadata.get(
-                "native_filter_configuration", []
-            )
-            for native_filter in native_filter_configuration:
-                for target in native_filter.get("targets", []):
-                    id_ = target.get("datasetId")
-                    if id_ is None:
-                        continue
-                    datasource = DatasourceDAO.get_datasource(
-                        utils.DatasourceType.TABLE, id_
-                    )
-                    datasource_ids.add((datasource.id, datasource.type))
-
-            copied_dashboard.alter_params(remote_id=dashboard_id)
-            copied_dashboards.append(copied_dashboard)
-
-        datasource_id_list = list(datasource_ids)
-        datasource_id_list.sort()
-
-        eager_datasources = []
-        for datasource_id, _ in datasource_id_list:
-            eager_datasource = SqlaTable.get_eager_sqlatable_datasource(datasource_id)
-            copied_datasource = eager_datasource.copy()
-            copied_datasource.alter_params(
-                remote_id=eager_datasource.id,
-                database_name=eager_datasource.database.name,
-            )
-            eager_datasources.append(copied_datasource)
-
-        return json.dumps(
-            {"dashboards": copied_dashboards, "datasources": eager_datasources},
-            cls=json.DashboardEncoder,
-            indent=4,
-        )
-
-    @classmethod
-    def get(cls, id_or_slug: str | int) -> Dashboard:
-        qry = db.session.query(Dashboard).filter(id_or_slug_filter(id_or_slug))
-        return qry.one_or_none()
-
-    def raise_for_access(self) -> None:
-        """
-        Raise an exception if the user cannot access the resource.
-
-        :raises SupersetSecurityException: If the user cannot access the resource
-        """
-
-        security_manager.raise_for_access(dashboard=self)
-
-
-def is_uuid(value: str | int) -> bool:
     try:
-        uuid.UUID(str(value))
-        return True
-    except ValueError:
-        return False
+        value_obj = json.loads(value)
+    except json.JSONDecodeError as ex:
+        raise ValidationError("JSON not valid") from ex
+    errors = DashboardJSONMetadataSchema().validate(value_obj, partial=False)
+    if errors:
+        raise ValidationError(errors)
 
 
-def is_int(value: str | int) -> bool:
-    try:
-        int(value)
-        return True
-    except ValueError:
-        return False
+class SharedLabelsColorsField(fields.Field):
+    """
+    A custom field that accepts either a list of strings or a dictionary.
+    """
+
+    def _deserialize(
+        self,
+        value: Union[list[str], dict[str, str]],
+        attr: Union[str, None],
+        data: Union[Mapping[str, Any], None],
+        **kwargs: dict[str, Any],
+    ) -> list[str]:
+        if isinstance(value, list):
+            if all(isinstance(item, str) for item in value):
+                return value
+        elif isinstance(value, dict):
+            # Enforce list (for backward compatibility)
+            return []
+
+        raise ValidationError("Not a valid list")
 
 
-def id_or_slug_filter(id_or_slug: int | str) -> BinaryExpression:
-    if is_int(id_or_slug):
-        return Dashboard.id == int(id_or_slug)
-    if is_uuid(id_or_slug):
-        return Dashboard.uuid == uuid.UUID(str(id_or_slug))
-    return Dashboard.slug == id_or_slug
+class DashboardJSONMetadataSchema(Schema):
+    # native_filter_configuration is for dashboard-native filters
+    native_filter_configuration = fields.List(fields.Dict(), allow_none=True)
+    # chart_configuration for now keeps data about cross-filter scoping for charts
+    chart_configuration = fields.Dict()
+    # global_chart_configuration keeps data about global cross-filter scoping
+    # for charts - can be overridden by chart_configuration for each chart
+    global_chart_configuration = fields.Dict()
+    timed_refresh_immune_slices = fields.List(fields.Integer())
+    # deprecated wrt dashboard-native filters
+    filter_scopes = fields.Dict()
+    expanded_slices = fields.Dict()
+    refresh_frequency = fields.Integer()
+    # deprecated wrt dashboard-native filters
+    default_filters = fields.Str()
+    stagger_refresh = fields.Boolean()
+    stagger_time = fields.Integer()
+    color_scheme = fields.Str(allow_none=True)
+    color_namespace = fields.Str(allow_none=True)
+    positions = fields.Dict(allow_none=True)
+    label_colors = fields.Dict()
+    shared_label_colors = SharedLabelsColorsField()
+    map_label_colors = fields.Dict()
+    color_scheme_domain = fields.List(fields.Str())
+    cross_filters_enabled = fields.Boolean(dump_default=True)
+    # used for v0 import/export
+    import_time = fields.Integer()
+    remote_id = fields.Integer()
+    filter_bar_orientation = fields.Str(allow_none=True)
+    native_filter_migration = fields.Dict()
+
+    @pre_load
+    def remove_show_native_filters(  # pylint: disable=unused-argument
+        self,
+        data: dict[str, Any],
+        **kwargs: Any,
+    ) -> dict[str, Any]:
+        """
+        Remove ``show_native_filters`` from the JSON metadata.
+
+        This field was removed in https://github.com/apache/superset/pull/23228, but might
+        be present in old exports.
+        """  # noqa: E501
+        if "show_native_filters" in data:
+            del data["show_native_filters"]
+
+        return data
 
 
-OnDashboardChange = Callable[[Mapper, Connection, Dashboard], Any]
+class UserSchema(Schema):
+    id = fields.Int()
+    username = fields.String()
+    first_name = fields.String()
+    last_name = fields.String()
 
-# Screenshot automation disabled
-# if is_feature_enabled("THUMBNAILS_SQLA_LISTENERS"):
-#     update_thumbnail: OnDashboardChange = lambda _, __, dash: dash.update_thumbnail()  # noqa: E731
-#     sqla.event.listen(Dashboard, "after_insert", update_thumbnail)
-#     sqla.event.listen(Dashboard, "after_update", update_thumbnail)
+
+class RolesSchema(Schema):
+    id = fields.Int()
+    name = fields.String()
+
+
+class TagSchema(Schema):
+    id = fields.Int()
+    name = fields.String()
+    type = fields.Enum(TagType, by_value=True)
+
+
+class ThemeSchema(Schema):
+    id = fields.Int()
+    theme_name = fields.String()
+    json_data = fields.String()
+
+
+class DashboardGetResponseSchema(Schema):
+    id = fields.Int()
+    slug = fields.String()
+    url = fields.String()
+    dashboard_title = fields.String(
+        metadata={"description": dashboard_title_description}
+    )
+    category = fields.String(metadata={"description": category_description})
+    thumbnail_url = fields.String(allow_none=True)
+    published = fields.Boolean()
+    css = fields.String(metadata={"description": css_description})
+    theme = fields.Nested(ThemeSchema, allow_none=True)
+    json_metadata = fields.String(metadata={"description": json_metadata_description})
+    position_json = fields.String(metadata={"description": position_json_description})
+    certified_by = fields.String(metadata={"description": certified_by_description})
+    certification_details = fields.String(
+        metadata={"description": certification_details_description}
+    )
+    changed_by_name = fields.String()
+    changed_by = fields.Nested(UserSchema(exclude=["username"]))
+    changed_on = fields.DateTime()
+    created_by = fields.Nested(UserSchema(exclude=["username"]))
+    charts = fields.List(fields.String(metadata={"description": charts_description}))
+    owners = fields.List(fields.Nested(UserSchema(exclude=["username"])))
+    roles = fields.List(fields.Nested(RolesSchema))
+    tags = fields.Nested(TagSchema, many=True)
+    changed_on_humanized = fields.String(data_key="changed_on_delta_humanized")
+    created_on_humanized = fields.String(data_key="created_on_delta_humanized")
+    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
+    uuid = fields.UUID(allow_none=True)
+
+    # pylint: disable=unused-argument
+    @post_dump()
+    def post_dump(self, serialized: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
+        if security_manager.is_guest_user():
+            del serialized["owners"]
+            del serialized["changed_by_name"]
+            del serialized["changed_by"]
+        return serialized
+
+
+class DatabaseSchema(Schema):
+    id = fields.Int()
+    name = fields.String()
+    backend = fields.String()
+    allows_subquery = fields.Bool()
+    allows_cost_estimate = fields.Bool()
+    allows_virtual_table_explore = fields.Bool()
+    disable_data_preview = fields.Bool()
+    disable_drill_to_detail = fields.Bool()
+    allow_multi_catalog = fields.Bool()
+    explore_database_id = fields.Int()
+
+
+class DashboardDatasetSchema(Schema):
+    id = fields.Int()
+    uid = fields.Str()
+    column_formats = fields.Dict()
+    database = fields.Nested(DatabaseSchema)
+    default_endpoint = fields.String()
+    filter_select = fields.Bool()
+    filter_select_enabled = fields.Bool()
+    is_sqllab_view = fields.Bool()
+    name = fields.Str()
+    datasource_name = fields.Str()
+    table_name = fields.Str()
+    type = fields.Str()
+    schema = fields.Str()
+    offset = fields.Int()
+    cache_timeout = fields.Int()
+    params = fields.Str()
+    perm = fields.Str()
+    edit_url = fields.Str()
+    sql = fields.Str()
+    select_star = fields.Str()
+    main_dttm_col = fields.Str()
+    health_check_message = fields.Str()
+    fetch_values_predicate = fields.Str()
+    template_params = fields.Str()
+    owners = fields.List(fields.Dict())
+    columns = fields.List(fields.Dict())
+    column_types = fields.List(fields.Int())
+    column_names = fields.List(fields.Str())
+    metrics = fields.List(fields.Dict())
+    order_by_choices = fields.List(fields.List(fields.Str()))
+    verbose_map = fields.Dict(fields.Str(), fields.Str())
+    time_grain_sqla = fields.List(fields.List(fields.Str()))
+    granularity_sqla = fields.List(fields.List(fields.Str()))
+    normalize_columns = fields.Bool()
+    always_filter_main_dttm = fields.Bool()
+
+    # pylint: disable=unused-argument
+    @post_dump()
+    def post_dump(self, serialized: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
+        if security_manager.is_guest_user():
+            del serialized["owners"]
+            del serialized["database"]
+        return serialized
+
+
+class TabSchema(Schema):
+    # pylint: disable=W0108
+    children = fields.List(fields.Nested(lambda: TabSchema()))
+    value = fields.Str()
+    title = fields.Str()
+    parents = fields.List(fields.Str())
+
+
+class TabsPayloadSchema(Schema):
+    all_tabs = fields.Dict(keys=fields.String(), values=fields.String())
+    tab_tree = fields.List(fields.Nested(lambda: TabSchema))
+
+
+class BaseDashboardSchema(Schema):
+    # pylint: disable=unused-argument
+    @post_load
+    def post_load(self, data: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
+        if data.get("slug"):
+            data["slug"] = data["slug"].strip()
+            data["slug"] = data["slug"].replace(" ", "-")
+            data["slug"] = re.sub(r"[^\w\-]+", "", data["slug"])
+        return data
+
+
+class DashboardPostSchema(BaseDashboardSchema):
+    dashboard_title = fields.String(
+        metadata={"description": dashboard_title_description},
+        allow_none=True,
+        validate=Length(0, 500),
+    )
+    category = fields.String(
+        metadata={"description": category_description},
+        required=True,
+        validate=OneOf(
+            [
+                "Performance Cockpit",
+                "Agent Empowerment",
+                "CX and Journey",
+                "Business Strategy",
+            ]
+        ),
+    )
+    slug = fields.String(
+        metadata={"description": slug_description},
+        allow_none=True,
+        validate=[Length(1, 255)],
+    )
+    owners = fields.List(fields.Integer(metadata={"description": owners_description}))
+    roles = fields.List(fields.Integer(metadata={"description": roles_description}))
+    position_json = fields.String(
+        metadata={"description": position_json_description}, validate=validate_json
+    )
+    css = fields.String(metadata={"description": css_description})
+    theme_id = fields.Integer(
+        metadata={"description": "Theme ID for the dashboard"}, allow_none=True
+    )
+    json_metadata = fields.String(
+        metadata={"description": json_metadata_description},
+        validate=validate_json_metadata,
+    )
+    published = fields.Boolean(metadata={"description": published_description})
+    certified_by = fields.String(
+        metadata={"description": certified_by_description}, allow_none=True
+    )
+    certification_details = fields.String(
+        metadata={"description": certification_details_description}, allow_none=True
+    )
+    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
+    external_url = fields.String(allow_none=True)
+    uuid = fields.UUID(allow_none=True)
+
+
+class DashboardCopySchema(Schema):
+    dashboard_title = fields.String(
+        metadata={"description": dashboard_title_description},
+        allow_none=True,
+        validate=Length(0, 500),
+    )
+    category = fields.String(
+        metadata={"description": category_description},
+        required=True,
+        validate=OneOf(
+            [
+                "Performance Cockpit",
+                "Agent Empowerment",
+                "CX and Journey",
+                "Business Strategy",
+            ]
+        ),
+    )
+    css = fields.String(metadata={"description": css_description})
+    json_metadata = fields.String(
+        metadata={"description": json_metadata_description},
+        validate=validate_json_metadata,
+        required=True,
+    )
+    duplicate_slices = fields.Boolean(
+        metadata={
+            "description": "Whether or not to also copy all charts on the dashboard"
+        }
+    )
+
+
+class DashboardPutSchema(BaseDashboardSchema):
+    dashboard_title = fields.String(
+        metadata={"description": dashboard_title_description},
+        allow_none=True,
+        validate=Length(0, 500),
+    )
+    category = fields.String(
+        metadata={"description": category_description},
+        allow_none=True,
+        validate=OneOf(
+            [
+                "Performance Cockpit",
+                "Agent Empowerment",
+                "CX and Journey",
+                "Business Strategy",
+            ]
+        ),
+    )
+    slug = fields.String(
+        metadata={"description": slug_description},
+        allow_none=True,
+        validate=Length(0, 255),
+    )
+    owners = fields.List(
+        fields.Integer(metadata={"description": owners_description}, allow_none=True)
+    )
+    roles = fields.List(
+        fields.Integer(metadata={"description": roles_description}, allow_none=True)
+    )
+    position_json = fields.String(
+        metadata={"description": position_json_description},
+        allow_none=True,
+        validate=validate_json,
+    )
+    css = fields.String(metadata={"description": css_description}, allow_none=True)
+    theme_id = fields.Integer(
+        metadata={"description": "Theme ID for the dashboard"}, allow_none=True
+    )
+    json_metadata = fields.String(
+        metadata={"description": json_metadata_description},
+        allow_none=True,
+        validate=validate_json_metadata,
+    )
+    published = fields.Boolean(
+        metadata={"description": published_description}, allow_none=True
+    )
+    certified_by = fields.String(
+        metadata={"description": certified_by_description}, allow_none=True
+    )
+    certification_details = fields.String(
+        metadata={"description": certification_details_description}, allow_none=True
+    )
+    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
+    external_url = fields.String(allow_none=True)
+    tags = fields.List(
+        fields.Integer(metadata={"description": tags_description}, allow_none=True)
+    )
+    uuid = fields.UUID(allow_none=True)
+
+
+class DashboardNativeFiltersConfigUpdateSchema(BaseDashboardSchema):
+    deleted = fields.List(fields.String(), allow_none=False)
+    modified = fields.List(fields.Raw(), allow_none=False)
+    reordered = fields.List(fields.String(), allow_none=False)
+
+
+class DashboardColorsConfigUpdateSchema(BaseDashboardSchema):
+    color_namespace = fields.String(allow_none=True)
+    color_scheme = fields.String(allow_none=True)
+    map_label_colors = fields.Dict(allow_none=False)
+    shared_label_colors = SharedLabelsColorsField()
+    label_colors = fields.Dict(allow_none=False)
+    color_scheme_domain = fields.List(fields.String(), allow_none=False)
+
+
+class DashboardScreenshotPostSchema(Schema):
+    dataMask = fields.Dict(  # noqa: N815
+        keys=fields.Str(),
+        values=fields.Raw(),
+        metadata={"description": "An object representing the data mask."},
+    )
+    activeTabs = fields.List(  # noqa: N815
+        fields.Str(), metadata={"description": "A list representing active tabs."}
+    )
+    anchor = fields.String(
+        metadata={"description": "A string representing the anchor."}
+    )
+    urlParams = fields.List(  # noqa: N815
+        fields.Tuple(
+            (fields.Str(), fields.Str()),
+        ),
+        metadata={"description": "A list of tuples, each containing two strings."},
+    )
+
+
+class ChartFavStarResponseResult(Schema):
+    id = fields.Integer(metadata={"description": "The Chart id"})
+    value = fields.Boolean(metadata={"description": "The FaveStar value"})
+
+
+class GetFavStarIdsSchema(Schema):
+    result = fields.List(
+        fields.Nested(ChartFavStarResponseResult),
+        metadata={
+            "description": "A list of results for each corresponding chart in the request"  # noqa: E501
+        },
+    )
+
+
+class ImportV1DashboardSchema(Schema):
+    dashboard_title = fields.String(required=True)
+    category = fields.String(allow_none=True)
+    description = fields.String(allow_none=True)
+    css = fields.String(allow_none=True)
+    slug = fields.String(allow_none=True)
+    uuid = fields.UUID(required=True)
+    position = fields.Dict()
+    metadata = fields.Dict()
+    version = fields.String(required=True)
+    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
+    external_url = fields.String(allow_none=True)
+    certified_by = fields.String(allow_none=True)
+    certification_details = fields.String(allow_none=True)
+    published = fields.Boolean(allow_none=True)
+    tags = fields.List(fields.String(), allow_none=True)
+    theme_uuid = fields.UUID(allow_none=True)
+    theme_id = fields.Integer(allow_none=True)
+
+
+class EmbeddedDashboardConfigSchema(Schema):
+    allowed_domains = fields.List(fields.String(), required=True)
+
+
+class EmbeddedDashboardResponseSchema(Schema):
+    uuid = fields.String()
+    allowed_domains = fields.List(fields.String())
+    dashboard_id = fields.String()
+    changed_on = fields.DateTime()
+    changed_by = fields.Nested(UserSchema)
+
+
+class DashboardCacheScreenshotResponseSchema(Schema):
+    cache_key = fields.String(metadata={"description": "The cache key"})
+    dashboard_url = fields.String(
+        metadata={"description": "The url to render the dashboard"}
+    )
+    image_url = fields.String(
+        metadata={"description": "The url to fetch the screenshot"}
+    )
+    task_status = fields.String(
+        metadata={"description": "The status of the async screenshot"}
+    )
+    task_updated_at = fields.String(
+        metadata={"description": "The timestamp of the last change in status"}
+    )
+
+
+class CacheScreenshotSchema(Schema):
+    dataMask = fields.Dict(keys=fields.Str(), values=fields.Raw(), required=False)  # noqa: N815
+    activeTabs = fields.List(fields.Str(), required=False)  # noqa: N815
+    anchor = fields.Str(required=False)
+    urlParams = fields.List(  # noqa: N815
+        fields.List(fields.Str(), validate=lambda x: len(x) == 2), required=False
+    )
+    permalinkKey = fields.Str(required=False)  # noqa: N815
