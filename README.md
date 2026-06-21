@@ -1,232 +1,411 @@
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-import logging
-import textwrap
-from functools import partial
-from typing import Any, Optional
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+import { useMemo } from 'react';
+import { isFeatureEnabled, FeatureFlag, t } from '@superset-ui/core';
+import { AsyncSelect } from '@superset-ui/core/components';
+import { type TagType } from 'src/components';
+import { loadTags } from 'src/components/Tag/utils';
+import getOwnerName from 'src/utils/getOwnerName';
+import Owner from 'src/types/Owner';
+import { ModalFormField } from 'src/components/Modal';
+import { useAccessOptions } from '../hooks/useAccessOptions';
 
-from flask import current_app
-from flask_appbuilder.models.sqla import Model
-from marshmallow import ValidationError
+type Roles = { id: number; name: string }[];
+type Owners = {
+  id: number;
+  full_name?: string;
+  first_name?: string;
+  last_name?: string;
+}[];
 
-from superset import db, security_manager
-from superset.commands.base import BaseCommand, UpdateMixin
-from superset.commands.dashboard.exceptions import (
-    DashboardColorsConfigUpdateFailedError,
-    DashboardForbiddenError,
-    DashboardInvalidError,
-    DashboardNativeFiltersUpdateFailedError,
-    DashboardNotFoundError,
-    DashboardSlugExistsValidationError,
-    DashboardUpdateFailedError,
-)
-from superset.commands.utils import populate_roles, update_tags, validate_tags
-from superset.daos.dashboard import DashboardDAO
-from superset.daos.report import ReportScheduleDAO
-from superset.exceptions import SupersetSecurityException
-from superset.models.dashboard import Dashboard
-from superset.reports.models import ReportSchedule
-from superset.tags.models import ObjectType
-from superset.utils import json
-from superset.utils.core import send_email_smtp
-from superset.utils.decorators import on_error, transaction
+interface AccessSectionProps {
+  isLoading: boolean;
+  owners: Owners;
+  roles: Roles;
+  tags: TagType[];
+  onChangeOwners: (owners: { value: number; label: string }[]) => void;
+  onChangeRoles: (roles: { value: number; label: string }[]) => void;
+  onChangeTags: (tags: { label: string; value: number }[]) => void;
+  onClearTags: () => void;
+}
 
-logger = logging.getLogger(__name__)
+const AccessSection = ({
+  isLoading,
+  owners,
+  roles,
+  tags,
+  onChangeOwners,
+  onChangeRoles,
+  onChangeTags,
+  onClearTags,
+}: AccessSectionProps) => {
+  const { loadAccessOptions } = useAccessOptions();
 
+  const ownersSelectValue = useMemo(
+    () =>
+      (owners || []).map((owner: Owner) => ({
+        value: owner.id,
+        label: getOwnerName(owner),
+      })),
+    [owners],
+  );
 
-class UpdateDashboardCommand(UpdateMixin, BaseCommand):
-    def __init__(self, model_id: int, data: dict[str, Any]):
-        self._model_id = model_id
-        self._properties = data.copy()
-        self._model: Optional[Dashboard] = None
+  const rolesSelectValue = useMemo(
+    () =>
+      (roles || []).map((role: { id: number; name: string }) => ({
+        value: role.id,
+        label: `${role.name}`,
+      })),
+    [roles],
+  );
 
-    @transaction(on_error=partial(on_error, reraise=DashboardUpdateFailedError))
-    def run(self) -> Model:
-        self.validate()
-        assert self._model is not None
-        self.process_tab_diff()
+  const tagsAsSelectValues = useMemo(
+    () =>
+      tags.map((tag: { id: number; name: string }) => ({
+        value: tag.id,
+        label: tag.name,
+      })),
+    [tags],
+  );
 
-        # Update tags
-        if (tags := self._properties.pop("tags", None)) is not None:
-            update_tags(ObjectType.dashboard, self._model.id, self._model.tags, tags)
+  return (
+    <>
+      <ModalFormField
+        label={t('Owners')}
+        testId="dashboard-owners-field"
+        helperText={t(
+          'Owners is a list of users who can alter the dashboard. Searchable by name or username.',
+        )}
+      >
+        <AsyncSelect
+          data-test="dashboard-owners-select"
+          allowClear
+          ariaLabel={t('Owners')}
+          disabled={isLoading}
+          mode="multiple"
+          onChange={onChangeOwners}
+          options={(input, page, pageSize) =>
+            loadAccessOptions('owners', input, page, pageSize)
+          }
+          value={ownersSelectValue}
+          showSearch
+          placeholder={t('Search owners')}
+        />
+      </ModalFormField>
+      {isFeatureEnabled(FeatureFlag.DashboardRbac) && (
+        <ModalFormField
+          label={t('Roles')}
+          testId="dashboard-roles-field"
+          helperText={t(
+            'Roles is a list which defines access to the dashboard. Granting a role access to a dashboard will bypass dataset level checks. If no roles are defined, regular access permissions apply.',
+          )}
+          bottomSpacing={!isFeatureEnabled(FeatureFlag.TaggingSystem)}
+        >
+          <AsyncSelect
+            data-test="dashboard-roles-select"
+            allowClear
+            ariaLabel={t('Roles')}
+            disabled={isLoading}
+            mode="multiple"
+            onChange={onChangeRoles}
+            options={(input, page, pageSize) =>
+              loadAccessOptions('roles', input, page, pageSize)
+            }
+            value={rolesSelectValue}
+            showSearch
+            placeholder={t('Search roles')}
+          />
+        </ModalFormField>
+      )}
+      {isFeatureEnabled(FeatureFlag.TaggingSystem) && (
+        <ModalFormField
+          label={t('Tags')}
+          testId="dashboard-tags-field"
+          helperText={t(
+            'A list of tags that have been applied to this dashboard.',
+          )}
+          bottomSpacing={false}
+        >
+          <AsyncSelect
+            data-test="dashboard-tags-select"
+            ariaLabel="Tags"
+            mode="multiple"
+            value={tagsAsSelectValues}
+            options={loadTags}
+            onChange={onChangeTags}
+            onClear={onClearTags}
+            allowClear
+            showSearch
+            placeholder={t('Search tags')}
+          />
+        </ModalFormField>
+      )}
+    </>
+  );
+};
 
-        dashboard = DashboardDAO.update(self._model, self._properties)
-        if self._properties.get("json_metadata"):
-            DashboardDAO.set_dash_metadata(
-                dashboard,
-                data=json.loads(self._properties.get("json_metadata", "{}")),
-            )
-        return dashboard
-
-    def validate(self) -> None:
-        exceptions: list[ValidationError] = []
-        owner_ids: Optional[list[int]] = self._properties.get("owners")
-        roles_ids: Optional[list[int]] = self._properties.get("roles")
-        slug: Optional[str] = self._properties.get("slug")
-        tag_ids: Optional[list[int]] = self._properties.get("tags")
-
-        # Validate/populate model exists
-        self._model = DashboardDAO.find_by_id(self._model_id)
-        if not self._model:
-            raise DashboardNotFoundError()
-        # Check ownership
-        try:
-            security_manager.raise_for_ownership(self._model)
-        except SupersetSecurityException as ex:
-            raise DashboardForbiddenError() from ex
-
-        # Validate slug uniqueness
-        if not DashboardDAO.validate_update_slug_uniqueness(self._model_id, slug):
-            exceptions.append(DashboardSlugExistsValidationError())
-
-        # Validate/Populate owner
-        try:
-            owners = self.compute_owners(
-                self._model.owners,
-                owner_ids,
-            )
-            self._properties["owners"] = owners
-        except ValidationError as ex:
-            exceptions.append(ex)
-
-        # validate tags
-        try:
-            validate_tags(ObjectType.dashboard, self._model.tags, tag_ids)
-        except ValidationError as ex:
-            exceptions.append(ex)
-
-        # Validate/Populate role
-        if roles_ids is None:
-            roles_ids = [role.id for role in self._model.roles]
-        try:
-            roles = populate_roles(roles_ids)
-            self._properties["roles"] = roles
-        except ValidationError as ex:
-            exceptions.append(ex)
-        if exceptions:
-            raise DashboardInvalidError(exceptions=exceptions)
-
-    def process_tab_diff(self) -> None:  # noqa: C901
-        def find_deleted_tabs() -> list[str]:
-            position_json = self._properties.get("position_json", "")
-            current_tabs = self._model.tabs  # type: ignore
-            if position_json and current_tabs:
-                position = json.loads(position_json)
-                deleted_tabs = [
-                    tab for tab in current_tabs["all_tabs"] if tab not in position
-                ]
-                return deleted_tabs
-            return []
-
-        def find_reports_containing_tabs(tabs: list[str]) -> list[ReportSchedule]:
-            alert_reports_list = []
-            for tab in tabs:
-                for report in ReportScheduleDAO.find_by_extra_metadata(tab):
-                    alert_reports_list.append(report)
-            return alert_reports_list
-
-        def send_deactivated_email_warning(report: ReportSchedule) -> None:
-            description = textwrap.dedent(
-                """
-                The dashboard tab used in this report has been deleted and your report has been deactivated.
-                Please update your report settings to remove or change the tab used.
-                """  # noqa: E501
-            )
-
-            html_content = textwrap.dedent(
-                f"""
-                    <html>
-                    <head>
-                        <style type="text/css">
-                        table, th, td {{
-                            border-collapse: collapse;
-                            border-color: rgb(200, 212, 227);
-                            color: rgb(42, 63, 95);
-                            padding: 4px 8px;
-                        }}
-                        .image{{
-                            margin-bottom: 18px;
-                        }}
-                        </style>
-                    </head>
-                    <body>
-                        <div>{description}</div>
-                        <br>
-                    </body>
-                    </html>
-                    """
-            )
-            for report_owner in report.owners:
-                if email := report_owner.email:
-                    send_email_smtp(
-                        to=email,
-                        subject=f"[Report: {report.name}] Deactivated",
-                        html_content=html_content,
-                        config=current_app.config,
-                    )
-
-        def deactivate_reports(reports_list: list[ReportSchedule]) -> None:
-            for report in reports_list:
-                # deactivate
-                ReportScheduleDAO.update(report, {"active": False})
-                # send email to report owner
-                send_deactivated_email_warning(report)
-
-        deleted_tabs = find_deleted_tabs()
-        reports = find_reports_containing_tabs(deleted_tabs)
-        deactivate_reports(reports)
+export default AccessSection;
 
 
-class UpdateDashboardNativeFiltersCommand(UpdateDashboardCommand):
-    @transaction(
-        on_error=partial(on_error, reraise=DashboardNativeFiltersUpdateFailedError)
-    )
-    def run(self) -> Model:
-        super().validate()
-        assert self._model
-
-        configuration = DashboardDAO.update_native_filters_config(
-            self._model, self._properties
-        )
-
-        return configuration
 
 
-class UpdateDashboardColorsConfigCommand(UpdateDashboardCommand):
-    def __init__(
-        self, model_id: int, data: dict[str, Any], mark_updated: bool = True
-    ) -> None:
-        super().__init__(model_id, data)
-        self._mark_updated = mark_updated
 
-    @transaction(
-        on_error=partial(on_error, reraise=DashboardColorsConfigUpdateFailedError)
-    )
-    def run(self) -> Model:
-        super().validate()
-        assert self._model
 
-        original_changed_on = self._model.changed_on
 
-        DashboardDAO.update_colors_config(self._model, self._properties)
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+import { t, styled } from '@superset-ui/core';
+import { JsonEditor } from '@superset-ui/core/components';
+import { ModalFormField } from 'src/components/Modal';
+import { ValidationObject } from 'src/components/Modal/useModalValidation';
 
-        if not self._mark_updated:
-            db.session.commit()  # pylint: disable=consider-using-transaction
-            # restore the original changed_on value
-            self._model.changed_on = original_changed_on
+const StyledJsonEditor = styled(JsonEditor)`
+  /* Border is already applied by AceEditor itself */
+`;
 
-        return self._model
+interface AdvancedSectionProps {
+  jsonMetadata: string;
+  jsonAnnotations: any[];
+  validationStatus: ValidationObject;
+  onJsonMetadataChange: (value: string) => void;
+}
+
+const AdvancedSection = ({
+  jsonMetadata,
+  jsonAnnotations,
+  validationStatus,
+  onJsonMetadataChange,
+}: AdvancedSectionProps) => (
+  <ModalFormField
+    label={t('JSON Metadata')}
+    testId="dashboard-metadata-field"
+    helperText={t(
+      'This JSON object is generated dynamically when clicking the save ' +
+        'or overwrite button in the dashboard view. It is exposed here for ' +
+        'reference and for power users who may want to alter specific parameters.',
+    )}
+    error={
+      validationStatus.advanced?.hasErrors && jsonAnnotations.length > 0
+        ? t('Invalid JSON metadata')
+        : undefined
+    }
+    bottomSpacing={false}
+  >
+    <StyledJsonEditor
+      data-test="dashboard-metadata-editor"
+      showLoadingForImport
+      name="json_metadata"
+      value={jsonMetadata}
+      onChange={onJsonMetadataChange}
+      tabSize={2}
+      width="100%"
+      height="200px"
+      wrapEnabled
+      annotations={jsonAnnotations}
+    />
+  </ModalFormField>
+);
+
+export default AdvancedSection;
+
+
+
+
+
+
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+import { css, SupersetTheme, t } from '@superset-ui/core';
+import {
+  FormItem,
+  Input,
+  FormInstance,
+  Select,
+} from '@superset-ui/core/components';
+import { ModalFormField } from 'src/components/Modal';
+import { ValidationObject } from 'src/components/Modal/useModalValidation';
+import { DASHBOARD_CATEGORIES } from 'src/dashboard/constants/categories';
+
+interface BasicInfoSectionProps {
+  form: FormInstance;
+  validationStatus: ValidationObject;
+}
+
+const categorySelectStyle = (theme: SupersetTheme) => css`
+  width: 100%;
+  min-width: ${theme.sizeUnit * 44}px;
+  max-width: 100%;
+  display: block;
+
+  .ant-select-selector {
+    width: 100%;
+  }
+`;
+
+const BasicInfoSection = ({
+  form,
+  validationStatus,
+}: BasicInfoSectionProps) => {
+  const titleValue = form.getFieldValue('title');
+  const categoryValue = form.getFieldValue('category');
+  const hasTitleError =
+    validationStatus.basic?.hasErrors &&
+    (!titleValue || titleValue.trim().length === 0);
+  const hasCategoryError =
+    validationStatus.basic?.hasErrors && !categoryValue;
+
+  return (
+    <>
+      <ModalFormField
+        label={t('Name')}
+        required
+        testId="dashboard-name-field"
+        error={hasTitleError ? t('Dashboard name is required') : undefined}
+      >
+        <FormItem
+          name="title"
+          noStyle
+          rules={[
+            {
+              required: true,
+              message: t('Dashboard name is required'),
+              whitespace: true,
+            },
+          ]}
+        >
+          <Input
+            placeholder={t('The display name of your dashboard')}
+            data-test="dashboard-title-input"
+            type="text"
+          />
+        </FormItem>
+      </ModalFormField>
+      <ModalFormField
+        label={t('Category')}
+        required
+        testId="dashboard-category-field"
+        error={hasCategoryError ? t('Dashboard category is required') : undefined}
+      >
+        <FormItem
+          name="category"
+          noStyle
+          rules={[
+            {
+              required: true,
+              message: t('Dashboard category is required'),
+            },
+          ]}
+        >
+          <Select
+            css={categorySelectStyle}
+            placeholder={t('Select')}
+            data-test="dashboard-category-select"
+            allowClear
+            options={DASHBOARD_CATEGORIES.map(category => ({
+              value: category,
+              label: category,
+            }))}
+            // Ensure category order matches Home page (no alphabetical re-sorting)
+            filterSort={(a, b) =>
+              DASHBOARD_CATEGORIES.indexOf(String((a as any).value)) -
+              DASHBOARD_CATEGORIES.indexOf(String((b as any).value))
+            }
+          />
+        </FormItem>
+      </ModalFormField>
+      <ModalFormField
+        label={t('URL Slug')}
+        testId="dashboard-slug-field"
+        bottomSpacing={false}
+      >
+        <FormItem name="slug" noStyle>
+          <Input
+            placeholder={t('A readable URL for your dashboard')}
+            data-test="dashboard-slug-input"
+            type="text"
+          />
+        </FormItem>
+      </ModalFormField>
+    </>
+  );
+};
+
+export default BasicInfoSection;
+
+
+
+
+
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+
+export { default as BasicInfoSection } from './BasicInfoSection';
+export { default as AccessSection } from './AccessSection';
+export { default as StylingSection } from './StylingSection';
+export { default as RefreshSection } from './RefreshSection';
+export { default as CertificationSection } from './CertificationSection';
+export { default as AdvancedSection } from './AdvancedSection';
