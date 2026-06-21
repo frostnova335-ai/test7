@@ -1,586 +1,964 @@
-# Licensed to the Apache Software Foundation (ASF) under one
-# or more contributor license agreements.  See the NOTICE file
-# distributed with this work for additional information
-# regarding copyright ownership.  The ASF licenses this file
-# to you under the Apache License, Version 2.0 (the
-# "License"); you may not use this file except in compliance
-# with the License.  You may obtain a copy of the License at
-#
-#   http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing,
-# software distributed under the License is distributed on an
-# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-# KIND, either express or implied.  See the License for the
-# specific language governing permissions and limitations
-# under the License.
-import re
-from typing import Any, Mapping, Union
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+/* eslint-env browser */
+import { extendedDayjs } from '@superset-ui/core/utils/dates';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  styled,
+  css,
+  isFeatureEnabled,
+  FeatureFlag,
+  t,
+  getExtensionsRegistry,
+} from '@superset-ui/core';
+import { Global } from '@emotion/react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import {
+  LOG_ACTIONS_PERIODIC_RENDER_DASHBOARD,
+  LOG_ACTIONS_FORCE_REFRESH_DASHBOARD,
+  LOG_ACTIONS_TOGGLE_EDIT_DASHBOARD,
+} from 'src/logger/LogUtils';
+import { Icons } from '@superset-ui/core/components/Icons';
+import {
+  Button,
+  Tooltip,
+  DeleteModal,
+  UnsavedChangesModal,
+  Select,
+} from '@superset-ui/core/components';
+import { findPermission } from 'src/utils/findPermission';
+import { safeStringify } from 'src/utils/safeStringify';
+import PublishedStatus from 'src/dashboard/components/PublishedStatus';
+import UndoRedoKeyListeners from 'src/dashboard/components/UndoRedoKeyListeners';
+import PropertiesModal from 'src/dashboard/components/PropertiesModal';
+import RefreshIntervalModal from 'src/dashboard/components/RefreshIntervalModal';
+import {
+  UNDO_LIMIT,
+  SAVE_TYPE_OVERWRITE,
+  DASHBOARD_POSITION_DATA_LIMIT,
+  DASHBOARD_HEADER_ID,
+} from 'src/dashboard/util/constants';
+import { TagTypeEnum } from 'src/components/Tag/TagType';
+import setPeriodicRunner, {
+  stopPeriodicRender,
+} from 'src/dashboard/util/setPeriodicRunner';
+import ReportModal from 'src/features/reports/ReportModal';
+import { deleteActiveReport } from 'src/features/reports/ReportModal/actions';
+import { PageHeaderWithActions } from '@superset-ui/core/components/PageHeaderWithActions';
+import { useUnsavedChangesPrompt } from 'src/hooks/useUnsavedChangesPrompt';
+import DashboardEmbedModal from '../EmbeddedModal';
+import OverwriteConfirm from '../OverwriteConfirm';
+import {
+  addDangerToast,
+  addSuccessToast,
+  addWarningToast,
+} from '../../../components/MessageToasts/actions';
+import {
+  dashboardTitleChanged,
+  redoLayoutAction,
+  undoLayoutAction,
+  updateDashboardTitle,
+  clearDashboardHistory,
+} from '../../actions/dashboardLayout';
+import {
+  fetchCharts,
+  fetchFaveStar,
+  maxUndoHistoryToast,
+  onChange,
+  onRefresh,
+  saveDashboardRequest,
+  saveFaveStar,
+  savePublished,
+  setEditMode,
+  setMaxUndoHistoryExceeded,
+  setRefreshFrequency,
+  setUnsavedChanges,
+} from '../../actions/dashboardState';
+import { logEvent } from '../../../logger/actions';
+import { dashboardInfoChanged } from '../../actions/dashboardInfo';
+import isDashboardLoading from '../../util/isDashboardLoading';
+import { useChartIds } from '../../util/charts/useChartIds';
+import { useDashboardMetadataBar } from './useDashboardMetadataBar';
+import { useHeaderActionsMenu } from './useHeaderActionsDropdownMenu';
+import { DASHBOARD_CATEGORIES } from 'src/dashboard/constants/categories';
 
-from marshmallow import fields, post_dump, post_load, pre_load, Schema
-from marshmallow.validate import Length, OneOf, ValidationError
+const extensionsRegistry = getExtensionsRegistry();
 
-from superset import security_manager
-from superset.tags.models import TagType
-from superset.utils import json
+const headerContainerStyle = theme => css`
+  border-bottom: none;
+`;
 
-get_delete_ids_schema = {"type": "array", "items": {"type": "integer"}}
-get_export_ids_schema = {"type": "array", "items": {"type": "integer"}}
-get_fav_star_ids_schema = {"type": "array", "items": {"type": "integer"}}
-thumbnail_query_schema = {
-    "type": "object",
-    "properties": {"force": {"type": "boolean"}},
-}
-width_height_schema = {
-    "type": "array",
-    "items": {"type": "integer"},
-}
-screenshot_query_schema = {
-    "type": "object",
-    "properties": {
-        "force": {"type": "boolean"},
-        "permalink": {"type": "string"},
-        "window_size": width_height_schema,
-        "thumb_size": width_height_schema,
-    },
-}
-dashboard_title_description = "A title for the dashboard."
-category_description = "Category for the dashboard. One of: Performance Cockpit, Agent Empowerment, CX and Journey, Business Strategy."
-slug_description = "Unique identifying part for the web address of the dashboard."
-owners_description = (
-    "Owner are users ids allowed to delete or change this dashboard. "
-    "If left empty you will be one of the owners of the dashboard."
-)
-roles_description = (
-    "Roles is a list which defines access to the dashboard. "
-    "These roles are always applied in addition to restrictions on dataset "
-    "level access. "
-    "If no roles defined then the dashboard is available to all roles."
-)
-position_json_description = (
-    "This json object describes the positioning of the widgets "
-    "in the dashboard. It is dynamically generated when "
-    "adjusting the widgets size and positions by using "
-    "drag & drop in the dashboard view"
-)
-css_description = "Override CSS for the dashboard."
-json_metadata_description = (
-    "This JSON object is generated dynamically when clicking "
-    "the save or overwrite button in the dashboard view. "
-    "It is exposed here for reference and for power users who may want to alter "
-    " specific parameters."
-)
-published_description = (
-    "Determines whether or not this dashboard is visible in the list of all dashboards."
-)
-charts_description = (
-    "The names of the dashboard's charts. Names are used for legacy reasons."
-)
-certified_by_description = "Person or group that has certified this dashboard"
-certification_details_description = "Details of the certification"
-tags_description = "Tags to be associated with the dashboard"
+const editButtonStyle = theme => css`
+  color: ${theme.colorPrimary};
+`;
 
-openapi_spec_methods_override = {
-    "get": {"get": {"summary": "Get a dashboard detail information"}},
-    "get_list": {
-        "get": {
-            "summary": "Get a list of dashboards",
-            "description": "Gets a list of dashboards, use Rison or JSON query "
-            "parameters for filtering, sorting, pagination and "
-            " for selecting specific columns and metadata.",
-        }
-    },
-    "info": {"get": {"summary": "Get metadata information about this API resource"}},
-    "related": {
-        "get": {"description": "Get a list of all possible owners for a dashboard."}
-    },
-}
+const actionButtonsStyle = theme => css`
+  display: flex;
+  align-items: center;
 
+  .action-schedule-report {
+    margin-left: ${theme.sizeUnit * 2}px;
+  }
 
-def validate_json(value: Union[bytes, bytearray, str]) -> None:
-    try:
-        json.validate_json(value)
-    except json.JSONDecodeError as ex:
-        raise ValidationError("JSON not valid") from ex
+  .undoRedo {
+    display: flex;
+    margin-right: ${theme.sizeUnit * 2}px;
+  }
+`;
 
+const StyledUndoRedoButton = styled(Button)`
+  // TODO: check if we need this
+  padding: 0;
+  &:hover {
+    background: transparent;
+  }
+`;
 
-def validate_json_metadata(value: Union[bytes, bytearray, str]) -> None:
-    if not value:
-        return
-    try:
-        value_obj = json.loads(value)
-    except json.JSONDecodeError as ex:
-        raise ValidationError("JSON not valid") from ex
-    errors = DashboardJSONMetadataSchema().validate(value_obj, partial=False)
-    if errors:
-        raise ValidationError(errors)
+const undoRedoStyle = theme => css`
+  color: ${theme.colorIcon};
+  &:hover {
+    color: ${theme.colorIconHover};
+  }
+`;
 
+const undoRedoEmphasized = theme => css`
+  color: ${theme.colorIcon};
+`;
 
-class SharedLabelsColorsField(fields.Field):
-    """
-    A custom field that accepts either a list of strings or a dictionary.
-    """
+const undoRedoDisabled = theme => css`
+  color: ${theme.colorTextDisabled};
+`;
 
-    def _deserialize(
-        self,
-        value: Union[list[str], dict[str, str]],
-        attr: Union[str, None],
-        data: Union[Mapping[str, Any], None],
-        **kwargs: dict[str, Any],
-    ) -> list[str]:
-        if isinstance(value, list):
-            if all(isinstance(item, str) for item in value):
-                return value
-        elif isinstance(value, dict):
-            # Enforce list (for backward compatibility)
-            return []
+const saveBtnStyle = theme => css`
+  min-width: ${theme.sizeUnit * 17}px;
+  height: ${theme.sizeUnit * 8}px;
+  span > :first-of-type {
+    margin-right: 0;
+  }
+`;
 
-        raise ValidationError("Not a valid list")
+const discardBtnStyle = theme => css`
+  min-width: ${theme.sizeUnit * 22}px;
+  height: ${theme.sizeUnit * 8}px;
+`;
 
+const categorySelectStyle = theme => css`
+  width: ${theme.sizeUnit * 44}px;
+  min-width: ${theme.sizeUnit * 36}px;
+  max-width: 40vw;
+  margin-right: ${theme.sizeUnit * 2}px;
+  flex: 0 1 auto;
 
-class DashboardJSONMetadataSchema(Schema):
-    download_query = fields.String(allow_none=True)
-    # native_filter_configuration is for dashboard-native filters
-    native_filter_configuration = fields.List(fields.Dict(), allow_none=True)
-    # chart_configuration for now keeps data about cross-filter scoping for charts
-    chart_configuration = fields.Dict()
-    # global_chart_configuration keeps data about global cross-filter scoping
-    # for charts - can be overridden by chart_configuration for each chart
-    global_chart_configuration = fields.Dict()
-    timed_refresh_immune_slices = fields.List(fields.Integer())
-    # deprecated wrt dashboard-native filters
-    filter_scopes = fields.Dict()
-    expanded_slices = fields.Dict()
-    refresh_frequency = fields.Integer()
-    # deprecated wrt dashboard-native filters
-    default_filters = fields.Str()
-    stagger_refresh = fields.Boolean()
-    stagger_time = fields.Integer()
-    color_scheme = fields.Str(allow_none=True)
-    color_namespace = fields.Str(allow_none=True)
-    positions = fields.Dict(allow_none=True)
-    label_colors = fields.Dict()
-    shared_label_colors = SharedLabelsColorsField()
-    map_label_colors = fields.Dict()
-    color_scheme_domain = fields.List(fields.Str())
-    cross_filters_enabled = fields.Boolean(dump_default=True)
-    # used for v0 import/export
-    import_time = fields.Integer()
-    remote_id = fields.Integer()
-    filter_bar_orientation = fields.Str(allow_none=True)
-    native_filter_migration = fields.Dict()
+  &.ant-select-single .ant-select-selector {
+    height: ${theme.sizeUnit * 8}px !important;
+    display: flex;
+    align-items: center;
+    border-radius: ${theme.borderRadius}px;
+    border: 1px solid ${theme.colorBorder};
+    background-color: ${theme.colorBgContainer};
+    width: 100%;
+  }
 
-    @pre_load
-    def remove_show_native_filters(  # pylint: disable=unused-argument
-        self,
-        data: dict[str, Any],
-        **kwargs: Any,
-    ) -> dict[str, Any]:
-        """
-        Remove ``show_native_filters`` from the JSON metadata.
+  /* Unselected state: same look as selected (border, background, text) */
+  &.ant-select-single:not(.ant-select-open) .ant-select-selector {
+    border-color: ${theme.colorBorder};
+    background-color: ${theme.colorBgContainer};
+  }
 
-        This field was removed in https://github.com/apache/superset/pull/23228, but might
-        be present in old exports.
-        """  # noqa: E501
-        if "show_native_filters" in data:
-            del data["show_native_filters"]
+  .ant-select-selection-placeholder {
+    color: ${theme.colorText};
+  }
 
-        return data
+  .ant-select-selection-item {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+`;
 
+const discardChanges = () => {
+  const url = new URL(window.location.href);
 
-class UserSchema(Schema):
-    id = fields.Int()
-    username = fields.String()
-    first_name = fields.String()
-    last_name = fields.String()
+  url.searchParams.delete('edit');
+  window.location.assign(url);
+};
 
+const Header = () => {
+  const dispatch = useDispatch();
+  const [didNotifyMaxUndoHistoryToast, setDidNotifyMaxUndoHistoryToast] =
+    useState(false);
+  const [emphasizeUndo, setEmphasizeUndo] = useState(false);
+  const [emphasizeRedo, setEmphasizeRedo] = useState(false);
+  const [showingPropertiesModal, setShowingPropertiesModal] = useState(false);
+  const [showingRefreshModal, setShowingRefreshModal] = useState(false);
+  const [showingEmbedModal, setShowingEmbedModal] = useState(false);
+  const [showingReportModal, setShowingReportModal] = useState(false);
+  const [currentReportDeleting, setCurrentReportDeleting] = useState(null);
+  const dashboardInfo = useSelector(state => state.dashboardInfo);
+  const layout = useSelector(state => state.dashboardLayout.present);
+  const undoLength = useSelector(state => state.dashboardLayout.past.length);
+  const redoLength = useSelector(state => state.dashboardLayout.future.length);
+  const dataMask = useSelector(state => state.dataMask);
+  const user = useSelector(state => state.user);
+  const chartIds = useChartIds();
 
-class RolesSchema(Schema):
-    id = fields.Int()
-    name = fields.String()
+  const {
+    expandedSlices,
+    refreshFrequency,
+    shouldPersistRefreshFrequency,
+    customCss,
+    colorNamespace,
+    colorScheme,
+    isStarred,
+    isPublished,
+    hasUnsavedChanges,
+    maxUndoHistoryExceeded,
+    editMode,
+    lastModifiedTime,
+  } = useSelector(
+    state => ({
+      expandedSlices: state.dashboardState.expandedSlices,
+      refreshFrequency: state.dashboardState.refreshFrequency,
+      shouldPersistRefreshFrequency:
+        !!state.dashboardState.shouldPersistRefreshFrequency,
+      customCss: state.dashboardInfo.css,
+      colorNamespace: state.dashboardState.colorNamespace,
+      colorScheme: state.dashboardState.colorScheme,
+      isStarred: !!state.dashboardState.isStarred,
+      isPublished: !!state.dashboardState.isPublished,
+      hasUnsavedChanges: !!state.dashboardState.hasUnsavedChanges,
+      maxUndoHistoryExceeded: !!state.dashboardState.maxUndoHistoryExceeded,
+      editMode: !!state.dashboardState.editMode,
+      lastModifiedTime: state.lastModifiedTime,
+    }),
+    shallowEqual,
+  );
+  const isLoading = useSelector(state => isDashboardLoading(state.charts));
 
+  const refreshTimer = useRef(0);
+  const ctrlYTimeout = useRef(0);
+  const ctrlZTimeout = useRef(0);
+  const prevThemeIdRef = useRef(dashboardInfo.theme?.id ?? null);
 
-class TagSchema(Schema):
-    id = fields.Int()
-    name = fields.String()
-    type = fields.Enum(TagType, by_value=True)
-
-
-class ThemeSchema(Schema):
-    id = fields.Int()
-    theme_name = fields.String()
-    json_data = fields.String()
-
-
-class DashboardGetResponseSchema(Schema):
-    id = fields.Int()
-    slug = fields.String()
-    url = fields.String()
-    dashboard_title = fields.String(
-        metadata={"description": dashboard_title_description}
-    )
-    category = fields.String(metadata={"description": category_description})
-    thumbnail_url = fields.String(allow_none=True)
-    published = fields.Boolean()
-    css = fields.String(metadata={"description": css_description})
-    theme = fields.Nested(ThemeSchema, allow_none=True)
-    json_metadata = fields.String(metadata={"description": json_metadata_description})
-    position_json = fields.String(metadata={"description": position_json_description})
-    certified_by = fields.String(metadata={"description": certified_by_description})
-    certification_details = fields.String(
-        metadata={"description": certification_details_description}
-    )
-    changed_by_name = fields.String()
-    changed_by = fields.Nested(UserSchema(exclude=["username"]))
-    changed_on = fields.DateTime()
-    created_by = fields.Nested(UserSchema(exclude=["username"]))
-    charts = fields.List(fields.String(metadata={"description": charts_description}))
-    owners = fields.List(fields.Nested(UserSchema(exclude=["username"])))
-    roles = fields.List(fields.Nested(RolesSchema))
-    tags = fields.Nested(TagSchema, many=True)
-    changed_on_humanized = fields.String(data_key="changed_on_delta_humanized")
-    created_on_humanized = fields.String(data_key="created_on_delta_humanized")
-    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
-    uuid = fields.UUID(allow_none=True)
-
-    # pylint: disable=unused-argument
-    @post_dump()
-    def post_dump(self, serialized: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
-        if security_manager.is_guest_user():
-            del serialized["owners"]
-            del serialized["changed_by_name"]
-            del serialized["changed_by"]
-        return serialized
-
-
-class DatabaseSchema(Schema):
-    id = fields.Int()
-    name = fields.String()
-    backend = fields.String()
-    allows_subquery = fields.Bool()
-    allows_cost_estimate = fields.Bool()
-    allows_virtual_table_explore = fields.Bool()
-    disable_data_preview = fields.Bool()
-    disable_drill_to_detail = fields.Bool()
-    allow_multi_catalog = fields.Bool()
-    explore_database_id = fields.Int()
-
-
-class DashboardDatasetSchema(Schema):
-    id = fields.Int()
-    uid = fields.Str()
-    column_formats = fields.Dict()
-    database = fields.Nested(DatabaseSchema)
-    default_endpoint = fields.String()
-    filter_select = fields.Bool()
-    filter_select_enabled = fields.Bool()
-    is_sqllab_view = fields.Bool()
-    name = fields.Str()
-    datasource_name = fields.Str()
-    table_name = fields.Str()
-    type = fields.Str()
-    schema = fields.Str()
-    offset = fields.Int()
-    cache_timeout = fields.Int()
-    params = fields.Str()
-    perm = fields.Str()
-    edit_url = fields.Str()
-    sql = fields.Str()
-    select_star = fields.Str()
-    main_dttm_col = fields.Str()
-    health_check_message = fields.Str()
-    fetch_values_predicate = fields.Str()
-    template_params = fields.Str()
-    owners = fields.List(fields.Dict())
-    columns = fields.List(fields.Dict())
-    column_types = fields.List(fields.Int())
-    column_names = fields.List(fields.Str())
-    metrics = fields.List(fields.Dict())
-    order_by_choices = fields.List(fields.List(fields.Str()))
-    verbose_map = fields.Dict(fields.Str(), fields.Str())
-    time_grain_sqla = fields.List(fields.List(fields.Str()))
-    granularity_sqla = fields.List(fields.List(fields.Str()))
-    normalize_columns = fields.Bool()
-    always_filter_main_dttm = fields.Bool()
-
-    # pylint: disable=unused-argument
-    @post_dump()
-    def post_dump(self, serialized: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
-        if security_manager.is_guest_user():
-            del serialized["owners"]
-            del serialized["database"]
-        return serialized
-
-
-class TabSchema(Schema):
-    # pylint: disable=W0108
-    children = fields.List(fields.Nested(lambda: TabSchema()))
-    value = fields.Str()
-    title = fields.Str()
-    parents = fields.List(fields.Str())
-
-
-class TabsPayloadSchema(Schema):
-    all_tabs = fields.Dict(keys=fields.String(), values=fields.String())
-    tab_tree = fields.List(fields.Nested(lambda: TabSchema))
-
-
-class BaseDashboardSchema(Schema):
-    # pylint: disable=unused-argument
-    @post_load
-    def post_load(self, data: dict[str, Any], **kwargs: Any) -> dict[str, Any]:
-        if data.get("slug"):
-            data["slug"] = data["slug"].strip()
-            data["slug"] = data["slug"].replace(" ", "-")
-            data["slug"] = re.sub(r"[^\w\-]+", "", data["slug"])
-        return data
-
-
-class DashboardPostSchema(BaseDashboardSchema):
-    download_query = fields.String(
-    required=False,
-    allow_none=True,
-     )
-    dashboard_title = fields.String(
-        metadata={"description": dashboard_title_description},
-        allow_none=True,
-        validate=Length(0, 500),
-    )
-    category = fields.String(
-        metadata={"description": category_description},
-        required=True,
-        validate=OneOf(
-            [
-                "Performance Cockpit",
-                "Agent Empowerment",
-                "CX and Journey",
-                "Business Strategy",
-            ]
-        ),
-    )
-    slug = fields.String(
-        metadata={"description": slug_description},
-        allow_none=True,
-        validate=[Length(1, 255)],
-    )
-    owners = fields.List(fields.Integer(metadata={"description": owners_description}))
-    roles = fields.List(fields.Integer(metadata={"description": roles_description}))
-    position_json = fields.String(
-        metadata={"description": position_json_description}, validate=validate_json
-    )
-    css = fields.String(metadata={"description": css_description})
-    theme_id = fields.Integer(
-        metadata={"description": "Theme ID for the dashboard"}, allow_none=True
-    )
-    json_metadata = fields.String(
-        metadata={"description": json_metadata_description},
-        validate=validate_json_metadata,
-    )
-    published = fields.Boolean(metadata={"description": published_description})
-    certified_by = fields.String(
-        metadata={"description": certified_by_description}, allow_none=True
-    )
-    certification_details = fields.String(
-        metadata={"description": certification_details_description}, allow_none=True
-    )
-    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
-    external_url = fields.String(allow_none=True)
-    uuid = fields.UUID(allow_none=True)
-
-
-class DashboardCopySchema(Schema):
-    dashboard_title = fields.String(
-        metadata={"description": dashboard_title_description},
-        allow_none=True,
-        validate=Length(0, 500),
-    )
-    category = fields.String(
-        metadata={"description": category_description},
-        required=True,
-        validate=OneOf(
-            [
-                "Performance Cockpit",
-                "Agent Empowerment",
-                "CX and Journey",
-                "Business Strategy",
-            ]
-        ),
-    )
-    css = fields.String(metadata={"description": css_description})
-    json_metadata = fields.String(
-        metadata={"description": json_metadata_description},
-        validate=validate_json_metadata,
-        required=True,
-    )
-    duplicate_slices = fields.Boolean(
-        metadata={
-            "description": "Whether or not to also copy all charts on the dashboard"
-        }
-    )
-
-
-class DashboardPutSchema(BaseDashboardSchema):
-    dashboard_title = fields.String(
-        metadata={"description": dashboard_title_description},
-        allow_none=True,
-        validate=Length(0, 500),
-    )
-    category = fields.String(
-        metadata={"description": category_description},
-        allow_none=True,
-        validate=OneOf(
-            [
-                "Performance Cockpit",
-                "Agent Empowerment",
-                "CX and Journey",
-                "Business Strategy",
-            ]
-        ),
-    )
-    slug = fields.String(
-        metadata={"description": slug_description},
-        allow_none=True,
-        validate=Length(0, 255),
-    )
-    owners = fields.List(
-        fields.Integer(metadata={"description": owners_description}, allow_none=True)
-    )
-    roles = fields.List(
-        fields.Integer(metadata={"description": roles_description}, allow_none=True)
-    )
-    position_json = fields.String(
-        metadata={"description": position_json_description},
-        allow_none=True,
-        validate=validate_json,
-    )
-    css = fields.String(metadata={"description": css_description}, allow_none=True)
-    theme_id = fields.Integer(
-        metadata={"description": "Theme ID for the dashboard"}, allow_none=True
-    )
-    json_metadata = fields.String(
-        metadata={"description": json_metadata_description},
-        allow_none=True,
-        validate=validate_json_metadata,
-    )
-    published = fields.Boolean(
-        metadata={"description": published_description}, allow_none=True
-    )
-    certified_by = fields.String(
-        metadata={"description": certified_by_description}, allow_none=True
-    )
-    certification_details = fields.String(
-        metadata={"description": certification_details_description}, allow_none=True
-    )
-    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
-    external_url = fields.String(allow_none=True)
-    tags = fields.List(
-        fields.Integer(metadata={"description": tags_description}, allow_none=True)
-    )
-    uuid = fields.UUID(allow_none=True)
-
-
-class DashboardNativeFiltersConfigUpdateSchema(BaseDashboardSchema):
-    deleted = fields.List(fields.String(), allow_none=False)
-    modified = fields.List(fields.Raw(), allow_none=False)
-    reordered = fields.List(fields.String(), allow_none=False)
-
-
-class DashboardColorsConfigUpdateSchema(BaseDashboardSchema):
-    color_namespace = fields.String(allow_none=True)
-    color_scheme = fields.String(allow_none=True)
-    map_label_colors = fields.Dict(allow_none=False)
-    shared_label_colors = SharedLabelsColorsField()
-    label_colors = fields.Dict(allow_none=False)
-    color_scheme_domain = fields.List(fields.String(), allow_none=False)
-
-
-class DashboardScreenshotPostSchema(Schema):
-    dataMask = fields.Dict(  # noqa: N815
-        keys=fields.Str(),
-        values=fields.Raw(),
-        metadata={"description": "An object representing the data mask."},
-    )
-    activeTabs = fields.List(  # noqa: N815
-        fields.Str(), metadata={"description": "A list representing active tabs."}
-    )
-    anchor = fields.String(
-        metadata={"description": "A string representing the anchor."}
-    )
-    urlParams = fields.List(  # noqa: N815
-        fields.Tuple(
-            (fields.Str(), fields.Str()),
-        ),
-        metadata={"description": "A list of tuples, each containing two strings."},
-    )
-
-
-class ChartFavStarResponseResult(Schema):
-    id = fields.Integer(metadata={"description": "The Chart id"})
-    value = fields.Boolean(metadata={"description": "The FaveStar value"})
-
-
-class GetFavStarIdsSchema(Schema):
-    result = fields.List(
-        fields.Nested(ChartFavStarResponseResult),
-        metadata={
-            "description": "A list of results for each corresponding chart in the request"  # noqa: E501
+  const dashboardTitle = layout[DASHBOARD_HEADER_ID]?.meta?.text;
+  const { slug } = dashboardInfo;
+  const actualLastModifiedTime = Math.max(
+    lastModifiedTime,
+    dashboardInfo.last_modified_time,
+  );
+  const boundActionCreators = useMemo(
+    () =>
+      bindActionCreators(
+        {
+          addSuccessToast,
+          addDangerToast,
+          addWarningToast,
+          onUndo: undoLayoutAction,
+          onRedo: redoLayoutAction,
+          clearDashboardHistory,
+          setEditMode,
+          setUnsavedChanges,
+          fetchFaveStar,
+          saveFaveStar,
+          savePublished,
+          fetchCharts,
+          updateDashboardTitle,
+          onChange,
+          onSave: saveDashboardRequest,
+          setMaxUndoHistoryExceeded,
+          maxUndoHistoryToast,
+          logEvent,
+          setRefreshFrequency,
+          onRefresh,
+          dashboardInfoChanged,
+          dashboardTitleChanged,
         },
-    )
+        dispatch,
+      ),
+    [dispatch],
+  );
 
+  const startPeriodicRender = useCallback(
+    interval => {
+      let intervalMessage;
 
-class ImportV1DashboardSchema(Schema):
-    dashboard_title = fields.String(required=True)
-    category = fields.String(allow_none=True)
-    description = fields.String(allow_none=True)
-    css = fields.String(allow_none=True)
-    slug = fields.String(allow_none=True)
-    uuid = fields.UUID(required=True)
-    position = fields.Dict()
-    metadata = fields.Dict()
-    version = fields.String(required=True)
-    is_managed_externally = fields.Boolean(allow_none=True, dump_default=False)
-    external_url = fields.String(allow_none=True)
-    certified_by = fields.String(allow_none=True)
-    certification_details = fields.String(allow_none=True)
-    published = fields.Boolean(allow_none=True)
-    tags = fields.List(fields.String(), allow_none=True)
-    theme_uuid = fields.UUID(allow_none=True)
-    theme_id = fields.Integer(allow_none=True)
+      if (interval) {
+        const periodicRefreshOptions =
+          dashboardInfo.common?.conf?.DASHBOARD_AUTO_REFRESH_INTERVALS;
+        const predefinedValue = periodicRefreshOptions.find(
+          option => Number(option[0]) === interval / 1000,
+        );
 
+        if (predefinedValue) {
+          intervalMessage = t(predefinedValue[1]);
+        } else {
+          intervalMessage = extendedDayjs
+            .duration(interval, 'millisecond')
+            .humanize();
+        }
+      }
 
-class EmbeddedDashboardConfigSchema(Schema):
-    allowed_domains = fields.List(fields.String(), required=True)
+      const fetchCharts = (charts, force = false) =>
+        boundActionCreators.fetchCharts(
+          charts,
+          force,
+          interval * 0.2,
+          dashboardInfo.id,
+        );
 
+      const periodicRender = () => {
+        const { metadata } = dashboardInfo;
+        const immune = metadata.timed_refresh_immune_slices || [];
+        const affectedCharts = chartIds.filter(
+          chartId => immune.indexOf(chartId) === -1,
+        );
 
-class EmbeddedDashboardResponseSchema(Schema):
-    uuid = fields.String()
-    allowed_domains = fields.List(fields.String())
-    dashboard_id = fields.String()
-    changed_on = fields.DateTime()
-    changed_by = fields.Nested(UserSchema)
+        boundActionCreators.logEvent(LOG_ACTIONS_PERIODIC_RENDER_DASHBOARD, {
+          interval,
+          chartCount: affectedCharts.length,
+        });
+        boundActionCreators.addWarningToast(
+          t(
+            `This dashboard is currently auto refreshing; the next auto refresh will be in %s.`,
+            intervalMessage,
+          ),
+        );
+        if (
+          dashboardInfo.common?.conf?.DASHBOARD_AUTO_REFRESH_MODE === 'fetch'
+        ) {
+          // force-refresh while auto-refresh in dashboard
+          return fetchCharts(affectedCharts);
+        }
+        return fetchCharts(affectedCharts, true);
+      };
 
+      refreshTimer.current = setPeriodicRunner({
+        interval,
+        periodicRender,
+        refreshTimer: refreshTimer.current,
+      });
+    },
+    [boundActionCreators, chartIds, dashboardInfo],
+  );
 
-class DashboardCacheScreenshotResponseSchema(Schema):
-    cache_key = fields.String(metadata={"description": "The cache key"})
-    dashboard_url = fields.String(
-        metadata={"description": "The url to render the dashboard"}
-    )
-    image_url = fields.String(
-        metadata={"description": "The url to fetch the screenshot"}
-    )
-    task_status = fields.String(
-        metadata={"description": "The status of the async screenshot"}
-    )
-    task_updated_at = fields.String(
-        metadata={"description": "The timestamp of the last change in status"}
-    )
+  useEffect(() => {
+    startPeriodicRender(refreshFrequency * 1000);
+  }, [refreshFrequency, startPeriodicRender]);
 
+  // Track theme updates as unsaved changes, but ignore initial hydration.
+  useEffect(() => {
+    const currentThemeId = dashboardInfo.theme?.id ?? null;
+    if (prevThemeIdRef.current === currentThemeId) {
+      return;
+    }
+    prevThemeIdRef.current = currentThemeId;
+    if (editMode) {
+      boundActionCreators.setUnsavedChanges(true);
+    }
+  }, [dashboardInfo.theme, editMode, boundActionCreators]);
 
-class CacheScreenshotSchema(Schema):
-    dataMask = fields.Dict(keys=fields.Str(), values=fields.Raw(), required=False)  # noqa: N815
-    activeTabs = fields.List(fields.Str(), required=False)  # noqa: N815
-    anchor = fields.Str(required=False)
-    urlParams = fields.List(  # noqa: N815
-        fields.List(fields.Str(), validate=lambda x: len(x) == 2), required=False
-    )
-    permalinkKey = fields.Str(required=False)  # noqa: N815
+  useEffect(() => {
+    if (UNDO_LIMIT - undoLength <= 0 && !didNotifyMaxUndoHistoryToast) {
+      setDidNotifyMaxUndoHistoryToast(true);
+      boundActionCreators.maxUndoHistoryToast();
+    }
+    if (undoLength > UNDO_LIMIT && !maxUndoHistoryExceeded) {
+      boundActionCreators.setMaxUndoHistoryExceeded();
+    }
+  }, [
+    boundActionCreators,
+    didNotifyMaxUndoHistoryToast,
+    maxUndoHistoryExceeded,
+    undoLength,
+  ]);
+
+  useEffect(
+    () => () => {
+      stopPeriodicRender(refreshTimer.current);
+      boundActionCreators.setRefreshFrequency(0);
+      clearTimeout(ctrlYTimeout.current);
+      clearTimeout(ctrlZTimeout.current);
+    },
+    [boundActionCreators],
+  );
+
+  const handleChangeText = useCallback(
+    nextText => {
+      if (nextText && dashboardTitle !== nextText) {
+        boundActionCreators.updateDashboardTitle(nextText);
+        boundActionCreators.onChange();
+      }
+    },
+    [boundActionCreators, dashboardTitle],
+  );
+
+  const handleCtrlY = useCallback(() => {
+    boundActionCreators.onRedo();
+    setEmphasizeRedo(true);
+    if (ctrlYTimeout.current) {
+      clearTimeout(ctrlYTimeout.current);
+    }
+    ctrlYTimeout.current = setTimeout(() => {
+      setEmphasizeRedo(false);
+    }, 100);
+  }, [boundActionCreators]);
+
+  const handleCtrlZ = useCallback(() => {
+    boundActionCreators.onUndo();
+    setEmphasizeUndo(true);
+    if (ctrlZTimeout.current) {
+      clearTimeout(ctrlZTimeout.current);
+    }
+    ctrlZTimeout.current = setTimeout(() => {
+      setEmphasizeUndo(false);
+    }, 100);
+  }, [boundActionCreators]);
+
+  const forceRefresh = useCallback(() => {
+    if (!isLoading) {
+      boundActionCreators.logEvent(LOG_ACTIONS_FORCE_REFRESH_DASHBOARD, {
+        force: true,
+        interval: 0,
+        chartCount: chartIds.length,
+      });
+      return boundActionCreators.onRefresh(chartIds, true, 0, dashboardInfo.id);
+    }
+    return false;
+  }, [boundActionCreators, chartIds, dashboardInfo.id, isLoading]);
+
+  const toggleEditMode = useCallback(() => {
+    boundActionCreators.logEvent(LOG_ACTIONS_TOGGLE_EDIT_DASHBOARD, {
+      edit_mode: !editMode,
+    });
+    boundActionCreators.setEditMode(!editMode);
+  }, [boundActionCreators, editMode]);
+
+  const overwriteDashboard = useCallback(() => {
+    if (!dashboardInfo.category) {
+      boundActionCreators.addDangerToast(t('Dashboard category is required'));
+      return;
+    }
+
+    const currentColorNamespace =
+      dashboardInfo?.metadata?.color_namespace || colorNamespace;
+    const currentColorScheme =
+      dashboardInfo?.metadata?.color_scheme || colorScheme;
+
+    const data = {
+      certified_by: dashboardInfo.certified_by,
+      certification_details: dashboardInfo.certification_details,
+      css: customCss,
+      dashboard_title: dashboardTitle,
+      category: dashboardInfo.category,
+      last_modified_time: actualLastModifiedTime,
+      owners: dashboardInfo.owners,
+      roles: dashboardInfo.roles,
+      slug,
+      tags: (dashboardInfo.tags || []).filter(
+        item => item.type === TagTypeEnum.Custom || !item.type,
+      ),
+      theme_id: dashboardInfo.theme ? dashboardInfo.theme.id : null,
+      metadata: {
+        ...dashboardInfo?.metadata,
+        color_namespace: currentColorNamespace,
+        color_scheme: currentColorScheme,
+        positions: layout,
+        refresh_frequency: shouldPersistRefreshFrequency
+          ? refreshFrequency
+          : dashboardInfo.metadata?.refresh_frequency,
+      },
+    };
+
+    // make sure positions data less than DB storage limitation:
+    const positionJSONLength = safeStringify(layout).length;
+    const limit =
+      dashboardInfo.common?.conf?.SUPERSET_DASHBOARD_POSITION_DATA_LIMIT ||
+      DASHBOARD_POSITION_DATA_LIMIT;
+    if (positionJSONLength >= limit) {
+      boundActionCreators.addDangerToast(
+        t(
+          'Your dashboard is too large. Please reduce its size before saving it.',
+        ),
+      );
+    } else {
+      if (positionJSONLength >= limit * 0.9) {
+        boundActionCreators.addWarningToast(
+          t('Your dashboard is near the size limit.'),
+        );
+      }
+
+      boundActionCreators.onSave(data, dashboardInfo.id, SAVE_TYPE_OVERWRITE);
+    }
+  }, [
+    actualLastModifiedTime,
+    boundActionCreators,
+    colorNamespace,
+    colorScheme,
+    customCss,
+    dashboardInfo.category,
+    dashboardInfo.certification_details,
+    dashboardInfo.certified_by,
+    dashboardInfo.common?.conf?.SUPERSET_DASHBOARD_POSITION_DATA_LIMIT,
+    dashboardInfo.id,
+    dashboardInfo.metadata,
+    dashboardInfo.owners,
+    dashboardInfo.roles,
+    dashboardInfo.tags,
+    dashboardTitle,
+    layout,
+    refreshFrequency,
+    shouldPersistRefreshFrequency,
+    slug,
+  ]);
+
+  const {
+    showModal: showUnsavedChangesModal,
+    setShowModal: setShowUnsavedChangesModal,
+    handleConfirmNavigation,
+    handleSaveAndCloseModal,
+  } = useUnsavedChangesPrompt({
+    hasUnsavedChanges,
+    onSave: overwriteDashboard,
+  });
+
+  const showPropertiesModal = useCallback(() => {
+    setShowingPropertiesModal(true);
+  }, []);
+
+  const hidePropertiesModal = useCallback(() => {
+    setShowingPropertiesModal(false);
+  }, []);
+  const showRefreshModal = useCallback(() => {
+    setShowingRefreshModal(true);
+  }, []);
+  const hideRefreshModal = useCallback(() => {
+    setShowingRefreshModal(false);
+  }, []);
+
+  const showEmbedModal = useCallback(() => {
+    setShowingEmbedModal(true);
+  }, []);
+
+  const hideEmbedModal = useCallback(() => {
+    setShowingEmbedModal(false);
+  }, []);
+
+  const showReportModal = useCallback(() => {
+    setShowingReportModal(true);
+  }, []);
+
+  const hideReportModal = useCallback(() => {
+    setShowingReportModal(false);
+  }, []);
+
+  const metadataBar = useDashboardMetadataBar(dashboardInfo);
+
+  const userCanEdit =
+    dashboardInfo.dash_edit_perm && !dashboardInfo.is_managed_externally;
+  const userCanShare = dashboardInfo.dash_share_perm;
+  const userCanSaveAs = dashboardInfo.dash_save_perm;
+  const userCanCurate =
+    isFeatureEnabled(FeatureFlag.EmbeddedSuperset) &&
+    findPermission('can_set_embedded', 'Dashboard', user.roles);
+  const isEmbedded = !dashboardInfo?.userId;
+
+  const handleOnPropertiesChange = useCallback(
+    updates => {
+      boundActionCreators.dashboardInfoChanged({
+        slug: updates.slug,
+        category: updates.category,
+        metadata: JSON.parse(updates.jsonMetadata || '{}'),
+        certified_by: updates.certifiedBy,
+        certification_details: updates.certificationDetails,
+        owners: updates.owners,
+        roles: updates.roles,
+        tags: updates.tags,
+        theme_id: updates.themeId,
+        css: updates.css,
+      });
+      boundActionCreators.setUnsavedChanges(true);
+
+      if (updates.title && dashboardTitle !== updates.title) {
+        boundActionCreators.updateDashboardTitle(updates.title);
+        boundActionCreators.onChange();
+      }
+    },
+    [boundActionCreators, dashboardTitle],
+  );
+
+  const handleRefreshChange = useCallback(
+    (refreshFrequency, editMode) => {
+      boundActionCreators.setRefreshFrequency(refreshFrequency, !!editMode);
+    },
+    [boundActionCreators],
+  );
+
+  const NavExtension = extensionsRegistry.get('dashboard.nav.right');
+
+  const editableTitleProps = useMemo(
+    () => ({
+      title: dashboardTitle,
+      canEdit: userCanEdit && editMode,
+      onSave: handleChangeText,
+      placeholder: t('Add the name of the dashboard'),
+      label: t('Dashboard title'),
+      showTooltip: false,
+    }),
+    [dashboardTitle, editMode, handleChangeText, userCanEdit],
+  );
+
+  const certifiedBadgeProps = useMemo(
+    () => ({
+      certifiedBy: dashboardInfo.certified_by,
+      details: dashboardInfo.certification_details,
+    }),
+    [dashboardInfo.certification_details, dashboardInfo.certified_by],
+  );
+
+  const faveStarProps = useMemo(
+    () => ({
+      itemId: dashboardInfo.id,
+      fetchFaveStar: boundActionCreators.fetchFaveStar,
+      saveFaveStar: boundActionCreators.saveFaveStar,
+      isStarred,
+      showTooltip: true,
+    }),
+    [
+      boundActionCreators.fetchFaveStar,
+      boundActionCreators.saveFaveStar,
+      dashboardInfo.id,
+      isStarred,
+    ],
+  );
+
+  const titlePanelAdditionalItems = useMemo(
+    () => [
+      !editMode && (
+        <PublishedStatus
+          dashboardId={dashboardInfo.id}
+          isPublished={isPublished}
+          savePublished={boundActionCreators.savePublished}
+          userCanEdit={userCanEdit}
+          userCanSave={userCanSaveAs}
+          visible={!editMode}
+        />
+      ),
+      !editMode && !isEmbedded && null,
+    ],
+    [
+      boundActionCreators.savePublished,
+      dashboardInfo.id,
+      editMode,
+      metadataBar,
+      isEmbedded,
+      isPublished,
+      userCanEdit,
+      userCanSaveAs,
+    ],
+  );
+
+  const rightPanelAdditionalItems = useMemo(
+    () => (
+      <div className="button-container">
+        {userCanSaveAs && (
+          <div className="button-container" data-test="dashboard-edit-actions">
+            {editMode && (
+              <div css={actionButtonsStyle}>
+                <div className="undoRedo">
+                  <Tooltip
+                    id="dashboard-undo-tooltip"
+                    title={t('Undo the action')}
+                  >
+                    <StyledUndoRedoButton
+                      buttonStyle="link"
+                      disabled={undoLength < 1}
+                      onClick={
+                        undoLength > 0 ? boundActionCreators.onUndo : undefined
+                      }
+                    >
+                      <Icons.Undo
+                        css={[
+                          undoRedoStyle,
+                          emphasizeUndo && undoRedoEmphasized,
+                          undoLength < 1 && undoRedoDisabled,
+                        ]}
+                        data-test="undo-action"
+                        iconSize="xl"
+                      />
+                    </StyledUndoRedoButton>
+                  </Tooltip>
+                  <Tooltip
+                    id="dashboard-redo-tooltip"
+                    title={t('Redo the action')}
+                  >
+                    <StyledUndoRedoButton
+                      buttonStyle="link"
+                      disabled={redoLength < 1}
+                      onClick={
+                        redoLength > 0 ? boundActionCreators.onRedo : undefined
+                      }
+                    >
+                      <Icons.Redo
+                        css={[
+                          undoRedoStyle,
+                          emphasizeRedo && undoRedoEmphasized,
+                          redoLength < 1 && undoRedoDisabled,
+                        ]}
+                        data-test="redo-action"
+                        iconSize="xl"
+                      />
+                    </StyledUndoRedoButton>
+                  </Tooltip>
+                </div>
+                <Select
+                  css={categorySelectStyle}
+                  placeholder={t('Select')}
+                  value={dashboardInfo.category || undefined}
+                  options={DASHBOARD_CATEGORIES.map(category => ({
+                    value: category,
+                    label: category,
+                  }))}
+                  // Ensure category order matches Home page (no alphabetical re-sorting)
+                  filterSort={(a, b) =>
+                    DASHBOARD_CATEGORIES.indexOf(String(a?.value)) -
+                    DASHBOARD_CATEGORIES.indexOf(String(b?.value))
+                  }
+                  onChange={value => {
+                    boundActionCreators.dashboardInfoChanged({
+                      ...dashboardInfo,
+                      category: value,
+                    });
+                    boundActionCreators.setUnsavedChanges(true);
+                  }}
+                  data-test="dashboard-header-category-select"
+                />
+                <Button
+                  css={discardBtnStyle}
+                  buttonSize="small"
+                  onClick={discardChanges}
+                  buttonStyle="secondary"
+                  data-test="discard-changes-button"
+                  aria-label={t('Discard')}
+                >
+                  {t('Discard')}
+                </Button>
+                <Button
+                  css={saveBtnStyle}
+                  buttonSize="small"
+                  disabled={!hasUnsavedChanges}
+                  buttonStyle="primary"
+                  onClick={overwriteDashboard}
+                  data-test="header-save-button"
+                  aria-label={t('Save')}
+                >
+                  <Icons.SaveOutlined iconSize="m" />
+                  {t('Save')}
+                </Button>
+              </div>
+            )}
+          </div>
+        )}
+        {editMode ? (
+          <UndoRedoKeyListeners onUndo={handleCtrlZ} onRedo={handleCtrlY} />
+        ) : (
+          <div css={actionButtonsStyle}>
+            {NavExtension && <NavExtension />}
+            {userCanEdit && (
+              <Button
+                buttonStyle="secondary"
+                onClick={() => {
+                  toggleEditMode();
+                  boundActionCreators.clearDashboardHistory?.(); // Resets the `past` as an empty array
+                }}
+                data-test="edit-dashboard-button"
+                className="action-button"
+                css={editButtonStyle}
+                aria-label={t('Edit dashboard')}
+              >
+                <Icons.EditOutlined iconSize="m" />
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+    ),
+    [
+      NavExtension,
+      boundActionCreators.onRedo,
+      boundActionCreators.onUndo,
+      boundActionCreators.clearDashboardHistory,
+      editMode,
+      emphasizeRedo,
+      emphasizeUndo,
+      handleCtrlY,
+      handleCtrlZ,
+      hasUnsavedChanges,
+      overwriteDashboard,
+      redoLength,
+      toggleEditMode,
+      undoLength,
+      userCanEdit,
+      userCanSaveAs,
+    ],
+  );
+
+  const handleReportDelete = async report => {
+    await dispatch(deleteActiveReport(report));
+    setCurrentReportDeleting(null);
+  };
+
+  const [menu, isDropdownVisible, setIsDropdownVisible] = useHeaderActionsMenu({
+    addSuccessToast: boundActionCreators.addSuccessToast,
+    addDangerToast: boundActionCreators.addDangerToast,
+    dashboardInfo,
+    dashboardId: dashboardInfo.id,
+    dashboardTitle,
+    dataMask,
+    layout,
+    expandedSlices,
+    customCss,
+    colorNamespace,
+    colorScheme,
+    onSave: boundActionCreators.onSave,
+    forceRefreshAllCharts: forceRefresh,
+    refreshFrequency,
+    shouldPersistRefreshFrequency,
+    editMode,
+    hasUnsavedChanges,
+    userCanEdit,
+    userCanShare,
+    userCanSave: userCanSaveAs,
+    userCanCurate,
+    isLoading,
+    showReportModal,
+    showPropertiesModal,
+    showRefreshModal,
+    setCurrentReportDeleting,
+    manageEmbedded: showEmbedModal,
+    lastModifiedTime: actualLastModifiedTime,
+    logEvent: boundActionCreators.logEvent,
+  });
+  return (
+    <div
+      css={headerContainerStyle}
+      data-test="dashboard-header-container"
+      data-test-id={dashboardInfo.id}
+      className="dashboard-header-container"
+    >
+      <PageHeaderWithActions
+        editableTitleProps={editableTitleProps}
+        certificatiedBadgeProps={certifiedBadgeProps}
+        faveStarProps={faveStarProps}
+        titlePanelAdditionalItems={titlePanelAdditionalItems}
+        rightPanelAdditionalItems={rightPanelAdditionalItems}
+        menuDropdownProps={{
+          open: isDropdownVisible,
+          onOpenChange: setIsDropdownVisible,
+        }}
+        additionalActionsMenu={menu}
+        showFaveStar={user?.userId && dashboardInfo?.id}
+        showTitlePanelItems
+      />
+      {showingPropertiesModal && (
+        <PropertiesModal
+          dashboardId={dashboardInfo.id}
+          dashboardInfo={dashboardInfo}
+          dashboardTitle={dashboardTitle}
+          show={showingPropertiesModal}
+          onHide={hidePropertiesModal}
+          colorScheme={colorScheme}
+          onSubmit={handleOnPropertiesChange}
+          onlyApply
+        />
+      )}
+      {showingRefreshModal && (
+        <RefreshIntervalModal
+          show={showingRefreshModal}
+          onHide={hideRefreshModal}
+          refreshFrequency={refreshFrequency}
+          onChange={handleRefreshChange}
+          editMode={editMode}
+          refreshLimit={
+            dashboardInfo.common?.conf
+              ?.SUPERSET_DASHBOARD_PERIODICAL_REFRESH_LIMIT
+          }
+          refreshWarning={
+            dashboardInfo.common?.conf?.DASHBOARD_AUTO_REFRESH_WARNING_MESSAGE
+          }
+          addSuccessToast={boundActionCreators.addSuccessToast}
+        />
+      )}
+
+      <ReportModal
+        userId={user.userId}
+        show={showingReportModal}
+        onHide={hideReportModal}
+        userEmail={user.email}
+        dashboardId={dashboardInfo.id}
+        creationMethod="dashboards"
+      />
+
+      {currentReportDeleting && (
+        <DeleteModal
+          description={t(
+            'This action will permanently delete %s.',
+            currentReportDeleting?.name,
+          )}
+          onConfirm={() => {
+            if (currentReportDeleting) {
+              handleReportDelete(currentReportDeleting);
+            }
+          }}
+          onHide={() => setCurrentReportDeleting(null)}
+          open
+          title={t('Delete Report?')}
+        />
+      )}
+
+      <OverwriteConfirm />
+
+      {userCanCurate && (
+        <DashboardEmbedModal
+          show={showingEmbedModal}
+          onHide={hideEmbedModal}
+          dashboardId={dashboardInfo.id}
+        />
+      )}
+      <Global
+        styles={css`
+          .ant-menu-vertical {
+            border-right: none;
+          }
+        `}
+      />
+
+      <UnsavedChangesModal
+        title={t('Save changes to your dashboard?')}
+        body={t("If you don't save, changes will be lost.")}
+        showModal={showUnsavedChangesModal}
+        onHide={() => setShowUnsavedChangesModal(false)}
+        onConfirmNavigation={handleConfirmNavigation}
+        handleSave={handleSaveAndCloseModal}
+      />
+    </div>
+  );
+};
+
+export default Header;
