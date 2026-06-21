@@ -1,646 +1,485 @@
-/**
- * Licensed to the Apache Software Foundation (ASF) under one
- * or more contributor license agreements.  See the NOTICE file
- * distributed with this work for additional information
- * regarding copyright ownership.  The ASF licenses this file
- * to you under the Apache License, Version 2.0 (the
- * "License"); you may not use this file except in compliance
- * with the License.  You may obtain a copy of the License at
- *
- *   http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing,
- * software distributed under the License is distributed on an
- * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
- * KIND, either express or implied.  See the License for the
- * specific language governing permissions and limitations
- * under the License.
- */
-import {
-  MouseEvent,
-  Key,
-  KeyboardEvent,
-  useState,
-  useRef,
-  RefObject,
-} from 'react';
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+from __future__ import annotations
 
-import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { extendedDayjs } from '@superset-ui/core/utils/dates';
-import {
-  Behavior,
-  css,
-  isFeatureEnabled,
-  FeatureFlag,
-  useTheme,
-  getChartMetadataRegistry,
-  styled,
-  t,
-  VizType,
-  BinaryQueryObjectFilterClause,
-  QueryFormData,
-} from '@superset-ui/core';
-import { useSelector } from 'react-redux';
-import { Menu, MenuItem } from '@superset-ui/core/components/Menu';
-import {
-  NoAnimationDropdown,
-  Tooltip,
-  Button,
-  ModalTrigger,
-} from '@superset-ui/core/components';
-import { useShareMenuItems } from 'src/dashboard/components/menu/ShareMenuItems';
-import downloadAsImage from 'src/utils/downloadAsImage';
-import { getSliceHeaderTooltip } from 'src/dashboard/util/getSliceHeaderTooltip';
-import { Icons } from '@superset-ui/core/components/Icons';
-import ViewQueryModal from 'src/explore/components/controls/ViewQueryModal';
-import { ResultsPaneOnDashboard } from 'src/explore/components/DataTablesPane';
-import { useDrillDetailMenuItems } from 'src/components/Chart/useDrillDetailMenuItems';
-import { LOG_ACTIONS_CHART_DOWNLOAD_AS_IMAGE } from 'src/logger/LogUtils';
-import { MenuKeys, RootState } from 'src/dashboard/types';
-import DrillDetailModal from 'src/components/Chart/DrillDetail/DrillDetailModal';
-import { usePermissions } from 'src/hooks/usePermissions';
-import { useDatasetDrillInfo } from 'src/hooks/apiResources/datasets';
-import { ResourceStatus } from 'src/hooks/apiResources/apiResources';
-import { useCrossFiltersScopingModal } from '../nativeFilters/FilterBar/CrossFilters/ScopingModal/useCrossFiltersScopingModal';
-import { ViewResultsModalTrigger } from './ViewResultsModalTrigger';
+import logging
+import uuid
+from collections import defaultdict, deque
+from typing import Any, Callable
 
-const RefreshTooltip = styled.div`
-  ${({ theme }) => css`
-    height: auto;
-    margin: ${theme.sizeUnit}px 0;
-    color: ${theme.colorTextLabel};
-    line-height: 21px;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: flex-start;
-  `}
-`;
+import sqlalchemy as sqla
+from flask import current_app as app
+from flask_appbuilder import Model
+from flask_appbuilder.models.decorators import renders
+from flask_appbuilder.security.sqla.models import User
+from markupsafe import escape, Markup
+from sqlalchemy import (
+    Boolean,
+    Column,
+    ForeignKey,
+    Integer,
+    String,
+    Table,
+    Text,
+    UniqueConstraint,
+)
+from sqlalchemy.engine.base import Connection
+from sqlalchemy.orm import relationship, subqueryload
+from sqlalchemy.orm.mapper import Mapper
+from sqlalchemy.sql.elements import BinaryExpression
 
-const getScreenshotNodeSelector = (chartId: string | number) =>
-  `.dashboard-chart-id-${chartId}`;
+from superset import db, is_feature_enabled, security_manager
+from superset.connectors.sqla.models import BaseDatasource, SqlaTable
+from superset.daos.datasource import DatasourceDAO
+from superset.models.helpers import AuditMixinNullable, ImportExportMixin
+from superset.models.slice import Slice
+from superset.models.user_attributes import UserAttribute
+from superset.tasks.thumbnails import cache_dashboard_thumbnail
+from superset.tasks.utils import get_current_user
+from superset.thumbnails.digest import get_dashboard_digest
+from superset.utils import core as utils, json
 
-const VerticalDotsTrigger = () => {
-  const theme = useTheme();
-  return (
-    <Icons.EllipsisOutlined
-      css={css`
-        transform: rotate(90deg);
-        &:hover {
-          cursor: pointer;
+metadata = Model.metadata  # pylint: disable=no-member
+logger = logging.getLogger(__name__)
+
+
+def copy_dashboard(_mapper: Mapper, _connection: Connection, target: Dashboard) -> None:
+    dashboard_id = app.config["DASHBOARD_TEMPLATE_ID"]
+    if dashboard_id is None:
+        return
+
+    session = sqla.inspect(target).session  # pylint: disable=disallowed-name
+    new_user = session.query(User).filter_by(id=target.id).first()
+
+    # copy template dashboard to user
+    template = session.query(Dashboard).filter_by(id=int(dashboard_id)).first()
+    dashboard = Dashboard(
+        dashboard_title=template.dashboard_title,
+        position_json=template.position_json,
+        description=template.description,
+        css=template.css,
+        json_metadata=template.json_metadata,
+        slices=template.slices,
+        owners=[new_user],
+    )
+    session.add(dashboard)
+
+    # set dashboard as the welcome dashboard
+    extra_attributes = UserAttribute(
+        user_id=target.id, welcome_dashboard_id=dashboard.id
+    )
+    session.add(extra_attributes)
+    session.commit()  # pylint: disable=consider-using-transaction
+
+
+sqla.event.listen(User, "after_insert", copy_dashboard)
+
+
+dashboard_slices = metadata.tables.get("dashboard_slices") or Table(
+    "dashboard_slices",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("dashboard_id", Integer, ForeignKey("dashboards.id", ondelete="CASCADE")),
+    Column("slice_id", Integer, ForeignKey("slices.id", ondelete="CASCADE")),
+    UniqueConstraint("dashboard_id", "slice_id"),
+    extend_existing=True,
+)
+
+
+dashboard_user = metadata.tables.get("dashboard_user") or Table(
+    "dashboard_user",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column("user_id", Integer, ForeignKey("ab_user.id", ondelete="CASCADE")),
+    Column("dashboard_id", Integer, ForeignKey("dashboards.id", ondelete="CASCADE")),
+    extend_existing=True,
+)
+
+
+DashboardRoles = metadata.tables.get("dashboard_roles") or Table(
+    "dashboard_roles",
+    metadata,
+    Column("id", Integer, primary_key=True),
+    Column(
+        "dashboard_id",
+        Integer,
+        ForeignKey("dashboards.id", ondelete="CASCADE"),
+        nullable=False,
+    ),
+    Column(
+        "role_id",
+        Integer,
+        ForeignKey("ab_role.id", ondelete="CASCADE"),
+        nullable=False,
+    ),
+    extend_existing=True,
+)
+
+
+class Dashboard(AuditMixinNullable, ImportExportMixin, Model):
+    """The dashboard object!"""
+
+    __tablename__ = "dashboards"
+    id = Column(Integer, primary_key=True)
+    dashboard_title = Column(String(500))
+    # Category is nullable in the DB to support initial dashboard creation,
+    # but the UI enforces it as a required field before saving.
+    category = Column(String(100), nullable=True)
+    position_json = Column(utils.MediumText())
+    description = Column(Text)
+    css = Column(utils.MediumText())
+    theme_id = Column(Integer, ForeignKey("themes.id"), nullable=True)
+    certified_by = Column(Text)
+    certification_details = Column(Text)
+    json_metadata = Column(utils.MediumText())
+    slug = Column(String(255), unique=True)
+    slices: list[Slice] = relationship(
+        Slice, secondary=dashboard_slices, backref="dashboards"
+    )
+    owners = relationship(
+        security_manager.user_model,
+        secondary=dashboard_user,
+        passive_deletes=True,
+    )
+    tags = relationship(
+        "Tag",
+        overlaps="objects,tag,tags",
+        secondary="tagged_object",
+        primaryjoin="and_(Dashboard.id == TaggedObject.object_id, "
+        "TaggedObject.object_type == 'dashboard')",
+        secondaryjoin="TaggedObject.tag_id == Tag.id",
+        viewonly=True,  # cascading deletion already handled by superset.tags.models.ObjectUpdater.after_delete  # noqa: E501
+    )
+    theme = relationship("Theme", foreign_keys=[theme_id])
+    published = Column(Boolean, default=False)
+    is_managed_externally = Column(Boolean, nullable=False, default=False)
+    external_url = Column(Text, nullable=True)
+    roles = relationship(security_manager.role_model, secondary=DashboardRoles)
+    embedded = relationship(
+        "EmbeddedDashboard",
+        back_populates="dashboard",
+        cascade="all, delete-orphan",
+    )
+    export_fields = [
+        "dashboard_title",
+        "category",
+        "position_json",
+        "json_metadata",
+        "description",
+        "css",
+        "slug",
+        "certified_by",
+        "certification_details",
+        "published",
+    ]
+    extra_import_fields = ["is_managed_externally", "external_url", "theme_id"]
+
+    def __repr__(self) -> str:
+        return f"Dashboard<{self.id or self.slug}>"
+
+    @property
+    def url(self) -> str:
+        return f"/insightshub/dashboard/{self.slug or self.id}/"
+
+    @staticmethod
+    def get_url(id_: int, slug: str | None = None) -> str:
+        # To be able to generate URL's without instantiating a Dashboard object
+        return f"/insightshub/dashboard/{slug or id_}/"
+
+    @property
+    def datasources(self) -> set[BaseDatasource]:
+        # Verbose but efficient database enumeration of dashboard datasources.
+        datasources_by_cls_model: dict[type[BaseDatasource], set[int]] = defaultdict(
+            set
+        )
+
+        for slc in self.slices:
+            datasources_by_cls_model[slc.cls_model].add(slc.datasource_id)
+
+        return {
+            datasource
+            for cls_model, datasource_ids in datasources_by_cls_model.items()
+            for datasource in db.session.query(cls_model)
+            .filter(cls_model.id.in_(datasource_ids))
+            .all()
         }
-      `}
-      iconSize="xl"
-      iconColor={theme.colorTextLabel}
-      className="dot"
-    />
-  );
-};
 
-export interface SliceHeaderControlsProps {
-  slice: {
-    description: string;
-    viz_type: string;
-    slice_name: string;
-    slice_id: number;
-    slice_description: string;
-    datasource: string;
-  };
+    @property
+    def charts(self) -> list[str]:
+        return [slc.chart for slc in self.slices]
 
-  defaultOpen?: boolean;
-  componentId: string;
-  dashboardId: number;
-  chartStatus: string;
-  isCached: boolean[];
-  cachedDttm: string[] | null;
-  isExpanded?: boolean;
-  updatedDttm: number | null;
-  isFullSize?: boolean;
-  isDescriptionExpanded?: boolean;
-  formData: QueryFormData;
-  exploreUrl: string;
+    @property
+    def status(self) -> utils.DashboardStatus:
+        if self.published:
+            return utils.DashboardStatus.PUBLISHED
+        return utils.DashboardStatus.DRAFT
 
-  forceRefresh: (sliceId: number, dashboardId: number) => void;
-  logExploreChart?: (sliceId: number) => void;
-  logEvent?: (eventName: string, eventData?: object) => void;
-  toggleExpandSlice?: (sliceId: number) => void;
-  exportCSV?: (sliceId: number) => void;
-  exportPivotCSV?: (sliceId: number) => void;
-  exportFullCSV?: (sliceId: number) => void;
-  exportXLSX?: (sliceId: number) => void;
-  exportFullXLSX?: (sliceId: number) => void;
-  handleToggleFullSize: () => void;
-  exportPivotExcel?: (tableSelector: string, sliceName: string) => void;
+    @renders("dashboard_title")
+    def dashboard_link(self) -> Markup:
+        title = escape(self.dashboard_title or "<empty>")
+        return Markup(f'<a href="{self.url}">{title}</a>')
 
-  addDangerToast: (message: string) => void;
-  addSuccessToast: (message: string) => void;
+    @property
+    def digest(self) -> str | None:
+        return get_dashboard_digest(self)
 
-  supersetCanExplore?: boolean;
-  supersetCanShare?: boolean;
-  supersetCanCSV?: boolean;
+    @property
+    def thumbnail_url(self) -> str | None:
+        """
+        Returns a thumbnail URL with a HEX digest. We want to avoid browser cache
+        if the dashboard has changed
+        """
+        if digest := self.digest:
+            return f"/api/v1/dashboard/{self.id}/thumbnail/{digest}/"
 
-  crossFiltersEnabled?: boolean;
-}
-type SliceHeaderControlsPropsWithRouter = SliceHeaderControlsProps &
-  RouteComponentProps;
+        return None
 
-const dropdownIconsStyles = css`
-  &&.anticon > .anticon:first-child {
-    margin-right: 0;
-    vertical-align: 0;
-  }
-`;
+    @property
+    def changed_by_name(self) -> str:
+        if not self.changed_by:
+            return ""
+        return str(self.changed_by)
 
-const SliceHeaderControls = (
-  props: SliceHeaderControlsPropsWithRouter | SliceHeaderControlsProps,
-) => {
-  const [drillModalIsOpen, setDrillModalIsOpen] = useState(false);
-  // setting openKeys undefined falls back to uncontrolled behaviour
-  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
-  const [openScopingModal, scopingModal] = useCrossFiltersScopingModal(
-    props.slice.slice_id,
-  );
-  const history = useHistory();
-
-  const queryMenuRef: RefObject<any> = useRef(null);
-  const resultsMenuRef: RefObject<any> = useRef(null);
-
-  const [modalFilters, setFilters] = useState<BinaryQueryObjectFilterClause[]>(
-    [],
-  );
-  const theme = useTheme();
-
-  const canEditCrossFilters =
-    useSelector<RootState, boolean>(
-      ({ dashboardInfo }) => dashboardInfo.dash_edit_perm,
-    ) &&
-    getChartMetadataRegistry()
-      .get(props.slice.viz_type)
-      ?.behaviors?.includes(Behavior.InteractiveChart);
-  const canExplore = props.supersetCanExplore;
-  const { canDrillToDetail, canViewQuery, canViewTable } = usePermissions();
-
-  const datasetResource = useDatasetDrillInfo(
-    props.slice.datasource,
-    props.dashboardId,
-    props.formData,
-    !canDrillToDetail,
-  );
-
-  const datasetWithVerboseMap =
-    datasetResource.status === ResourceStatus.Complete
-      ? datasetResource.result
-      : undefined;
-
-  const refreshChart = () => {
-    if (props.updatedDttm) {
-      props.forceRefresh(props.slice.slice_id, props.dashboardId);
-    }
-  };
-
-  const handleMenuClick = ({
-    key,
-    domEvent,
-  }: {
-    key: Key;
-    domEvent: MouseEvent<HTMLElement> | KeyboardEvent<HTMLElement>;
-  }) => {
-    switch (key) {
-      case MenuKeys.ForceRefresh:
-        refreshChart();
-        props.addSuccessToast(t('Data refreshed'));
-        break;
-      case MenuKeys.ToggleChartDescription:
-        // eslint-disable-next-line no-unused-expressions
-        props.toggleExpandSlice?.(props.slice.slice_id);
-        break;
-      case MenuKeys.ExploreChart:
-        // eslint-disable-next-line no-unused-expressions
-        props.logExploreChart?.(props.slice.slice_id);
-        if (domEvent.metaKey || domEvent.ctrlKey) {
-          domEvent.preventDefault();
-          window.open(props.exploreUrl, '_blank');
-        } else {
-          history.push(props.exploreUrl);
+    @property
+    def data(self) -> dict[str, Any]:
+        positions = self.position_json
+        if positions:
+            positions = json.loads(positions)
+        return {
+            "id": self.id,
+            "metadata": self.params_dict,
+            "certified_by": self.certified_by,
+            "certification_details": self.certification_details,
+            "css": self.css,
+            "dashboard_title": self.dashboard_title,
+            "published": self.published,
+            "slug": self.slug,
+            "slices": [slc.data for slc in self.slices],
+            "position_json": positions,
+            "last_modified_time": self.changed_on.replace(microsecond=0).timestamp(),
+            "is_managed_externally": self.is_managed_externally,
         }
-        break;
-      case MenuKeys.ExportCsv:
-        // eslint-disable-next-line no-unused-expressions
-        props.exportCSV?.(props.slice.slice_id);
-        break;
-      case MenuKeys.ExportPivotCsv:
-        // eslint-disable-next-line no-unused-expressions
-        props.exportPivotCSV?.(props.slice.slice_id);
-        break;
-      case MenuKeys.Fullscreen:
-        props.handleToggleFullSize();
-        break;
-      case MenuKeys.ExportFullCsv:
-        // eslint-disable-next-line no-unused-expressions
-        props.exportFullCSV?.(props.slice.slice_id);
-        break;
-      case MenuKeys.ExportFullXlsx:
-        // eslint-disable-next-line no-unused-expressions
-        props.exportFullXLSX?.(props.slice.slice_id);
-        break;
-      case MenuKeys.ExportXlsx:
-        // eslint-disable-next-line no-unused-expressions
-        props.exportXLSX?.(props.slice.slice_id);
-        break;
-      case MenuKeys.DownloadAsImage: {
-        // menu closes with a delay, we need to hide it manually,
-        // so that we don't capture it on the screenshot
-        const menu = document.querySelector(
-          '.ant-dropdown:not(.ant-dropdown-hidden)',
-        ) as HTMLElement;
-        if (menu) {
-          menu.style.visibility = 'hidden';
-        }
-        downloadAsImage(
-          getScreenshotNodeSelector(props.slice.slice_id),
-          props.slice.slice_name,
-          true,
-          theme,
-        )(domEvent).then(() => {
-          if (menu) {
-            menu.style.visibility = 'visible';
-          }
-        });
-        props.logEvent?.(LOG_ACTIONS_CHART_DOWNLOAD_AS_IMAGE, {
-          chartId: props.slice.slice_id,
-        });
-        break;
-      }
-      case MenuKeys.ExportPivotXlsx: {
-        const sliceSelector = `#chart-id-${props.slice.slice_id}`;
-        props.exportPivotExcel?.(
-          `${sliceSelector} .pvtTable`,
-          props.slice.slice_name,
-        );
-        break;
-      }
-      case MenuKeys.CrossFilterScoping: {
-        openScopingModal();
-        break;
-      }
-      case MenuKeys.ViewResults: {
-        if (resultsMenuRef.current && !resultsMenuRef.current.showModal) {
-          resultsMenuRef.current.open(domEvent);
-        }
-        break;
-      }
-      case MenuKeys.DrillToDetail: {
-        setDrillModalIsOpen(!drillModalIsOpen);
-        break;
-      }
-      case MenuKeys.ViewQuery: {
-        if (queryMenuRef.current && !queryMenuRef.current.showModal) {
-          queryMenuRef.current.open(domEvent);
-        }
-        break;
-      }
-      default:
-        break;
-    }
-    setIsDropdownVisible(false);
-  };
 
-  const {
-    componentId,
-    dashboardId,
-    slice,
-    isFullSize,
-    cachedDttm = [],
-    updatedDttm = null,
-    addSuccessToast = () => {},
-    addDangerToast = () => {},
-    supersetCanShare = false,
-    isCached = [],
-  } = props;
-  const isTable = slice.viz_type === VizType.Table;
-  const isAgGridTable = slice.viz_type === VizType.TableAgGrid;
-  const isPivotTable = slice.viz_type === VizType.PivotTable;
-  const hasInlineHeaderSearchSlot =
-    isTable ||
-    isAgGridTable ||
-    slice.viz_type === 'transcript_chart' ||
-    slice.viz_type === 'audio_table';
-  const cachedWhen = (cachedDttm || []).map(itemCachedDttm =>
-    extendedDayjs.utc(itemCachedDttm).fromNow(),
-  );
-  const updatedWhen = updatedDttm
-    ? extendedDayjs.utc(updatedDttm).fromNow()
-    : '';
-  const getCachedTitle = (itemCached: boolean) => {
-    if (itemCached) {
-      return t('Cached %s', cachedWhen);
-    }
-    if (updatedWhen) {
-      return t('Fetched %s', updatedWhen);
-    }
-    return '';
-  };
-  const refreshTooltipData = [...new Set(isCached.map(getCachedTitle) || '')];
-  // If all queries have same cache time we can unit them to one
-  const refreshTooltip = refreshTooltipData.map((item, index) => (
-    <div key={`tooltip-${index}`}>
-      {refreshTooltipData.length > 1
-        ? t('Query %s: %s', index + 1, item)
-        : item}
-    </div>
-  ));
-  const fullscreenLabel = isFullSize
-    ? t('Exit fullscreen')
-    : t('Enter fullscreen');
+    def datasets_trimmed_for_slices(self) -> list[dict[str, Any]]:
+        # Verbose but efficient database enumeration of dashboard datasources.
+        slices_by_datasource: dict[tuple[type[BaseDatasource], int], set[Slice]] = (
+            defaultdict(set)
+        )
 
-  // @z-index-below-dashboard-header (100) - 1 = 99 for !isFullSize and 101 for isFullSize
-  const dropdownOverlayStyle = {
-    zIndex: isFullSize ? 101 : 99,
-    animationDuration: '0s',
-  };
+        for slc in self.slices:
+            slices_by_datasource[(slc.cls_model, slc.datasource_id)].add(slc)
 
-  const newMenuItems: MenuItem[] = [
-    {
-      key: MenuKeys.ForceRefresh,
-      label: (
-        <>
-          {t('Force refresh')}
-          <RefreshTooltip data-test="dashboard-slice-refresh-tooltip">
-            {refreshTooltip}
-          </RefreshTooltip>
-        </>
-      ),
-      disabled: props.chartStatus === 'loading',
-      style: { height: 'auto', lineHeight: 'initial' },
-      ...{ 'data-test': 'refresh-chart-menu-item' }, // Typescript hack to get around MenuItem type
-    },
-    {
-      key: MenuKeys.Fullscreen,
-      label: fullscreenLabel,
-    },
-    {
-      type: 'divider',
-    },
-  ];
+        result: list[dict[str, Any]] = []
 
-  if (slice.description) {
-    newMenuItems.push({
-      key: MenuKeys.ToggleChartDescription,
-      label: props.isDescriptionExpanded
-        ? t('Hide chart description')
-        : t('Show chart description'),
-    });
-  }
+        for (cls_model, datasource_id), slices in slices_by_datasource.items():
+            datasource = (
+                db.session.query(cls_model).filter_by(id=datasource_id).one_or_none()
+            )
 
-  if (canExplore) {
-    newMenuItems.push({
-      key: MenuKeys.ExploreChart,
-      label: (
-        <Tooltip title={getSliceHeaderTooltip(props.slice.slice_name)}>
-          {t('Edit chart')}
-        </Tooltip>
-      ),
-      ...{ 'data-test-edit-chart-name': slice.slice_name },
-    });
-  }
+            if datasource:
+                # Filter out unneeded fields from the datasource payload
+                result.append(datasource.data_for_slices(slices))
 
-  if (canEditCrossFilters) {
-    newMenuItems.push({
-      key: MenuKeys.CrossFilterScoping,
-      label: t('Cross-filtering scoping'),
-    });
-  }
+        return result
 
-  if (canExplore || canEditCrossFilters) {
-    newMenuItems.push({ type: 'divider' });
-  }
+    @property
+    def params(self) -> str:
+        return self.json_metadata
 
-  if (canExplore || canViewQuery) {
-    newMenuItems.push({
-      key: MenuKeys.ViewQuery,
-      label: (
-        <ModalTrigger
-          triggerNode={
-            <div data-test="view-query-menu-item">{t('View query')}</div>
-          }
-          modalTitle={t('View query')}
-          modalBody={<ViewQueryModal latestQueryFormData={props.formData} />}
-          draggable
-          resizable
-          responsive
-          ref={queryMenuRef}
-        />
-      ),
-    });
-  }
+    @params.setter
+    def params(self, value: str) -> None:
+        self.json_metadata = value
 
-  if (canExplore || canViewTable) {
-    newMenuItems.push({
-      key: MenuKeys.ViewResults,
-      label: (
-        <ViewResultsModalTrigger
-          canExplore={props.supersetCanExplore}
-          exploreUrl={props.exploreUrl}
-          triggerNode={
-            <div data-test="view-query-menu-item">{t('View as table')}</div>
-          }
-          modalRef={resultsMenuRef}
-          modalTitle={t('Chart Data: %s', slice.slice_name)}
-          modalBody={
-            <ResultsPaneOnDashboard
-              queryFormData={props.formData}
-              queryForce={false}
-              dataSize={20}
-              isRequest
-              isVisible
-              canDownload={!!props.supersetCanCSV}
-            />
-          }
-        />
-      ),
-    });
-  }
+    @property
+    def position(self) -> dict[str, Any]:
+        if self.position_json:
+            return json.loads(self.position_json)
+        return {}
 
-  const drillDetailMenuItems = useDrillDetailMenuItems({
-    formData: props.formData,
-    filters: modalFilters,
-    setFilters,
-    setShowModal: setDrillModalIsOpen,
-    key: MenuKeys.DrillToDetail,
-  });
+    @property
+    def tabs(self) -> dict[str, Any]:
+        if self.position == {}:
+            return {}
 
-  const shareMenuItems = useShareMenuItems({
-    dashboardId,
-    dashboardComponentId: componentId,
-    copyMenuItemTitle: t('Copy permalink to clipboard'),
-    emailMenuItemTitle: t('Share chart by email'),
-    emailSubject: t('Superset chart'),
-    emailBody: t('Check out this chart: '),
-    addSuccessToast,
-    addDangerToast,
-    title: t('Share'),
-  });
+        def get_node(node_id: str) -> dict[str, Any]:
+            """
+            Helper function for getting a node from the position_data
+            """
+            return self.position[node_id]
 
-  if (isFeatureEnabled(FeatureFlag.DrillToDetail) && canDrillToDetail) {
-    newMenuItems.push(...drillDetailMenuItems);
-  }
+        def build_tab_tree(
+            node: dict[str, Any], children: list[dict[str, Any]]
+        ) -> None:
+            """
+            Function for building the tab tree structure and list of all tabs
+            """
 
-  if (slice.description || canExplore) {
-    newMenuItems.push({ type: 'divider' });
-  }
+            new_children: list[dict[str, Any]] = []
+            # new children to overwrite parent's children
+            for child_id in node.get("children", []):
+                child = get_node(child_id)
+                if node["type"] == "TABS":
+                    # if TABS add create a new list and append children to it
+                    # new_children.append(child)
+                    children.append(child)
+                    queue.append((child, new_children))
+                elif node["type"] in ["GRID", "ROOT"]:
+                    queue.append((child, children))
+                elif node["type"] == "TAB":
+                    queue.append((child, new_children))
+            if node["type"] == "TAB":
+                node["children"] = new_children
+                node["title"] = node["meta"]["text"]
+                node["value"] = node["id"]
+                all_tabs[node["id"]] = node["title"]
 
-  if (supersetCanShare) {
-    newMenuItems.push(shareMenuItems);
-  }
+        root = get_node("ROOT_ID")
+        tab_tree: list[dict[str, Any]] = []
+        all_tabs: dict[str, str] = {}
+        queue: deque[tuple[dict[str, Any], list[dict[str, Any]]]] = deque()
+        queue.append((root, tab_tree))
+        while queue:
+            node, children = queue.popleft()
+            build_tab_tree(node, children)
 
-  if (props.supersetCanCSV) {
-    newMenuItems.push({
-      type: 'submenu',
-      key: MenuKeys.Download,
-      label: t('Download'),
-      children: [
-        {
-          key: MenuKeys.ExportCsv,
-          label: t('Export to .CSV'),
-          icon: <Icons.FileOutlined css={dropdownIconsStyles} />,
-        },
-        ...(isPivotTable
-          ? [
-              {
-                key: MenuKeys.ExportPivotCsv,
-                label: t('Export to Pivoted .CSV'),
-                icon: <Icons.FileOutlined css={dropdownIconsStyles} />,
-              },
-              {
-                key: MenuKeys.ExportPivotXlsx,
-                label: t('Export to Pivoted Excel'),
-                icon: <Icons.FileOutlined css={dropdownIconsStyles} />,
-              },
-            ]
-          : []),
-        {
-          key: MenuKeys.ExportXlsx,
-          label: t('Export to Excel'),
-          icon: <Icons.FileOutlined css={dropdownIconsStyles} />,
-        },
-        ...(isFeatureEnabled(FeatureFlag.AllowFullCsvExport) &&
-        props.supersetCanCSV &&
-        isTable
-          ? [
-              {
-                key: MenuKeys.ExportFullCsv,
-                label: t('Export to full .CSV'),
-                icon: <Icons.FileOutlined css={dropdownIconsStyles} />,
-              },
-              {
-                key: MenuKeys.ExportFullXlsx,
-                label: t('Export to full Excel'),
-                icon: <Icons.FileOutlined css={dropdownIconsStyles} />,
-              },
-            ]
-          : []),
-        {
-          key: MenuKeys.DownloadAsImage,
-          label: t('Download as image'),
-          icon: <Icons.FileImageOutlined css={dropdownIconsStyles} />,
-        },
-      ],
-    });
-  }
+        return {"all_tabs": all_tabs, "tab_tree": tab_tree}
 
-  return (
-    <>
-      {isFullSize && (
-        <Icons.FullscreenExitOutlined
-          style={{ fontSize: 22 }}
-          onClick={() => {
-            props.handleToggleFullSize();
-          }}
-        />
-      )}
-      {hasInlineHeaderSearchSlot && (
-        <div
-          id={`slice_${slice.slice_id}-header-search`}
-          css={theme => css`
-            display: inline-flex;
-            align-items: center;
-            flex: 0 1 180px;
-            min-width: 96px;
-            max-width: 180px;
-            width: clamp(96px, 24vw, 180px);
-            min-height: 0;
-            margin-right: ${theme.sizeUnit * 2}px;
+    # Screenshot automation disabled
+    # def update_thumbnail(self) -> None:
+    #     cache_dashboard_thumbnail.delay(
+    #         current_user=get_current_user(),
+    #         dashboard_id=self.id,
+    #         force=True,
+    #     )
 
-            .dt-global-filter {
-              display: inline-flex;
-              align-items: center;
-              width: 100%;
-              min-width: 0;
-              margin-bottom: 0;
-              white-space: nowrap;
-              float: none;
-            }
+    @classmethod
+    def export_dashboards(  # pylint: disable=too-many-locals
+        cls,
+        dashboard_ids: set[int],
+    ) -> str:
+        copied_dashboards = []
+        datasource_ids = set()
+        for dashboard_id in dashboard_ids:
+            # make sure that dashboard_id is an integer
+            dashboard_id = int(dashboard_id)
+            dashboard = (
+                db.session.query(Dashboard)
+                .options(subqueryload(Dashboard.slices))
+                .filter_by(id=dashboard_id)
+                .first()
+            )
+            # remove ids and relations (like owners, created by, slices, ...)
+            copied_dashboard = dashboard.copy()
+            for slc in dashboard.slices:
+                datasource_ids.add((slc.datasource_id, slc.datasource_type))
+                copied_slc = slc.copy()
+                # save original id into json
+                # we need it to update dashboard's json metadata on import
+                copied_slc.id = slc.id
+                # add extra params for the import
+                copied_slc.alter_params(
+                    remote_id=slc.id,
+                    datasource_name=slc.datasource.datasource_name,
+                    schema=slc.datasource.schema,
+                    database_name=slc.datasource.database.name,
+                )
+                # set slices without creating ORM relations
+                slices = copied_dashboard.__dict__.setdefault("slices", [])
+                slices.append(copied_slc)
 
-            .dt-global-filter .ant-input-affix-wrapper {
-              width: 100%;
-              min-width: 0;
-            }
+            json_metadata = json.loads(dashboard.json_metadata)
+            native_filter_configuration: list[dict[str, Any]] = json_metadata.get(
+                "native_filter_configuration", []
+            )
+            for native_filter in native_filter_configuration:
+                for target in native_filter.get("targets", []):
+                    id_ = target.get("datasetId")
+                    if id_ is None:
+                        continue
+                    datasource = DatasourceDAO.get_datasource(
+                        utils.DatasourceType.TABLE, id_
+                    )
+                    datasource_ids.add((datasource.id, datasource.type))
 
-            .dt-global-filter .ant-input {
-              min-width: 0;
-            }
+            copied_dashboard.alter_params(remote_id=dashboard_id)
+            copied_dashboards.append(copied_dashboard)
 
-            .dt-global-filter .table-header-search-input.ant-input-affix-wrapper {
-              border: 1px solid ${theme.colorBorderSecondary};
-              box-shadow: none;
-              background: ${theme.colorBgContainer};
-            }
-          `}
-        />
-      )}
-      <NoAnimationDropdown
-        popupRender={() => (
-          <Menu
-            onClick={handleMenuClick}
-            data-test={`slice_${slice.slice_id}-menu`}
-            id={`slice_${slice.slice_id}-menu`}
-            selectable={false}
-            items={newMenuItems}
-          />
-        )}
-        overlayStyle={dropdownOverlayStyle}
-        trigger={['click']}
-        placement="bottomRight"
-        open={isDropdownVisible}
-        onOpenChange={visible => setIsDropdownVisible(visible)}
-      >
-        <Button
-          id={`slice_${slice.slice_id}-controls`}
-          buttonStyle="link"
-          aria-label="More Options"
-          aria-haspopup="true"
-          css={theme => css`
-            padding: ${theme.sizeUnit * 2}px;
-            padding-right: 0px;
-          `}
-        >
-          <VerticalDotsTrigger />
-        </Button>
-      </NoAnimationDropdown>
-      <DrillDetailModal
-        formData={props.formData}
-        initialFilters={[]}
-        onHideModal={() => {
-          setDrillModalIsOpen(false);
-        }}
-        chartId={slice.slice_id}
-        showModal={drillModalIsOpen}
-        dataset={datasetWithVerboseMap}
-      />
+        datasource_id_list = list(datasource_ids)
+        datasource_id_list.sort()
 
-      {canEditCrossFilters && scopingModal}
-    </>
-  );
-};
+        eager_datasources = []
+        for datasource_id, _ in datasource_id_list:
+            eager_datasource = SqlaTable.get_eager_sqlatable_datasource(datasource_id)
+            copied_datasource = eager_datasource.copy()
+            copied_datasource.alter_params(
+                remote_id=eager_datasource.id,
+                database_name=eager_datasource.database.name,
+            )
+            eager_datasources.append(copied_datasource)
 
-export default SliceHeaderControls;
+        return json.dumps(
+            {"dashboards": copied_dashboards, "datasources": eager_datasources},
+            cls=json.DashboardEncoder,
+            indent=4,
+        )
+
+    @classmethod
+    def get(cls, id_or_slug: str | int) -> Dashboard:
+        qry = db.session.query(Dashboard).filter(id_or_slug_filter(id_or_slug))
+        return qry.one_or_none()
+
+    def raise_for_access(self) -> None:
+        """
+        Raise an exception if the user cannot access the resource.
+
+        :raises SupersetSecurityException: If the user cannot access the resource
+        """
+
+        security_manager.raise_for_access(dashboard=self)
+
+
+def is_uuid(value: str | int) -> bool:
+    try:
+        uuid.UUID(str(value))
+        return True
+    except ValueError:
+        return False
+
+
+def is_int(value: str | int) -> bool:
+    try:
+        int(value)
+        return True
+    except ValueError:
+        return False
+
+
+def id_or_slug_filter(id_or_slug: int | str) -> BinaryExpression:
+    if is_int(id_or_slug):
+        return Dashboard.id == int(id_or_slug)
+    if is_uuid(id_or_slug):
+        return Dashboard.uuid == uuid.UUID(str(id_or_slug))
+    return Dashboard.slug == id_or_slug
+
+
+OnDashboardChange = Callable[[Mapper, Connection, Dashboard], Any]
+
+# Screenshot automation disabled
+# if is_feature_enabled("THUMBNAILS_SQLA_LISTENERS"):
+#     update_thumbnail: OnDashboardChange = lambda _, __, dash: dash.update_thumbnail()  # noqa: E731
+#     sqla.event.listen(Dashboard, "after_insert", update_thumbnail)
+#     sqla.event.listen(Dashboard, "after_update", update_thumbnail)
