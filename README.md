@@ -16,949 +16,789 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/* eslint-env browser */
-import { extendedDayjs } from '@superset-ui/core/utils/dates';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { omit } from 'lodash';
+import jsonStringify from 'json-stringify-pretty-compact';
 import {
-  styled,
-  css,
+  Form,
+  Modal,
+  Collapse,
+  CollapseLabelInModal,
+  JsonEditor,
+} from '@superset-ui/core/components';
+import { useJsonValidation } from '@superset-ui/core/components/AsyncAceEditor';
+import { type TagType } from 'src/components';
+import rison from 'rison';
+import {
+  ensureIsArray,
   isFeatureEnabled,
   FeatureFlag,
+  getCategoricalSchemeRegistry,
+  SupersetClient,
   t,
-  getExtensionsRegistry,
+  getClientErrorObject,
 } from '@superset-ui/core';
-import { Global } from '@emotion/react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { bindActionCreators } from 'redux';
+
+import withToasts from 'src/components/MessageToasts/withToasts';
+import { fetchTags, OBJECT_TYPES } from 'src/features/tags/tags';
 import {
-  LOG_ACTIONS_PERIODIC_RENDER_DASHBOARD,
-  LOG_ACTIONS_FORCE_REFRESH_DASHBOARD,
-  LOG_ACTIONS_TOGGLE_EDIT_DASHBOARD,
-} from 'src/logger/LogUtils';
-import { Icons } from '@superset-ui/core/components/Icons';
+  applyColors,
+  getColorNamespace,
+  getFreshLabelsColorMapEntries,
+} from 'src/utils/colorScheme';
+import { useDispatch } from 'react-redux';
 import {
-  Button,
-  Tooltip,
-  DeleteModal,
-  UnsavedChangesModal,
-  Select,
-} from '@superset-ui/core/components';
-import { findPermission } from 'src/utils/findPermission';
-import { safeStringify } from 'src/utils/safeStringify';
-import PublishedStatus from 'src/dashboard/components/PublishedStatus';
-import UndoRedoKeyListeners from 'src/dashboard/components/UndoRedoKeyListeners';
-import PropertiesModal from 'src/dashboard/components/PropertiesModal';
-import RefreshIntervalModal from 'src/dashboard/components/RefreshIntervalModal';
+  setColorScheme,
+  setDashboardMetadata,
+} from 'src/dashboard/actions/dashboardState';
+import { areObjectsEqual } from 'src/reduxUtils';
+import { StandardModal, useModalValidation } from 'src/components/Modal';
 import {
-  UNDO_LIMIT,
-  SAVE_TYPE_OVERWRITE,
-  DASHBOARD_POSITION_DATA_LIMIT,
-  DASHBOARD_HEADER_ID,
-} from 'src/dashboard/util/constants';
-import { TagTypeEnum } from 'src/components/Tag/TagType';
-import setPeriodicRunner, {
-  stopPeriodicRender,
-} from 'src/dashboard/util/setPeriodicRunner';
-import ReportModal from 'src/features/reports/ReportModal';
-import { deleteActiveReport } from 'src/features/reports/ReportModal/actions';
-import { PageHeaderWithActions } from '@superset-ui/core/components/PageHeaderWithActions';
-import { useUnsavedChangesPrompt } from 'src/hooks/useUnsavedChangesPrompt';
-import DashboardEmbedModal from '../EmbeddedModal';
-import OverwriteConfirm from '../OverwriteConfirm';
-import {
-  addDangerToast,
-  addSuccessToast,
-  addWarningToast,
-} from '../../../components/MessageToasts/actions';
-import {
-  dashboardTitleChanged,
-  redoLayoutAction,
-  undoLayoutAction,
-  updateDashboardTitle,
-  clearDashboardHistory,
-} from '../../actions/dashboardLayout';
-import {
-  fetchCharts,
-  fetchFaveStar,
-  maxUndoHistoryToast,
-  onChange,
-  onRefresh,
-  saveDashboardRequest,
-  saveFaveStar,
-  savePublished,
-  setEditMode,
-  setMaxUndoHistoryExceeded,
-  setRefreshFrequency,
-  setUnsavedChanges,
-} from '../../actions/dashboardState';
-import { logEvent } from '../../../logger/actions';
-import { dashboardInfoChanged } from '../../actions/dashboardInfo';
-import isDashboardLoading from '../../util/isDashboardLoading';
-import { useChartIds } from '../../util/charts/useChartIds';
-import { useDashboardMetadataBar } from './useDashboardMetadataBar';
-import { useHeaderActionsMenu } from './useHeaderActionsDropdownMenu';
-import { DASHBOARD_CATEGORIES } from 'src/dashboard/constants/categories';
+  BasicInfoSection,
+  AccessSection,
+  StylingSection,
+  RefreshSection,
+  CertificationSection,
+  AdvancedSection,
+} from './sections';
 
-const extensionsRegistry = getExtensionsRegistry();
-
-const headerContainerStyle = theme => css`
-  border-bottom: none;
-`;
-
-const editButtonStyle = theme => css`
-  color: ${theme.colorPrimary};
-`;
-
-const actionButtonsStyle = theme => css`
-  display: flex;
-  align-items: center;
-
-  .action-schedule-report {
-    margin-left: ${theme.sizeUnit * 2}px;
-  }
-
-  .undoRedo {
-    display: flex;
-    margin-right: ${theme.sizeUnit * 2}px;
-  }
-`;
-
-const StyledUndoRedoButton = styled(Button)`
-  // TODO: check if we need this
-  padding: 0;
-  &:hover {
-    background: transparent;
-  }
-`;
-
-const undoRedoStyle = theme => css`
-  color: ${theme.colorIcon};
-  &:hover {
-    color: ${theme.colorIconHover};
-  }
-`;
-
-const undoRedoEmphasized = theme => css`
-  color: ${theme.colorIcon};
-`;
-
-const undoRedoDisabled = theme => css`
-  color: ${theme.colorTextDisabled};
-`;
-
-const saveBtnStyle = theme => css`
-  min-width: ${theme.sizeUnit * 17}px;
-  height: ${theme.sizeUnit * 8}px;
-  span > :first-of-type {
-    margin-right: 0;
-  }
-`;
-
-const discardBtnStyle = theme => css`
-  min-width: ${theme.sizeUnit * 22}px;
-  height: ${theme.sizeUnit * 8}px;
-`;
-
-const categorySelectStyle = theme => css`
-  width: ${theme.sizeUnit * 44}px;
-  min-width: ${theme.sizeUnit * 36}px;
-  max-width: 40vw;
-  margin-right: ${theme.sizeUnit * 2}px;
-  flex: 0 1 auto;
-
-  &.ant-select-single .ant-select-selector {
-    height: ${theme.sizeUnit * 8}px !important;
-    display: flex;
-    align-items: center;
-    border-radius: ${theme.borderRadius}px;
-    border: 1px solid ${theme.colorBorder};
-    background-color: ${theme.colorBgContainer};
-    width: 100%;
-  }
-
-  /* Unselected state: same look as selected (border, background, text) */
-  &.ant-select-single:not(.ant-select-open) .ant-select-selector {
-    border-color: ${theme.colorBorder};
-    background-color: ${theme.colorBgContainer};
-  }
-
-  .ant-select-selection-placeholder {
-    color: ${theme.colorText};
-  }
-
-  .ant-select-selection-item {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-`;
-
-const discardChanges = () => {
-  const url = new URL(window.location.href);
-
-  url.searchParams.delete('edit');
-  window.location.assign(url);
+type PropertiesModalProps = {
+  dashboardId: number;
+  dashboardTitle?: string;
+  dashboardInfo?: Record<string, any>;
+  show?: boolean;
+  onHide?: () => void;
+  colorScheme?: string;
+  onSubmit?: (params: Record<string, any>) => void;
+  addSuccessToast: (message: string) => void;
+  addDangerToast: (message: string) => void;
+  onlyApply?: boolean;
 };
 
-const Header = () => {
-  const dispatch = useDispatch();
-  const [didNotifyMaxUndoHistoryToast, setDidNotifyMaxUndoHistoryToast] =
-    useState(false);
-  const [emphasizeUndo, setEmphasizeUndo] = useState(false);
-  const [emphasizeRedo, setEmphasizeRedo] = useState(false);
-  const [showingPropertiesModal, setShowingPropertiesModal] = useState(false);
-  const [showingRefreshModal, setShowingRefreshModal] = useState(false);
-  const [showingEmbedModal, setShowingEmbedModal] = useState(false);
-  const [showingReportModal, setShowingReportModal] = useState(false);
-  const [currentReportDeleting, setCurrentReportDeleting] = useState(null);
-  const dashboardInfo = useSelector(state => state.dashboardInfo);
-  const layout = useSelector(state => state.dashboardLayout.present);
-  const undoLength = useSelector(state => state.dashboardLayout.past.length);
-  const redoLength = useSelector(state => state.dashboardLayout.future.length);
-  const dataMask = useSelector(state => state.dataMask);
-  const user = useSelector(state => state.user);
-  const chartIds = useChartIds();
-
-  const {
-    expandedSlices,
-    refreshFrequency,
-    shouldPersistRefreshFrequency,
-    customCss,
-    colorNamespace,
-    colorScheme,
-    isStarred,
-    isPublished,
-    hasUnsavedChanges,
-    maxUndoHistoryExceeded,
-    editMode,
-    lastModifiedTime,
-  } = useSelector(
-    state => ({
-      expandedSlices: state.dashboardState.expandedSlices,
-      refreshFrequency: state.dashboardState.refreshFrequency,
-      shouldPersistRefreshFrequency:
-        !!state.dashboardState.shouldPersistRefreshFrequency,
-      customCss: state.dashboardInfo.css,
-      colorNamespace: state.dashboardState.colorNamespace,
-      colorScheme: state.dashboardState.colorScheme,
-      isStarred: !!state.dashboardState.isStarred,
-      isPublished: !!state.dashboardState.isPublished,
-      hasUnsavedChanges: !!state.dashboardState.hasUnsavedChanges,
-      maxUndoHistoryExceeded: !!state.dashboardState.maxUndoHistoryExceeded,
-      editMode: !!state.dashboardState.editMode,
-      lastModifiedTime: state.lastModifiedTime,
-    }),
-    shallowEqual,
-  );
-  const isLoading = useSelector(state => isDashboardLoading(state.charts));
-
-  const refreshTimer = useRef(0);
-  const ctrlYTimeout = useRef(0);
-  const ctrlZTimeout = useRef(0);
-  const prevThemeIdRef = useRef(dashboardInfo.theme?.id ?? null);
-
-  const dashboardTitle = layout[DASHBOARD_HEADER_ID]?.meta?.text;
-  const { slug } = dashboardInfo;
-  const actualLastModifiedTime = Math.max(
-    lastModifiedTime,
-    dashboardInfo.last_modified_time,
-  );
-  const boundActionCreators = useMemo(
-    () =>
-      bindActionCreators(
-        {
-          addSuccessToast,
-          addDangerToast,
-          addWarningToast,
-          onUndo: undoLayoutAction,
-          onRedo: redoLayoutAction,
-          clearDashboardHistory,
-          setEditMode,
-          setUnsavedChanges,
-          fetchFaveStar,
-          saveFaveStar,
-          savePublished,
-          fetchCharts,
-          updateDashboardTitle,
-          onChange,
-          onSave: saveDashboardRequest,
-          setMaxUndoHistoryExceeded,
-          maxUndoHistoryToast,
-          logEvent,
-          setRefreshFrequency,
-          onRefresh,
-          dashboardInfoChanged,
-          dashboardTitleChanged,
-        },
-        dispatch,
-      ),
-    [dispatch],
-  );
-
-  const startPeriodicRender = useCallback(
-    interval => {
-      let intervalMessage;
-
-      if (interval) {
-        const periodicRefreshOptions =
-          dashboardInfo.common?.conf?.DASHBOARD_AUTO_REFRESH_INTERVALS;
-        const predefinedValue = periodicRefreshOptions.find(
-          option => Number(option[0]) === interval / 1000,
-        );
-
-        if (predefinedValue) {
-          intervalMessage = t(predefinedValue[1]);
-        } else {
-          intervalMessage = extendedDayjs
-            .duration(interval, 'millisecond')
-            .humanize();
-        }
-      }
-
-      const fetchCharts = (charts, force = false) =>
-        boundActionCreators.fetchCharts(
-          charts,
-          force,
-          interval * 0.2,
-          dashboardInfo.id,
-        );
-
-      const periodicRender = () => {
-        const { metadata } = dashboardInfo;
-        const immune = metadata.timed_refresh_immune_slices || [];
-        const affectedCharts = chartIds.filter(
-          chartId => immune.indexOf(chartId) === -1,
-        );
-
-        boundActionCreators.logEvent(LOG_ACTIONS_PERIODIC_RENDER_DASHBOARD, {
-          interval,
-          chartCount: affectedCharts.length,
-        });
-        boundActionCreators.addWarningToast(
-          t(
-            `This dashboard is currently auto refreshing; the next auto refresh will be in %s.`,
-            intervalMessage,
-          ),
-        );
-        if (
-          dashboardInfo.common?.conf?.DASHBOARD_AUTO_REFRESH_MODE === 'fetch'
-        ) {
-          // force-refresh while auto-refresh in dashboard
-          return fetchCharts(affectedCharts);
-        }
-        return fetchCharts(affectedCharts, true);
-      };
-
-      refreshTimer.current = setPeriodicRunner({
-        interval,
-        periodicRender,
-        refreshTimer: refreshTimer.current,
-      });
-    },
-    [boundActionCreators, chartIds, dashboardInfo],
-  );
-
-  useEffect(() => {
-    startPeriodicRender(refreshFrequency * 1000);
-  }, [refreshFrequency, startPeriodicRender]);
-
-  // Track theme updates as unsaved changes, but ignore initial hydration.
-  useEffect(() => {
-    const currentThemeId = dashboardInfo.theme?.id ?? null;
-    if (prevThemeIdRef.current === currentThemeId) {
-      return;
-    }
-    prevThemeIdRef.current = currentThemeId;
-    if (editMode) {
-      boundActionCreators.setUnsavedChanges(true);
-    }
-  }, [dashboardInfo.theme, editMode, boundActionCreators]);
-
-  useEffect(() => {
-    if (UNDO_LIMIT - undoLength <= 0 && !didNotifyMaxUndoHistoryToast) {
-      setDidNotifyMaxUndoHistoryToast(true);
-      boundActionCreators.maxUndoHistoryToast();
-    }
-    if (undoLength > UNDO_LIMIT && !maxUndoHistoryExceeded) {
-      boundActionCreators.setMaxUndoHistoryExceeded();
-    }
-  }, [
-    boundActionCreators,
-    didNotifyMaxUndoHistoryToast,
-    maxUndoHistoryExceeded,
-    undoLength,
-  ]);
-
-  useEffect(
-    () => () => {
-      stopPeriodicRender(refreshTimer.current);
-      boundActionCreators.setRefreshFrequency(0);
-      clearTimeout(ctrlYTimeout.current);
-      clearTimeout(ctrlZTimeout.current);
-    },
-    [boundActionCreators],
-  );
-
-  const handleChangeText = useCallback(
-    nextText => {
-      if (nextText && dashboardTitle !== nextText) {
-        boundActionCreators.updateDashboardTitle(nextText);
-        boundActionCreators.onChange();
-      }
-    },
-    [boundActionCreators, dashboardTitle],
-  );
-
-  const handleCtrlY = useCallback(() => {
-    boundActionCreators.onRedo();
-    setEmphasizeRedo(true);
-    if (ctrlYTimeout.current) {
-      clearTimeout(ctrlYTimeout.current);
-    }
-    ctrlYTimeout.current = setTimeout(() => {
-      setEmphasizeRedo(false);
-    }, 100);
-  }, [boundActionCreators]);
-
-  const handleCtrlZ = useCallback(() => {
-    boundActionCreators.onUndo();
-    setEmphasizeUndo(true);
-    if (ctrlZTimeout.current) {
-      clearTimeout(ctrlZTimeout.current);
-    }
-    ctrlZTimeout.current = setTimeout(() => {
-      setEmphasizeUndo(false);
-    }, 100);
-  }, [boundActionCreators]);
-
-  const forceRefresh = useCallback(() => {
-    if (!isLoading) {
-      boundActionCreators.logEvent(LOG_ACTIONS_FORCE_REFRESH_DASHBOARD, {
-        force: true,
-        interval: 0,
-        chartCount: chartIds.length,
-      });
-      return boundActionCreators.onRefresh(chartIds, true, 0, dashboardInfo.id);
-    }
-    return false;
-  }, [boundActionCreators, chartIds, dashboardInfo.id, isLoading]);
-
-  const toggleEditMode = useCallback(() => {
-    boundActionCreators.logEvent(LOG_ACTIONS_TOGGLE_EDIT_DASHBOARD, {
-      edit_mode: !editMode,
-    });
-    boundActionCreators.setEditMode(!editMode);
-  }, [boundActionCreators, editMode]);
-
-  const overwriteDashboard = useCallback(() => {
-    if (!dashboardInfo.category) {
-      boundActionCreators.addDangerToast(t('Dashboard category is required'));
-      return;
-    }
-
-    const currentColorNamespace =
-      dashboardInfo?.metadata?.color_namespace || colorNamespace;
-    const currentColorScheme =
-      dashboardInfo?.metadata?.color_scheme || colorScheme;
-
-    const data = {
-      certified_by: dashboardInfo.certified_by,
-      certification_details: dashboardInfo.certification_details,
-      css: customCss,
-      dashboard_title: dashboardTitle,
-      category: dashboardInfo.category,
-      last_modified_time: actualLastModifiedTime,
-      owners: dashboardInfo.owners,
-      roles: dashboardInfo.roles,
-      slug,
-      tags: (dashboardInfo.tags || []).filter(
-        item => item.type === TagTypeEnum.Custom || !item.type,
-      ),
-      theme_id: dashboardInfo.theme ? dashboardInfo.theme.id : null,
-      metadata: {
-        ...dashboardInfo?.metadata,
-        color_namespace: currentColorNamespace,
-        color_scheme: currentColorScheme,
-        positions: layout,
-        refresh_frequency: shouldPersistRefreshFrequency
-          ? refreshFrequency
-          : dashboardInfo.metadata?.refresh_frequency,
-      },
+type Roles = { id: number; name: string }[];
+type Owners = {
+  id: number;
+  full_name?: string;
+  first_name?: string;
+  last_name?: string;
+}[];
+type DashboardInfo = {
+  id: number;
+  title: string;
+  slug: string;
+  certifiedBy: string;
+  certificationDetails: string;
+  isManagedExternally: boolean;
+  metadata: Record<string, any>;
+  common?: {
+    conf?: {
+      SUPERSET_DASHBOARD_PERIODICAL_REFRESH_LIMIT?: number;
     };
+  };
+};
 
-    // make sure positions data less than DB storage limitation:
-    const positionJSONLength = safeStringify(layout).length;
-    const limit =
-      dashboardInfo.common?.conf?.SUPERSET_DASHBOARD_POSITION_DATA_LIMIT ||
-      DASHBOARD_POSITION_DATA_LIMIT;
-    if (positionJSONLength >= limit) {
-      boundActionCreators.addDangerToast(
-        t(
-          'Your dashboard is too large. Please reduce its size before saving it.',
-        ),
-      );
-    } else {
-      if (positionJSONLength >= limit * 0.9) {
-        boundActionCreators.addWarningToast(
-          t('Your dashboard is near the size limit.'),
-        );
-      }
+const PropertiesModal = ({
+  addSuccessToast,
+  addDangerToast,
+  colorScheme: currentColorScheme,
+  dashboardId,
+  dashboardInfo: currentDashboardInfo,
+  dashboardTitle,
+  onHide = () => {},
+  onlyApply = false,
+  onSubmit = () => {},
+  show = false,
+}: PropertiesModalProps) => {
+  const dispatch = useDispatch();
+  const [form] = Form.useForm();
 
-      boundActionCreators.onSave(data, dashboardInfo.id, SAVE_TYPE_OVERWRITE);
-    }
-  }, [
-    actualLastModifiedTime,
-    boundActionCreators,
-    colorNamespace,
-    colorScheme,
-    customCss,
-    dashboardInfo.category,
-    dashboardInfo.certification_details,
-    dashboardInfo.certified_by,
-    dashboardInfo.common?.conf?.SUPERSET_DASHBOARD_POSITION_DATA_LIMIT,
-    dashboardInfo.id,
-    dashboardInfo.metadata,
-    dashboardInfo.owners,
-    dashboardInfo.roles,
-    dashboardInfo.tags,
-    dashboardTitle,
-    layout,
-    refreshFrequency,
-    shouldPersistRefreshFrequency,
-    slug,
-  ]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isApplying, setIsApplying] = useState(false);
+  const [colorScheme, setCurrentColorScheme] = useState(currentColorScheme);
+  const [jsonMetadata, setJsonMetadata] = useState('');
+  const [dashboardInfo, setDashboardInfo] = useState<DashboardInfo>();
 
-  const {
-    showModal: showUnsavedChangesModal,
-    setShowModal: setShowUnsavedChangesModal,
-    handleConfirmNavigation,
-    handleSaveAndCloseModal,
-  } = useUnsavedChangesPrompt({
-    hasUnsavedChanges,
-    onSave: overwriteDashboard,
+  // JSON validation for metadata
+  const jsonAnnotations = useJsonValidation(jsonMetadata, {
+    errorPrefix: 'Invalid JSON metadata',
   });
+  const [owners, setOwners] = useState<Owners>([]);
+  const [roles, setRoles] = useState<Roles>([]);
+  const saveLabel = onlyApply ? t('Apply') : t('Save');
+  const [tags, setTags] = useState<TagType[]>([]);
+  const [customCss, setCustomCss] = useState('');
+  const [refreshFrequency, setRefreshFrequency] = useState(0);
+  const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
+  const [themes, setThemes] = useState<
+    Array<{
+      id: number;
+      theme_name: string;
+    }>
+  >([]);
+  const categoricalSchemeRegistry = getCategoricalSchemeRegistry();
+  const originalDashboardMetadata = useRef<Record<string, any>>({});
 
-  const showPropertiesModal = useCallback(() => {
-    setShowingPropertiesModal(true);
-  }, []);
+  const handleErrorResponse = async (response: Response) => {
+    const { error, statusText, message } = await getClientErrorObject(response);
+    let errorText = error || statusText || t('An error has occurred');
+    if (typeof message === 'object' && 'json_metadata' in message) {
+      errorText = (message as { json_metadata: string }).json_metadata;
+    } else if (typeof message === 'string') {
+      errorText = message;
 
-  const hidePropertiesModal = useCallback(() => {
-    setShowingPropertiesModal(false);
-  }, []);
-  const showRefreshModal = useCallback(() => {
-    setShowingRefreshModal(true);
-  }, []);
-  const hideRefreshModal = useCallback(() => {
-    setShowingRefreshModal(false);
-  }, []);
-
-  const showEmbedModal = useCallback(() => {
-    setShowingEmbedModal(true);
-  }, []);
-
-  const hideEmbedModal = useCallback(() => {
-    setShowingEmbedModal(false);
-  }, []);
-
-  const showReportModal = useCallback(() => {
-    setShowingReportModal(true);
-  }, []);
-
-  const hideReportModal = useCallback(() => {
-    setShowingReportModal(false);
-  }, []);
-
-  const metadataBar = useDashboardMetadataBar(dashboardInfo);
-
-  const userCanEdit =
-    dashboardInfo.dash_edit_perm && !dashboardInfo.is_managed_externally;
-  const userCanShare = dashboardInfo.dash_share_perm;
-  const userCanSaveAs = dashboardInfo.dash_save_perm;
-  const userCanCurate =
-    isFeatureEnabled(FeatureFlag.EmbeddedSuperset) &&
-    findPermission('can_set_embedded', 'Dashboard', user.roles);
-  const isEmbedded = !dashboardInfo?.userId;
-
-  const handleOnPropertiesChange = useCallback(
-    updates => {
-      boundActionCreators.dashboardInfoChanged({
-        slug: updates.slug,
-        category: updates.category,
-        metadata: JSON.parse(updates.jsonMetadata || '{}'),
-        certified_by: updates.certifiedBy,
-        certification_details: updates.certificationDetails,
-        owners: updates.owners,
-        roles: updates.roles,
-        tags: updates.tags,
-        theme_id: updates.themeId,
-        css: updates.css,
-      });
-      boundActionCreators.setUnsavedChanges(true);
-
-      if (updates.title && dashboardTitle !== updates.title) {
-        boundActionCreators.updateDashboardTitle(updates.title);
-        boundActionCreators.onChange();
+      if (message === 'Forbidden') {
+        errorText = t('You do not have permission to edit this dashboard');
       }
-    },
-    [boundActionCreators, dashboardTitle],
-  );
+    }
 
-  const handleRefreshChange = useCallback(
-    (refreshFrequency, editMode) => {
-      boundActionCreators.setRefreshFrequency(refreshFrequency, !!editMode);
-    },
-    [boundActionCreators],
-  );
-
-  const NavExtension = extensionsRegistry.get('dashboard.nav.right');
-
-  const editableTitleProps = useMemo(
-    () => ({
-      title: dashboardTitle,
-      canEdit: userCanEdit && editMode,
-      onSave: handleChangeText,
-      placeholder: t('Add the name of the dashboard'),
-      label: t('Dashboard title'),
-      showTooltip: false,
-    }),
-    [dashboardTitle, editMode, handleChangeText, userCanEdit],
-  );
-
-  const certifiedBadgeProps = useMemo(
-    () => ({
-      certifiedBy: dashboardInfo.certified_by,
-      details: dashboardInfo.certification_details,
-    }),
-    [dashboardInfo.certification_details, dashboardInfo.certified_by],
-  );
-
-  const faveStarProps = useMemo(
-    () => ({
-      itemId: dashboardInfo.id,
-      fetchFaveStar: boundActionCreators.fetchFaveStar,
-      saveFaveStar: boundActionCreators.saveFaveStar,
-      isStarred,
-      showTooltip: true,
-    }),
-    [
-      boundActionCreators.fetchFaveStar,
-      boundActionCreators.saveFaveStar,
-      dashboardInfo.id,
-      isStarred,
-    ],
-  );
-
-  const titlePanelAdditionalItems = useMemo(
-    () => [
-      !editMode && (
-        <PublishedStatus
-          dashboardId={dashboardInfo.id}
-          isPublished={isPublished}
-          savePublished={boundActionCreators.savePublished}
-          userCanEdit={userCanEdit}
-          userCanSave={userCanSaveAs}
-          visible={!editMode}
-        />
-      ),
-      !editMode && !isEmbedded && null,
-    ],
-    [
-      boundActionCreators.savePublished,
-      dashboardInfo.id,
-      editMode,
-      metadataBar,
-      isEmbedded,
-      isPublished,
-      userCanEdit,
-      userCanSaveAs,
-    ],
-  );
-
-  const rightPanelAdditionalItems = useMemo(
-    () => (
-      <div className="button-container">
-        {userCanSaveAs && (
-          <div className="button-container" data-test="dashboard-edit-actions">
-            {editMode && (
-              <div css={actionButtonsStyle}>
-                <div className="undoRedo">
-                  <Tooltip
-                    id="dashboard-undo-tooltip"
-                    title={t('Undo the action')}
-                  >
-                    <StyledUndoRedoButton
-                      buttonStyle="link"
-                      disabled={undoLength < 1}
-                      onClick={
-                        undoLength > 0 ? boundActionCreators.onUndo : undefined
-                      }
-                    >
-                      <Icons.Undo
-                        css={[
-                          undoRedoStyle,
-                          emphasizeUndo && undoRedoEmphasized,
-                          undoLength < 1 && undoRedoDisabled,
-                        ]}
-                        data-test="undo-action"
-                        iconSize="xl"
-                      />
-                    </StyledUndoRedoButton>
-                  </Tooltip>
-                  <Tooltip
-                    id="dashboard-redo-tooltip"
-                    title={t('Redo the action')}
-                  >
-                    <StyledUndoRedoButton
-                      buttonStyle="link"
-                      disabled={redoLength < 1}
-                      onClick={
-                        redoLength > 0 ? boundActionCreators.onRedo : undefined
-                      }
-                    >
-                      <Icons.Redo
-                        css={[
-                          undoRedoStyle,
-                          emphasizeRedo && undoRedoEmphasized,
-                          redoLength < 1 && undoRedoDisabled,
-                        ]}
-                        data-test="redo-action"
-                        iconSize="xl"
-                      />
-                    </StyledUndoRedoButton>
-                  </Tooltip>
-                </div>
-                <Select
-                  css={categorySelectStyle}
-                  placeholder={t('Select')}
-                  value={dashboardInfo.category || undefined}
-                  options={DASHBOARD_CATEGORIES.map(category => ({
-                    value: category,
-                    label: category,
-                  }))}
-                  // Ensure category order matches Home page (no alphabetical re-sorting)
-                  filterSort={(a, b) =>
-                    DASHBOARD_CATEGORIES.indexOf(String(a?.value)) -
-                    DASHBOARD_CATEGORIES.indexOf(String(b?.value))
-                  }
-                  onChange={value => {
-                    boundActionCreators.dashboardInfoChanged({
-                      ...dashboardInfo,
-                      category: value,
-                    });
-                    boundActionCreators.setUnsavedChanges(true);
-                  }}
-                  data-test="dashboard-header-category-select"
-                />
-                <Button
-                  css={discardBtnStyle}
-                  buttonSize="small"
-                  onClick={discardChanges}
-                  buttonStyle="secondary"
-                  data-test="discard-changes-button"
-                  aria-label={t('Discard')}
-                >
-                  {t('Discard')}
-                </Button>
-                <Button
-                  css={saveBtnStyle}
-                  buttonSize="small"
-                  disabled={!hasUnsavedChanges}
-                  buttonStyle="primary"
-                  onClick={overwriteDashboard}
-                  data-test="header-save-button"
-                  aria-label={t('Save')}
-                >
-                  <Icons.SaveOutlined iconSize="m" />
-                  {t('Save')}
-                </Button>
-              </div>
-            )}
-          </div>
-        )}
-        {editMode ? (
-          <UndoRedoKeyListeners onUndo={handleCtrlZ} onRedo={handleCtrlY} />
-        ) : (
-          <div css={actionButtonsStyle}>
-            {NavExtension && <NavExtension />}
-            {userCanEdit && (
-              <Button
-                buttonStyle="secondary"
-                onClick={() => {
-                  toggleEditMode();
-                  boundActionCreators.clearDashboardHistory?.(); // Resets the `past` as an empty array
-                }}
-                data-test="edit-dashboard-button"
-                className="action-button"
-                css={editButtonStyle}
-                aria-label={t('Edit dashboard')}
-              >
-                <Icons.EditOutlined iconSize="m" />
-              </Button>
-            )}
-          </div>
-        )}
-      </div>
-    ),
-    [
-      NavExtension,
-      boundActionCreators.onRedo,
-      boundActionCreators.onUndo,
-      boundActionCreators.clearDashboardHistory,
-      editMode,
-      emphasizeRedo,
-      emphasizeUndo,
-      handleCtrlY,
-      handleCtrlZ,
-      hasUnsavedChanges,
-      overwriteDashboard,
-      redoLength,
-      toggleEditMode,
-      undoLength,
-      userCanEdit,
-      userCanSaveAs,
-    ],
-  );
-
-  const handleReportDelete = async report => {
-    await dispatch(deleteActiveReport(report));
-    setCurrentReportDeleting(null);
+    Modal.error({
+      title: t('Error'),
+      content: errorText,
+      okButtonProps: { danger: true, className: 'btn-danger' },
+    });
   };
 
-  const [menu, isDropdownVisible, setIsDropdownVisible] = useHeaderActionsMenu({
-    addSuccessToast: boundActionCreators.addSuccessToast,
-    addDangerToast: boundActionCreators.addDangerToast,
-    dashboardInfo,
-    dashboardId: dashboardInfo.id,
-    dashboardTitle,
-    dataMask,
-    layout,
-    expandedSlices,
-    customCss,
-    colorNamespace,
-    colorScheme,
-    onSave: boundActionCreators.onSave,
-    forceRefreshAllCharts: forceRefresh,
-    refreshFrequency,
-    shouldPersistRefreshFrequency,
-    editMode,
-    hasUnsavedChanges,
-    userCanEdit,
-    userCanShare,
-    userCanSave: userCanSaveAs,
-    userCanCurate,
-    isLoading,
-    showReportModal,
-    showPropertiesModal,
-    showRefreshModal,
-    setCurrentReportDeleting,
-    manageEmbedded: showEmbedModal,
-    lastModifiedTime: actualLastModifiedTime,
-    logEvent: boundActionCreators.logEvent,
+  const handleDashboardData = useCallback(
+    dashboardData => {
+      const {
+        id,
+        dashboard_title,
+        category,
+        slug,
+        certified_by,
+        certification_details,
+        owners,
+        roles,
+        metadata,
+        is_managed_externally,
+        theme,
+        css,
+      } = dashboardData;
+      const dashboardInfo = {
+        id,
+        title: dashboard_title,
+        category: category ?? undefined,
+        slug: slug || '',
+        certifiedBy: certified_by || '',
+        certificationDetails: certification_details || '',
+        isManagedExternally: is_managed_externally || false,
+        css: css || '',
+        metadata,
+      };
+
+      form.setFieldsValue(dashboardInfo);
+      setDashboardInfo(dashboardInfo);
+      setOwners(owners);
+      setRoles(roles);
+      setCustomCss(css || '');
+      setCurrentColorScheme(metadata?.color_scheme);
+      setSelectedThemeId(theme?.id || null);
+
+      const metaDataCopy = omit(metadata, [
+        'positions',
+        'shared_label_colors',
+        'map_label_colors',
+        'color_scheme_domain',
+      ]);
+
+      setJsonMetadata(metaDataCopy ? jsonStringify(metaDataCopy) : '');
+      setRefreshFrequency(metadata?.refresh_frequency || 0);
+      originalDashboardMetadata.current = metadata;
+    },
+    [form],
+  );
+
+  const fetchDashboardDetails = useCallback(() => {
+    // We fetch the dashboard details because not all code
+    // that renders this component have all the values we need.
+    // At some point when we have a more consistent frontend
+    // datamodel, the dashboard could probably just be passed as a prop.
+    SupersetClient.get({
+      endpoint: `/api/v1/dashboard/${dashboardId}`,
+    }).then(response => {
+      const dashboard = response.json.result;
+      const jsonMetadataObj = dashboard.json_metadata?.length
+        ? JSON.parse(dashboard.json_metadata)
+        : {};
+
+      handleDashboardData({
+        ...dashboard,
+        metadata: jsonMetadataObj,
+      });
+
+      setIsLoading(false);
+    }, handleErrorResponse);
+  }, [dashboardId, handleDashboardData]);
+
+  const getJsonMetadata = () => {
+    try {
+      const jsonMetadataObj = jsonMetadata?.length
+        ? JSON.parse(jsonMetadata)
+        : {};
+      return jsonMetadataObj;
+    } catch (_) {
+      return {};
+    }
+  };
+
+  const handleOnChangeOwners = (owners: { value: number; label: string }[]) => {
+    const parsedOwners: Owners = ensureIsArray(owners).map(o => ({
+      id: o.value,
+      full_name: o.label,
+    }));
+    setOwners(parsedOwners);
+  };
+
+  const handleOnChangeRoles = (roles: { value: number; label: string }[]) => {
+    const parsedRoles: Roles = ensureIsArray(roles).map(r => ({
+      id: r.value,
+      name: r.label,
+    }));
+    setRoles(parsedRoles);
+  };
+
+  const handleOnCancel = () => onHide();
+
+  const onColorSchemeChange = (
+    colorScheme = '',
+    { updateMetadata = true } = {},
+  ) => {
+    // check that color_scheme is valid
+    const colorChoices = categoricalSchemeRegistry.keys();
+    const jsonMetadataObj = getJsonMetadata();
+
+    // only fire if the color_scheme is present and invalid
+    if (colorScheme && !colorChoices.includes(colorScheme)) {
+      Modal.error({
+        title: t('Error'),
+        content: t('A valid color scheme is required'),
+        okButtonProps: { danger: true, className: 'btn-danger' },
+      });
+      onHide();
+      throw new Error('A valid color scheme is required');
+    }
+
+    jsonMetadataObj.color_scheme = colorScheme;
+    jsonMetadataObj.label_colors = jsonMetadataObj.label_colors || {};
+
+    setCurrentColorScheme(colorScheme);
+    dispatch(setColorScheme(colorScheme));
+
+    // update metadata to match selection
+    if (updateMetadata) {
+      setJsonMetadata(jsonStringify(jsonMetadataObj));
+    }
+  };
+
+  const onFinish = () => {
+    const formValues = form.getFieldsValue();
+    const {
+      title,
+      slug,
+      certifiedBy,
+      certificationDetails,
+      category,
+    } = formValues;
+    let currentJsonMetadata = jsonMetadata;
+
+    // validate currentJsonMetadata
+    let metadata;
+    try {
+      if (
+        !currentJsonMetadata.startsWith('{') ||
+        !currentJsonMetadata.endsWith('}')
+      ) {
+        throw new Error();
+      }
+      metadata = JSON.parse(currentJsonMetadata);
+    } catch (error) {
+      addDangerToast(t('JSON metadata is invalid!'));
+      return;
+    }
+
+    const colorNamespace = getColorNamespace(metadata?.color_namespace);
+    // color scheme in json metadata has precedence over selection
+    const updatedColorScheme = metadata?.color_scheme || colorScheme;
+    const shouldGoFresh =
+      updatedColorScheme !== originalDashboardMetadata.current.color_scheme;
+    const shouldResetCustomLabels = !areObjectsEqual(
+      originalDashboardMetadata.current.label_colors || {},
+      metadata?.label_colors || {},
+    );
+    const currentCustomLabels = Object.keys(metadata?.label_colors || {});
+    const prevCustomLabels = Object.keys(
+      originalDashboardMetadata.current.label_colors || {},
+    );
+    const resettableCustomLabels =
+      currentCustomLabels.length > 0 ? currentCustomLabels : prevCustomLabels;
+    const freshCustomLabels =
+      shouldResetCustomLabels && resettableCustomLabels.length > 0
+        ? resettableCustomLabels
+        : false;
+    const jsonMetadataObj = getJsonMetadata();
+    jsonMetadataObj.refresh_frequency = refreshFrequency;
+    const customLabelColors = jsonMetadataObj.label_colors || {};
+    const updatedDashboardMetadata = {
+      ...originalDashboardMetadata.current,
+      label_colors: customLabelColors,
+      color_scheme: updatedColorScheme,
+    };
+
+    originalDashboardMetadata.current = updatedDashboardMetadata;
+    applyColors(updatedDashboardMetadata, shouldGoFresh || freshCustomLabels);
+    dispatch(
+      setDashboardMetadata({
+        ...updatedDashboardMetadata,
+        map_label_colors: getFreshLabelsColorMapEntries(customLabelColors),
+      }),
+    );
+
+    onColorSchemeChange(updatedColorScheme, {
+      updateMetadata: false,
+    });
+
+    currentJsonMetadata = jsonStringify(jsonMetadataObj);
+
+    const moreOnSubmitProps: { roles?: Roles; tags?: TagType[] } = {};
+    const morePutProps: {
+      roles?: number[];
+      tags?: (string | number | undefined)[];
+    } = {};
+    if (isFeatureEnabled(FeatureFlag.DashboardRbac)) {
+      moreOnSubmitProps.roles = roles;
+      morePutProps.roles = (roles || []).map(r => r.id);
+    }
+    if (isFeatureEnabled(FeatureFlag.TaggingSystem)) {
+      moreOnSubmitProps.tags = tags;
+      morePutProps.tags = tags.map(tag => tag.id);
+    }
+    const onSubmitProps = {
+      id: dashboardId,
+      title,
+      slug,
+      category,
+      jsonMetadata: currentJsonMetadata,
+      owners,
+      colorScheme: currentColorScheme,
+      colorNamespace,
+      certifiedBy,
+      certificationDetails,
+      themeId: selectedThemeId,
+      css: customCss,
+      ...moreOnSubmitProps,
+    };
+    if (onlyApply) {
+      setIsApplying(true);
+      try {
+        onSubmit(onSubmitProps);
+        onHide();
+        addSuccessToast(t('Dashboard properties updated'));
+      } catch (error) {
+        console.error('Apply failed:', error);
+      } finally {
+        setIsApplying(false);
+      }
+    } else {
+      // Validate category is selected
+      if (!category) {
+        addDangerToast(t('Dashboard category is required'));
+        return;
+      }
+
+      const saveData = {
+        dashboard_title: title,
+        category,
+        slug: slug || null,
+        json_metadata: currentJsonMetadata || null,
+        owners: (owners || []).map(o => o.id),
+        certified_by: certifiedBy || null,
+        certification_details:
+          certifiedBy && certificationDetails ? certificationDetails : null,
+        css: customCss || null,
+        theme_id: selectedThemeId,
+        ...morePutProps,
+      };
+
+      SupersetClient.put({
+        endpoint: `/api/v1/dashboard/${dashboardId}`,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(saveData),
+      }).then(() => {
+        onSubmit(onSubmitProps);
+        onHide();
+        addSuccessToast(t('The dashboard has been saved'));
+      }, handleErrorResponse);
+    }
+  };
+
+  useEffect(() => {
+    if (show) {
+      // Reset loading state when modal opens
+      setIsLoading(true);
+
+      if (!currentDashboardInfo) {
+        fetchDashboardDetails();
+      } else {
+        handleDashboardData(currentDashboardInfo);
+        // Data is immediately available, so we can stop loading
+        setIsLoading(false);
+      }
+
+      // Category should be explicitly selected by user, no default value
+
+      // Fetch themes (excluding system themes)
+      const themeQuery = rison.encode({
+        columns: ['id', 'theme_name', 'is_system'],
+        filters: [
+          {
+            col: 'is_system',
+            opr: 'eq',
+            value: false,
+          },
+        ],
+      });
+      SupersetClient.get({ endpoint: `/api/v1/theme/?q=${themeQuery}` })
+        .then(({ json }) => {
+          const fetchedThemes = json.result;
+          setThemes(fetchedThemes);
+        })
+        .catch(() => {
+          addDangerToast(
+            t('An error occurred while fetching available themes'),
+          );
+        });
+    }
+
+    JsonEditor.preload();
+  }, [
+    currentDashboardInfo,
+    fetchDashboardDetails,
+    handleDashboardData,
+    show,
+    addDangerToast,
+    form,
+  ]);
+
+  useEffect(() => {
+    // the title can be changed inline in the dashboard, this catches it
+    if (
+      dashboardTitle &&
+      dashboardInfo &&
+      dashboardInfo.title !== dashboardTitle
+    ) {
+      form.setFieldsValue({
+        ...dashboardInfo,
+        title: dashboardTitle,
+      });
+    }
+  }, [dashboardInfo, dashboardTitle, form]);
+
+  useEffect(() => {
+    if (!isFeatureEnabled(FeatureFlag.TaggingSystem)) return;
+    try {
+      fetchTags(
+        {
+          objectType: OBJECT_TYPES.DASHBOARD,
+          objectId: dashboardId,
+          includeTypes: false,
+        },
+        (tags: TagType[]) => setTags(tags),
+        (error: Response) => {
+          addDangerToast(`Error fetching tags: ${error.text}`);
+        },
+      );
+    } catch (error) {
+      handleErrorResponse(error);
+    }
+  }, [dashboardId]);
+
+  const handleChangeTags = (tags: { label: string; value: number }[]) => {
+    const parsedTags: TagType[] = ensureIsArray(tags).map(r => ({
+      id: r.value,
+      name: r.label,
+    }));
+    setTags(parsedTags);
+  };
+
+  const handleClearTags = () => {
+    setTags([]);
+  };
+
+  // Section handlers for extracted components
+  const handleThemeChange = (value: any) => setSelectedThemeId(value || null);
+  const handleRefreshFrequencyChange = (value: any) =>
+    setRefreshFrequency(value);
+
+  // Helper function for styling section
+  const hasCustomLabelsColor = !!Object.keys(
+    getJsonMetadata()?.label_colors || {},
+  ).length;
+
+  // Validation setup
+  const modalSections = useMemo(
+    () => [
+      {
+        key: 'basic',
+        name: t('General information'),
+        validator: () => {
+          const errors = [];
+          const values = form.getFieldsValue();
+
+          // Check validation - only add if title is empty
+          if (!values.title || values.title.trim().length === 0) {
+            errors.push(t('Dashboard name is required'));
+          }
+
+          // Category must be explicitly selected (no default)
+          if (!values.category || values.category.trim().length === 0) {
+            errors.push(t('Dashboard category is required'));
+          }
+
+          return errors;
+        },
+      },
+      {
+        key: 'access',
+        name: t('Access & ownership'),
+        validator: () => [],
+      },
+      {
+        key: 'styling',
+        name: t('Styling'),
+        validator: () => [],
+      },
+      {
+        key: 'refresh',
+        name: t('Refresh settings'),
+        validator: () => {
+          const errors = [];
+          const refreshLimit =
+            dashboardInfo?.common?.conf
+              ?.SUPERSET_DASHBOARD_PERIODICAL_REFRESH_LIMIT;
+          if (
+            refreshLimit &&
+            refreshFrequency > 0 &&
+            refreshFrequency < refreshLimit
+          ) {
+            errors.push(
+              t(
+                'Refresh frequency must be at least %s seconds',
+                refreshLimit / 1000,
+              ),
+            );
+          }
+          return errors;
+        },
+      },
+      {
+        key: 'certification',
+        name: t('Certification'),
+        validator: () => [],
+      },
+      {
+        key: 'advanced',
+        name: t('Advanced settings'),
+        validator: () => {
+          if (jsonAnnotations.length > 0) {
+            return [t('Invalid JSON metadata')];
+          }
+          return [];
+        },
+      },
+    ],
+    [form, jsonAnnotations, refreshFrequency, dashboardInfo],
+  );
+
+  const {
+    validationStatus,
+    validateAll,
+    validateSection,
+    errorTooltip,
+    hasErrors,
+  } = useModalValidation({
+    sections: modalSections,
   });
+
+  // Validate basic section when title changes
+  useEffect(() => {
+    validateSection('basic');
+  }, [dashboardTitle, validateSection]);
+
+  // Validate advanced section when JSON changes
+  useEffect(() => {
+    validateSection('advanced');
+  }, [jsonMetadata, validateSection]);
+
+  // Validate refresh section when refresh frequency changes
+  useEffect(() => {
+    validateSection('refresh');
+  }, [refreshFrequency, validateSection]);
+
   return (
-    <div
-      css={headerContainerStyle}
-      data-test="dashboard-header-container"
-      data-test-id={dashboardInfo.id}
-      className="dashboard-header-container"
+    <StandardModal
+      show={show}
+      onHide={handleOnCancel}
+      onSave={() => {
+        if (validateAll()) {
+          form.submit();
+        }
+      }}
+      title={t('Dashboard properties')}
+      isEditMode
+      saveDisabled={dashboardInfo?.isManagedExternally || hasErrors}
+      saveLoading={isApplying}
+      contentLoading={isLoading}
+      errorTooltip={
+        dashboardInfo?.isManagedExternally
+          ? t(
+              "This dashboard is managed externally, and can't be edited in Superset",
+            )
+          : errorTooltip
+      }
+      saveText={saveLabel}
+      wrapProps={{ 'data-test': 'properties-edit-modal' }}
     >
-      <PageHeaderWithActions
-        editableTitleProps={editableTitleProps}
-        certificatiedBadgeProps={certifiedBadgeProps}
-        faveStarProps={faveStarProps}
-        titlePanelAdditionalItems={titlePanelAdditionalItems}
-        rightPanelAdditionalItems={rightPanelAdditionalItems}
-        menuDropdownProps={{
-          open: isDropdownVisible,
-          onOpenChange: setIsDropdownVisible,
+      <Form
+        form={form}
+        onFinish={onFinish}
+        onFieldsChange={() => {
+          // Re-validate sections when form fields change
+          setTimeout(() => validateSection('basic'), 100);
         }}
-        additionalActionsMenu={menu}
-        showFaveStar={user?.userId && dashboardInfo?.id}
-        showTitlePanelItems
-      />
-      {showingPropertiesModal && (
-        <PropertiesModal
-          dashboardId={dashboardInfo.id}
-          dashboardInfo={dashboardInfo}
-          dashboardTitle={dashboardTitle}
-          show={showingPropertiesModal}
-          onHide={hidePropertiesModal}
-          colorScheme={colorScheme}
-          onSubmit={handleOnPropertiesChange}
-          onlyApply
+        data-test="dashboard-edit-properties-form"
+        layout="vertical"
+        initialValues={{
+          ...dashboardInfo,
+          category: dashboardInfo?.category ?? undefined,
+        }}
+      >
+        <Collapse
+          expandIconPosition="end"
+          defaultActiveKey="basic"
+          accordion
+          modalMode
+          items={[
+            {
+              key: 'basic',
+              label: (
+                <CollapseLabelInModal
+                  title={t('General information')}
+                  subtitle={t('Dashboard name and URL configuration')}
+                  validateCheckStatus={!validationStatus.basic?.hasErrors}
+                  testId="basic-section"
+                />
+              ),
+              children: (
+                <BasicInfoSection
+                  form={form}
+                  validationStatus={validationStatus}
+                />
+              ),
+            },
+            {
+              key: 'access',
+              label: (
+                <CollapseLabelInModal
+                  title={t('Access & ownership')}
+                  subtitle={t('Manage dashboard owners and access permissions')}
+                  validateCheckStatus={!validationStatus.access?.hasErrors}
+                  testId="access-section"
+                />
+              ),
+              children: (
+                <AccessSection
+                  isLoading={isLoading}
+                  owners={owners}
+                  roles={roles}
+                  tags={tags}
+                  onChangeOwners={handleOnChangeOwners}
+                  onChangeRoles={handleOnChangeRoles}
+                  onChangeTags={handleChangeTags}
+                  onClearTags={handleClearTags}
+                />
+              ),
+            },
+            {
+              key: 'styling',
+              label: (
+                <CollapseLabelInModal
+                  title={t('Styling')}
+                  subtitle={t(
+                    'Configure dashboard appearance, colors, and custom CSS',
+                  )}
+                  validateCheckStatus={!validationStatus.styling?.hasErrors}
+                  testId="styling-section"
+                />
+              ),
+              children: (
+                <StylingSection
+                  themes={themes}
+                  selectedThemeId={selectedThemeId}
+                  colorScheme={colorScheme}
+                  customCss={customCss}
+                  hasCustomLabelsColor={hasCustomLabelsColor}
+                  onThemeChange={handleThemeChange}
+                  onColorSchemeChange={onColorSchemeChange}
+                  onCustomCssChange={setCustomCss}
+                  addDangerToast={addDangerToast}
+                />
+              ),
+            },
+            {
+              key: 'refresh',
+              label: (
+                <CollapseLabelInModal
+                  title={t('Refresh settings')}
+                  subtitle={t('Configure automatic dashboard refresh')}
+                  validateCheckStatus={!validationStatus.refresh?.hasErrors}
+                  testId="refresh-section"
+                />
+              ),
+              children: (
+                <RefreshSection
+                  refreshFrequency={refreshFrequency}
+                  onRefreshFrequencyChange={handleRefreshFrequencyChange}
+                />
+              ),
+            },
+            {
+              key: 'certification',
+              label: (
+                <CollapseLabelInModal
+                  title={t('Certification')}
+                  subtitle={t('Add certification details for this dashboard')}
+                  validateCheckStatus={
+                    !validationStatus.certification?.hasErrors
+                  }
+                  testId="certification-section"
+                />
+              ),
+              children: <CertificationSection isLoading={isLoading} />,
+            },
+            {
+              key: 'advanced',
+              label: (
+                <CollapseLabelInModal
+                  title={t('Advanced settings')}
+                  subtitle={t('JSON metadata and advanced configuration')}
+                  validateCheckStatus={!validationStatus.advanced?.hasErrors}
+                  testId="advanced-section"
+                />
+              ),
+              children: (
+                <AdvancedSection
+                  jsonMetadata={jsonMetadata}
+                  jsonAnnotations={jsonAnnotations}
+                  validationStatus={validationStatus}
+                  onJsonMetadataChange={setJsonMetadata}
+                />
+              ),
+            },
+          ]}
         />
-      )}
-      {showingRefreshModal && (
-        <RefreshIntervalModal
-          show={showingRefreshModal}
-          onHide={hideRefreshModal}
-          refreshFrequency={refreshFrequency}
-          onChange={handleRefreshChange}
-          editMode={editMode}
-          refreshLimit={
-            dashboardInfo.common?.conf
-              ?.SUPERSET_DASHBOARD_PERIODICAL_REFRESH_LIMIT
-          }
-          refreshWarning={
-            dashboardInfo.common?.conf?.DASHBOARD_AUTO_REFRESH_WARNING_MESSAGE
-          }
-          addSuccessToast={boundActionCreators.addSuccessToast}
-        />
-      )}
-
-      <ReportModal
-        userId={user.userId}
-        show={showingReportModal}
-        onHide={hideReportModal}
-        userEmail={user.email}
-        dashboardId={dashboardInfo.id}
-        creationMethod="dashboards"
-      />
-
-      {currentReportDeleting && (
-        <DeleteModal
-          description={t(
-            'This action will permanently delete %s.',
-            currentReportDeleting?.name,
-          )}
-          onConfirm={() => {
-            if (currentReportDeleting) {
-              handleReportDelete(currentReportDeleting);
-            }
-          }}
-          onHide={() => setCurrentReportDeleting(null)}
-          open
-          title={t('Delete Report?')}
-        />
-      )}
-
-      <OverwriteConfirm />
-
-      {userCanCurate && (
-        <DashboardEmbedModal
-          show={showingEmbedModal}
-          onHide={hideEmbedModal}
-          dashboardId={dashboardInfo.id}
-        />
-      )}
-      <Global
-        styles={css`
-          .ant-menu-vertical {
-            border-right: none;
-          }
-        `}
-      />
-
-      <UnsavedChangesModal
-        title={t('Save changes to your dashboard?')}
-        body={t("If you don't save, changes will be lost.")}
-        showModal={showUnsavedChangesModal}
-        onHide={() => setShowUnsavedChangesModal(false)}
-        onConfirmNavigation={handleConfirmNavigation}
-        handleSave={handleSaveAndCloseModal}
-      />
-    </div>
+      </Form>
+    </StandardModal>
   );
 };
 
-export default Header;
+export default withToasts(PropertiesModal);
