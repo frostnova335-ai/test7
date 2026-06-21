@@ -14,219 +14,487 @@
 # KIND, either express or implied.  See the License for the
 # specific language governing permissions and limitations
 # under the License.
+from __future__ import annotations
+
 import logging
-import textwrap
-from functools import partial
-from typing import Any, Optional
+from collections import defaultdict
+from datetime import datetime
+from typing import Any, Dict, List
 
-from flask import current_app
-from flask_appbuilder.models.sqla import Model
-from marshmallow import ValidationError
+from flask import g
+from flask_appbuilder.models.sqla.interface import SQLAInterface
 
-from superset import db, security_manager
-from superset.commands.base import BaseCommand, UpdateMixin
+from superset import is_feature_enabled, security_manager
 from superset.commands.dashboard.exceptions import (
-    DashboardColorsConfigUpdateFailedError,
+    DashboardAccessDeniedError,
     DashboardForbiddenError,
-    DashboardInvalidError,
-    DashboardNativeFiltersUpdateFailedError,
     DashboardNotFoundError,
-    DashboardSlugExistsValidationError,
     DashboardUpdateFailedError,
 )
-from superset.commands.utils import populate_roles, update_tags, validate_tags
-from superset.daos.dashboard import DashboardDAO
-from superset.daos.report import ReportScheduleDAO
+from superset.daos.base import BaseDAO
+from superset.dashboards.filters import DashboardAccessFilter, is_uuid
 from superset.exceptions import SupersetSecurityException
-from superset.models.dashboard import Dashboard
-from superset.reports.models import ReportSchedule
-from superset.tags.models import ObjectType
+from superset.extensions import db
+from superset.models.core import FavStar, FavStarClassName
+from superset.models.dashboard import Dashboard, id_or_slug_filter
+from superset.models.embedded_dashboard import EmbeddedDashboard
+from superset.models.slice import Slice
 from superset.utils import json
-from superset.utils.core import send_email_smtp
-from superset.utils.decorators import on_error, transaction
+from superset.utils.core import get_user_id
+from superset.utils.dashboard_filter_scopes_converter import copy_filter_scopes
 
 logger = logging.getLogger(__name__)
 
+# Custom filterable fields for dashboards
+DASHBOARD_CUSTOM_FIELDS = {
+    "tags": ["eq", "in_", "like"],
+    "owners": ["eq", "in_"],
+    "published": ["eq"],
+}
 
-class UpdateDashboardCommand(UpdateMixin, BaseCommand):
-    def __init__(self, model_id: int, data: dict[str, Any]):
-        self._model_id = model_id
-        self._properties = data.copy()
-        self._model: Optional[Dashboard] = None
 
-    @transaction(on_error=partial(on_error, reraise=DashboardUpdateFailedError))
-    def run(self) -> Model:
-        self.validate()
-        assert self._model is not None
-        self.process_tab_diff()
+class DashboardDAO(BaseDAO[Dashboard]):
+    base_filter = DashboardAccessFilter
 
-        # Update tags
-        if (tags := self._properties.pop("tags", None)) is not None:
-            update_tags(ObjectType.dashboard, self._model.id, self._model.tags, tags)
+    @classmethod
+    def get_filterable_columns_and_operators(cls) -> Dict[str, List[str]]:
+        filterable = super().get_filterable_columns_and_operators()
+        # Add custom fields for dashboards
+        filterable.update(DASHBOARD_CUSTOM_FIELDS)
+        return filterable
 
-        dashboard = DashboardDAO.update(self._model, self._properties)
-        if self._properties.get("json_metadata"):
-            DashboardDAO.set_dash_metadata(
-                dashboard,
-                data=json.loads(self._properties.get("json_metadata", "{}")),
+    @classmethod
+    def get_by_id_or_slug(cls, id_or_slug: int | str) -> Dashboard:
+        if is_uuid(id_or_slug):
+            # just get dashboard if it's uuid
+            dashboard = Dashboard.get(id_or_slug)
+        else:
+            query = (
+                db.session.query(Dashboard)
+                .filter(id_or_slug_filter(id_or_slug))
+                .outerjoin(Dashboard.owners)
+                .outerjoin(Dashboard.roles)
             )
+            # Apply dashboard base filters
+            query = cls.base_filter("id", SQLAInterface(Dashboard, db.session)).apply(
+                query, None
+            )
+            dashboard = query.one_or_none()
+        if not dashboard:
+            raise DashboardNotFoundError()
+
+        # make sure we still have basic access check from security manager
+        try:
+            dashboard.raise_for_access()
+        except SupersetSecurityException as ex:
+            raise DashboardAccessDeniedError() from ex
+
         return dashboard
 
-    def validate(self) -> None:
-        exceptions: list[ValidationError] = []
-        owner_ids: Optional[list[int]] = self._properties.get("owners")
-        roles_ids: Optional[list[int]] = self._properties.get("roles")
-        slug: Optional[str] = self._properties.get("slug")
-        tag_ids: Optional[list[int]] = self._properties.get("tags")
+    @staticmethod
+    def get_datasets_for_dashboard(id_or_slug: str) -> list[Any]:
+        dashboard = DashboardDAO.get_by_id_or_slug(id_or_slug)
+        return dashboard.datasets_trimmed_for_slices()
 
-        # Validate/populate model exists
-        self._model = DashboardDAO.find_by_id(self._model_id)
-        if not self._model:
-            raise DashboardNotFoundError()
-        # Check ownership
-        try:
-            security_manager.raise_for_ownership(self._model)
-        except SupersetSecurityException as ex:
-            raise DashboardForbiddenError() from ex
+    @staticmethod
+    def get_tabs_for_dashboard(id_or_slug: str) -> dict[str, Any]:
+        dashboard = DashboardDAO.get_by_id_or_slug(id_or_slug)
+        return dashboard.tabs
 
-        # Validate slug uniqueness
-        if not DashboardDAO.validate_update_slug_uniqueness(self._model_id, slug):
-            exceptions.append(DashboardSlugExistsValidationError())
+    @staticmethod
+    def get_charts_for_dashboard(id_or_slug: str) -> list[Slice]:
+        return DashboardDAO.get_by_id_or_slug(id_or_slug).slices
 
-        # Validate/Populate owner
-        try:
-            owners = self.compute_owners(
-                self._model.owners,
-                owner_ids,
-            )
-            self._properties["owners"] = owners
-        except ValidationError as ex:
-            exceptions.append(ex)
+    @staticmethod
+    def get_dashboard_changed_on(id_or_slug_or_dashboard: str | Dashboard) -> datetime:
+        """
+        Get latest changed datetime for a dashboard.
 
-        # validate tags
-        try:
-            validate_tags(ObjectType.dashboard, self._model.tags, tag_ids)
-        except ValidationError as ex:
-            exceptions.append(ex)
+        :param id_or_slug_or_dashboard: A dashboard or the ID or slug of the dashboard.
+        :returns: The datetime the dashboard was last changed.
+        """
 
-        # Validate/Populate role
-        if roles_ids is None:
-            roles_ids = [role.id for role in self._model.roles]
-        try:
-            roles = populate_roles(roles_ids)
-            self._properties["roles"] = roles
-        except ValidationError as ex:
-            exceptions.append(ex)
-        if exceptions:
-            raise DashboardInvalidError(exceptions=exceptions)
-
-    def process_tab_diff(self) -> None:  # noqa: C901
-        def find_deleted_tabs() -> list[str]:
-            position_json = self._properties.get("position_json", "")
-            current_tabs = self._model.tabs  # type: ignore
-            if position_json and current_tabs:
-                position = json.loads(position_json)
-                deleted_tabs = [
-                    tab for tab in current_tabs["all_tabs"] if tab not in position
-                ]
-                return deleted_tabs
-            return []
-
-        def find_reports_containing_tabs(tabs: list[str]) -> list[ReportSchedule]:
-            alert_reports_list = []
-            for tab in tabs:
-                for report in ReportScheduleDAO.find_by_extra_metadata(tab):
-                    alert_reports_list.append(report)
-            return alert_reports_list
-
-        def send_deactivated_email_warning(report: ReportSchedule) -> None:
-            description = textwrap.dedent(
-                """
-                The dashboard tab used in this report has been deleted and your report has been deactivated.
-                Please update your report settings to remove or change the tab used.
-                """  # noqa: E501
-            )
-
-            html_content = textwrap.dedent(
-                f"""
-                    <html>
-                    <head>
-                        <style type="text/css">
-                        table, th, td {{
-                            border-collapse: collapse;
-                            border-color: rgb(200, 212, 227);
-                            color: rgb(42, 63, 95);
-                            padding: 4px 8px;
-                        }}
-                        .image{{
-                            margin-bottom: 18px;
-                        }}
-                        </style>
-                    </head>
-                    <body>
-                        <div>{description}</div>
-                        <br>
-                    </body>
-                    </html>
-                    """
-            )
-            for report_owner in report.owners:
-                if email := report_owner.email:
-                    send_email_smtp(
-                        to=email,
-                        subject=f"[Report: {report.name}] Deactivated",
-                        html_content=html_content,
-                        config=current_app.config,
-                    )
-
-        def deactivate_reports(reports_list: list[ReportSchedule]) -> None:
-            for report in reports_list:
-                # deactivate
-                ReportScheduleDAO.update(report, {"active": False})
-                # send email to report owner
-                send_deactivated_email_warning(report)
-
-        deleted_tabs = find_deleted_tabs()
-        reports = find_reports_containing_tabs(deleted_tabs)
-        deactivate_reports(reports)
-
-
-class UpdateDashboardNativeFiltersCommand(UpdateDashboardCommand):
-    @transaction(
-        on_error=partial(on_error, reraise=DashboardNativeFiltersUpdateFailedError)
-    )
-    def run(self) -> Model:
-        super().validate()
-        assert self._model
-
-        configuration = DashboardDAO.update_native_filters_config(
-            self._model, self._properties
+        dashboard: Dashboard = (
+            DashboardDAO.get_by_id_or_slug(id_or_slug_or_dashboard)
+            if isinstance(id_or_slug_or_dashboard, str)
+            else id_or_slug_or_dashboard
         )
+        # drop microseconds in datetime to match with last_modified header
+        return dashboard.changed_on.replace(microsecond=0)
 
-        return configuration
+    @staticmethod
+    def get_dashboard_and_slices_changed_on(  # pylint: disable=invalid-name
+        id_or_slug_or_dashboard: str | Dashboard,
+    ) -> datetime:
+        """
+        Get latest changed datetime for a dashboard. The change could be a dashboard
+        metadata change, or a change to one of its dependent slices.
 
+        :param id_or_slug_or_dashboard: A dashboard or the ID or slug of the dashboard.
+        :returns: The datetime the dashboard was last changed.
+        """
 
-class UpdateDashboardColorsConfigCommand(UpdateDashboardCommand):
-    def __init__(
-        self, model_id: int, data: dict[str, Any], mark_updated: bool = True
+        dashboard = (
+            DashboardDAO.get_by_id_or_slug(id_or_slug_or_dashboard)
+            if isinstance(id_or_slug_or_dashboard, str)
+            else id_or_slug_or_dashboard
+        )
+        dashboard_changed_on = DashboardDAO.get_dashboard_changed_on(dashboard)
+        slices = dashboard.slices
+        slices_changed_on = max(
+            [slc.changed_on for slc in slices]
+            + ([datetime.fromtimestamp(0)] if len(slices) == 0 else [])
+        )
+        # drop microseconds in datetime to match with last_modified header
+        return max(dashboard_changed_on, slices_changed_on).replace(microsecond=0)
+
+    @staticmethod
+    def get_dashboard_and_datasets_changed_on(  # pylint: disable=invalid-name
+        id_or_slug_or_dashboard: str | Dashboard,
+    ) -> datetime:
+        """
+        Get latest changed datetime for a dashboard. The change could be a dashboard
+        metadata change, a change to one of its dependent datasets.
+
+        :param id_or_slug_or_dashboard: A dashboard or the ID or slug of the dashboard.
+        :returns: The datetime the dashboard was last changed.
+        """
+
+        dashboard = (
+            DashboardDAO.get_by_id_or_slug(id_or_slug_or_dashboard)
+            if isinstance(id_or_slug_or_dashboard, str)
+            else id_or_slug_or_dashboard
+        )
+        dashboard_changed_on = DashboardDAO.get_dashboard_changed_on(dashboard)
+        datasources = dashboard.datasources
+        datasources_changed_on = max(
+            [datasource.changed_on for datasource in datasources]
+            + ([datetime.fromtimestamp(0)] if len(datasources) == 0 else [])
+        )
+        # drop microseconds in datetime to match with last_modified header
+        return max(dashboard_changed_on, datasources_changed_on).replace(microsecond=0)
+
+    @staticmethod
+    def validate_slug_uniqueness(slug: str) -> bool:
+        if not slug:
+            return True
+        dashboard_query = db.session.query(Dashboard).filter(Dashboard.slug == slug)
+        return not db.session.query(dashboard_query.exists()).scalar()
+
+    @staticmethod
+    def validate_update_slug_uniqueness(dashboard_id: int, slug: str | None) -> bool:
+        if slug is not None:
+            dashboard_query = db.session.query(Dashboard).filter(
+                Dashboard.slug == slug, Dashboard.id != dashboard_id
+            )
+            return not db.session.query(dashboard_query.exists()).scalar()
+        return True
+
+    @staticmethod
+    def set_dash_metadata(
+        dashboard: Dashboard,
+        data: dict[Any, Any],
+        old_to_new_slice_ids: dict[int, int] | None = None,
     ) -> None:
-        super().__init__(model_id, data)
-        self._mark_updated = mark_updated
+        new_filter_scopes = {}
+        md = dashboard.params_dict
 
-    @transaction(
-        on_error=partial(on_error, reraise=DashboardColorsConfigUpdateFailedError)
-    )
-    def run(self) -> Model:
-        super().validate()
-        assert self._model
+        if (positions := data.get("positions")) is not None:
+            # find slices in the position data
+            slice_ids = [
+                value.get("meta", {}).get("chartId")
+                for value in positions.values()
+                if isinstance(value, dict)
+            ]
 
-        original_changed_on = self._model.changed_on
+            current_slices = (
+                db.session.query(Slice).filter(Slice.id.in_(slice_ids)).all()
+            )
 
-        DashboardDAO.update_colors_config(self._model, self._properties)
+            dashboard.slices = current_slices
 
-        if not self._mark_updated:
-            db.session.commit()  # pylint: disable=consider-using-transaction
-            # restore the original changed_on value
-            self._model.changed_on = original_changed_on
+            # add UUID to positions
+            uuid_map = {slice.id: str(slice.uuid) for slice in current_slices}
+            for obj in positions.values():
+                if (
+                    isinstance(obj, dict)
+                    and obj["type"] == "CHART"
+                    and obj["meta"]["chartId"]
+                ):
+                    chart_id = obj["meta"]["chartId"]
+                    obj["meta"]["uuid"] = uuid_map.get(chart_id)
 
-        return self._model
+            # remove leading and trailing white spaces in the dumped json
+            dashboard.position_json = json.dumps(
+                positions, indent=None, separators=(",", ":"), sort_keys=True
+            )
+
+            if "filter_scopes" in data:
+                # replace filter_id and immune ids from old slice id to new slice id:
+                # and remove slice ids that are not in dash anymore
+                slc_id_dict: dict[int, int] = {}
+                if old_to_new_slice_ids:
+                    slc_id_dict = {
+                        old: new
+                        for old, new in old_to_new_slice_ids.items()
+                        if new in slice_ids
+                    }
+                else:
+                    slc_id_dict = {sid: sid for sid in slice_ids}
+                new_filter_scopes = copy_filter_scopes(
+                    old_to_new_slc_id_dict=slc_id_dict,
+                    old_filter_scopes=json.loads(data["filter_scopes"] or "{}")
+                    if isinstance(data["filter_scopes"], str)
+                    else data["filter_scopes"],
+                )
+
+            default_filters_data = json.loads(data.get("default_filters", "{}"))
+            applicable_filters = {
+                key: v
+                for key, v in default_filters_data.items()
+                if int(key) in slice_ids
+            }
+            md["default_filters"] = json.dumps(applicable_filters)
+
+            # positions have its own column, no need to store it in metadata
+            md.pop("positions", None)
+
+        if new_filter_scopes:
+            md["filter_scopes"] = new_filter_scopes
+        else:
+            md.pop("filter_scopes", None)
+
+        md.setdefault("timed_refresh_immune_slices", [])
+
+        if data.get("color_namespace") is None:
+            md.pop("color_namespace", None)
+        else:
+            md["color_namespace"] = data.get("color_namespace")
+
+        md["expanded_slices"] = data.get("expanded_slices", {})
+        md["refresh_frequency"] = data.get("refresh_frequency", 0)
+        md["color_scheme"] = data.get("color_scheme", "")
+        md["label_colors"] = data.get("label_colors", {})
+        md["shared_label_colors"] = data.get("shared_label_colors", [])
+        md["map_label_colors"] = data.get("map_label_colors", {})
+        md["color_scheme_domain"] = data.get("color_scheme_domain", [])
+        md["cross_filters_enabled"] = data.get("cross_filters_enabled", True)
+        dashboard.json_metadata = json.dumps(md)
+
+    @staticmethod
+    def favorited_ids(dashboards: list[Dashboard]) -> list[FavStar]:
+        ids = [dash.id for dash in dashboards]
+        return [
+            star.obj_id
+            for star in db.session.query(FavStar.obj_id)
+            .filter(
+                FavStar.class_name == FavStarClassName.DASHBOARD,
+                FavStar.obj_id.in_(ids),
+                FavStar.user_id == get_user_id(),
+            )
+            .all()
+        ]
+
+    @classmethod
+    def copy_dashboard(
+        cls, original_dash: Dashboard, data: dict[str, Any]
+    ) -> Dashboard:
+        if is_feature_enabled("DASHBOARD_RBAC") and not security_manager.is_owner(
+            original_dash
+        ):
+            raise DashboardForbiddenError()
+
+        dash = Dashboard()
+        dash.owners = [g.user] if g.user else []
+        dash.dashboard_title = data["dashboard_title"]
+        dash.category = data.get("category", "Business Strategy")
+        dash.css = data.get("css")
+
+        metadata = json.loads(data["json_metadata"])
+        old_to_new_slice_ids: dict[int, int] = {}
+        if data.get("duplicate_slices"):
+            # Duplicating slices as well, mapping old ids to new ones
+            for slc in original_dash.slices:
+                new_slice = slc.clone()
+                new_slice.owners = [g.user] if g.user else []
+                db.session.add(new_slice)
+                db.session.flush()
+                new_slice.dashboards.append(dash)
+                old_to_new_slice_ids[slc.id] = new_slice.id
+
+            # update chartId of layout entities
+            for value in metadata["positions"].values():
+                if isinstance(value, dict) and value.get("meta", {}).get("chartId"):
+                    old_id = value["meta"]["chartId"]
+                    new_id = old_to_new_slice_ids.get(old_id)
+                    value["meta"]["chartId"] = new_id
+        else:
+            dash.slices = original_dash.slices
+
+        dash.params = original_dash.params
+        cls.set_dash_metadata(dash, metadata, old_to_new_slice_ids)
+        db.session.add(dash)
+        return dash
+
+    @classmethod
+    def get_native_filter_configuration(
+        cls, id: str
+    ) -> dict[str, list[dict[str, Any]]]:
+        dashboard = cls.get_by_id_or_slug(id)
+        metadata = json.loads(dashboard.json_metadata or "{}")
+        native_filter_configuration = metadata.get("native_filter_configuration", [])
+
+        tab_filters = defaultdict(list)
+        for filter in native_filter_configuration:
+            if tabs_in_scope := filter.get("tabsInScope", []):
+                for tab_key in tabs_in_scope:
+                    tab_filters[tab_key].append(filter)
+            tab_filters["all"].append(filter)
+
+        return tab_filters
+
+    @classmethod
+    def update_native_filters_config(
+        cls,
+        dashboard: Dashboard | None = None,
+        attributes: dict[str, Any] | None = None,
+    ) -> list[dict[str, Any]]:
+        if not dashboard:
+            raise DashboardUpdateFailedError("Dashboard not found")
+
+        if attributes:
+            metadata = json.loads(dashboard.json_metadata or "{}")
+            native_filter_configuration = metadata.get(
+                "native_filter_configuration", []
+            )
+            reordered_filter_ids: list[int] = attributes.get("reordered", [])
+            updated_configuration = []
+
+            # Modify / Delete existing filters
+            for conf in native_filter_configuration:
+                deleted_filter = next(
+                    (f for f in attributes.get("deleted", []) if f == conf.get("id")),
+                    None,
+                )
+                if deleted_filter:
+                    continue
+
+                modified_filter = next(
+                    (
+                        f
+                        for f in attributes.get("modified", [])
+                        if f.get("id") == conf.get("id")
+                    ),
+                    None,
+                )
+                if modified_filter:
+                    # Filter was modified, substitute it
+                    updated_configuration.append(modified_filter)
+                else:
+                    # Filter was not modified, keep it as is
+                    updated_configuration.append(conf)
+
+            # Append new filters
+            for new_filter in attributes.get("modified", []):
+                new_filter_id = new_filter.get("id")
+                if new_filter_id not in [f.get("id") for f in updated_configuration]:
+                    updated_configuration.append(new_filter)
+
+                    if (
+                        reordered_filter_ids
+                        and new_filter_id not in reordered_filter_ids
+                    ):
+                        reordered_filter_ids.append(new_filter_id)
+
+            # Reorder filters
+            if reordered_filter_ids:
+                filter_map = {
+                    filter_config["id"]: filter_config
+                    for filter_config in updated_configuration
+                }
+
+                updated_configuration = [
+                    filter_map[filter_id]
+                    for filter_id in reordered_filter_ids
+                    if filter_id in filter_map
+                ]
+
+            metadata["native_filter_configuration"] = updated_configuration
+            dashboard.json_metadata = json.dumps(metadata)
+
+        return updated_configuration
+
+    @classmethod
+    def update_colors_config(
+        cls, dashboard: Dashboard, attributes: dict[str, Any]
+    ) -> None:
+        metadata = json.loads(dashboard.json_metadata or "{}")
+
+        for key in [
+            "color_scheme_domain",
+            "color_scheme",
+            "shared_label_colors",
+            "map_label_colors",
+            "label_colors",
+        ]:
+            if key in attributes:
+                metadata[key] = attributes[key]
+
+        dashboard.json_metadata = json.dumps(metadata)
+
+    @staticmethod
+    def add_favorite(dashboard: Dashboard) -> None:
+        ids = DashboardDAO.favorited_ids([dashboard])
+        if dashboard.id not in ids:
+            db.session.add(
+                FavStar(
+                    class_name=FavStarClassName.DASHBOARD,
+                    obj_id=dashboard.id,
+                    user_id=get_user_id(),
+                    dttm=datetime.now(),
+                )
+            )
+
+    @staticmethod
+    def remove_favorite(dashboard: Dashboard) -> None:
+        fav = (
+            db.session.query(FavStar)
+            .filter(
+                FavStar.class_name == FavStarClassName.DASHBOARD,
+                FavStar.obj_id == dashboard.id,
+                FavStar.user_id == get_user_id(),
+            )
+            .one_or_none()
+        )
+        if fav:
+            db.session.delete(fav)
+
+
+class EmbeddedDashboardDAO(BaseDAO[EmbeddedDashboard]):
+    # There isn't really a regular scenario where we would rather get Embedded by id
+    id_column_name = "uuid"
+
+    @staticmethod
+    def upsert(dashboard: Dashboard, allowed_domains: list[str]) -> EmbeddedDashboard:
+        """
+        Sets up a dashboard to be embeddable.
+        Upsert is used to preserve the embedded_dashboard uuid across updates.
+        """
+        embedded: EmbeddedDashboard = (
+            dashboard.embedded[0] if dashboard.embedded else EmbeddedDashboard()
+        )
+        embedded.allow_domain_list = ",".join(allowed_domains)
+        dashboard.embedded = [embedded]
+        return embedded
+
+    @classmethod
+    def create(
+        cls,
+        item: EmbeddedDashboardDAO | None = None,
+        attributes: dict[str, Any] | None = None,
+    ) -> Any:
+        """
+        Use EmbeddedDashboardDAO.upsert() instead.
+        At least, until we are ok with more than one embedded item per dashboard.
+        """
+        raise NotImplementedError("Use EmbeddedDashboardDAO.upsert() instead.")
