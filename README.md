@@ -1,116 +1,819 @@
-Loaded download_query: 
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: S
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Se
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Sel
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Sele
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Selec
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select 
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select *
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * 
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * f
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * fr
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * fro
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from 
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from a
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from au
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from aud
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from audi
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from audio
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from audio_
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from audio_c
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from audio_cs
-3598.adf22e4058ed75f143f2.entry.js:175 TEXTAREA VALUE: Select * from audio_csv
-3598.adf22e4058ed75f143f2.entry.js:175 ===== DOWNLOAD DEBUG =====
-3598.adf22e4058ed75f143f2.entry.js:175 downloadQuery state: Select * from audio_csv
-3598.adf22e4058ed75f143f2.entry.js:175 jsonMetadata state: {
-  "download_query": "",
-  "chart_configuration": {},
-  "global_chart_configuration": {
-    "scope": {"rootPath": ["ROOT_ID"], "excluded": []},
-    "chartsInScope": [142, 143, 195]
-  },
-  "color_scheme": "",
-  "refresh_frequency": 0,
-  "expanded_slices": {},
-  "label_colors": {},
-  "timed_refresh_immune_slices": [],
-  "cross_filters_enabled": true,
-  "default_filters": "{}",
-  "native_filter_configuration": [
-    {
-      "id": "NATIVE_FILTER-re27oF1C9ksZkGvKclOI-",
-      "controlValues": {"enableEmptyFilter": false},
-      "name": "Select date",
-      "filterType": "filter_time",
-      "targets": [{}],
-      "defaultDataMask": {
-        "extraFormData": {},
-        "filterState": {},
-        "ownState": {}
-      },
-      "cascadeParentIds": [],
-      "scope": {"excluded": [142], "rootPath": ["ROOT_ID"]},
-      "type": "NATIVE_FILTER",
-      "description": "",
-      "chartsInScope": [143, 42, 55, 93],
-      "tabsInScope": ["TAB-y7_NMENli43nxGQwj1stW"]
-    },
-    {
-      "id": "NATIVE_FILTER-HgoXN6-uAc_2X9uyw3NVa",
-      "controlValues": {
-        "enableEmptyFilter": false,
-        "defaultToFirstItem": false,
-        "creatable": true,
-        "multiSelect": true,
-        "searchAllOptions": false,
-        "inverseSelection": false
-      },
-      "name": "Audio name",
-      "filterType": "filter_select",
-      "targets": [{"datasetId": 77, "column": {"name": "audio_name"}}],
-      "defaultDataMask": {
-        "extraFormData": {},
-        "filterState": {},
-        "ownState": {}
-      },
-      "cascadeParentIds": [],
-      "scope": {"rootPath": ["ROOT_ID"], "excluded": [143]},
-      "type": "NATIVE_FILTER",
-      "description": "",
-      "chartsInScope": [142],
-      "tabsInScope": []
-    },
-    {
-      "id": "NATIVE_FILTER-LRToVW0F3pwkoviVdSnJc",
-      "controlValues": {
-        "enableEmptyFilter": false,
-        "defaultToFirstItem": false,
-        "creatable": true,
-        "multiSelect": true,
-        "searchAllOptions": false,
-        "inverseSelection": false
-      },
-      "name": "date",
-      "filterType": "filter_select",
-      "targets": [{"datasetId": 78, "column": {"name": "created_at"}}],
-      "defaultDataMask": {
-        "extraFormData": {},
-        "filterState": {},
-        "ownState": {}
-      },
-      "cascadeParentIds": [],
-      "scope": {"rootPath": ["ROOT_ID"], "excluded": [42, 55, 93, 142]},
-      "type": "NATIVE_FILTER",
-      "description": "",
-      "chartsInScope": [143],
-      "tabsInScope": ["TAB-y7_NMENli43nxGQwj1stW"]
+
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
+ */
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { omit } from 'lodash';
+import jsonStringify from 'json-stringify-pretty-compact';
+import {
+  Form,
+  Modal,
+  Collapse,
+  CollapseLabelInModal,
+  JsonEditor,
+} from '@superset-ui/core/components';
+import { useJsonValidation } from '@superset-ui/core/components/AsyncAceEditor';
+import { type TagType } from 'src/components';
+import rison from 'rison';
+import {
+  ensureIsArray,
+  isFeatureEnabled,
+  FeatureFlag,
+  getCategoricalSchemeRegistry,
+  SupersetClient,
+  t,
+  getClientErrorObject,
+} from '@superset-ui/core';
+
+import withToasts from 'src/components/MessageToasts/withToasts';
+import { fetchTags, OBJECT_TYPES } from 'src/features/tags/tags';
+import {
+  applyColors,
+  getColorNamespace,
+  getFreshLabelsColorMapEntries,
+} from 'src/utils/colorScheme';
+import { useDispatch } from 'react-redux';
+import {
+  setColorScheme,
+  setDashboardMetadata,
+} from 'src/dashboard/actions/dashboardState';
+import { areObjectsEqual } from 'src/reduxUtils';
+import { StandardModal, useModalValidation } from 'src/components/Modal';
+import {
+  BasicInfoSection,
+  AccessSection,
+  StylingSection,
+  RefreshSection,
+  CertificationSection,
+  AdvancedSection,
+} from './sections';
+
+type PropertiesModalProps = {
+  dashboardId: number;
+  dashboardTitle?: string;
+  dashboardInfo?: Record<string, any>;
+  show?: boolean;
+  onHide?: () => void;
+  colorScheme?: string;
+  onSubmit?: (params: Record<string, any>) => void;
+  addSuccessToast: (message: string) => void;
+  addDangerToast: (message: string) => void;
+  onlyApply?: boolean;
+};
+
+type Roles = { id: number; name: string }[];
+type Owners = {
+  id: number;
+  full_name?: string;
+  first_name?: string;
+  last_name?: string;
+}[];
+type DashboardInfo = {
+  id: number;
+  title: string;
+  slug: string;
+  certifiedBy: string;
+  certificationDetails: string;
+  isManagedExternally: boolean;
+  metadata: Record<string, any>;
+  common?: {
+    conf?: {
+      SUPERSET_DASHBOARD_PERIODICAL_REFRESH_LIMIT?: number;
+    };
+  };
+};
+
+const PropertiesModal = ({
+  addSuccessToast,
+  addDangerToast,
+  colorScheme: currentColorScheme,
+  dashboardId,
+  dashboardInfo: currentDashboardInfo,
+  dashboardTitle,
+  onHide = () => { },
+  onlyApply = false,
+  onSubmit = () => { },
+  show = false,
+}: PropertiesModalProps) => {
+  const dispatch = useDispatch();
+  const [form] = Form.useForm();
+
+  const [isLoading, setIsLoading] = useState(true);
+  const [isApplying, setIsApplying] = useState(false);
+  const [colorScheme, setCurrentColorScheme] = useState(currentColorScheme);
+  const [jsonMetadata, setJsonMetadata] = useState('');
+  const [downloadQuery, setDownloadQuery] = useState('');
+  const [dashboardInfo, setDashboardInfo] = useState<DashboardInfo>();
+
+  // JSON validation for metadata
+  const jsonAnnotations = useJsonValidation(jsonMetadata, {
+    errorPrefix: 'Invalid JSON metadata',
+  });
+  const [owners, setOwners] = useState<Owners>([]);
+  const [roles, setRoles] = useState<Roles>([]);
+  const saveLabel = onlyApply ? t('Apply') : t('Save');
+  const [tags, setTags] = useState<TagType[]>([]);
+  const [customCss, setCustomCss] = useState('');
+  const [refreshFrequency, setRefreshFrequency] = useState(0);
+  const [selectedThemeId, setSelectedThemeId] = useState<number | null>(null);
+  const [themes, setThemes] = useState<
+    Array<{
+      id: number;
+      theme_name: string;
+    }>
+  >([]);
+  const categoricalSchemeRegistry = getCategoricalSchemeRegistry();
+  const originalDashboardMetadata = useRef<Record<string, any>>({});
+
+  const handleErrorResponse = async (response: Response) => {
+    const { error, statusText, message } = await getClientErrorObject(response);
+    let errorText = error || statusText || t('An error has occurred');
+    if (typeof message === 'object' && 'json_metadata' in message) {
+      errorText = (message as { json_metadata: string }).json_metadata;
+    } else if (typeof message === 'string') {
+      errorText = message;
+
+      if (message === 'Forbidden') {
+        errorText = t('You do not have permission to edit this dashboard');
+      }
     }
-  ],
-  "filter_bar_orientation": "HORIZONTAL",
-  "filter_scopes": {}
-}
-3598.adf22e4058ed75f143f2.entry.js:175 Loaded download_query: 
-3598.adf22e4058ed75f143f2.entry.js:175 Loaded download_query: Select * from audio_csv
-7262.bef1a79dfef1e07dcfd8.entry.js:2  GET https://insightshub-dev.exlservice.com/api/v1/dataset/NaN/drill_info/?q=(dashboard_id:52) 404 (Not Found)
+
+    Modal.error({
+      title: t('Error'),
+      content: errorText,
+      okButtonProps: { danger: true, className: 'btn-danger' },
+    });
+  };
+
+  const handleDashboardData = useCallback(
+    dashboardData => {
+      const {
+        id,
+        dashboard_title,
+        category,
+        slug,
+        certified_by,
+        certification_details,
+        owners,
+        roles,
+        metadata,
+        is_managed_externally,
+        theme,
+        css,
+      } = dashboardData;
+      const dashboardInfo = {
+        id,
+        title: dashboard_title,
+        category: category ?? undefined,
+        slug: slug || '',
+        certifiedBy: certified_by || '',
+        certificationDetails: certification_details || '',
+        isManagedExternally: is_managed_externally || false,
+        css: css || '',
+        metadata,
+      };
+
+      form.setFieldsValue(dashboardInfo);
+      setDashboardInfo(dashboardInfo);
+      setOwners(owners);
+      setRoles(roles);
+      setCustomCss(css || '');
+      setCurrentColorScheme(metadata?.color_scheme);
+      setSelectedThemeId(theme?.id || null);
+
+      const metaDataCopy = omit(metadata, [
+        'positions',
+        'shared_label_colors',
+        'map_label_colors',
+        'color_scheme_domain',
+      ]);
+
+      setJsonMetadata(metaDataCopy ? jsonStringify(metaDataCopy) : '');
+      console.log(
+        'Loaded download_query:',
+        metadata?.download_query,
+      );
+
+      setDownloadQuery(metadata?.download_query || '');
+      setRefreshFrequency(metadata?.refresh_frequency || 0);
+      originalDashboardMetadata.current = metadata;
+    },
+    [form],
+  );
+
+  const fetchDashboardDetails = useCallback(() => {
+    // We fetch the dashboard details because not all code
+    // that renders this component have all the values we need.
+    // At some point when we have a more consistent frontend
+    // datamodel, the dashboard could probably just be passed as a prop.
+    SupersetClient.get({
+      endpoint: `/api/v1/dashboard/${dashboardId}`,
+    }).then(response => {
+      const dashboard = response.json.result;
+      const jsonMetadataObj = dashboard.json_metadata?.length
+        ? JSON.parse(dashboard.json_metadata)
+        : {};
+
+      handleDashboardData({
+        ...dashboard,
+        metadata: jsonMetadataObj,
+      });
+
+      setIsLoading(false);
+    }, handleErrorResponse);
+  }, [dashboardId, handleDashboardData]);
+
+  const getJsonMetadata = () => {
+    try {
+      const jsonMetadataObj = jsonMetadata?.length
+        ? JSON.parse(jsonMetadata)
+        : {};
+      return jsonMetadataObj;
+    } catch (_) {
+      return {};
+    }
+  };
+
+  const handleOnChangeOwners = (owners: { value: number; label: string }[]) => {
+    const parsedOwners: Owners = ensureIsArray(owners).map(o => ({
+      id: o.value,
+      full_name: o.label,
+    }));
+    setOwners(parsedOwners);
+  };
+
+  const handleOnChangeRoles = (roles: { value: number; label: string }[]) => {
+    const parsedRoles: Roles = ensureIsArray(roles).map(r => ({
+      id: r.value,
+      name: r.label,
+    }));
+    setRoles(parsedRoles);
+  };
+
+  const handleOnCancel = () => onHide();
+
+  const onColorSchemeChange = (
+    colorScheme = '',
+    { updateMetadata = true } = {},
+  ) => {
+    // check that color_scheme is valid
+    const colorChoices = categoricalSchemeRegistry.keys();
+    const jsonMetadataObj = getJsonMetadata();
+
+    // only fire if the color_scheme is present and invalid
+    if (colorScheme && !colorChoices.includes(colorScheme)) {
+      Modal.error({
+        title: t('Error'),
+        content: t('A valid color scheme is required'),
+        okButtonProps: { danger: true, className: 'btn-danger' },
+      });
+      onHide();
+      throw new Error('A valid color scheme is required');
+    }
+
+    jsonMetadataObj.color_scheme = colorScheme;
+    jsonMetadataObj.label_colors = jsonMetadataObj.label_colors || {};
+
+    setCurrentColorScheme(colorScheme);
+    dispatch(setColorScheme(colorScheme));
+
+    // update metadata to match selection
+    if (updateMetadata) {
+      setJsonMetadata(jsonStringify(jsonMetadataObj));
+    }
+  };
+
+  const onFinish = () => {
+    console.log('===== DOWNLOAD DEBUG =====');
+    console.log('downloadQuery state:', downloadQuery);
+    console.log('jsonMetadata state:', jsonMetadata);
+    const formValues = form.getFieldsValue();
+    const {
+      title,
+      slug,
+      certifiedBy,
+      certificationDetails,
+      category,
+    } = formValues;
+    let currentJsonMetadata = jsonMetadata;
+
+    // validate currentJsonMetadata
+    let metadata;
+    try {
+      if (
+        !currentJsonMetadata.startsWith('{') ||
+        !currentJsonMetadata.endsWith('}')
+      ) {
+        throw new Error();
+      }
+      metadata = JSON.parse(currentJsonMetadata);
+    } catch (error) {
+      addDangerToast(t('JSON metadata is invalid!'));
+      return;
+    }
+
+    const colorNamespace = getColorNamespace(metadata?.color_namespace);
+    // color scheme in json metadata has precedence over selection
+    const updatedColorScheme = metadata?.color_scheme || colorScheme;
+    const shouldGoFresh =
+      updatedColorScheme !== originalDashboardMetadata.current.color_scheme;
+    const shouldResetCustomLabels = !areObjectsEqual(
+      originalDashboardMetadata.current.label_colors || {},
+      metadata?.label_colors || {},
+    );
+    const currentCustomLabels = Object.keys(metadata?.label_colors || {});
+    const prevCustomLabels = Object.keys(
+      originalDashboardMetadata.current.label_colors || {},
+    );
+    const resettableCustomLabels =
+      currentCustomLabels.length > 0 ? currentCustomLabels : prevCustomLabels;
+    const freshCustomLabels =
+      shouldResetCustomLabels && resettableCustomLabels.length > 0
+        ? resettableCustomLabels
+        : false;
+    const jsonMetadataObj = getJsonMetadata();
+    jsonMetadataObj.refresh_frequency = refreshFrequency;
+    jsonMetadataObj.download_query = downloadQuery;
+    const customLabelColors = jsonMetadataObj.label_colors || {};
+    const updatedDashboardMetadata = {
+      ...originalDashboardMetadata.current,
+      label_colors: customLabelColors,
+      color_scheme: updatedColorScheme,
+    };
+
+    originalDashboardMetadata.current = updatedDashboardMetadata;
+    applyColors(updatedDashboardMetadata, shouldGoFresh || freshCustomLabels);
+    dispatch(
+      setDashboardMetadata({
+        ...updatedDashboardMetadata,
+        map_label_colors: getFreshLabelsColorMapEntries(customLabelColors),
+      }),
+    );
+
+    onColorSchemeChange(updatedColorScheme, {
+      updateMetadata: false,
+    });
+
+    currentJsonMetadata = jsonStringify(jsonMetadataObj);
+
+    const moreOnSubmitProps: { roles?: Roles; tags?: TagType[] } = {};
+    const morePutProps: {
+      roles?: number[];
+      tags?: (string | number | undefined)[];
+    } = {};
+    if (isFeatureEnabled(FeatureFlag.DashboardRbac)) {
+      moreOnSubmitProps.roles = roles;
+      morePutProps.roles = (roles || []).map(r => r.id);
+    }
+    if (isFeatureEnabled(FeatureFlag.TaggingSystem)) {
+      moreOnSubmitProps.tags = tags;
+      morePutProps.tags = tags.map(tag => tag.id);
+    }
+    const onSubmitProps = {
+      id: dashboardId,
+      title,
+      slug,
+      category,
+      jsonMetadata: currentJsonMetadata,
+      downloadQuery,
+      owners,
+      colorScheme: currentColorScheme,
+      colorNamespace,
+      certifiedBy,
+      certificationDetails,
+      themeId: selectedThemeId,
+      css: customCss,
+      ...moreOnSubmitProps,
+    };
+    if (onlyApply) {
+      setIsApplying(true);
+      try {
+        onSubmit(onSubmitProps);
+        onHide();
+        addSuccessToast(t('Dashboard properties updated'));
+      } catch (error) {
+        console.error('Apply failed:', error);
+      } finally {
+        setIsApplying(false);
+      }
+    } else {
+      // Validate category is selected
+      if (!category) {
+        addDangerToast(t('Dashboard category is required'));
+        return;
+      }
+
+      const saveData = {
+        dashboard_title: title,
+        category,
+        slug: slug || null,
+        json_metadata: currentJsonMetadata || null,
+        owners: (owners || []).map(o => o.id),
+        certified_by: certifiedBy || null,
+        certification_details:
+          certifiedBy && certificationDetails ? certificationDetails : null,
+        css: customCss || null,
+        theme_id: selectedThemeId,
+        ...morePutProps,
+      };
+
+      SupersetClient.put({
+        endpoint: `/api/v1/dashboard/${dashboardId}`,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(saveData),
+      }).then(() => {
+        onSubmit(onSubmitProps);
+        onHide();
+        addSuccessToast(t('The dashboard has been saved'));
+      }, handleErrorResponse);
+    }
+  };
+
+  useEffect(() => {
+    if (show) {
+      // Reset loading state when modal opens
+      setIsLoading(true);
+
+      if (!currentDashboardInfo) {
+        fetchDashboardDetails();
+      } else {
+        handleDashboardData(currentDashboardInfo);
+        // Data is immediately available, so we can stop loading
+        setIsLoading(false);
+      }
+
+      // Category should be explicitly selected by user, no default value
+
+      // Fetch themes (excluding system themes)
+      const themeQuery = rison.encode({
+        columns: ['id', 'theme_name', 'is_system'],
+        filters: [
+          {
+            col: 'is_system',
+            opr: 'eq',
+            value: false,
+          },
+        ],
+      });
+      SupersetClient.get({ endpoint: `/api/v1/theme/?q=${themeQuery}` })
+        .then(({ json }) => {
+          const fetchedThemes = json.result;
+          setThemes(fetchedThemes);
+        })
+        .catch(() => {
+          addDangerToast(
+            t('An error occurred while fetching available themes'),
+          );
+        });
+    }
+
+    JsonEditor.preload();
+  }, [
+    currentDashboardInfo,
+    fetchDashboardDetails,
+    handleDashboardData,
+    show,
+    addDangerToast,
+    form,
+  ]);
+
+  useEffect(() => {
+    // the title can be changed inline in the dashboard, this catches it
+    if (
+      dashboardTitle &&
+      dashboardInfo &&
+      dashboardInfo.title !== dashboardTitle
+    ) {
+      form.setFieldsValue({
+        ...dashboardInfo,
+        title: dashboardTitle,
+      });
+    }
+  }, [dashboardInfo, dashboardTitle, form]);
+
+  useEffect(() => {
+    if (!isFeatureEnabled(FeatureFlag.TaggingSystem)) return;
+    try {
+      fetchTags(
+        {
+          objectType: OBJECT_TYPES.DASHBOARD,
+          objectId: dashboardId,
+          includeTypes: false,
+        },
+        (tags: TagType[]) => setTags(tags),
+        (error: Response) => {
+          addDangerToast(`Error fetching tags: ${error.text}`);
+        },
+      );
+    } catch (error) {
+      handleErrorResponse(error);
+    }
+  }, [dashboardId]);
+
+  const handleChangeTags = (tags: { label: string; value: number }[]) => {
+    const parsedTags: TagType[] = ensureIsArray(tags).map(r => ({
+      id: r.value,
+      name: r.label,
+    }));
+    setTags(parsedTags);
+  };
+
+  const handleClearTags = () => {
+    setTags([]);
+  };
+
+  // Section handlers for extracted components
+  const handleThemeChange = (value: any) => setSelectedThemeId(value || null);
+  const handleRefreshFrequencyChange = (value: any) =>
+    setRefreshFrequency(value);
+
+  // Helper function for styling section
+  const hasCustomLabelsColor = !!Object.keys(
+    getJsonMetadata()?.label_colors || {},
+  ).length;
+
+  // Validation setup
+  const modalSections = useMemo(
+    () => [
+      {
+        key: 'basic',
+        name: t('General information'),
+        validator: () => {
+          const errors = [];
+          const values = form.getFieldsValue();
+
+          // Check validation - only add if title is empty
+          if (!values.title || values.title.trim().length === 0) {
+            errors.push(t('Dashboard name is required'));
+          }
+
+          // Category must be explicitly selected (no default)
+          if (!values.category || values.category.trim().length === 0) {
+            errors.push(t('Dashboard category is required'));
+          }
+
+          return errors;
+        },
+      },
+      {
+        key: 'access',
+        name: t('Access & ownership'),
+        validator: () => [],
+      },
+      {
+        key: 'styling',
+        name: t('Styling'),
+        validator: () => [],
+      },
+      {
+        key: 'refresh',
+        name: t('Refresh settings'),
+        validator: () => {
+          const errors = [];
+          const refreshLimit =
+            dashboardInfo?.common?.conf
+              ?.SUPERSET_DASHBOARD_PERIODICAL_REFRESH_LIMIT;
+          if (
+            refreshLimit &&
+            refreshFrequency > 0 &&
+            refreshFrequency < refreshLimit
+          ) {
+            errors.push(
+              t(
+                'Refresh frequency must be at least %s seconds',
+                refreshLimit / 1000,
+              ),
+            );
+          }
+          return errors;
+        },
+      },
+      {
+        key: 'certification',
+        name: t('Certification'),
+        validator: () => [],
+      },
+      {
+        key: 'advanced',
+        name: t('Advanced settings'),
+        validator: () => {
+          if (jsonAnnotations.length > 0) {
+            return [t('Invalid JSON metadata')];
+          }
+          return [];
+        },
+      },
+    ],
+    [form, jsonAnnotations, refreshFrequency, dashboardInfo],
+  );
+
+  const {
+    validationStatus,
+    validateAll,
+    validateSection,
+    errorTooltip,
+    hasErrors,
+  } = useModalValidation({
+    sections: modalSections,
+  });
+
+  // Validate basic section when title changes
+  useEffect(() => {
+    validateSection('basic');
+  }, [dashboardTitle, validateSection]);
+
+  // Validate advanced section when JSON changes
+  useEffect(() => {
+    validateSection('advanced');
+  }, [jsonMetadata, validateSection]);
+
+  // Validate refresh section when refresh frequency changes
+  useEffect(() => {
+    validateSection('refresh');
+  }, [refreshFrequency, validateSection]);
+
+  return (
+    <StandardModal
+      show={show}
+      onHide={handleOnCancel}
+      onSave={() => {
+        if (validateAll()) {
+          form.submit();
+        }
+      }}
+      title={t('Dashboard properties')}
+      isEditMode
+      saveDisabled={dashboardInfo?.isManagedExternally || hasErrors}
+      saveLoading={isApplying}
+      contentLoading={isLoading}
+      errorTooltip={
+        dashboardInfo?.isManagedExternally
+          ? t(
+            "This dashboard is managed externally, and can't be edited in Superset",
+          )
+          : errorTooltip
+      }
+      saveText={saveLabel}
+      wrapProps={{ 'data-test': 'properties-edit-modal' }}
+    >
+      <Form
+        form={form}
+        onFinish={onFinish}
+        onFieldsChange={() => {
+          // Re-validate sections when form fields change
+          setTimeout(() => validateSection('basic'), 100);
+        }}
+        data-test="dashboard-edit-properties-form"
+        layout="vertical"
+        initialValues={{
+          ...dashboardInfo,
+          category: dashboardInfo?.category ?? undefined,
+        }}
+      >
+        <Collapse
+          expandIconPosition="end"
+          defaultActiveKey="basic"
+          accordion
+          modalMode
+          items={[
+            {
+              key: 'basic',
+              label: (
+                <CollapseLabelInModal
+                  title={t('General information')}
+                  subtitle={t('Dashboard name and URL configuration')}
+                  validateCheckStatus={!validationStatus.basic?.hasErrors}
+                  testId="basic-section"
+                />
+              ),
+              children: (
+                <BasicInfoSection
+                  form={form}
+                  validationStatus={validationStatus}
+                />
+              ),
+            },
+            {
+              key: 'access',
+              label: (
+                <CollapseLabelInModal
+                  title={t('Access & ownership')}
+                  subtitle={t('Manage dashboard owners and access permissions')}
+                  validateCheckStatus={!validationStatus.access?.hasErrors}
+                  testId="access-section"
+                />
+              ),
+              children: (
+                <AccessSection
+                  isLoading={isLoading}
+                  owners={owners}
+                  roles={roles}
+                  tags={tags}
+                  onChangeOwners={handleOnChangeOwners}
+                  onChangeRoles={handleOnChangeRoles}
+                  onChangeTags={handleChangeTags}
+                  onClearTags={handleClearTags}
+                />
+              ),
+            },
+            {
+              key: 'styling',
+              label: (
+                <CollapseLabelInModal
+                  title={t('Styling')}
+                  subtitle={t(
+                    'Configure dashboard appearance, colors, and custom CSS',
+                  )}
+                  validateCheckStatus={!validationStatus.styling?.hasErrors}
+                  testId="styling-section"
+                />
+              ),
+              children: (
+                <StylingSection
+                  themes={themes}
+                  selectedThemeId={selectedThemeId}
+                  colorScheme={colorScheme}
+                  customCss={customCss}
+                  hasCustomLabelsColor={hasCustomLabelsColor}
+                  onThemeChange={handleThemeChange}
+                  onColorSchemeChange={onColorSchemeChange}
+                  onCustomCssChange={setCustomCss}
+                  addDangerToast={addDangerToast}
+                />
+              ),
+            },
+            {
+              key: 'refresh',
+              label: (
+                <CollapseLabelInModal
+                  title={t('Refresh settings')}
+                  subtitle={t('Configure automatic dashboard refresh')}
+                  validateCheckStatus={!validationStatus.refresh?.hasErrors}
+                  testId="refresh-section"
+                />
+              ),
+              children: (
+                <RefreshSection
+                  refreshFrequency={refreshFrequency}
+                  onRefreshFrequencyChange={handleRefreshFrequencyChange}
+                />
+              ),
+            },
+            {
+              key: 'certification',
+              label: (
+                <CollapseLabelInModal
+                  title={t('Certification')}
+                  subtitle={t('Add certification details for this dashboard')}
+                  validateCheckStatus={
+                    !validationStatus.certification?.hasErrors
+                  }
+                  testId="certification-section"
+                />
+              ),
+              children: <CertificationSection isLoading={isLoading} />,
+            },
+            {
+              key: 'advanced',
+              label: (
+                <CollapseLabelInModal
+                  title={t('Advanced settings')}
+                  subtitle={t('JSON metadata and advanced configuration')}
+                  validateCheckStatus={!validationStatus.advanced?.hasErrors}
+                  testId="advanced-section"
+                />
+              ),
+              children: (
+                <AdvancedSection
+                  jsonMetadata={jsonMetadata}
+                  jsonAnnotations={jsonAnnotations}
+                  validationStatus={validationStatus}
+                  onJsonMetadataChange={setJsonMetadata}
+                  downloadQuery={downloadQuery}
+                  onDownloadQueryChange={setDownloadQuery}
+                />
+              ),
+            },
+          ]}
+        />
+      </Form>
+    </StandardModal>
+  );
+};
+
+export default withToasts(PropertiesModal);
