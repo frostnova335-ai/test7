@@ -1,79 +1,1964 @@
-=> ERROR [superset-worker superset-node-ci 11/12] RUN --mount=type=cache,target=/root/.npm     --mount=type=cache,target=/root/.cache     if [ "fa  197.3s
-------
- > [superset-worker superset-node-ci 11/12] RUN --mount=type=cache,target=/root/.npm     --mount=type=cache,target=/root/.cache     if [ "false" = "false" ]; then       npm ci --workspaces --include-workspace-root ||       npm install --workspaces --include-workspace-root;     else       echo "Skipping 'npm ci' in dev mode - will run in docker-frontend.sh";     fi:
-5.834 npm error code EUSAGE
-5.834 npm error
-5.834 npm error `npm ci` can only install packages when your package.json and package-lock.json or npm-shrinkwrap.json are in sync. Please update your lock file with `npm install` before continuing.
-5.834 npm error
-5.834 npm error Missing: core-js@3.40.0 from lock file
-5.834 npm error Missing: d3-color@1.4.1 from lock file
-5.834 npm error
-5.834 npm error Clean install a project
-5.834 npm error
-5.834 npm error Usage:
-5.834 npm error npm ci
-5.834 npm error
-5.834 npm error Options:
-5.834 npm error [--install-strategy <hoisted|nested|shallow|linked>] [--legacy-bundling]
-5.834 npm error [--global-style] [--omit <dev|optional|peer> [--omit <dev|optional|peer> ...]]
-5.834 npm error [--include <prod|dev|optional|peer> [--include <prod|dev|optional|peer> ...]]
-5.834 npm error [--strict-peer-deps] [--foreground-scripts] [--ignore-scripts] [--no-audit]
-5.834 npm error [--no-bin-links] [--no-fund] [--dry-run]
-5.834 npm error [-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
-5.834 npm error [-ws|--workspaces] [--include-workspace-root] [--install-links]
-5.834 npm error
-5.834 npm error aliases: clean-install, ic, install-clean, isntall-clean
-5.834 npm error
-5.834 npm error Run "npm help ci" for more info
-5.837 npm notice
-5.837 npm notice New major version of npm available! 10.8.2 -> 11.17.0
-5.837 npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.17.0
-5.837 npm notice To update run: npm install -g npm@11.17.0
-5.837 npm notice
-5.838 npm error A complete log of this run can be found in: /root/.npm/_logs/2026-06-22T06_20_31_468Z-debug-0.log
-28.37 npm warn deprecated whatwg-encoding@3.1.1: Use @exodus/bytes instead for a more spec-conformant and faster implementation
-28.74 npm warn deprecated viewport-mercator-project@7.0.4: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
-31.49 npm warn deprecated semver-diff@5.0.0: Deprecated as the semver package now supports this built-in.
-31.78 npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
-32.67 npm warn deprecated tar@6.2.1: Old versions of tar are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-33.92 npm warn deprecated topojson@1.6.27: Use topojson-client, topojson-server or topojson-simplify directly.
-35.17 npm warn deprecated nomnom@1.8.1: Package no longer supported. Contact support@npmjs.com for more info.
-36.20 npm warn deprecated lodash.isequal@4.5.0: This package is deprecated. Use require('node:util').isDeepStrictEqual instead.
-36.20 npm warn deprecated lodash.get@4.4.2: This package is deprecated. Use the optional chaining (?.) operator instead.
-36.64 npm warn deprecated node-domexception@1.0.0: Use your platform's native DOMException instead
-37.69 npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
-38.09 npm warn deprecated puppeteer@22.15.0: < 24.15.0 is no longer supported
-38.24 npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-40.43 npm warn deprecated domexception@4.0.0: Use your platform's native DOMException instead
-43.23 npm warn deprecated abab@2.0.6: Use your platform's native atob() and btoa() methods instead
-44.43 npm warn deprecated @types/react-virtualized-auto-sizer@1.0.8: This is a stub types definition. react-virtualized-auto-sizer provides its own type definitions, so you do not need this installed.
-48.97 npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
-48.97 npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
-52.68 npm warn deprecated @babel/polyfill@7.12.1: 🚨 This package has been deprecated in favor of separate inclusion of a polyfill and regenerator-runtime (when needed). See the @babel/polyfill docs (https://babeljs.io/docs/en/babel-polyfill) for more information.
-53.35 npm warn deprecated rimraf@2.6.3: Rimraf versions prior to v4 are no longer supported
-57.37 npm warn deprecated whatwg-encoding@2.0.0: Use @exodus/bytes instead for a more spec-conformant and faster implementation
-61.44 npm warn deprecated glob@8.1.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-64.38 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-64.62 npm warn deprecated glob@9.3.5: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-65.55 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-66.41 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-68.20 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-69.74 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-70.21 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-70.41 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-70.44 npm warn deprecated glob@9.3.5: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-70.55 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-70.75 npm warn deprecated glob@10.5.0: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
-75.25 npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
-196.3 npm error code ECONNRESET
-196.3 npm error network aborted
-196.3 npm error network This is a problem related to network connectivity.
-196.3 npm error network In most cases you are behind a proxy or have bad network settings.
-196.3 npm error network
-196.3 npm error network If you are behind a proxy, please make sure that the
-196.3 npm error network 'proxy' config is set properly.  See: 'npm help config'
-196.3 npm error A complete log of this run can be found in: /root/.npm/_logs/2026-06-22T06_20_36_895Z-debug-0.log
-------
-target superset-worker: failed to solve: process "/bin/bash -o pipefail -c if [ \"${DEV_MODE}\" = \"false\" ]; then       npm ci --workspaces --include-workspace-root ||       npm install --workspaces --include-workspace-root;     else       echo \"Skipping 'npm ci' in dev mode - will run in docker-frontend.sh\";     fi" did not complete successfully: exit code: 1
 
-root@EC03-B17-
+# Licensed to the Apache Software Foundation (ASF) under one
+# or more contributor license agreements.  See the NOTICE file
+# distributed with this work for additional information
+# regarding copyright ownership.  The ASF licenses this file
+# to you under the Apache License, Version 2.0 (the
+# "License"); you may not use this file except in compliance
+# with the License.  You may obtain a copy of the License at
+#
+#   http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing,
+# software distributed under the License is distributed on an
+# "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+# KIND, either express or implied.  See the License for the
+# specific language governing permissions and limitations
+# under the License.
+# pylint: disable=too-many-lines
+import functools
+import logging
+from datetime import datetime
+from io import BytesIO
+import pandas as pd
+from typing import Any, Callable, cast
+from zipfile import is_zipfile, ZipFile
+
+from flask import current_app, g, redirect, request, Response, send_file, url_for
+
+from flask_appbuilder import permission_name
+from flask_appbuilder.api import expose, protect, rison, safe
+from flask_appbuilder.models.sqla.interface import SQLAInterface
+from flask_babel import gettext, ngettext
+from sqlalchemy import text
+from marshmallow import ValidationError
+from werkzeug.wrappers import Response as WerkzeugResponse
+from werkzeug.wsgi import FileWrapper
+
+from superset import db
+from superset.charts.schemas import ChartEntityResponseSchema
+from superset.commands.dashboard.copy import CopyDashboardCommand
+from superset.commands.dashboard.create import CreateDashboardCommand
+from superset.commands.dashboard.delete import (
+    DeleteDashboardCommand,
+    DeleteEmbeddedDashboardCommand,
+)
+from superset.commands.dashboard.exceptions import (
+    DashboardAccessDeniedError,
+    DashboardColorsConfigUpdateFailedError,
+    DashboardCopyError,
+    DashboardCreateFailedError,
+    DashboardDeleteFailedError,
+    DashboardForbiddenError,
+    DashboardInvalidError,
+    DashboardNativeFiltersUpdateFailedError,
+    DashboardNotFoundError,
+    DashboardUpdateFailedError,
+)
+from superset.commands.dashboard.export import ExportDashboardsCommand
+from superset.commands.dashboard.fave import AddFavoriteDashboardCommand
+from superset.commands.dashboard.importers.dispatcher import ImportDashboardsCommand
+from superset.commands.dashboard.permalink.create import CreateDashboardPermalinkCommand
+from superset.commands.dashboard.unfave import DelFavoriteDashboardCommand
+from superset.commands.dashboard.update import (
+    UpdateDashboardColorsConfigCommand,
+    UpdateDashboardCommand,
+    UpdateDashboardNativeFiltersCommand,
+)
+from superset.commands.database.exceptions import DatasetValidationError
+from superset.commands.exceptions import TagForbiddenError
+from superset.commands.importers.exceptions import NoValidFilesFoundError
+from superset.commands.importers.v1.utils import get_contents_from_bundle
+from superset.constants import MODEL_API_RW_METHOD_PERMISSION_MAP, RouteMethod
+from superset.daos.dashboard import DashboardDAO, EmbeddedDashboardDAO
+from superset.dashboards.filters import (
+    DashboardAccessFilter,
+    DashboardCertifiedFilter,
+    DashboardCreatedByMeFilter,
+    DashboardFavoriteFilter,
+    DashboardHasCreatedByFilter,
+    DashboardTagIdFilter,
+    DashboardTagNameFilter,
+    DashboardTitleOrSlugFilter,
+    FilterRelatedRoles,
+)
+from superset.dashboards.permalink.types import DashboardPermalinkState
+from superset.dashboards.schemas import (
+    CacheScreenshotSchema,
+    DashboardCacheScreenshotResponseSchema,
+    DashboardColorsConfigUpdateSchema,
+    DashboardCopySchema,
+    DashboardDatasetSchema,
+    DashboardGetResponseSchema,
+    DashboardNativeFiltersConfigUpdateSchema,
+    DashboardPostSchema,
+    DashboardPutSchema,
+    DashboardScreenshotPostSchema,
+    EmbeddedDashboardConfigSchema,
+    EmbeddedDashboardResponseSchema,
+    get_delete_ids_schema,
+    get_export_ids_schema,
+    get_fav_star_ids_schema,
+    GetFavStarIdsSchema,
+    openapi_spec_methods_override,
+    screenshot_query_schema,
+    TabsPayloadSchema,
+    thumbnail_query_schema,
+)
+from superset.exceptions import ScreenshotImageNotAvailableException
+from superset.extensions import event_logger
+from superset.models.dashboard import Dashboard
+from superset.models.embedded_dashboard import EmbeddedDashboard
+from superset.security.guest_token import GuestUser
+from superset.tasks.thumbnails import (
+    cache_dashboard_screenshot,
+    cache_dashboard_thumbnail,
+)
+from superset.tasks.utils import get_current_user
+from superset.utils import json
+from superset.utils.core import parse_boolean_string
+from superset.utils.file import get_filename
+from superset.utils.pdf import build_pdf_from_screenshots
+from superset.utils.screenshots import (
+    DashboardScreenshot,
+    DEFAULT_DASHBOARD_WINDOW_SIZE,
+    ScreenshotCachePayload,
+)
+from superset.utils.urls import get_url_path
+from superset.views.base_api import (
+    BaseSupersetModelRestApi,
+    RelatedFieldFilter,
+    requires_form_data,
+    requires_json,
+    statsd_metrics,
+    validate_feature_flags,
+)
+from superset.views.error_handling import handle_api_exception
+from superset.views.filters import (
+    BaseFilterRelatedRoles,
+    BaseFilterRelatedUsers,
+    FilterRelatedOwners,
+)
+
+logger = logging.getLogger(__name__)
+
+
+def with_dashboard(
+    f: Callable[[BaseSupersetModelRestApi, Dashboard], Response],
+) -> Callable[[BaseSupersetModelRestApi, str], Response]:
+    """
+    A decorator that looks up the dashboard by id or slug and passes it to the api.
+    Route must include an <id_or_slug> parameter.
+    Responds with 403 or 404 without calling the route, if necessary.
+    """
+
+    def wraps(self: BaseSupersetModelRestApi, id_or_slug: str) -> Response:
+        try:
+            dash = DashboardDAO.get_by_id_or_slug(id_or_slug)
+            return f(self, dash)
+        except DashboardAccessDeniedError:
+            return self.response_403()
+        except DashboardNotFoundError:
+            return self.response_404()
+
+    return functools.update_wrapper(wraps, f)
+
+
+# pylint: disable=too-many-public-methods
+class DashboardRestApi(BaseSupersetModelRestApi):
+    datamodel = SQLAInterface(Dashboard)
+
+    include_route_methods = RouteMethod.REST_MODEL_VIEW_CRUD_SET | {
+        RouteMethod.EXPORT,
+        RouteMethod.IMPORT,
+        RouteMethod.RELATED,
+        "bulk_delete",  # not using RouteMethod since locally defined
+        "favorite_status",
+        "add_favorite",
+        "remove_favorite",
+        "get_charts",
+        "get_datasets",
+        "get_tabs",
+        "get_embedded",
+        "set_embedded",
+        "delete_embedded",
+        "thumbnail",
+        "copy_dash",
+        "cache_dashboard_screenshot",
+        "screenshot",
+        "put_filters",
+        "download_data",
+        "put_colors",
+    }
+    resource_name = "dashboard"
+    allow_browser_login = True
+
+    class_permission_name = "Dashboard"
+    method_permission_name = MODEL_API_RW_METHOD_PERMISSION_MAP
+
+    list_columns = [
+        "id",
+        "uuid",
+        "published",
+        "status",
+        "slug",
+        "url",
+        "thumbnail_url",
+        "certified_by",
+        "certification_details",
+        "changed_by.first_name",
+        "changed_by.last_name",
+        "changed_by.id",
+        "changed_by_name",
+        "changed_on_utc",
+        "changed_on_delta_humanized",
+        "created_on_delta_humanized",
+        "created_by.first_name",
+        "created_by.id",
+        "created_by.last_name",
+        "dashboard_title",
+        "category",
+        "owners.id",
+        "owners.first_name",
+        "owners.last_name",
+        "roles.id",
+        "roles.name",
+        "is_managed_externally",
+        "tags.id",
+        "tags.name",
+        "tags.type",
+        "uuid",
+    ]
+
+    list_select_columns = list_columns + ["changed_on", "created_on", "changed_by_fk"]
+    order_columns = [
+        "changed_by.first_name",
+        "changed_on_delta_humanized",
+        "created_by.first_name",
+        "dashboard_title",
+        "published",
+        "changed_on",
+    ]
+
+    add_columns = [
+        "certified_by",
+        "certification_details",
+        "dashboard_title",
+        "slug",
+        "owners",
+        "roles",
+        "position_json",
+        "css",
+        "theme_id",
+        "json_metadata",
+        "published",
+    ]
+    edit_columns = add_columns
+
+    search_columns = (
+        "created_by",
+        "changed_by",
+        "category",
+        "dashboard_title",
+        "id",
+        "uuid",
+        "owners",
+        "published",
+        "roles",
+        "slug",
+        "tags",
+        "uuid",
+    )
+    search_filters = {
+        "dashboard_title": [DashboardTitleOrSlugFilter],
+        "id": [DashboardFavoriteFilter, DashboardCertifiedFilter],
+        "created_by": [DashboardCreatedByMeFilter, DashboardHasCreatedByFilter],
+        "tags": [DashboardTagIdFilter, DashboardTagNameFilter],
+    }
+
+    base_order = ("changed_on", "desc")
+
+    add_model_schema = DashboardPostSchema()
+    edit_model_schema = DashboardPutSchema()
+    update_filters_model_schema = DashboardNativeFiltersConfigUpdateSchema()
+    update_colors_model_schema = DashboardColorsConfigUpdateSchema()
+    chart_entity_response_schema = ChartEntityResponseSchema()
+    dashboard_get_response_schema = DashboardGetResponseSchema()
+    dashboard_dataset_schema = DashboardDatasetSchema()
+    tab_schema = TabsPayloadSchema()
+    embedded_response_schema = EmbeddedDashboardResponseSchema()
+    embedded_config_schema = EmbeddedDashboardConfigSchema()
+
+    base_filters = [
+        ["id", DashboardAccessFilter, lambda: []],
+    ]
+
+    order_rel_fields = {
+        "slices": ("slice_name", "asc"),
+        "owners": ("first_name", "asc"),
+        "roles": ("name", "asc"),
+    }
+    base_related_field_filters = {
+        "owners": [["id", BaseFilterRelatedUsers, lambda: []]],
+        "created_by": [["id", BaseFilterRelatedUsers, lambda: []]],
+        "changed_by": [["id", BaseFilterRelatedUsers, lambda: []]],
+        "roles": [["id", BaseFilterRelatedRoles, lambda: []]],
+    }
+
+    related_field_filters = {
+        "owners": RelatedFieldFilter("first_name", FilterRelatedOwners),
+        "roles": RelatedFieldFilter("name", FilterRelatedRoles),
+        "created_by": RelatedFieldFilter("first_name", FilterRelatedOwners),
+        "changed_by": RelatedFieldFilter("first_name", FilterRelatedOwners),
+    }
+    allowed_rel_fields = {"owners", "roles", "created_by", "changed_by"}
+
+    openapi_spec_tag = "Dashboards"
+    """ Override the name set for this collection of endpoints """
+    openapi_spec_component_schemas = (
+        ChartEntityResponseSchema,
+        DashboardCacheScreenshotResponseSchema,
+        DashboardCopySchema,
+        DashboardGetResponseSchema,
+        DashboardDatasetSchema,
+        TabsPayloadSchema,
+        GetFavStarIdsSchema,
+        EmbeddedDashboardResponseSchema,
+        DashboardScreenshotPostSchema,
+    )
+    apispec_parameter_schemas = {
+        "get_delete_ids_schema": get_delete_ids_schema,
+        "get_export_ids_schema": get_export_ids_schema,
+        "thumbnail_query_schema": thumbnail_query_schema,
+        "get_fav_star_ids_schema": get_fav_star_ids_schema,
+    }
+    openapi_spec_methods = openapi_spec_methods_override
+    """ Overrides GET methods OpenApi descriptions """
+
+    def __repr__(self) -> str:
+        """Deterministic string representation of the API instance for etag_cache."""
+        # pylint: disable=consider-using-f-string
+        return "Superset.dashboards.api.DashboardRestApi@v{}{}".format(
+            current_app.config["VERSION_STRING"],
+            current_app.config["VERSION_SHA"],
+        )
+
+    @expose("/<id_or_slug>", methods=("GET",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @with_dashboard
+    @event_logger.log_this_with_extra_payload
+    # pylint: disable=arguments-differ,arguments-renamed
+    def get(
+        self,
+        dash: Dashboard,
+        add_extra_log_payload: Callable[..., None] = lambda **kwargs: None,
+    ) -> Response:
+        """Get a dashboard.
+        ---
+        get:
+          summary: Get a dashboard
+          parameters:
+          - in: path
+            schema:
+              type: string
+            name: id_or_slug
+            description: Either the id of the dashboard, or its slug
+          responses:
+            200:
+              description: Dashboard
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/DashboardGetResponseSchema'
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            403:
+              $ref: '#/components/responses/403'
+            404:
+              $ref: '#/components/responses/404'
+        """
+        result = self.dashboard_get_response_schema.dump(dash)
+
+        metadata = json.loads(dash.json_metadata or "{}")
+
+        result["download_query"] = metadata.get("download_query")
+
+        add_extra_log_payload(
+            dashboard_id=dash.id, action=f"{self.__class__.__name__}.get"
+        )
+        return self.response(200, result=result)
+
+    @expose("/<id_or_slug>/datasets", methods=("GET",))
+    @protect()
+    @handle_api_exception
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.get_datasets",
+        log_to_statsd=False,
+    )
+    def get_datasets(self, id_or_slug: str) -> Response:
+        """Get dashboard's datasets.
+        ---
+        get:
+          summary: Get dashboard's datasets
+          description: >-
+            Returns a list of a dashboard's datasets. Each dataset includes only
+            the information necessary to render the dashboard's charts.
+          parameters:
+          - in: path
+            schema:
+              type: string
+            name: id_or_slug
+            description: Either the id of the dashboard, or its slug
+          responses:
+            200:
+              description: Dashboard dataset definitions
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/DashboardDatasetSchema'
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            403:
+              $ref: '#/components/responses/403'
+            404:
+              $ref: '#/components/responses/404'
+        """
+        try:
+            datasets = DashboardDAO.get_datasets_for_dashboard(id_or_slug)
+            result = [
+                self.dashboard_dataset_schema.dump(dataset) for dataset in datasets
+            ]
+            return self.response(200, result=result)
+        except (TypeError, ValueError) as err:
+            raise DatasetValidationError(err) from err
+
+    @expose("/<id_or_slug>/tabs", methods=("GET",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.get_tabs",
+        log_to_statsd=False,
+    )
+    def get_tabs(self, id_or_slug: str) -> Response:
+        """Get dashboard's tabs.
+        ---
+        get:
+          summary: Get dashboard's tabs
+          description: >-
+            Returns a list of a dashboard's tabs and dashboard's nested tree structure for associated tabs.
+          parameters:
+          - in: path
+            schema:
+              type: string
+            name: id_or_slug
+            description: Either the id of the dashboard, or its slug
+          responses:
+            200:
+              description: Dashboard tabs
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        type: object
+                        items:
+                          $ref: '#/components/schemas/TabsPayloadSchema'
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            403:
+              $ref: '#/components/responses/403'
+            404:
+              $ref: '#/components/responses/404'
+        """  # noqa: E501
+        try:
+            tabs = DashboardDAO.get_tabs_for_dashboard(id_or_slug)
+            native_filters = DashboardDAO.get_native_filter_configuration(id_or_slug)
+
+            result = self.tab_schema.dump(tabs)
+            result["native_filters"] = native_filters
+
+            return self.response(200, result=result)
+
+        except (TypeError, ValueError) as err:
+            return self.response_400(
+                message=gettext(
+                    "Tab schema is invalid, caused by: %(error)s", error=str(err)
+                )
+            )
+        except DashboardAccessDeniedError:
+            return self.response_403()
+        except DashboardNotFoundError:
+            return self.response_404()
+
+    @expose("/<id_or_slug>/charts", methods=("GET",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.get_charts",
+        log_to_statsd=False,
+    )
+    def get_charts(self, id_or_slug: str) -> Response:
+        """Get a dashboard's chart definitions.
+        ---
+        get:
+          summary: Get a dashboard's chart definitions.
+          parameters:
+          - in: path
+            schema:
+              type: string
+            name: id_or_slug
+          responses:
+            200:
+              description: Dashboard chart definitions
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/ChartEntityResponseSchema'
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            403:
+              $ref: '#/components/responses/403'
+            404:
+              $ref: '#/components/responses/404'
+        """
+        try:
+            charts = DashboardDAO.get_charts_for_dashboard(id_or_slug)
+            result = [self.chart_entity_response_schema.dump(chart) for chart in charts]
+            return self.response(200, result=result)
+        except DashboardAccessDeniedError:
+            return self.response_403()
+        except DashboardNotFoundError:
+            return self.response_404()
+
+    @expose("/", methods=("POST",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.post",
+        log_to_statsd=False,
+    )
+    @requires_json
+    def post(self) -> Response:
+        """Create a new dashboard.
+        ---
+        post:
+          summary: Create a new dashboard
+          requestBody:
+            description: Dashboard schema
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/{{self.__class__.__name__}}.post'
+          responses:
+            201:
+              description: Dashboard added
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      result:
+                        $ref: '#/components/schemas/{{self.__class__.__name__}}.post'
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            404:
+              $ref: '#/components/responses/404'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        try:
+           item = self.edit_model_schema.load(request.json)
+
+           if "download_query" in request.json:
+              item["download_query"] = request.json.get("download_query")
+
+        except ValidationError as error:
+             return self.response_400(message=error.messages)
+
+        try:
+            new_model = CreateDashboardCommand(item).run()
+            return self.response(201, id=new_model.id, result=item)
+        except DashboardInvalidError as ex:
+            return self.response_422(message=ex.normalized_messages())
+        except DashboardCreateFailedError as ex:
+            logger.error(
+                "Error creating model %s: %s",
+                self.__class__.__name__,
+                str(ex),
+                exc_info=True,
+            )
+            return self.response_422(message=str(ex))
+
+    @expose("/<pk>", methods=("PUT",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.put",
+        log_to_statsd=False,
+    )
+    @requires_json
+    def put(self, pk: int) -> Response:
+        """Update a dashboard.
+        ---
+        put:
+          summary: Update a dashboard
+          parameters:
+          - in: path
+            schema:
+              type: integer
+            name: pk
+          requestBody:
+            description: Dashboard schema
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/{{self.__class__.__name__}}.put'
+          responses:
+            200:
+              description: Dashboard changed
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      result:
+                        $ref: '#/components/schemas/{{self.__class__.__name__}}.put'
+                      last_modified_time:
+                        type: number
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            403:
+              $ref: '#/components/responses/403'
+            404:
+              $ref: '#/components/responses/404'
+            422:
+              $ref: '#/components/responses/422'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        try:
+            item = self.edit_model_schema.load(request.json)
+        # This validates custom Schema with custom validations
+        except ValidationError as error:
+            return self.response_400(message=error.messages)
+        try:
+            changed_model = UpdateDashboardCommand(pk, item).run()
+            last_modified_time = changed_model.changed_on.replace(
+                microsecond=0
+            ).timestamp()
+            response = self.response(
+                200,
+                id=changed_model.id,
+                result=item,
+                last_modified_time=last_modified_time,
+            )
+        except DashboardNotFoundError:
+            response = self.response_404()
+        except DashboardForbiddenError:
+            response = self.response_403()
+        except TagForbiddenError as ex:
+            response = self.response(403, message=str(ex))
+        except DashboardInvalidError as ex:
+            return self.response_422(message=ex.normalized_messages())
+        except DashboardUpdateFailedError as ex:
+            logger.error(
+                "Error updating model %s: %s",
+                self.__class__.__name__,
+                str(ex),
+                exc_info=True,
+            )
+            response = self.response_422(message=str(ex))
+        return response
+
+    @expose("/<pk>/filters", methods=("PUT",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.put_filters",
+        log_to_statsd=False,
+    )
+    @requires_json
+    def put_filters(self, pk: int) -> Response:
+        """
+        Modify native filters configuration for a dashboard.
+        ---
+        put:
+          summary: Update native filters configuration for a dashboard.
+          parameters:
+          - in: path
+            schema:
+              type: integer
+            name: pk
+          requestBody:
+            description: Native filters configuration
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/DashboardNativeFiltersConfigUpdateSchema'
+          responses:
+            200:
+              description: Dashboard native filters updated
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        type: array
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            403:
+              $ref: '#/components/responses/403'
+            404:
+              $ref: '#/components/responses/404'
+            422:
+              $ref: '#/components/responses/422'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        try:
+            item = self.update_filters_model_schema.load(request.json, partial=True)
+        except ValidationError as error:
+            return self.response_400(message=error.messages)
+
+        try:
+            configuration = UpdateDashboardNativeFiltersCommand(pk, item).run()
+            response = self.response(
+                200,
+                result=configuration,
+            )
+        except DashboardNotFoundError:
+            response = self.response_404()
+        except DashboardForbiddenError:
+            response = self.response_403()
+        except TagForbiddenError as ex:
+            response = self.response(403, message=str(ex))
+        except DashboardInvalidError as ex:
+            return self.response_422(message=ex.normalized_messages())
+        except DashboardNativeFiltersUpdateFailedError as ex:
+            logger.error(
+                "Error changing native filters for dashboard %s: %s",
+                self.__class__.__name__,
+                str(ex),
+                exc_info=True,
+            )
+            response = self.response_422(message=str(ex))
+        return response
+
+    @expose("/<pk>/colors", methods=("PUT",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.put_colors",
+        log_to_statsd=False,
+    )
+    @requires_json
+    def put_colors(self, pk: int) -> Response:
+        """
+        Modify colors configuration for a dashboard.
+        ---
+        put:
+          summary: Update colors configuration for a dashboard.
+          parameters:
+          - in: path
+            schema:
+              type: integer
+            name: pk
+          - in: query
+            name: mark_updated
+            schema:
+              type: boolean
+              description: Whether to update the dashboard changed_on field
+          requestBody:
+            description: Colors configuration
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/DashboardColorsConfigUpdateSchema'
+          responses:
+            200:
+              description: Dashboard colors updated
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        type: array
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            403:
+              $ref: '#/components/responses/403'
+            404:
+              $ref: '#/components/responses/404'
+            422:
+              $ref: '#/components/responses/422'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        try:
+            item = self.update_colors_model_schema.load(request.json, partial=True)
+        except ValidationError as error:
+            return self.response_400(message=error.messages)
+
+        try:
+            mark_updated = parse_boolean_string(
+                request.args.get("mark_updated", "true")
+            )
+            UpdateDashboardColorsConfigCommand(pk, item, mark_updated).run()
+            response = self.response(200)
+        except DashboardNotFoundError:
+            response = self.response_404()
+        except DashboardForbiddenError:
+            response = self.response_403()
+        except DashboardInvalidError as ex:
+            return self.response_422(message=ex.normalized_messages())
+        except DashboardColorsConfigUpdateFailedError as ex:
+            logger.error(
+                "Error changing color configuration for dashboard %s: %s",
+                self.__class__.__name__,
+                str(ex),
+                exc_info=True,
+            )
+            response = self.response_422(message=str(ex))
+        return response
+
+    @expose("/<pk>", methods=("DELETE",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.delete",
+        log_to_statsd=False,
+    )
+    def delete(self, pk: int) -> Response:
+        """Delete a dashboard.
+        ---
+        delete:
+          summary: Delete a dashboard
+          parameters:
+          - in: path
+            schema:
+              type: integer
+            name: pk
+          responses:
+            200:
+              description: Dashboard deleted
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+            401:
+              $ref: '#/components/responses/401'
+            403:
+              $ref: '#/components/responses/403'
+            404:
+              $ref: '#/components/responses/404'
+            422:
+              $ref: '#/components/responses/422'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        try:
+            DeleteDashboardCommand([pk]).run()
+            return self.response(200, message="OK")
+        except DashboardNotFoundError:
+            return self.response_404()
+        except DashboardForbiddenError:
+            return self.response_403()
+        except DashboardDeleteFailedError as ex:
+            logger.error(
+                "Error deleting model %s: %s",
+                self.__class__.__name__,
+                str(ex),
+                exc_info=True,
+            )
+            return self.response_422(message=str(ex))
+
+    @expose("/", methods=("DELETE",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @rison(get_delete_ids_schema)
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.bulk_delete",
+        log_to_statsd=False,
+    )
+    def bulk_delete(self, **kwargs: Any) -> Response:
+        """Bulk delete dashboards.
+        ---
+        delete:
+          summary: Bulk delete dashboards
+          parameters:
+          - in: query
+            name: q
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/get_delete_ids_schema'
+          responses:
+            200:
+              description: Dashboard bulk delete
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+            401:
+              $ref: '#/components/responses/401'
+            403:
+              $ref: '#/components/responses/403'
+            404:
+              $ref: '#/components/responses/404'
+            422:
+              $ref: '#/components/responses/422'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        item_ids = kwargs["rison"]
+        try:
+            DeleteDashboardCommand(item_ids).run()
+            return self.response(
+                200,
+                message=ngettext(
+                    "Deleted %(num)d dashboard",
+                    "Deleted %(num)d dashboards",
+                    num=len(item_ids),
+                ),
+            )
+        except DashboardNotFoundError:
+            return self.response_404()
+        except DashboardForbiddenError:
+            return self.response_403()
+        except DashboardDeleteFailedError as ex:
+            return self.response_422(message=str(ex))
+
+    @expose("/export/", methods=("GET",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @rison(get_export_ids_schema)
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.export",
+        log_to_statsd=False,
+    )
+    def export(self, **kwargs: Any) -> Response:
+        """Download multiple dashboards as YAML files.
+        ---
+        get:
+          summary: Download multiple dashboards as YAML files
+          parameters:
+          - in: query
+            name: q
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/get_export_ids_schema'
+          responses:
+            200:
+              description: Dashboard export
+              content:
+                text/plain:
+                  schema:
+                    type: string
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            404:
+              $ref: '#/components/responses/404'
+            422:
+              $ref: '#/components/responses/422'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        requested_ids = kwargs["rison"]
+
+        timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
+        root = f"dashboard_export_{timestamp}"
+        filename = f"{root}.zip"
+
+        buf = BytesIO()
+        with ZipFile(buf, "w") as bundle:
+            try:
+                for file_name, file_content in ExportDashboardsCommand(
+                    requested_ids
+                ).run():
+                    with bundle.open(f"{root}/{file_name}", "w") as fp:
+                        fp.write(file_content().encode())
+            except DashboardNotFoundError:
+                return self.response_404()
+        buf.seek(0)
+
+        response = send_file(
+            buf,
+            mimetype="application/zip",
+            as_attachment=True,
+            download_name=filename,
+        )
+        if token := request.args.get("token"):
+            response.set_cookie(token, "done", max_age=600)
+        return response
+
+    @expose("/<pk>/cache_dashboard_screenshot/", methods=("POST",))
+    @validate_feature_flags(["THUMBNAILS", "ENABLE_DASHBOARD_SCREENSHOT_ENDPOINTS"])
+    @protect()
+    @rison(screenshot_query_schema)
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}"
+        f".cache_dashboard_screenshot",
+        log_to_statsd=False,
+    )
+    def cache_dashboard_screenshot(self, pk: int, **kwargs: Any) -> WerkzeugResponse:
+        """Compute and cache a screenshot.
+        ---
+        post:
+          summary: Compute and cache a screenshot
+          parameters:
+          - in: path
+            schema:
+              type: integer
+            name: pk
+          requestBody:
+            content:
+              application/json:
+                  schema:
+                    $ref: '#/components/schemas/DashboardScreenshotPostSchema'
+          responses:
+            202:
+              description: Dashboard async result
+              content:
+                application/json:
+                  schema:
+                    $ref: "#/components/schemas/DashboardCacheScreenshotResponseSchema"
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            404:
+              $ref: '#/components/responses/404'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        try:
+            payload = CacheScreenshotSchema().load(request.json)
+        except ValidationError as error:
+            return self.response_400(message=error.messages)
+        dashboard = cast(Dashboard, self.datamodel.get(pk, self._base_filters))
+        if not dashboard:
+            return self.response_404()
+
+        window_size = (
+            kwargs["rison"].get("window_size") or DEFAULT_DASHBOARD_WINDOW_SIZE
+        )
+        # Don't shrink the image if thumb_size is not specified
+        thumb_size = kwargs["rison"].get("thumb_size") or window_size
+        force = kwargs["rison"].get("force", False)
+        dashboard_state: DashboardPermalinkState = {
+            "dataMask": payload.get("dataMask", {}),
+            "activeTabs": payload.get("activeTabs", []),
+            "anchor": payload.get("anchor", ""),
+            "urlParams": payload.get("urlParams", []),
+        }
+
+        # if the permalink key is provided, dashboard_state will be ignored
+        # else, create a permalink key from the dashboard_state
+        permalink_key = (
+            payload.get("permalinkKey", None)
+            or CreateDashboardPermalinkCommand(
+                dashboard_id=str(dashboard.id),
+                state=dashboard_state,
+            ).run()
+        )
+
+        dashboard_url = get_url_path("Superset.dashboard_permalink", key=permalink_key)
+        screenshot_obj = DashboardScreenshot(dashboard_url, dashboard.digest)
+        cache_key = screenshot_obj.get_cache_key(window_size, thumb_size, permalink_key)
+        image_url = get_url_path(
+            "DashboardRestApi.screenshot", pk=dashboard.id, digest=cache_key
+        )
+        cache_payload = (
+            screenshot_obj.get_from_cache_key(cache_key) or ScreenshotCachePayload()
+        )
+
+        def build_response(status_code: int) -> WerkzeugResponse:
+            return self.response(
+                status_code,
+                cache_key=cache_key,
+                dashboard_url=dashboard_url,
+                image_url=image_url,
+                task_updated_at=cache_payload.get_timestamp(),
+                task_status=cache_payload.get_status(),
+            )
+
+        if cache_payload.should_trigger_task(force):
+            logger.info("Triggering screenshot ASYNC")
+            screenshot_obj.cache.set(cache_key, ScreenshotCachePayload().to_dict())
+            cache_dashboard_screenshot.delay(
+                username=get_current_user(),
+                guest_token=(
+                    g.user.guest_token
+                    if get_current_user() and isinstance(g.user, GuestUser)
+                    else None
+                ),
+                dashboard_id=dashboard.id,
+                dashboard_url=dashboard_url,
+                thumb_size=thumb_size,
+                window_size=window_size,
+                cache_key=cache_key,
+                force=force,
+            )
+            return build_response(202)
+        return build_response(200)
+
+    @expose("/<pk>/screenshot/<digest>/", methods=("GET",))
+    @validate_feature_flags(["THUMBNAILS", "ENABLE_DASHBOARD_SCREENSHOT_ENDPOINTS"])
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.screenshot",
+        log_to_statsd=False,
+    )
+    def screenshot(self, pk: int, digest: str) -> WerkzeugResponse:
+        """Get a computed dashboard screenshot from cache.
+        ---
+        get:
+          summary: Get a computed screenshot from cache
+          parameters:
+          - in: path
+            schema:
+              type: integer
+            name: pk
+          - in: path
+            schema:
+              type: string
+            name: digest
+          - in: query
+            name: download_format
+            schema:
+              type: string
+              enum: [png, pdf]
+          responses:
+            200:
+              description: Dashboard thumbnail image
+              content:
+               image/*:
+                 schema:
+                   type: string
+                   format: binary
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            404:
+              $ref: '#/components/responses/404'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        dashboard = self.datamodel.get(pk, self._base_filters)
+
+        # Making sure the dashboard still exists
+        if not dashboard:
+            return self.response_404()
+
+        download_format = request.args.get("download_format", "png")
+
+        # fetch the dashboard screenshot using the current user and cache if set
+
+        if cache_payload := DashboardScreenshot.get_from_cache_key(digest):
+            try:
+                image = cache_payload.get_image()
+            except ScreenshotImageNotAvailableException:
+                return self.response_404()
+
+            filename = get_filename(
+                dashboard.dashboard_title or "screenshot", dashboard.id, skip_id=True
+            )
+            if download_format == "pdf":
+                pdf_img = image.getvalue()
+                # Convert the screenshot to PDF
+                pdf_data = build_pdf_from_screenshots([pdf_img])
+
+                return Response(
+                    pdf_data,
+                    mimetype="application/pdf",
+                    headers={
+                        "Content-Disposition": f'attachment; filename="{filename}.pdf"'
+                    },
+                    direct_passthrough=True,
+                )
+            if download_format == "png":
+                return Response(
+                    FileWrapper(image),
+                    mimetype="image/png",
+                    headers={
+                        "Content-Disposition": f'attachment; filename="{filename}.png"'
+                    },
+                    direct_passthrough=True,
+                )
+        return self.response_404()
+
+    @expose("/<pk>/thumbnail/<digest>/", methods=("GET",))
+    @validate_feature_flags(["THUMBNAILS"])
+    @protect()
+    @safe
+    @rison(thumbnail_query_schema)
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.thumbnail",
+        log_to_statsd=False,
+    )
+    def thumbnail(self, pk: int, digest: str, **kwargs: Any) -> WerkzeugResponse:
+        """Compute async or get already computed dashboard thumbnail from cache.
+        ---
+        get:
+          summary: Get dashboard's thumbnail
+          description: >-
+            Computes async or get already computed dashboard thumbnail from cache.
+          parameters:
+          - in: path
+            schema:
+              type: integer
+            name: pk
+          - in: path
+            name: digest
+            description: A hex digest that makes this dashboard unique
+            schema:
+              type: string
+          responses:
+            200:
+              description: Dashboard thumbnail image
+              content:
+               image/*:
+                 schema:
+                   type: string
+                   format: binary
+            202:
+              description: Thumbnail does not exist on cache, fired async to compute
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+            302:
+              description: Redirects to the current digest
+            401:
+              $ref: '#/components/responses/401'
+            404:
+              $ref: '#/components/responses/404'
+            422:
+              $ref: '#/components/responses/422'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        dashboard = cast(Dashboard, self.datamodel.get(pk, self._base_filters))
+        if not dashboard:
+            return self.response_404()
+
+        current_user = get_current_user()
+        dashboard_url = get_url_path(
+            "Superset.dashboard", dashboard_id_or_slug=dashboard.id
+        )
+        if dashboard.digest != digest:
+            self.incr_stats("redirect", self.thumbnail.__name__)
+            return redirect(
+                url_for(
+                    f"{self.__class__.__name__}.thumbnail",
+                    pk=pk,
+                    digest=dashboard.digest,
+                )
+            )
+        screenshot_obj = DashboardScreenshot(dashboard_url, dashboard.digest)
+        cache_key = screenshot_obj.get_cache_key()
+        cache_payload = (
+            screenshot_obj.get_from_cache_key(cache_key) or ScreenshotCachePayload()
+        )
+        image_url = get_url_path(
+            "DashboardRestApi.thumbnail", pk=dashboard.id, digest=cache_key
+        )
+
+        if cache_payload.should_trigger_task():
+            self.incr_stats("async", self.thumbnail.__name__)
+            logger.info(
+                "Triggering thumbnail compute (dashboard id: %s) ASYNC",
+                str(dashboard.id),
+            )
+            screenshot_obj.cache.set(cache_key, ScreenshotCachePayload().to_dict())
+            cache_dashboard_thumbnail.delay(
+                current_user=current_user,
+                dashboard_id=dashboard.id,
+                force=False,
+                cache_key=cache_key,
+            )
+            return self.response(
+                202,
+                cache_key=cache_key,
+                dashboard_url=dashboard_url,
+                image_url=image_url,
+                task_updated_at=cache_payload.get_timestamp(),
+                task_status=cache_payload.get_status(),
+            )
+
+        self.incr_stats("from_cache", self.thumbnail.__name__)
+        try:
+            image = cache_payload.get_image()
+            if not image or not hasattr(image, "read"):
+                return self.response_404()
+        except ScreenshotImageNotAvailableException:
+            return self.response_404()
+        return Response(
+            FileWrapper(image),
+            mimetype="image/png",
+            direct_passthrough=True,
+        )
+
+    @expose("/favorite_status/", methods=("GET",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @rison(get_fav_star_ids_schema)
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}"
+        f".favorite_status",
+        log_to_statsd=False,
+    )
+    def favorite_status(self, **kwargs: Any) -> Response:
+        """Check favorited dashboards for current user.
+        ---
+        get:
+          summary: Check favorited dashboards for current user
+          parameters:
+          - in: query
+            name: q
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/get_fav_star_ids_schema'
+          responses:
+            200:
+              description:
+              content:
+                application/json:
+                  schema:
+                    $ref: "#/components/schemas/GetFavStarIdsSchema"
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            404:
+              $ref: '#/components/responses/404'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        requested_ids = kwargs["rison"]
+        dashboards = DashboardDAO.find_by_ids(requested_ids)
+        if not dashboards:
+            return self.response_404()
+
+        favorited_dashboard_ids = DashboardDAO.favorited_ids(dashboards)
+        res = [
+            {"id": request_id, "value": request_id in favorited_dashboard_ids}
+            for request_id in requested_ids
+        ]
+        return self.response(200, result=res)
+
+    @expose("/<pk>/favorites/", methods=("POST",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.add_favorite",
+        log_to_statsd=False,
+    )
+    def add_favorite(self, pk: int) -> Response:
+        """Mark the dashboard as favorite for the current user.
+        ---
+        post:
+          summary: Mark the dashboard as favorite for the current user
+          parameters:
+          - in: path
+            schema:
+              type: integer
+            name: pk
+          responses:
+            200:
+              description: Dashboard added to favorites
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        type: object
+            401:
+              $ref: '#/components/responses/401'
+            404:
+              $ref: '#/components/responses/404'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        try:
+            AddFavoriteDashboardCommand(pk).run()
+
+        except DashboardNotFoundError:
+            return self.response_404()
+        except DashboardAccessDeniedError:
+            return self.response_403()
+
+        return self.response(200, result="OK")
+
+    @expose("/<pk>/favorites/", methods=("DELETE",))
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}"
+        f".remove_favorite",
+        log_to_statsd=False,
+    )
+    def remove_favorite(self, pk: int) -> Response:
+        """Remove the dashboard from the user favorite list.
+        ---
+        delete:
+          summary: Remove the dashboard from the user favorite list
+          parameters:
+          - in: path
+            schema:
+              type: integer
+            name: pk
+          responses:
+            200:
+              description: Dashboard removed from favorites
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        type: object
+            401:
+              $ref: '#/components/responses/401'
+            404:
+              $ref: '#/components/responses/404'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        try:
+            DelFavoriteDashboardCommand(pk).run()
+        except DashboardNotFoundError:
+            return self.response_404()
+        except DashboardAccessDeniedError:
+            return self.response_403()
+
+        return self.response(200, result="OK")
+
+    @expose("/import/", methods=("POST",))
+    @protect()
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.import_",
+        log_to_statsd=False,
+    )
+    @requires_form_data
+    def import_(self) -> Response:
+        """Import dashboard(s) with associated charts/datasets/databases.
+        ---
+        post:
+          summary: Import dashboard(s) with associated charts/datasets/databases
+          requestBody:
+            required: true
+            content:
+              multipart/form-data:
+                schema:
+                  type: object
+                  properties:
+                    formData:
+                      description: upload file (ZIP or JSON)
+                      type: string
+                      format: binary
+                    passwords:
+                      description: >-
+                        JSON map of passwords for each featured database in the
+                        ZIP file. If the ZIP includes a database config in the path
+                        `databases/MyDatabase.yaml`, the password should be provided
+                        in the following format:
+                        `{"databases/MyDatabase.yaml": "my_password"}`.
+                      type: string
+                    overwrite:
+                      description: overwrite existing dashboards?
+                      type: boolean
+                    ssh_tunnel_passwords:
+                      description: >-
+                        JSON map of passwords for each ssh_tunnel associated to a
+                        featured database in the ZIP file. If the ZIP includes a
+                        ssh_tunnel config in the path `databases/MyDatabase.yaml`,
+                        the password should be provided in the following format:
+                        `{"databases/MyDatabase.yaml": "my_password"}`.
+                      type: string
+                    ssh_tunnel_private_keys:
+                      description: >-
+                        JSON map of private_keys for each ssh_tunnel associated to a
+                        featured database in the ZIP file. If the ZIP includes a
+                        ssh_tunnel config in the path `databases/MyDatabase.yaml`,
+                        the private_key should be provided in the following format:
+                        `{"databases/MyDatabase.yaml": "my_private_key"}`.
+                      type: string
+                    ssh_tunnel_private_key_passwords:
+                      description: >-
+                        JSON map of private_key_passwords for each ssh_tunnel associated
+                        to a featured database in the ZIP file. If the ZIP includes a
+                        ssh_tunnel config in the path `databases/MyDatabase.yaml`,
+                        the private_key should be provided in the following format:
+                        `{"databases/MyDatabase.yaml": "my_private_key_password"}`.
+                      type: string
+          responses:
+            200:
+              description: Dashboard import result
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            422:
+              $ref: '#/components/responses/422'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        upload = request.files.get("formData")
+        if not upload:
+            return self.response_400()
+        if is_zipfile(upload):
+            with ZipFile(upload) as bundle:
+                contents = get_contents_from_bundle(bundle)
+        else:
+            upload.seek(0)
+            contents = {upload.filename: upload.read()}
+
+        if not contents:
+            raise NoValidFilesFoundError()
+
+        passwords = (
+            json.loads(request.form["passwords"])
+            if "passwords" in request.form
+            else None
+        )
+        overwrite = request.form.get("overwrite") == "true"
+
+        ssh_tunnel_passwords = (
+            json.loads(request.form["ssh_tunnel_passwords"])
+            if "ssh_tunnel_passwords" in request.form
+            else None
+        )
+        ssh_tunnel_private_keys = (
+            json.loads(request.form["ssh_tunnel_private_keys"])
+            if "ssh_tunnel_private_keys" in request.form
+            else None
+        )
+        ssh_tunnel_priv_key_passwords = (
+            json.loads(request.form["ssh_tunnel_private_key_passwords"])
+            if "ssh_tunnel_private_key_passwords" in request.form
+            else None
+        )
+
+        command = ImportDashboardsCommand(
+            contents,
+            passwords=passwords,
+            overwrite=overwrite,
+            ssh_tunnel_passwords=ssh_tunnel_passwords,
+            ssh_tunnel_private_keys=ssh_tunnel_private_keys,
+            ssh_tunnel_priv_key_passwords=ssh_tunnel_priv_key_passwords,
+        )
+        command.run()
+        return self.response(200, message="OK")
+
+    @expose("/<id_or_slug>/embedded", methods=("GET",))
+    @protect()
+    @safe
+    @permission_name("read")
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.get_embedded",
+        log_to_statsd=False,
+    )
+    @with_dashboard
+    def get_embedded(self, dashboard: Dashboard) -> Response:
+        """Get the dashboard's embedded configuration.
+        ---
+        get:
+          summary: Get the dashboard's embedded configuration
+          parameters:
+          - in: path
+            schema:
+              type: string
+            name: id_or_slug
+            description: The dashboard id or slug
+          responses:
+            200:
+              description: Result contains the embedded dashboard config
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/EmbeddedDashboardResponseSchema'
+            401:
+              $ref: '#/components/responses/401'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        if not dashboard.embedded:
+            return self.response(404)
+        embedded: EmbeddedDashboard = dashboard.embedded[0]
+        result = self.embedded_response_schema.dump(embedded)
+        return self.response(200, result=result)
+
+    @expose("/<id_or_slug>/embedded", methods=["POST", "PUT"])
+    @protect()
+    @safe
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.set_embedded",
+        log_to_statsd=False,
+    )
+    @with_dashboard
+    def set_embedded(self, dashboard: Dashboard) -> Response:
+        """Set a dashboard's embedded configuration.
+        ---
+        post:
+          summary: Set a dashboard's embedded configuration
+          parameters:
+          - in: path
+            schema:
+              type: string
+            name: id_or_slug
+            description: The dashboard id or slug
+          requestBody:
+            description: The embedded configuration to set
+            required: true
+            content:
+              application/json:
+                schema: EmbeddedDashboardConfigSchema
+          responses:
+            200:
+              description: Successfully set the configuration
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/EmbeddedDashboardResponseSchema'
+            401:
+              $ref: '#/components/responses/401'
+            500:
+              $ref: '#/components/responses/500'
+        put:
+          description: >-
+            Sets a dashboard's embedded configuration.
+          parameters:
+          - in: path
+            schema:
+              type: string
+            name: id_or_slug
+            description: The dashboard id or slug
+          requestBody:
+            description: The embedded configuration to set
+            required: true
+            content:
+              application/json:
+                schema: EmbeddedDashboardConfigSchema
+          responses:
+            200:
+              description: Successfully set the configuration
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      result:
+                        $ref: '#/components/schemas/EmbeddedDashboardResponseSchema'
+            401:
+              $ref: '#/components/responses/401'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        try:
+            body = self.embedded_config_schema.load(request.json)
+
+            embedded = EmbeddedDashboardDAO.upsert(
+                dashboard,
+                body["allowed_domains"],
+            )
+            db.session.commit()  # pylint: disable=consider-using-transaction
+
+            result = self.embedded_response_schema.dump(embedded)
+            return self.response(200, result=result)
+        except ValidationError as error:
+            db.session.rollback()  # pylint: disable=consider-using-transaction
+            return self.response_400(message=error.messages)
+
+    @expose("/<id_or_slug>/embedded", methods=("DELETE",))
+    @protect()
+    @safe
+    @permission_name("set_embedded")
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self,
+        *args,
+        **kwargs: f"{self.__class__.__name__}.delete_embedded",
+        log_to_statsd=False,
+    )
+    @with_dashboard
+    def delete_embedded(self, dashboard: Dashboard) -> Response:
+        """Delete a dashboard's embedded configuration.
+        ---
+        delete:
+          summary: Delete a dashboard's embedded configuration
+          parameters:
+          - in: path
+            schema:
+              type: string
+            name: id_or_slug
+            description: The dashboard id or slug
+          responses:
+            200:
+              description: Successfully removed the configuration
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      message:
+                        type: string
+            401:
+              $ref: '#/components/responses/401'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        DeleteEmbeddedDashboardCommand(dashboard).run()
+        return self.response(200, message="OK")
+    
+    @expose("/<id_or_slug>/download_data", methods=("POST",))
+    @protect()
+    @safe
+    @statsd_metrics
+    def download_data(self, id_or_slug: str) -> Response:
+        """
+        Download dashboard data using configured SQL query.
+        """
+
+        from superset.daos.dashboard import DashboardDAO
+        from superset.models.dashboard import Dashboard
+        from superset import db
+
+        print("===== DOWNLOAD API HIT =====")
+        print("Dashboard:", id_or_slug)
+        dashboard = DashboardDAO.get_by_id_or_slug(id_or_slug)
+        print("Dashboard Found:", dashboard.id)
+        body = request.json or {}
+        print("Request Body:", body)
+        export_type = body.get("export_type", "csv")
+        
+        metadata = json.loads(dashboard.json_metadata or "{}")
+        print("Metadata:", metadata)
+        download_query = metadata.get("download_query")
+        print("Download Query:", download_query)
+        if not download_query:
+            return self.response(
+                400,
+                message="No download query configured for this dashboard",
+            )
+        query_check = download_query.strip().lower()
+
+        if not query_check.startswith("select"):
+           return self.response(
+           400,
+           message="Only SELECT queries are allowed",
+           )
+
+        if ";" in download_query:
+            return self.response(
+             400,
+              message="Multiple statements not allowed",
+             )
+
+        try:
+           print("Executing Query:", download_query)
+           result = db.session.execute(
+          text(download_query)
+           )
+           print("Query Executed Successfully")
+        except Exception as ex:
+           print("QUERY ERROR:", str(ex))
+           return self.response(
+            400,
+           message=str(ex),
+          )
+
+        
+        rows = result.fetchall()
+        print("Rows Count:", len(rows))
+        columns = result.keys()
+        print("Columns:", list(columns))
+        df = pd.DataFrame(rows, columns=columns)
+
+        output = BytesIO()
+
+        if export_type == "excel":
+            with pd.ExcelWriter(output, engine="openpyxl") as writer:
+                df.to_excel(writer, index=False)
+
+            output.seek(0)
+
+            return send_file(
+                output,
+                mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                as_attachment=True,
+                download_name=f"{dashboard.dashboard_title}.xlsx",
+            )
+
+        df.to_csv(output, index=False)
+
+        output.seek(0)
+
+        return send_file(
+            output,
+            mimetype="text/csv",
+            as_attachment=True,
+            download_name=f"{dashboard.dashboard_title}.csv",
+        )
+
+    @expose("/<id_or_slug>/copy/", methods=("POST",))
+    @protect()
+    @safe
+    @permission_name("write")
+    @statsd_metrics
+    @event_logger.log_this_with_context(
+        action=lambda self, *args, **kwargs: f"{self.__class__.__name__}.copy_dash",
+        log_to_statsd=False,
+    )
+    @with_dashboard
+    def copy_dash(self, original_dash: Dashboard) -> Response:
+        """Create a copy of an existing dashboard.
+        ---
+        post:
+          summary: Create a copy of an existing dashboard
+          parameters:
+          - in: path
+            schema:
+              type: string
+            name: id_or_slug
+            description: The dashboard id or slug
+          requestBody:
+            required: true
+            content:
+              application/json:
+                schema:
+                  $ref: '#/components/schemas/DashboardCopySchema'
+          responses:
+            200:
+              description: Id of new dashboard and last modified time
+              content:
+                application/json:
+                  schema:
+                    type: object
+                    properties:
+                      id:
+                        type: number
+                      last_modified_time:
+                        type: number
+            400:
+              $ref: '#/components/responses/400'
+            401:
+              $ref: '#/components/responses/401'
+            403:
+              $ref: '#/components/responses/403'
+            404:
+              $ref: '#/components/responses/404'
+            500:
+              $ref: '#/components/responses/500'
+        """
+        try:
+            data = DashboardCopySchema().load(request.json)
+        except ValidationError as error:
+            return self.response_400(message=error.messages)
+
+        try:
+            dash = CopyDashboardCommand(original_dash, data).run()
+        except DashboardForbiddenError:
+            return self.response_403()
+        except DashboardCopyError:
+            return self.response_400()
+
+        return self.response(
+            200,
+            result={
+                "id": dash.id,
+                "last_modified_time": dash.changed_on.replace(
+                    microsecond=0
+                ).timestamp(),
+            },
+        )
