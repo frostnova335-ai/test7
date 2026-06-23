@@ -19,6 +19,7 @@
 /* eslint-env browser */
 import { extendedDayjs } from '@superset-ui/core/utils/dates';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Modal, DatePicker, Radio } from 'antd';
 import {
   styled,
   css,
@@ -207,6 +208,13 @@ const Header = () => {
   const [emphasizeUndo, setEmphasizeUndo] = useState(false);
   const [emphasizeRedo, setEmphasizeRedo] = useState(false);
   const [showingPropertiesModal, setShowingPropertiesModal] = useState(false);
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
+
+  const [startDate, setStartDate] = useState < any > (null);
+
+  const [endDate, setEndDate] = useState < any > (null);
+
+  const [exportType, setExportType] = useState < 'csv' | 'excel' > ('csv');
   const [showingRefreshModal, setShowingRefreshModal] = useState(false);
   const [showingEmbedModal, setShowingEmbedModal] = useState(false);
   const [showingReportModal, setShowingReportModal] = useState(false);
@@ -430,6 +438,25 @@ const Header = () => {
       setEmphasizeUndo(false);
     }, 100);
   }, [boundActionCreators]);
+
+
+  const handleDashboardDownload = () => {
+    if (!startDate || !endDate) {
+      boundActionCreators.addDangerToast(
+        t('Please select start date and end date'),
+      );
+      return;
+    }
+
+    window.open(
+      `/api/v1/dashboard/${dashboardInfo.id}/download_data?export_type=${exportType}&start_date=${startDate.format(
+        'YYYY-MM-DD',
+      )}&end_date=${endDate.format('YYYY-MM-DD')}`,
+      '_blank',
+    );
+
+    setShowDownloadModal(false);
+  };
 
   const forceRefresh = useCallback(() => {
     if (!isLoading) {
@@ -780,6 +807,12 @@ const Header = () => {
         ) : (
           <div css={actionButtonsStyle}>
             {NavExtension && <NavExtension />}
+            {<Button
+              buttonStyle="primary"
+              onClick={() => setShowDownloadModal(true)}
+            >
+              Download Data
+            </Button>}
             {userCanEdit && (
               <Button
                 buttonStyle="secondary"
@@ -799,7 +832,7 @@ const Header = () => {
               <Button
                 buttonStyle="primary"
                 className="observability-btn"
-                
+
                 style={{
                   borderRadius: '14px',
 
@@ -1094,6 +1127,37 @@ const Header = () => {
           }
         `}
       />
+
+      <Modal
+        title="Download Dashboard Data"
+        open={showDownloadModal}
+        onCancel={() => setShowDownloadModal(false)}
+        onOk={handleDashboardDownload}
+      >
+        <div style={{ marginBottom: 16 }}>
+          <label>Start Date</label>
+          <DatePicker
+            style={{ width: '100%' }}
+            onChange={value => setStartDate(value)}
+          />
+        </div>
+
+        <div style={{ marginBottom: 16 }}>
+          <label>End Date</label>
+          <DatePicker
+            style={{ width: '100%' }}
+            onChange={value => setEndDate(value)}
+          />
+        </div>
+
+        <Radio.Group
+          value={exportType}
+          onChange={e => setExportType(e.target.value)}
+        >
+          <Radio value="csv">CSV</Radio>
+          <Radio value="excel">Excel</Radio>
+        </Radio.Group>
+      </Modal>
 
       <UnsavedChangesModal
         title={t('Save changes to your dashboard?')}
